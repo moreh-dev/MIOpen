@@ -147,10 +147,15 @@ bool PerformanceConvMlirIgemmXdlops::SetNextValue(const ConvolutionContext& conf
     if(use_spare_set)
         return false;
 
-    GemmBThreadCopyMoreGemmKPack = true;
-    GemmAThreadCopyMoreGemmK     = true;
+    //GemmBThreadCopyMoreGemmKPack = true;
+    //GemmAThreadCopyMoreGemmK     = true;
     do
     {
+
+        if(!NextFlag<false, true>(GemmBThreadCopyMoreGemmKPack))
+            break;
+        if(!NextFlag<false, true>(GemmAThreadCopyMoreGemmK))
+            break;
         if(!NextTwoPower<4, 256>(GemmMPerBlock))
             break;
         if(!NextTwoPower<16, 256>(GemmNPerBlock))
