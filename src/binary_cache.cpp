@@ -60,7 +60,9 @@ static boost::filesystem::path ComputeSysCachePath()
 static boost::filesystem::path ComputeUserCachePath()
 {
 #ifdef MIOPEN_CACHE_DIR
-    const std::string cache_dir = MIOPEN_CACHE_DIR;
+    char hostname[HOST_NAME_MAX + 1];
+    gethostname(hostname, HOST_NAME_MAX + 1);
+    const std::string cache_dir = "~/.miopen/" + std::string(hostname) + "/cache";
     const std::string version =
         std::to_string(MIOPEN_VERSION_MAJOR) + "." + std::to_string(MIOPEN_VERSION_MINOR) + "." +
         std::to_string(MIOPEN_VERSION_PATCH) + "." + MIOPEN_STRINGIZE(MIOPEN_VERSION_TWEAK);
