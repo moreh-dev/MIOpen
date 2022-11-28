@@ -152,10 +152,17 @@ class FindDbRecord_t
         MIOPEN_LOG_I("Find-db regenerating.");
         ret.clear();
         record.in_sync = false;
-        record.content.emplace(problem);
-        regenerator(*record.content);
-        record.CopyTo(ret);
 
+        {
+          DbRecord explored_record(problem);
+          regenerator(explored_record);
+
+          const auto range = explored_record.As<FindDbData>();
+          std::transform(range.begin(), range.end(), std::back_inserter(ret), [](const auto& pair) {
+              return PerfField{
+              pair.first, pair.second.solver_id, pair.second.time, pair.second.workspace};
+              });
+        }
         return ret;
     }
 
