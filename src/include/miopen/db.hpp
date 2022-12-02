@@ -196,14 +196,20 @@ class MultiFileDb
           _user(GetDbInstance<TUser>(user_path, false))
 #endif
     {
+#if MIOPEN_DISABLE_USERDB
+        (void)user_path;
+#endif
     }
 
     template <bool merge = merge_records, std::enable_if_t<merge>* = nullptr, typename... U>
     auto FindRecord(const U&... args)
     {
+#if !MIOPEN_DISABLE_USERDB
         auto users     = _user.FindRecord(args...);
+#endif
         auto installed = _installed.FindRecord(args...);
 
+#if !MIOPEN_DISABLE_USERDB
         if(users && installed)
         {
             users->Merge(installed.value());
@@ -212,6 +218,7 @@ class MultiFileDb
 
         if(users)
             return users;
+#endif
 
         return installed;
     }
@@ -219,46 +226,77 @@ class MultiFileDb
     template <bool merge = merge_records, std::enable_if_t<!merge>* = nullptr, typename... U>
     auto FindRecord(const U&... args)
     {
+#if !MIOPEN_DISABLE_USERDB
         auto users = _user.FindRecord(args...);
         return users ? users : _installed.FindRecord(args...);
+#else
+        return _installed.FindRecord(args...);
+#endif
     }
 
     template <typename... U>
     auto StoreRecord(const U&... args)
     {
+#if !MIOPEN_DISABLE_USERDB
         return _user.StoreRecord(args...);
+#else
+        (void)(sizeof...(args));
+        return true;
+#endif
     }
 
     template <typename... U>
     auto UpdateRecord(U&... args)
     {
+#if !MIOPEN_DISABLE_USERDB
         return _user.UpdateRecord(args...);
+#else
+        (void)(sizeof...(args));
+        return true;
+#endif
     }
 
     template <typename... U>
     auto RemoveRecord(const U&... args)
     {
+#if !MIOPEN_DISABLE_USERDB
         return _user.RemoveRecord(args...);
+#else
+        (void)(sizeof...(args));
+        return true;
+#endif
     }
 
     template <typename... U>
     auto Update(const U&... args)
     {
+#if !MIOPEN_DISABLE_USERDB
         return _user.Update(args...);
+#else
+        (void)(sizeof...(args));
+        return true;
+#endif
     }
 
     template <typename... U>
     auto Load(U&... args)
     {
+#if !MIOPEN_DISABLE_USERDB
         if(_user.Load(args...))
             return true;
+#endif
         return _installed.Load(args...);
     }
 
     template <typename... U>
     auto Remove(const U&... args)
     {
+#if !MIOPEN_DISABLE_USERDB
         return _user.Remove(args...);
+#else
+        (void)(sizeof...(args));
+        return true;
+#endif
     }
 
     private:
