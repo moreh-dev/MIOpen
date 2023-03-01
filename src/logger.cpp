@@ -118,10 +118,7 @@ bool IsLoggingDebugQuiet()
     return debug::LoggingQuiet && !miopen::IsEnabled(MIOPEN_DEBUG_LOGGING_QUIETING_DISABLE{});
 }
 
-bool IsLoggingFunctionCalls()
-{
-    return miopen::IsEnabled(MIOPEN_ENABLE_LOGGING{}) && !IsLoggingDebugQuiet();
-}
+bool IsLoggingFunctionCalls() { return false; }
 
 bool IsLogging(const LoggingLevel level, const bool disableQuieting)
 {

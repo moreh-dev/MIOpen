@@ -862,7 +862,10 @@ void GetSolutions(Handle& handle,
     {
         const auto algo = static_cast<miopenConvAlgorithm_t>(algoResolver(pair.first));
         if(IsAlgorithmDisabled(algo))
+        {
+            MIOPEN_LOG_W("[Warning] algo disabled: " << pair.second.solver_id);
             continue;
+        }
 
         const auto solver_id = solver::Id{pair.second.solver_id};
         // Wrong IDs can't be used to call IsApplicable(), so let's
@@ -870,11 +873,15 @@ void GetSolutions(Handle& handle,
         if(!solver_id.IsValid())
         {
             // Do not disturb users with warnings unless detailed log is enabled.
-            MIOPEN_LOG_I("[Warning] incorrect solver_id: " << pair.second.solver_id);
+            MIOPEN_LOG_W("[Warning] incorrect solver_id: " << pair.second.solver_id);
             continue;
         }
 
-        if(solver_id.GetSolver().IsApplicable(ctx))
+        bool applicable = solver_id.GetSolver().IsApplicable(ctx);
+        MIOPEN_LOG_W("[maloja] solver_id.GetSolver().IsApplicable(ctx) = "
+                     << applicable << ", solver_id = " << pair.second.solver_id);
+
+        if(applicable)
             interim.emplace_back(pair.second.time, pair.second.workspace, solver_id.Value(), algo);
     }
     std::sort(begin(interim), end(interim));
@@ -1783,6 +1790,205 @@ void ConvolutionDescriptor::ConvolutionWrwImmediate(Handle& handle,
             tensors, workSpace, workSpaceSize, this->attribute.gfx90aFp16alt.GetWrW()};
         invoker(handle, invoke_ctx);
     });
+}
+
+static bool CheckSolverUsePreCompiledKernel(const Handle& handle,
+                                            ConvolutionContext& ctx,
+                                            solver::Id solver_id,
+                                            const FindDbKCacheKey& key)
+{
+    ctx.DetectRocm();
+    ctx.SetupFloats();
+
+    const auto solver   = solver_id.GetSolver();
+    auto db             = GetDb(ctx);
+    const auto solution = solver.FindSolution(ctx, db, {}); // auto tune is not expected here
+
+    std::vector<KernelInvoke> kernels;
+
+    auto algorithm_name = key.algorithm_name;
+    auto network_config = key.network_config;
+
+    if(algorithm_name.empty() || network_config.empty())
+    {
+        assert(algorithm_name.empty() && network_config.empty());
+    }
+
+    for(auto& k : solution.construction_params)
+    {
+        if(!handle.HasPreCompiledProgram(k.kernel_file, k.comp_options))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+static bool CheckSolutionUsePreCompiledKernel(Handle& handle,
+                                              const solver::Id solver_id,
+                                              ConvolutionContext& ctx,
+                                              conv::Direction dir)
+{
+    // dir unused?
+
+    if(!solver_id.IsValid())
+        MIOPEN_THROW(miopenStatusBadParm, "solver_id = " + solver_id.ToString());
+
+    const FindDbRecord fdb_record{handle, ctx};
+    for(const auto& pair : fdb_record)
+    {
+        if(solver::Id{pair.second.solver_id} != solver_id)
+            continue;
+
+        const auto&& kernels = handle.GetKernels(pair.second.kcache_key.algorithm_name,
+                                                 pair.second.kcache_key.network_config);
+
+        if(!kernels.empty())
+            continue;
+
+        if(!CheckSolverUsePreCompiledKernel(handle, ctx, solver_id, pair.second.kcache_key))
+            return false;
+    }
+
+    return true;
+}
+
+void ConvolutionDescriptor::CheckConvFwdUsePreCompiledKernel(
+    Handle& handle,
+    const TensorDescriptor& xDesc,
+    ConstData_t x,
+    const TensorDescriptor& wDesc,
+    ConstData_t w,
+    const TensorDescriptor& yDesc,
+    Data_t y,
+    bool* const returnedUsePreCompiledKernel) const
+{
+    if(x == nullptr || w == nullptr || y == nullptr)
+        MIOPEN_THROW(miopenStatusBadParm, "Buffers cannot be NULL");
+    if(returnedUsePreCompiledKernel == nullptr)
+        MIOPEN_THROW(miopenStatusBadParm, "returnedUsePreCompiledKernel cannot be nullptr");
+
+    const ProblemDescription problem(xDesc, wDesc, yDesc, *this, conv::Direction::Forward);
+    std::vector<PerfField> perf_db;
+
+    auto ctx = ConvolutionContext{problem};
+    ctx.SetStream(&handle);
+
+    bool use_immediate_solution = false;
+    miopenConvSolution_t sol;
+    if(findMode.IsFast(ctx) || findMode.IsHybrid(ctx))
+    {
+        size_t count;
+        bool fallback;
+        GetForwardSolutions(handle, wDesc, xDesc, yDesc, 1, &count, &sol, &fallback);
+        use_immediate_solution = (count > 0) && !(findMode.IsHybrid(ctx) && fallback);
+        // In Hybrid Find mode, we use Normal Find instead of Immediate fallback kernels.
+    }
+
+    if(use_immediate_solution)
+    {
+        const auto id = solver::Id(sol.solution_id);
+        *returnedUsePreCompiledKernel =
+            CheckSolutionUsePreCompiledKernel(handle, id, ctx, conv::Direction::Forward);
+    }
+    else
+    {
+        *returnedUsePreCompiledKernel = false;
+        // TODO(kyeonghwan) most likely true. fix later (DirConvFindCore)
+    }
+}
+
+void ConvolutionDescriptor::CheckConvBwdDataUsePreCompiledKernel(
+    Handle& handle,
+    const TensorDescriptor& dyDesc,
+    ConstData_t dy,
+    const TensorDescriptor& wDesc,
+    ConstData_t w,
+    const TensorDescriptor& dxDesc,
+    Data_t dx,
+    bool* const returnedUsePreCompiledKernel) const
+{
+    if(dy == nullptr || w == nullptr || dx == nullptr)
+        MIOPEN_THROW(miopenStatusBadParm, "Buffers cannot be NULL");
+    if(returnedUsePreCompiledKernel == nullptr)
+        MIOPEN_THROW(miopenStatusBadParm, "returnedUsePreCompiledKernel cannot be nullptr");
+
+    const ProblemDescription problem(dxDesc, wDesc, dyDesc, *this, conv::Direction::BackwardData);
+    std::vector<PerfField> perf_db;
+
+    auto ctx = ConvolutionContext{problem};
+    ctx.SetStream(&handle);
+
+    bool use_immediate_solution = false;
+    miopenConvSolution_t sol;
+    if(findMode.IsFast(ctx) || findMode.IsHybrid(ctx))
+    {
+        size_t count;
+        bool fallback;
+        CompileBackwardSolution(handle, dyDesc, wDesc, dxDesc, sol.solution_id);
+
+        use_immediate_solution = (count > 0) && !(findMode.IsHybrid(ctx) && fallback);
+        // In Hybrid Find mode, we use Normal Find instead of Immediate fallback kernels.
+    }
+
+    if(use_immediate_solution)
+    {
+        const auto id = solver::Id(sol.solution_id);
+
+        *returnedUsePreCompiledKernel =
+            CheckSolutionUsePreCompiledKernel(handle, id, ctx, conv::Direction::Forward);
+    }
+    else
+    {
+        *returnedUsePreCompiledKernel = false;
+        // TODO(kyeonghwan) most likely true. fix later (DirConvFindCore)
+    }
+}
+
+void ConvolutionDescriptor::CheckConvBwdWeightsUsePreCompiledKernel(
+    Handle& handle,
+    const TensorDescriptor& dyDesc,
+    ConstData_t dy,
+    const TensorDescriptor& xDesc,
+    ConstData_t x,
+    const TensorDescriptor& dwDesc,
+    Data_t dw,
+    bool* const returnedUsePreCompiledKernel) const
+{
+    if(x == nullptr || dw == nullptr || dy == nullptr)
+        MIOPEN_THROW(miopenStatusBadParm, "Buffers cannot be NULL");
+    if(returnedUsePreCompiledKernel == nullptr)
+        MIOPEN_THROW(miopenStatusBadParm, "returnedUsePreCompiledKernel cannot be nullptr");
+
+    const ProblemDescription problem(
+        xDesc, dwDesc, dyDesc, *this, conv::Direction::BackwardWeights);
+    std::vector<PerfField> perf_db;
+
+    auto ctx = ConvolutionContext{problem};
+    ctx.SetStream(&handle);
+
+    bool use_immediate_solution = false;
+    miopenConvSolution_t sol;
+    if(findMode.IsFast(ctx) || findMode.IsHybrid(ctx))
+    {
+        size_t count;
+        bool fallback;
+        GetWrwSolutions(handle, dyDesc, xDesc, dwDesc, 1, &count, &sol, &fallback);
+        use_immediate_solution = (count > 0) && !(findMode.IsHybrid(ctx) && fallback);
+        // In Hybrid Find mode, we use Normal Find instead of Immediate fallback kernels.
+    }
+
+    if(use_immediate_solution)
+    {
+        const auto id = solver::Id(sol.solution_id);
+        *returnedUsePreCompiledKernel =
+            CheckSolutionUsePreCompiledKernel(handle, id, ctx, conv::Direction::Forward);
+    }
+    else
+    {
+        *returnedUsePreCompiledKernel = false;
+        // TODO(kyeonghwan) most likely true. fix later (DirConvFindCore)
+    }
 }
 
 void ConvolutionBackwardBias(const Handle& handle,

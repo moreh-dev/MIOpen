@@ -52,6 +52,8 @@ if(BUILD_FILE_REORG_BACKWARD_COMPATIBILITY)
 configure_file( "${PROJECT_SOURCE_DIR}/include/miopen/miopen.h" "${PROJECT_BINARY_DIR}/include/miopen/miopen.h" )
 endif()
 
+configure_file( "${PROJECT_SOURCE_DIR}/include/miopen/miopen_ext.h" "${PROJECT_BINARY_DIR}/include/miopen/miopen_ext.h" )
+
 message( STATUS "MIOpen_VERSION= ${MIOpen_VERSION}" )
 message( STATUS "CMAKE_BUILD_TYPE= ${CMAKE_BUILD_TYPE}" )
 
@@ -121,6 +123,7 @@ set( MIOpen_Source
     lrn_api.cpp
     md_graph.cpp
     mdg_expr.cpp
+    modnn_api.cpp
     op_args.cpp
     operator.cpp
     performance_config.cpp

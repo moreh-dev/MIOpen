@@ -240,4 +240,33 @@ void SaveBinary(const boost::filesystem::path& binary_path,
     }
 }
 #endif
+
+bool HasPreCompiledBinary(const TargetProperties& target,
+                          const size_t num_cu,
+                          const std::string& name,
+                          const std::string& args,
+                          bool is_kernel_str)
+{
+    if(miopen::IsCacheDisabled())
+    {
+        return false;
+    }
+
+    auto db = GetDb(target, num_cu);
+
+    const std::string filename = (is_kernel_str ? miopen::md5(name) : name) + ".o";
+    KernelConfig cfg{filename, args, ""};
+
+    const auto verbose_name = GetFilenameForInfo2Logging(is_kernel_str, filename, name);
+    auto record             = db.FindRecord(cfg);
+
+    if(record)
+    {
+        MIOPEN_LOG_I2("Found pre-compiled binary for: " << verbose_name << "; args: " << args);
+        return true;
+    }
+
+    MIOPEN_LOG_I2("Not found pre-compiled binary for: " << verbose_name << "; args: " << args);
+    return false;
+}
 } // namespace miopen

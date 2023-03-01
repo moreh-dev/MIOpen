@@ -346,6 +346,10 @@ std::size_t ConvolutionDescriptor::ForwardGetWorkSpaceSize(Handle& handle,
     ctx.do_search             = false;
     ctx.disable_perfdb_access = true;
 
+    MIOPEN_LOG_W("[maloja] findMode.IsFast(ctx) = " << findMode.IsFast(ctx)
+                                                    << ", findMode.IsHybrid(ctx) = "
+                                                    << findMode.IsHybrid(ctx));
+
     while(findMode.IsFast(ctx) || findMode.IsHybrid(ctx))
     {
         /// \section ffind_gwss_why_not_0
@@ -363,6 +367,9 @@ std::size_t ConvolutionDescriptor::ForwardGetWorkSpaceSize(Handle& handle,
         miopenConvSolution_t sol;
         bool fallback;
         GetForwardSolutions(handle, wDesc, xDesc, yDesc, 1, &count, &sol, &fallback);
+
+        MIOPEN_LOG_W("[maloja] count = " << count << ", fallback = " << fallback);
+
         if(count < 1 || (findMode.IsHybrid(ctx) && fallback))
         {
             ctx.use_dynamic_solutions_only = findMode.IsDynamicHybrid(ctx);
