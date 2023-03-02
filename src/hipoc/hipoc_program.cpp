@@ -265,7 +265,6 @@ void HIPOCProgramImpl::BuildCodeObjectInMemory(const std::string& params,
                                                const std::string& src,
                                                const std::string& filename)
 {
-    MIOPEN_LOG_W(filename);
     if(miopen::EndsWith(filename, ".so"))
     {
         std::size_t sz = src.length();

@@ -862,10 +862,7 @@ void GetSolutions(Handle& handle,
     {
         const auto algo = static_cast<miopenConvAlgorithm_t>(algoResolver(pair.first));
         if(IsAlgorithmDisabled(algo))
-        {
-            MIOPEN_LOG_W("[Warning] algo disabled: " << pair.second.solver_id);
             continue;
-        }
 
         const auto solver_id = solver::Id{pair.second.solver_id};
         // Wrong IDs can't be used to call IsApplicable(), so let's
@@ -873,15 +870,10 @@ void GetSolutions(Handle& handle,
         if(!solver_id.IsValid())
         {
             // Do not disturb users with warnings unless detailed log is enabled.
-            MIOPEN_LOG_W("[Warning] incorrect solver_id: " << pair.second.solver_id);
             continue;
         }
 
-        bool applicable = solver_id.GetSolver().IsApplicable(ctx);
-        MIOPEN_LOG_W("[maloja] solver_id.GetSolver().IsApplicable(ctx) = "
-                     << applicable << ", solver_id = " << pair.second.solver_id);
-
-        if(applicable)
+        if(solver_id.GetSolver().IsApplicable(ctx))
             interim.emplace_back(pair.second.time, pair.second.workspace, solver_id.Value(), algo);
     }
     std::sort(begin(interim), end(interim));
@@ -1861,7 +1853,7 @@ void ConvolutionDescriptor::CheckConvFwdUsePreCompiledKernel(
     ConstData_t w,
     const TensorDescriptor& yDesc,
     Data_t y,
-    bool* const returnedUsePreCompiledKernel) const
+    bool* returnedUsePreCompiledKernel) const
 {
     if(x == nullptr || w == nullptr || y == nullptr)
         MIOPEN_THROW(miopenStatusBadParm, "Buffers cannot be NULL");
@@ -1880,9 +1872,9 @@ void ConvolutionDescriptor::CheckConvFwdUsePreCompiledKernel(
     {
         size_t count;
         bool fallback;
+
         GetForwardSolutions(handle, wDesc, xDesc, yDesc, 1, &count, &sol, &fallback);
         use_immediate_solution = (count > 0) && !(findMode.IsHybrid(ctx) && fallback);
-        // In Hybrid Find mode, we use Normal Find instead of Immediate fallback kernels.
     }
 
     if(use_immediate_solution)
@@ -1893,8 +1885,10 @@ void ConvolutionDescriptor::CheckConvFwdUsePreCompiledKernel(
     }
     else
     {
+        // In this case, MIOpen tries to test all possible solutions
+        // so all the kernels used by the solutions become targets of builds.
+        // It's better to find the optimal solution and write it down to Find-Db.
         *returnedUsePreCompiledKernel = false;
-        // TODO(kyeonghwan) most likely true. fix later (DirConvFindCore)
     }
 }
 
@@ -1906,7 +1900,7 @@ void ConvolutionDescriptor::CheckConvBwdDataUsePreCompiledKernel(
     ConstData_t w,
     const TensorDescriptor& dxDesc,
     Data_t dx,
-    bool* const returnedUsePreCompiledKernel) const
+    bool* returnedUsePreCompiledKernel) const
 {
     if(dy == nullptr || w == nullptr || dx == nullptr)
         MIOPEN_THROW(miopenStatusBadParm, "Buffers cannot be NULL");
@@ -1925,23 +1919,23 @@ void ConvolutionDescriptor::CheckConvBwdDataUsePreCompiledKernel(
     {
         size_t count;
         bool fallback;
-        CompileBackwardSolution(handle, dyDesc, wDesc, dxDesc, sol.solution_id);
 
+        CompileBackwardSolution(handle, dyDesc, wDesc, dxDesc, sol.solution_id);
         use_immediate_solution = (count > 0) && !(findMode.IsHybrid(ctx) && fallback);
-        // In Hybrid Find mode, we use Normal Find instead of Immediate fallback kernels.
     }
 
     if(use_immediate_solution)
     {
         const auto id = solver::Id(sol.solution_id);
-
         *returnedUsePreCompiledKernel =
             CheckSolutionUsePreCompiledKernel(handle, id, ctx, conv::Direction::Forward);
     }
     else
     {
+        // In this case, MIOpen tries to test all possible solutions
+        // so all the kernels used by the solutions become targets of builds.
+        // It's better to find the optimal solution and write it down to Find-Db.
         *returnedUsePreCompiledKernel = false;
-        // TODO(kyeonghwan) most likely true. fix later (DirConvFindCore)
     }
 }
 
@@ -1953,7 +1947,7 @@ void ConvolutionDescriptor::CheckConvBwdWeightsUsePreCompiledKernel(
     ConstData_t x,
     const TensorDescriptor& dwDesc,
     Data_t dw,
-    bool* const returnedUsePreCompiledKernel) const
+    bool* returnedUsePreCompiledKernel) const
 {
     if(x == nullptr || dw == nullptr || dy == nullptr)
         MIOPEN_THROW(miopenStatusBadParm, "Buffers cannot be NULL");
@@ -1973,9 +1967,9 @@ void ConvolutionDescriptor::CheckConvBwdWeightsUsePreCompiledKernel(
     {
         size_t count;
         bool fallback;
+
         GetWrwSolutions(handle, dyDesc, xDesc, dwDesc, 1, &count, &sol, &fallback);
         use_immediate_solution = (count > 0) && !(findMode.IsHybrid(ctx) && fallback);
-        // In Hybrid Find mode, we use Normal Find instead of Immediate fallback kernels.
     }
 
     if(use_immediate_solution)
@@ -1986,8 +1980,11 @@ void ConvolutionDescriptor::CheckConvBwdWeightsUsePreCompiledKernel(
     }
     else
     {
+        // In this case, MIOpen tries to test all possible solutions
+        // so all the kernels used by the solutions become targets of builds.
+        // It's better to find the optimal solution and write it down to Find-Db.
+
         *returnedUsePreCompiledKernel = false;
-        // TODO(kyeonghwan) most likely true. fix later (DirConvFindCore)
     }
 }
 
