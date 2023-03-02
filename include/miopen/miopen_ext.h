@@ -42,15 +42,15 @@ extern "C" {
   @brief Check if the convolution forward will use pre-compiled kernel.
 */
 MIOPEN_EXPORT miopenStatus_t
-miopenCheckConvFwdUsePreCompiledKernel(miopenHandle_t handle,
-                                       const miopenTensorDescriptor_t xDesc,
-                                       const void* x,
-                                       const miopenTensorDescriptor_t wDesc,
-                                       const void* w,
-                                       const miopenConvolutionDescriptor_t convDesc,
-                                       const miopenTensorDescriptor_t yDesc,
-                                       void* y,
-                                       bool* kernelBuildHappen);
+miopenCheckConvolutionForwardUsePreCompiledKernel(miopenHandle_t handle,
+                                                  const miopenTensorDescriptor_t xDesc,
+                                                  const void* x,
+                                                  const miopenTensorDescriptor_t wDesc,
+                                                  const void* w,
+                                                  const miopenConvolutionDescriptor_t convDesc,
+                                                  const miopenTensorDescriptor_t yDesc,
+                                                  void* y,
+                                                  bool* kernelBuildHappen);
 
 /*!
   @brief Check if the convolution backward data will use pre-compiled kernel.
