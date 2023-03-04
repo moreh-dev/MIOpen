@@ -50,6 +50,7 @@ miopenCheckConvolutionForwardUsePreCompiledKernel(miopenHandle_t handle,
                                                   const miopenConvolutionDescriptor_t convDesc,
                                                   const miopenTensorDescriptor_t yDesc,
                                                   void* y,
+                                                  bool ignoreAsmBuild,
                                                   bool* kernelBuildHappen);
 
 /*!
@@ -64,6 +65,7 @@ miopenCheckConvolutionBackwardDataUsePreCompiledKernel(miopenHandle_t handle,
                                                        const miopenConvolutionDescriptor_t convDesc,
                                                        const miopenTensorDescriptor_t dxDesc,
                                                        void* dx,
+                                                       bool ignoreAsmBuild,
                                                        bool* kernelBuildHappen);
 
 /*!
@@ -78,6 +80,7 @@ MIOPEN_EXPORT miopenStatus_t miopenCheckConvolutionBackwardWeightsUsePreCompiled
     const miopenConvolutionDescriptor_t convDesc,
     const miopenTensorDescriptor_t dwDesc,
     void* dw,
+    bool ignoreAsmBuild,
     bool* kernelBuildHappen);
 
 #ifdef __cplusplus

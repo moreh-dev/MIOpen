@@ -464,6 +464,7 @@ struct ConvolutionDescriptor : miopenConvolutionDescriptor
                                           ConstData_t w,
                                           const TensorDescriptor& yDesc,
                                           Data_t y,
+                                          bool ignoreAsmBuild,
                                           bool* returnedUsePreCompiledKernel) const;
 
     void CheckConvBwdDataUsePreCompiledKernel(Handle& handle,
@@ -473,6 +474,7 @@ struct ConvolutionDescriptor : miopenConvolutionDescriptor
                                               ConstData_t w,
                                               const TensorDescriptor& dxDesc,
                                               Data_t dx,
+                                              bool ignoreAsmBuild,
                                               bool* returnedUsePreCompiledKernel) const;
 
     void CheckConvBwdWeightsUsePreCompiledKernel(Handle& handle,
@@ -482,6 +484,7 @@ struct ConvolutionDescriptor : miopenConvolutionDescriptor
                                                  ConstData_t x,
                                                  const TensorDescriptor& dwDesc,
                                                  Data_t dw,
+                                                 bool ignoreAsmBuild,
                                                  bool* returnedUsePreCompiledKernel) const;
 };
 

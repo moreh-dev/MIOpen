@@ -262,11 +262,11 @@ bool HasPreCompiledBinary(const TargetProperties& target,
 
     if(record)
     {
-        MIOPEN_LOG_I2("Found pre-compiled binary for: " << verbose_name << "; args: " << args);
+        MIOPEN_LOG_I2("Pre-compiled binary found: " << verbose_name << "; args: " << args);
         return true;
     }
 
-    MIOPEN_LOG_I2("Not found pre-compiled binary for: " << verbose_name << "; args: " << args);
+    MIOPEN_LOG_I2("Pre-compiled binary not found: " << verbose_name << "; args: " << args);
     return false;
 }
 } // namespace miopen

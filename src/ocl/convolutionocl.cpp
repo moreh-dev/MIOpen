@@ -52,6 +52,7 @@
 #include <cassert>
 #include <type_traits>
 
+#include <boost/algorithm/string/predicate.hpp>
 #include <boost/range/adaptors.hpp>
 
 namespace miopen {
@@ -1784,10 +1785,11 @@ void ConvolutionDescriptor::ConvolutionWrwImmediate(Handle& handle,
     });
 }
 
-static bool CheckSolverUsePreCompiledKernel(const Handle& handle,
+static bool CheckSolverHasPreCompiledKernel(const Handle& handle,
                                             ConvolutionContext& ctx,
                                             solver::Id solver_id,
-                                            const FindDbKCacheKey& key)
+                                            const FindDbKCacheKey& key,
+                                            bool ignoreAsmBuild)
 {
     ctx.DetectRocm();
     ctx.SetupFloats();
@@ -1806,27 +1808,34 @@ static bool CheckSolverUsePreCompiledKernel(const Handle& handle,
         assert(algorithm_name.empty() && network_config.empty());
     }
 
+    bool ret = true;
     for(auto& k : solution.construction_params)
     {
-        if(!handle.HasPreCompiledProgram(k.kernel_file, k.comp_options))
+        if(ignoreAsmBuild && boost::algorithm::ends_with(k.kernel_file, ".s"))
         {
-            return false;
+            MIOPEN_LOG_I2("Passing because ignoreAsmBuild=1, kernel_name = " << k.kernel_name);
+            continue;
         }
+        bool has_pre_compiled_program = handle.HasPreCompiledProgram(k.kernel_file, k.comp_options);
+
+        MIOPEN_LOG_I2("has_pre_compiled_program = " << has_pre_compiled_program
+                                                    << ", kernel_name = " << k.kernel_name);
+        ret = ret && has_pre_compiled_program;
     }
-    return true;
+    return ret;
 }
 
 static bool CheckSolutionUsePreCompiledKernel(Handle& handle,
                                               const solver::Id solver_id,
                                               ConvolutionContext& ctx,
-                                              conv::Direction dir)
+                                              bool ignoreAsmBuild)
 {
-    // dir unused?
-
     if(!solver_id.IsValid())
         MIOPEN_THROW(miopenStatusBadParm, "solver_id = " + solver_id.ToString());
 
     const FindDbRecord fdb_record{handle, ctx};
+
+    bool ret = true;
     for(const auto& pair : fdb_record)
     {
         if(solver::Id{pair.second.solver_id} != solver_id)
@@ -1838,11 +1847,13 @@ static bool CheckSolutionUsePreCompiledKernel(Handle& handle,
         if(!kernels.empty())
             continue;
 
-        if(!CheckSolverUsePreCompiledKernel(handle, ctx, solver_id, pair.second.kcache_key))
-            return false;
+        bool has_pre_compiled_kernel = CheckSolverHasPreCompiledKernel(
+            handle, ctx, solver_id, pair.second.kcache_key, ignoreAsmBuild);
+
+        ret = ret && has_pre_compiled_kernel;
     }
 
-    return true;
+    return ret;
 }
 
 void ConvolutionDescriptor::CheckConvFwdUsePreCompiledKernel(
@@ -1853,6 +1864,7 @@ void ConvolutionDescriptor::CheckConvFwdUsePreCompiledKernel(
     ConstData_t w,
     const TensorDescriptor& yDesc,
     Data_t y,
+    bool ignoreAsmBuild,
     bool* returnedUsePreCompiledKernel) const
 {
     if(x == nullptr || w == nullptr || y == nullptr)
@@ -1870,18 +1882,25 @@ void ConvolutionDescriptor::CheckConvFwdUsePreCompiledKernel(
     miopenConvSolution_t sol;
     if(findMode.IsFast(ctx) || findMode.IsHybrid(ctx))
     {
-        size_t count;
-        bool fallback;
+        size_t count  = 0;
+        bool fallback = false;
 
         GetForwardSolutions(handle, wDesc, xDesc, yDesc, 1, &count, &sol, &fallback);
+
         use_immediate_solution = (count > 0) && !(findMode.IsHybrid(ctx) && fallback);
     }
 
     if(use_immediate_solution)
     {
         const auto id = solver::Id(sol.solution_id);
+
+        auto new_ctx = ConvolutionContext{xDesc, wDesc, yDesc, *this, conv::Direction::Forward};
+        new_ctx.SetStream(&handle);
+        new_ctx.disable_search_enforce = true;
+
         *returnedUsePreCompiledKernel =
-            CheckSolutionUsePreCompiledKernel(handle, id, ctx, conv::Direction::Forward);
+            CheckSolutionUsePreCompiledKernel(handle, id, new_ctx, ignoreAsmBuild);
+        MIOPEN_LOG_W("*returnedUsePreCompiledKernel = " << *returnedUsePreCompiledKernel);
     }
     else
     {
@@ -1900,6 +1919,7 @@ void ConvolutionDescriptor::CheckConvBwdDataUsePreCompiledKernel(
     ConstData_t w,
     const TensorDescriptor& dxDesc,
     Data_t dx,
+    bool ignoreAsmBuild,
     bool* returnedUsePreCompiledKernel) const
 {
     if(dy == nullptr || w == nullptr || dx == nullptr)
@@ -1917,8 +1937,8 @@ void ConvolutionDescriptor::CheckConvBwdDataUsePreCompiledKernel(
     miopenConvSolution_t sol;
     if(findMode.IsFast(ctx) || findMode.IsHybrid(ctx))
     {
-        size_t count;
-        bool fallback;
+        size_t count  = 0;
+        bool fallback = false;
 
         CompileBackwardSolution(handle, dyDesc, wDesc, dxDesc, sol.solution_id);
         use_immediate_solution = (count > 0) && !(findMode.IsHybrid(ctx) && fallback);
@@ -1928,7 +1948,7 @@ void ConvolutionDescriptor::CheckConvBwdDataUsePreCompiledKernel(
     {
         const auto id = solver::Id(sol.solution_id);
         *returnedUsePreCompiledKernel =
-            CheckSolutionUsePreCompiledKernel(handle, id, ctx, conv::Direction::Forward);
+            CheckSolutionUsePreCompiledKernel(handle, id, ctx, ignoreAsmBuild);
     }
     else
     {
@@ -1947,6 +1967,7 @@ void ConvolutionDescriptor::CheckConvBwdWeightsUsePreCompiledKernel(
     ConstData_t x,
     const TensorDescriptor& dwDesc,
     Data_t dw,
+    bool ignoreAsmBuild,
     bool* returnedUsePreCompiledKernel) const
 {
     if(x == nullptr || dw == nullptr || dy == nullptr)
@@ -1965,8 +1986,8 @@ void ConvolutionDescriptor::CheckConvBwdWeightsUsePreCompiledKernel(
     miopenConvSolution_t sol;
     if(findMode.IsFast(ctx) || findMode.IsHybrid(ctx))
     {
-        size_t count;
-        bool fallback;
+        size_t count  = 0;
+        bool fallback = false;
 
         GetWrwSolutions(handle, dyDesc, xDesc, dwDesc, 1, &count, &sol, &fallback);
         use_immediate_solution = (count > 0) && !(findMode.IsHybrid(ctx) && fallback);
@@ -1976,7 +1997,7 @@ void ConvolutionDescriptor::CheckConvBwdWeightsUsePreCompiledKernel(
     {
         const auto id = solver::Id(sol.solution_id);
         *returnedUsePreCompiledKernel =
-            CheckSolutionUsePreCompiledKernel(handle, id, ctx, conv::Direction::Forward);
+            CheckSolutionUsePreCompiledKernel(handle, id, ctx, ignoreAsmBuild);
     }
     else
     {
