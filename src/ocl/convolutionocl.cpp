@@ -1940,7 +1940,7 @@ void ConvolutionDescriptor::CheckConvBwdDataUsePreCompiledKernel(
         size_t count  = 0;
         bool fallback = false;
 
-        CompileBackwardSolution(handle, dyDesc, wDesc, dxDesc, sol.solution_id);
+        GetBackwardSolutions(handle, dyDesc, wDesc, dxDesc, 1, &count, &sol, &fallback);
         use_immediate_solution = (count > 0) && !(findMode.IsHybrid(ctx) && fallback);
     }
 
