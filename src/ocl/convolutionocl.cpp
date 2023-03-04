@@ -871,6 +871,7 @@ void GetSolutions(Handle& handle,
         if(!solver_id.IsValid())
         {
             // Do not disturb users with warnings unless detailed log is enabled.
+            MIOPEN_LOG_I("[Warning] incorrect solver_id: " << pair.second.solver_id);
             continue;
         }
 
