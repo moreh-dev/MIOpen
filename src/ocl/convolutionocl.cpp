@@ -1900,7 +1900,6 @@ void ConvolutionDescriptor::CheckConvFwdUsePreCompiledKernel(
 
         *returnedUsePreCompiledKernel =
             CheckSolutionUsePreCompiledKernel(handle, id, new_ctx, ignoreAsmBuild);
-        MIOPEN_LOG_W("*returnedUsePreCompiledKernel = " << *returnedUsePreCompiledKernel);
     }
     else
     {
