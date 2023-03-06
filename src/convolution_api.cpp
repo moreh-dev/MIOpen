@@ -277,7 +277,6 @@ miopenConvolutionForwardGetWorkSpaceSize(miopenHandle_t handle,
                                          const miopenTensorDescriptor_t yDesc,
                                          size_t* workSpaceSize)
 {
-
     MIOPEN_LOG_FUNCTION(handle, wDesc, yDesc, convDesc, workSpaceSize);
     miopen::try_([&] {
         miopen::deref(workSpaceSize) =

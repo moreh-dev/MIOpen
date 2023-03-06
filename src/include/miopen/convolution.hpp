@@ -456,6 +456,36 @@ struct ConvolutionDescriptor : miopenConvolutionDescriptor
                               miopenConvSolution_t* solutions) const;
 
     std::size_t GetSolutionCountFallback(Handle& handle, const ProblemDescription& problem) const;
+
+    void CheckConvFwdUsePreCompiledKernel(Handle& handle,
+                                          const TensorDescriptor& xDesc,
+                                          ConstData_t x,
+                                          const TensorDescriptor& wDesc,
+                                          ConstData_t w,
+                                          const TensorDescriptor& yDesc,
+                                          Data_t y,
+                                          bool ignoreAsmBuild,
+                                          bool* returnedUsePreCompiledKernel) const;
+
+    void CheckConvBwdDataUsePreCompiledKernel(Handle& handle,
+                                              const TensorDescriptor& dyDesc,
+                                              ConstData_t dy,
+                                              const TensorDescriptor& wDesc,
+                                              ConstData_t w,
+                                              const TensorDescriptor& dxDesc,
+                                              Data_t dx,
+                                              bool ignoreAsmBuild,
+                                              bool* returnedUsePreCompiledKernel) const;
+
+    void CheckConvBwdWeightsUsePreCompiledKernel(Handle& handle,
+                                                 const TensorDescriptor& dyDesc,
+                                                 ConstData_t dy,
+                                                 const TensorDescriptor& xDesc,
+                                                 ConstData_t x,
+                                                 const TensorDescriptor& dwDesc,
+                                                 Data_t dw,
+                                                 bool ignoreAsmBuild,
+                                                 bool* returnedUsePreCompiledKernel) const;
 };
 
 void ConvolutionBackwardBias(const Handle& handle,

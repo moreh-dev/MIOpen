@@ -52,6 +52,7 @@
 #include <cassert>
 #include <type_traits>
 
+#include <boost/algorithm/string/predicate.hpp>
 #include <boost/range/adaptors.hpp>
 
 namespace miopen {
@@ -1783,6 +1784,229 @@ void ConvolutionDescriptor::ConvolutionWrwImmediate(Handle& handle,
             tensors, workSpace, workSpaceSize, this->attribute.gfx90aFp16alt.GetWrW()};
         invoker(handle, invoke_ctx);
     });
+}
+
+static bool CheckSolverHasPreCompiledKernel(const Handle& handle,
+                                            ConvolutionContext& ctx,
+                                            solver::Id solver_id,
+                                            const FindDbKCacheKey& key,
+                                            bool ignoreAsmBuild)
+{
+    ctx.DetectRocm();
+    ctx.SetupFloats();
+
+    const auto solver   = solver_id.GetSolver();
+    auto db             = GetDb(ctx);
+    const auto solution = solver.FindSolution(ctx, db, {}); // auto tune is not expected here
+
+    std::vector<KernelInvoke> kernels;
+
+    auto algorithm_name = key.algorithm_name;
+    auto network_config = key.network_config;
+
+    if(algorithm_name.empty() || network_config.empty())
+    {
+        assert(algorithm_name.empty() && network_config.empty());
+    }
+
+    bool ret = true;
+    for(auto& k : solution.construction_params)
+    {
+        if(ignoreAsmBuild && boost::algorithm::ends_with(k.kernel_file, ".s"))
+        {
+            MIOPEN_LOG_I2("Passing because ignoreAsmBuild=1, kernel_name = " << k.kernel_name);
+            continue;
+        }
+        bool has_pre_compiled_program = handle.HasPreCompiledProgram(k.kernel_file, k.comp_options);
+
+        MIOPEN_LOG_I2("has_pre_compiled_program = " << has_pre_compiled_program
+                                                    << ", kernel_name = " << k.kernel_name);
+        ret = ret && has_pre_compiled_program;
+    }
+    return ret;
+}
+
+static bool CheckSolutionUsePreCompiledKernel(Handle& handle,
+                                              const solver::Id solver_id,
+                                              ConvolutionContext& ctx,
+                                              bool ignoreAsmBuild)
+{
+    if(!solver_id.IsValid())
+        MIOPEN_THROW(miopenStatusBadParm, "solver_id = " + solver_id.ToString());
+
+    const FindDbRecord fdb_record{handle, ctx};
+
+    bool ret = true;
+    for(const auto& pair : fdb_record)
+    {
+        if(solver::Id{pair.second.solver_id} != solver_id)
+            continue;
+
+        const auto&& kernels = handle.GetKernels(pair.second.kcache_key.algorithm_name,
+                                                 pair.second.kcache_key.network_config);
+
+        if(!kernels.empty())
+            continue;
+
+        bool has_pre_compiled_kernel = CheckSolverHasPreCompiledKernel(
+            handle, ctx, solver_id, pair.second.kcache_key, ignoreAsmBuild);
+
+        ret = ret && has_pre_compiled_kernel;
+    }
+
+    return ret;
+}
+
+void ConvolutionDescriptor::CheckConvFwdUsePreCompiledKernel(
+    Handle& handle,
+    const TensorDescriptor& xDesc,
+    ConstData_t x,
+    const TensorDescriptor& wDesc,
+    ConstData_t w,
+    const TensorDescriptor& yDesc,
+    Data_t y,
+    bool ignoreAsmBuild,
+    bool* returnedUsePreCompiledKernel) const
+{
+    if(x == nullptr || w == nullptr || y == nullptr)
+        MIOPEN_THROW(miopenStatusBadParm, "Buffers cannot be NULL");
+    if(returnedUsePreCompiledKernel == nullptr)
+        MIOPEN_THROW(miopenStatusBadParm, "returnedUsePreCompiledKernel cannot be nullptr");
+
+    const ProblemDescription problem(xDesc, wDesc, yDesc, *this, conv::Direction::Forward);
+    std::vector<PerfField> perf_db;
+
+    auto ctx = ConvolutionContext{problem};
+    ctx.SetStream(&handle);
+
+    bool use_immediate_solution = false;
+    miopenConvSolution_t sol;
+    if(findMode.IsFast(ctx) || findMode.IsHybrid(ctx))
+    {
+        size_t count  = 0;
+        bool fallback = false;
+
+        GetForwardSolutions(handle, wDesc, xDesc, yDesc, 1, &count, &sol, &fallback);
+
+        use_immediate_solution = (count > 0) && !(findMode.IsHybrid(ctx) && fallback);
+    }
+
+    if(use_immediate_solution)
+    {
+        const auto id = solver::Id(sol.solution_id);
+
+        auto new_ctx = ConvolutionContext{xDesc, wDesc, yDesc, *this, conv::Direction::Forward};
+        new_ctx.SetStream(&handle);
+        new_ctx.disable_search_enforce = true;
+
+        *returnedUsePreCompiledKernel =
+            CheckSolutionUsePreCompiledKernel(handle, id, new_ctx, ignoreAsmBuild);
+    }
+    else
+    {
+        // In this case, MIOpen tries to test all possible solutions
+        // so all the kernels used by the solutions become targets of builds.
+        // It's better to find the optimal solution and write it down to Find-Db.
+        *returnedUsePreCompiledKernel = false;
+    }
+}
+
+void ConvolutionDescriptor::CheckConvBwdDataUsePreCompiledKernel(
+    Handle& handle,
+    const TensorDescriptor& dyDesc,
+    ConstData_t dy,
+    const TensorDescriptor& wDesc,
+    ConstData_t w,
+    const TensorDescriptor& dxDesc,
+    Data_t dx,
+    bool ignoreAsmBuild,
+    bool* returnedUsePreCompiledKernel) const
+{
+    if(dy == nullptr || w == nullptr || dx == nullptr)
+        MIOPEN_THROW(miopenStatusBadParm, "Buffers cannot be NULL");
+    if(returnedUsePreCompiledKernel == nullptr)
+        MIOPEN_THROW(miopenStatusBadParm, "returnedUsePreCompiledKernel cannot be nullptr");
+
+    const ProblemDescription problem(dxDesc, wDesc, dyDesc, *this, conv::Direction::BackwardData);
+    std::vector<PerfField> perf_db;
+
+    auto ctx = ConvolutionContext{problem};
+    ctx.SetStream(&handle);
+
+    bool use_immediate_solution = false;
+    miopenConvSolution_t sol;
+    if(findMode.IsFast(ctx) || findMode.IsHybrid(ctx))
+    {
+        size_t count  = 0;
+        bool fallback = false;
+
+        GetBackwardSolutions(handle, dyDesc, wDesc, dxDesc, 1, &count, &sol, &fallback);
+        use_immediate_solution = (count > 0) && !(findMode.IsHybrid(ctx) && fallback);
+    }
+
+    if(use_immediate_solution)
+    {
+        const auto id = solver::Id(sol.solution_id);
+        *returnedUsePreCompiledKernel =
+            CheckSolutionUsePreCompiledKernel(handle, id, ctx, ignoreAsmBuild);
+    }
+    else
+    {
+        // In this case, MIOpen tries to test all possible solutions
+        // so all the kernels used by the solutions become targets of builds.
+        // It's better to find the optimal solution and write it down to Find-Db.
+        *returnedUsePreCompiledKernel = false;
+    }
+}
+
+void ConvolutionDescriptor::CheckConvBwdWeightsUsePreCompiledKernel(
+    Handle& handle,
+    const TensorDescriptor& dyDesc,
+    ConstData_t dy,
+    const TensorDescriptor& xDesc,
+    ConstData_t x,
+    const TensorDescriptor& dwDesc,
+    Data_t dw,
+    bool ignoreAsmBuild,
+    bool* returnedUsePreCompiledKernel) const
+{
+    if(x == nullptr || dw == nullptr || dy == nullptr)
+        MIOPEN_THROW(miopenStatusBadParm, "Buffers cannot be NULL");
+    if(returnedUsePreCompiledKernel == nullptr)
+        MIOPEN_THROW(miopenStatusBadParm, "returnedUsePreCompiledKernel cannot be nullptr");
+
+    const ProblemDescription problem(
+        xDesc, dwDesc, dyDesc, *this, conv::Direction::BackwardWeights);
+    std::vector<PerfField> perf_db;
+
+    auto ctx = ConvolutionContext{problem};
+    ctx.SetStream(&handle);
+
+    bool use_immediate_solution = false;
+    miopenConvSolution_t sol;
+    if(findMode.IsFast(ctx) || findMode.IsHybrid(ctx))
+    {
+        size_t count  = 0;
+        bool fallback = false;
+
+        GetWrwSolutions(handle, dyDesc, xDesc, dwDesc, 1, &count, &sol, &fallback);
+        use_immediate_solution = (count > 0) && !(findMode.IsHybrid(ctx) && fallback);
+    }
+
+    if(use_immediate_solution)
+    {
+        const auto id = solver::Id(sol.solution_id);
+        *returnedUsePreCompiledKernel =
+            CheckSolutionUsePreCompiledKernel(handle, id, ctx, ignoreAsmBuild);
+    }
+    else
+    {
+        // In this case, MIOpen tries to test all possible solutions
+        // so all the kernels used by the solutions become targets of builds.
+        // It's better to find the optimal solution and write it down to Find-Db.
+
+        *returnedUsePreCompiledKernel = false;
+    }
 }
 
 void ConvolutionBackwardBias(const Handle& handle,

@@ -363,6 +363,7 @@ std::size_t ConvolutionDescriptor::ForwardGetWorkSpaceSize(Handle& handle,
         miopenConvSolution_t sol;
         bool fallback;
         GetForwardSolutions(handle, wDesc, xDesc, yDesc, 1, &count, &sol, &fallback);
+
         if(count < 1 || (findMode.IsHybrid(ctx) && fallback))
         {
             ctx.use_dynamic_solutions_only = findMode.IsDynamicHybrid(ctx);
