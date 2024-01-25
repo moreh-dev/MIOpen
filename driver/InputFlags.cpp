@@ -72,7 +72,7 @@ void InputFlags::AddInputFlag(const std::string& _long_name,
                               const std::string& _type,
                               const bool _convert2uppercase)
 {
-
+#if 0
     Input in;
     in.long_name         = _long_name;
     in.short_name        = _short_name;
@@ -81,10 +81,25 @@ void InputFlags::AddInputFlag(const std::string& _long_name,
     in.type              = _type;
     in.convert2uppercase = _convert2uppercase;
 
-    if(MapInputs.count(_short_name) > 0)
-        printf("Input flag: %s (%c) already exists !", _long_name.c_str(), _short_name);
+    if(MapInputs.count(_short_name) > 0) {
+        // printf("Input flag: %s (%c) already exists !", _long_name.c_str(), _short_name);
+        printf("Input flag: %s (%s) already exists !\n", _long_name.c_str(), MapInputs[_short_name].value.c_str());
+        MapInputs[_short_name] = in;
+        printf("Input flag: %s (%s) update !\n", _long_name.c_str(), MapInputs[_short_name].value.c_str());
+    }
     else
         MapInputs[_short_name] = in;
+#else
+    Input in;
+    in.long_name         = _long_name;
+    in.short_name        = _short_name;
+    in.value             = _value;
+    in.help_text         = _help_text;
+    in.type              = _type;
+    in.convert2uppercase = _convert2uppercase;
+
+    MapInputs[_short_name] = in;
+#endif    
 }
 
 void InputFlags::AddTensorFlag(const std::string& name,

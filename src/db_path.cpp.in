@@ -86,8 +86,10 @@ std::string PrepareUserDbPath()
     std::string default_path;
     auto p = GetStringEnv(MIOPEN_USER_DB_PATH{});
     if(p == nullptr) {
-      char hostname[HOST_NAME_MAX + 1];
-      gethostname(hostname, HOST_NAME_MAX + 1);
+      char hostname[_SC_HOST_NAME_MAX + 1];
+      gethostname(hostname, _SC_HOST_NAME_MAX + 1);
+      //char hostname[HOST_NAME_MAX + 1];
+      //gethostname(hostname, HOST_NAME_MAX + 1);
 
       default_path = "~/.miopen/" + std::string(hostname) + "/config";
       p = default_path.c_str();

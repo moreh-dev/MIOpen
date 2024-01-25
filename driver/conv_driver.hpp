@@ -73,6 +73,10 @@
 
 #include <boost/optional.hpp>
 
+// FIXME(iwooook) : added
+#include <miopen/any_solver.hpp>
+#include <boost/algorithm/string/predicate.hpp>
+
 // Declare hidden function for MIGraphX to smoke test it.
 extern "C" miopenStatus_t miopenHiddenSetConvolutionFindMode(miopenConvolutionDescriptor_t convDesc,
                                                              int findMode);
@@ -252,6 +256,9 @@ public:
 
     int VerifyBackward() override;
     int VerifyForward() override;
+    void Pre();
+    void ParseKey(std::string key);
+    void Post();
     ~ConvDriver() override
     {
         miopenDestroyTensorDescriptor(biasTensor);
@@ -353,6 +360,13 @@ private:
     Timer2 bwd_auxiliary_gwss;
     Timer2 wrw_auxiliary_gwss;
     Timer2 warmup_wall_total; // Counts also auxiliary time.
+
+    // FIXME(iwooook) : my globals
+    int convDirection;
+    int key_in_channels = 0;
+    int key_out_channels = 0;
+    std::vector<int> key_out_lens = {0, 0, 0};
+    int data_type_ = -1;
 
     void PrintForwardTime(float kernel_total_time, float kernel_first_time) const;
     int RunForwardGpuImmed(bool is_transform);
@@ -613,6 +627,20 @@ int ConvDriver<Tgpu, Tref>::GetandSetData()
     std::vector<int> in_len  = GetInputTensorLengthsFromCmdLine();
     std::vector<int> wei_len = GetWeightTensorLengthsFromCmdLine();
 
+    // FIXME(iwooook)
+    // std::cout << "1. data_type: " << data_type << std::endl;
+    // std::cout << "2. data_type: " << this->GetDataType() << std::endl;
+    // this->InitDataType<float>();
+    std::cout << "3. data_type: " << this->GetDataType() << std::endl;
+    this->InitDataType<bfloat16>();
+    if (data_type_ == 0) this->InitDataType<float>();
+    // else if (data_type_ == 1) this->InitDataType<float16>();
+    // else if (data_type_ == 2) this->InitDataType<bfloat16>();
+    // else {
+    //     std::cout << "xxxxxxxxxxxxx" << std::endl;    
+    // }
+    std::cout << "3. data_type: " << this->GetDataType() << std::endl;
+
     SetTensorNd(inputTensor, in_len, inflags.GetValueStr("in_layout"), data_type);
     SetTensorNd(weightTensor, wei_len, inflags.GetValueStr("fil_layout"), data_type);
 
@@ -842,6 +870,12 @@ std::vector<int> ConvDriver<Tgpu, Tref>::GetInputTensorLengthsFromCmdLine()
         MIOPEN_THROW("unsupported convolution dimension");
     }
 
+    // FIXME(iwooook)
+    // std::cout << "GetInputTensorLengthsFromCmdLine()" << std::endl;
+    // for (int i = 0 ; i < in_lens.size(); i++) {
+    //     std::cout << "  : " << in_lens[i] << std::endl;
+    // }    
+
     return in_lens;
 }
 
@@ -909,6 +943,12 @@ std::vector<int> ConvDriver<Tgpu, Tref>::GetWeightTensorLengthsFromCmdLine()
         wei_lens[0] = wei_k_len;
         wei_lens[1] = wei_c_len / group_count;
     }
+
+    // FIXME(iwooook)
+    // std::cout << "GetWeightTensorLengthsFromCmdLine()" << std::endl;
+    // for (int i = 0 ; i < wei_lens.size(); i++) {
+    //     std::cout << "  : " << wei_lens[i] << std::endl;
+    // }        
 
     return wei_lens;
 }
@@ -1053,8 +1093,20 @@ std::vector<int> ConvDriver<Tgpu, Tref>::GetOutputTensorLengths()
 
     std::vector<int> out_lens(ndim);
 
-    miopenGetConvolutionNdForwardOutputDim(
-        convDesc, inputTensor, weightTensor, &ndim, out_lens.data());
+    //miopenGetConvolutionNdForwardOutputDim(
+    //    convDesc, inputTensor, weightTensor, &ndim, out_lens.data());
+
+    out_lens[0] = key_in_channels;
+    out_lens[1] = key_out_channels;
+    out_lens[2] = (ndim == 4) ? key_out_lens[1] : key_out_lens[0];
+    out_lens[3] = (ndim == 4) ? key_out_lens[2] : key_out_lens[1];
+    if (ndim == 5) out_lens[4] = key_out_lens[2];
+
+    // FIXME(iwooook)
+    // std::cout << "GetOutputTensorLengths()" << std::endl;
+    // for (int i = 0 ; i < out_lens.size(); i++) {
+    //     std::cout << "  : " << out_lens[i] << std::endl;
+    // }        
 
     return out_lens;
 }
@@ -3457,5 +3509,345 @@ int ConvDriver<Tgpu, Tref>::VerifyBackward()
 
     return cumulative_rc;
 }
+
+template <typename Tgpu, typename Tref>
+void ConvDriver<Tgpu, Tref>::Pre()
+{
+    AddCmdLineArgs();
+}
+
+template <typename Tgpu, typename Tref>
+void ConvDriver<Tgpu, Tref>::ParseKey(std::string key)
+{
+    char h_sep = '-';
+    char x_sep = 'x';
+
+    int h_pos;
+    int x_pos;
+
+    int n;
+
+    std::string contents, buf;
+
+    // GetInChannels
+    h_pos = key.find(h_sep);
+    //command["in_channels"] = std::stoi(key.substr(0, h_pos));
+    key_in_channels = std::stoi(key.substr(0, h_pos));
+    inflags.AddInputFlag("in_channels", 'c', key.substr(0, h_pos), "Number of Input Channels (Default=3)", "int");
+
+    contents = key.substr(h_pos + 1);
+
+
+    // GetInDHW
+    x_pos = contents.find(x_sep);
+    buf = contents.substr(0, x_pos);
+    n = std::count(buf.begin(), buf.end(), h_sep);
+
+    if (n == 3) {
+        inflags.AddInputFlag("spatial_dim", '_', "3", "convolution spatial dimension (Default-2)", "int");
+
+        h_pos = contents.find(h_sep);
+        // command["in_d"] = std::stoi(contents.substr(0, h_pos));
+        inflags.AddInputFlag("in_d", '!', contents.substr(0, h_pos), "Input Depth (Default=32)", "int");
+        contents = contents.substr(h_pos + 1);
+    }
+    inflags.AddInputFlag("spatial_dim", '_', "2", "convolution spatial dimension (Default-2)", "int");
+
+    h_pos = contents.find(h_sep);
+    // command["in_h"] = std::stoi(contents.substr(0, h_pos));
+    inflags.AddInputFlag("in_h", 'H', contents.substr(0, h_pos), "Input Height (Default=32)", "int");
+    contents = contents.substr(h_pos + 1);
+    
+    h_pos = contents.find(h_sep);
+    // command["in_w"] = std::stoi(contents.substr(0, h_pos));
+    inflags.AddInputFlag("in_w", 'W', contents.substr(0, h_pos), "Input Width (Default=32)", "int");
+    contents = contents.substr(h_pos + 1);
+
+
+    // GetWeightDHW
+    h_pos = contents.find(h_sep);
+    buf = contents.substr(0, h_pos);
+    n = std::count(buf.begin(), buf.end(), x_sep);
+
+    if (n == 2) {            
+        x_pos = contents.find(x_sep);
+        // command["fil_d"] = std::stoi(contents.substr(0, x_pos));
+        inflags.AddInputFlag("fil_d", '@', contents.substr(0, x_pos), "Filter Depth (Default=3)", "int");
+        contents = contents.substr(x_pos + 1);
+    }
+    x_pos = contents.find(x_sep);
+    // command["fil_h"] = std::stoi(contents.substr(0, x_pos));
+    inflags.AddInputFlag("fil_h", 'y', contents.substr(0, x_pos), "Filter Height (Default=3)", "int");
+    contents = contents.substr(x_pos + 1);
+    
+    h_pos = contents.find(h_sep);
+    // command["fil_w"] = std::stoi(contents.substr(0, h_pos));
+    inflags.AddInputFlag("fil_w", 'x', contents.substr(0, h_pos), "Filter Width (Default=3)", "int");
+    contents = contents.substr(h_pos + 1);        
+
+    // GetOutChannels
+    h_pos = contents.find(h_sep);
+    // command["out_channels"] = std::stoi(contents.substr(0, h_pos));
+    key_out_channels = std::stoi(contents.substr(0, h_pos));
+    inflags.AddInputFlag("out_channels", 'k', contents.substr(0, h_pos), "Number of Output Channels (Default=32)", "int");
+    contents = contents.substr(h_pos + 1);
+
+    // GetOutDHW
+    x_pos = contents.find(x_sep);
+    buf = contents.substr(0, x_pos);
+    n = std::count(buf.begin(), buf.end(), h_sep);
+
+    if (n == 4) {
+    // n include's batchsize's hyphen            
+        h_pos = contents.find(h_sep);
+        //command["out_d"] = std::stoi(contents.substr(0, h_pos));
+        key_out_lens[0] = std::stoi(contents.substr(0, h_pos));
+        contents = contents.substr(h_pos + 1);
+    }
+    h_pos = contents.find(h_sep);
+    //command["out_h"] = std::stoi(contents.substr(0, h_pos));
+    key_out_lens[1] = std::stoi(contents.substr(0, h_pos));
+    contents = contents.substr(h_pos + 1);
+
+    h_pos = contents.find(h_sep);
+    //command["out_w"] = std::stoi(contents.substr(0, h_pos));
+    key_out_lens[2] = std::stoi(contents.substr(0, h_pos));
+    contents = contents.substr(h_pos + 1);
+
+    // GetInBatchSize
+    h_pos = contents.find(h_sep);
+    // command["batchsize"] = std::stoi(contents.substr(0, h_pos));
+    inflags.AddInputFlag("batchsize", 'n', contents.substr(0, h_pos), "Mini-batch size (Default=100)", "int");
+    contents = contents.substr(h_pos + 1);
+
+
+    // GetPadDHW
+    h_pos = contents.find(h_sep);
+    buf = contents.substr(0, h_pos);
+    n = std::count(buf.begin(), buf.end(), x_sep);
+
+    if (n == 2) {
+    // spatial_dims > 2            
+        x_pos = contents.find(x_sep);
+        // command["pad_d"] = std::stoi(contents.substr(0, x_pos));
+        inflags.AddInputFlag("pad_d", '$', contents.substr(0, x_pos), "Zero Padding for Depth (Default=0)", "int");
+        contents = contents.substr(x_pos + 1);
+    }
+    x_pos = contents.find(x_sep);
+    // command["pad_h"] = std::stoi(contents.substr(0, x_pos));
+    inflags.AddInputFlag("pad_h", 'p', contents.substr(0, x_pos), "Zero Padding for Height (Default=0)", "int");
+    contents = contents.substr(x_pos + 1);
+
+    h_pos = contents.find(h_sep);
+    // command["pad_w"] = std::stoi(contents.substr(0, h_pos));
+    inflags.AddInputFlag("pad_w", 'q', contents.substr(0, h_pos), "Zero Padding for Width (Default=0)", "int");
+    contents = contents.substr(h_pos + 1);
+
+
+    // GetStrideDHW
+    h_pos = contents.find(h_sep);
+    buf = contents.substr(0, h_pos);
+    n = std::count(buf.begin(), buf.end(), x_sep);
+
+    if (n == 2) {
+    // spatial_dims > 2            
+        x_pos = contents.find(x_sep);
+        // command["conv_stride_d"] = std::stoi(contents.substr(0, x_pos));
+        inflags.AddInputFlag("conv_stride_d", '#', contents.substr(0, x_pos), "Convolution Stride for Depth (Default=1)", "int");
+        contents = contents.substr(x_pos + 1);
+    }
+    x_pos = contents.find(x_sep);
+    // command["conv_stride_h"] = std::stoi(contents.substr(0, x_pos));
+    inflags.AddInputFlag("conv_stride_h", 'u', contents.substr(0, x_pos), "Convolution Stride for Height (Default=1)", "int");    
+    contents = contents.substr(x_pos + 1);
+
+    h_pos = contents.find(h_sep);
+    // command["conv_stride_w"] = std::stoi(contents.substr(0, h_pos));
+    inflags.AddInputFlag("conv_stride_w", 'v', contents.substr(0, h_pos), "Convolution Stride for Width (Default=1)", "int");
+    contents = contents.substr(h_pos + 1);
+
+
+    // GetDilationDHW
+    h_pos = contents.find(h_sep);
+    buf = contents.substr(0, h_pos);
+    n = std::count(buf.begin(), buf.end(), x_sep);
+
+    if (n == 2) {
+    // spatial_dims > 2            
+        x_pos = contents.find(x_sep);
+        // command["dilation_d"] = std::stoi(contents.substr(0, x_pos));
+        inflags.AddInputFlag("dilation_d", '^', contents.substr(0, x_pos), "Dilation of Filter Depth (Default=1)", "int");
+        contents = contents.substr(x_pos + 1);
+    }
+    x_pos = contents.find(x_sep);
+    // command["dilation_h"] = std::stoi(contents.substr(0, x_pos));
+    inflags.AddInputFlag("dilation_h", 'l', contents.substr(0, x_pos), "Dilation of Filter Height (Default=1)", "int");
+    contents = contents.substr(x_pos + 1);
+
+    h_pos = contents.find(h_sep);
+    // command["dilation_w"] = std::stoi(contents.substr(0, h_pos));
+    inflags.AddInputFlag("dilation_w", 'j', contents.substr(0, h_pos), "Dilation of Filter Width (Default=1)", "int");
+    contents = contents.substr(h_pos + 1);
+
+
+    // GetBias
+    h_pos = contents.find(h_sep);
+    // command["bias"] = std::stoi(contents.substr(0, h_pos));
+    inflags.AddInputFlag("bias", 'b', contents.substr(0, h_pos), "Use Bias (Default=0)", "int");
+    contents = contents.substr(h_pos + 1);
+
+
+    // GetLayouts
+    h_pos = contents.find(h_sep);
+    // command["in_layout"] = contents.substr(0, h_pos);
+    inflags.AddInputFlag("in_layout",
+                         'I',
+                         contents.substr(0, h_pos),
+                         "Input Layout (Default=NCHW for 2d conv, NCDHW for 3d conv)",
+                         "string",
+                         true);
+    std::string in_layout = contents.substr(0, h_pos);                             
+    contents = contents.substr(h_pos + 1);
+
+    h_pos = contents.find(h_sep);
+    // string contents' first character is 'N', more layout coming
+    if (contents[0] == 'N') {
+        // command["wei_layout"] = contents.substr(0, h_pos);
+        inflags.AddInputFlag("out_layout",
+                         'O',
+                         contents.substr(0, h_pos),
+                         "Output Layout (Default=NCHW for 2d conv, NCDHW for 3d conv)",
+                         "string",
+                         true);        
+        contents = contents.substr(h_pos + 1);
+
+        h_pos = contents.find(h_sep);
+        // command["out_layout"] = contents.substr(0, h_pos);
+        inflags.AddInputFlag("fil_layout",
+                         'f',
+                         contents.substr(0, h_pos),
+                         "Filter Layout (Default=NCHW for 2d conv, NCDHW for 3d conv)",
+                         "string",
+                         true);        
+        contents = contents.substr(h_pos + 1);
+    } else {
+        inflags.AddInputFlag("out_layout",
+                         'O',
+                         in_layout,
+                         "Output Layout (Default=NCHW for 2d conv, NCDHW for 3d conv)",
+                         "string",
+                         true);
+        inflags.AddInputFlag("fil_layout",
+                         'f',
+                         in_layout,
+                         "Filter Layout (Default=NCHW for 2d conv, NCDHW for 3d conv)",
+                         "string",
+                         true);                                   
+    }
+
+
+    // GetDataType
+    h_pos = contents.find(h_sep);
+    // FIXME(iwooook)
+    if (contents.substr(0, h_pos).compare("FP32")) {
+        std::cout << contents.substr(0, h_pos) << std::endl;
+        data_type_ = 0; 
+    }
+    else if (contents.substr(0, h_pos).compare("FP16")) { 
+        std::cout << contents.substr(0, h_pos) << std::endl;
+        data_type_ = 1;
+    }
+    else if (contents.substr(0, h_pos).compare("BF16")) { 
+        std::cout << contents.substr(0, h_pos) << std::endl;
+        data_type_ = 2;
+    }
+    else {
+        std::cerr << "Invalid data type" << std::endl;
+        exit(1);
+    }
+
+    contents = contents.substr(h_pos + 1);
+
+    if (contents[0] == 'F') { convDirection = 0; }
+    else if(contents[0] == 'B') { convDirection = 1; }
+    else if(contents[0] == 'W') { convDirection = 2; }
+    else {
+        std::cerr << "Invalid direction" << std::endl;
+        exit(1);
+    }    
+}    
+
+template <typename Tgpu, typename Tref>
+void ConvDriver<Tgpu, Tref>::Post()
+{
+    GetandSetData();
+
+    size_t solutionCount;
+    miopenConvSolution_t solution;
+    bool fallbackPathTaken;
+
+    miopen::ConvolutionDescriptor convDesc_ = miopen::deref(convDesc);
+    miopen::Handle handle;
+    miopen::ProblemDescription *problem;
+
+    if (convDirection == 0) {
+        std::cout << "0aaaa" << std::endl;
+        convDesc_.GetForwardSolutions(handle, miopen::deref(weightTensor), miopen::deref(inputTensor),  
+            miopen::deref(outputTensor), 1, &solutionCount, &solution, &fallbackPathTaken);
+
+        // std::cout << "0bbbb" << std::endl;
+        // problem = new miopen::ProblemDescription(miopen::deref(inputTensor), miopen::deref(weightTensor), 
+        // miopen::deref(outputTensor), convDesc_, miopen::conv::Direction::Forward);
+    } else if (convDirection == 1) {
+        std::cout << "1aaaa" << std::endl;
+        convDesc_.GetBackwardSolutions(handle, miopen::deref(inputTensor), miopen::deref(weightTensor), 
+            miopen::deref(outputTensor), 1, &solutionCount, &solution, &fallbackPathTaken);
+
+        // std::cout << "1bbbb" << std::endl;
+        // problem = new miopen::ProblemDescription(miopen::deref(outputTensor), miopen::deref(weightTensor), 
+        // miopen::deref(inputTensor), convDesc_, miopen::conv::Direction::BackwardData);
+    } else if (convDirection == 2) {
+        std::cout << "2aaaa" << std::endl;
+        convDesc_.GetWrwSolutions(handle, miopen::deref(inputTensor), miopen::deref(outputTensor), 
+            miopen::deref(weightTensor), 1, &solutionCount, &solution, &fallbackPathTaken);
+
+        // std::cout << "2bbbb" << std::endl;
+        // problem = new miopen::ProblemDescription(miopen::deref(weightTensor), miopen::deref(outputTensor), 
+        // miopen::deref(inputTensor), convDesc_, miopen::conv::Direction::BackwardWeights);            
+    } else {
+        std::cerr << "Invalid convDirection" << std::endl;
+        exit(1);
+    }       
+
+    // auto ctx    = miopen::ConvolutionContext{*problem};
+
+    // ctx.SetStream(&handle);
+
+    // auto solver_id = miopen::solver::Id(solution.solution_id);
+    // auto solver   = solver_id.GetSolver();
+    // auto db             = miopen::GetDb(ctx);
+    // auto solution_ = solver.FindSolution(ctx, db, {});
+
+    // bool ignoreAsmBuild = false;
+
+    // bool ret = true;
+    // //std::cout << "aaaa" << std::endl;
+    // for(auto& k : solution_.construction_params)
+    // {
+    //     //std::cout << "bbbb" << std::endl;
+    //     if(ignoreAsmBuild && boost::algorithm::ends_with(k.kernel_file, ".s"))
+    //     {
+    //         MIOPEN_LOG_I2("Passing because ignoreAsmBuild=1, kernel_name = " << k.kernel_name);
+    //         continue;
+    //     }
+    //     bool has_pre_compiled_program = handle.HasPreCompiledProgram(k.kernel_file, k.comp_options);
+
+    //     MIOPEN_LOG_I2("has_pre_compiled_program = " << has_pre_compiled_program
+    //                                                 << ", kernel_name = " << k.kernel_name);
+    //     ret = ret && has_pre_compiled_program;
+    // }
+    std::cout << "cccc" << std::endl;       
+}
+
 
 #endif // GUARD_MIOPEN_CONV_DRIVER_HPP

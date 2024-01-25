@@ -1909,6 +1909,11 @@ void ConvolutionDescriptor::CheckConvFwdUsePreCompiledKernel(
         // It's better to find the optimal solution and write it down to Find-Db.
         *returnedUsePreCompiledKernel = false;
     }
+
+    // FIXME(iwooook)
+    if (*returnedUsePreCompiledKernel) {
+        MIOPEN_LOG_I2("!!!iwooook - using precompiled kernel!!!");
+    }
 }
 
 void ConvolutionDescriptor::CheckConvBwdDataUsePreCompiledKernel(
@@ -1957,6 +1962,11 @@ void ConvolutionDescriptor::CheckConvBwdDataUsePreCompiledKernel(
         // It's better to find the optimal solution and write it down to Find-Db.
         *returnedUsePreCompiledKernel = false;
     }
+
+    // FIXME(iwooook)
+    if (*returnedUsePreCompiledKernel) {
+        MIOPEN_LOG_I2("!!!iwooook - using precompiled kernel!!!");
+    }    
 }
 
 void ConvolutionDescriptor::CheckConvBwdWeightsUsePreCompiledKernel(
@@ -2006,6 +2016,11 @@ void ConvolutionDescriptor::CheckConvBwdWeightsUsePreCompiledKernel(
         // It's better to find the optimal solution and write it down to Find-Db.
 
         *returnedUsePreCompiledKernel = false;
+    }
+
+    // FIXME(iwooook)
+    if (*returnedUsePreCompiledKernel) {
+        MIOPEN_LOG_I2("!!!iwooook - using precompiled kernel!!!");
     }
 }
 

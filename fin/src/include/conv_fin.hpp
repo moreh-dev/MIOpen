@@ -84,8 +84,8 @@ class ConvFin : public Fin
     ConvFin() : Fin() {}
     ConvFin(json _job) : Fin(), job(_job)
     {
-        if(job.contains("config"))
-            PrepConvolution();
+        // if(job.contains("config"))
+        //     PrepConvolution();
     }
 
     void VerifyDevProps()
@@ -125,13 +125,244 @@ class ConvFin : public Fin
         command         = job["config"];
         command["bias"] = 0;
         // timing is always enabled
-        is_fwd = (job["direction"].get<int>() == 0 || job["direction"].get<int>() & 1);
-        is_bwd = (job["direction"].get<int>() == 0 || job["direction"].get<int>() & 2);
-        is_wrw = (job["direction"].get<int>() == 0 || job["direction"].get<int>() & 4);
+        // is_fwd = (job["direction"].get<int>() == 0 || job["direction"].get<int>() & 1);
+        // is_bwd = (job["direction"].get<int>() == 0 || job["direction"].get<int>() & 2);
+        // is_wrw = (job["direction"].get<int>() == 0 || job["direction"].get<int>() & 4);
+        is_fwd = command["direction"].get<std::string>() == "F";
+        is_bwd = command["direction"].get<std::string>() == "B";
+        is_wrw = command["direction"].get<std::string>() == "W";
         SetConvDescriptor();
         // workspace_dev = nullptr; // TODO: replaced with a tensor class
         // the variable name is implementation dependent, checking size instead
     }
+
+    void ParseKey(std::string key)
+    {
+        char h_sep = '-';
+        char x_sep = 'x';
+
+        int h_pos;
+        int x_pos;
+
+        int n;
+
+        std::string contents, buf;
+
+        std::cout << "000. key     : " << key << std::endl;
+
+        // GetInChannels
+        h_pos = key.find(h_sep);
+        command["in_channels"] = std::stoi(key.substr(0, h_pos));
+
+        contents = key.substr(h_pos + 1);
+
+        std::cout << "111. contents: " << contents << std::endl;
+
+        // GetInDHW
+        x_pos = contents.find(x_sep);
+        buf = contents.substr(0, x_pos);
+        n = std::count(buf.begin(), buf.end(), h_sep);
+
+        if (n == 3) {
+        // FIXME(iwooook) : make spatial_dim global?
+        // spatial_dims > 2            
+            h_pos = contents.find(h_sep);
+            command["in_d"] = std::stoi(contents.substr(0, h_pos));
+            contents = contents.substr(h_pos + 1);
+        }
+        h_pos = contents.find(h_sep);
+        command["in_h"] = std::stoi(contents.substr(0, h_pos));
+        contents = contents.substr(h_pos + 1);
+        
+        h_pos = contents.find(h_sep);
+        command["in_w"] = std::stoi(contents.substr(0, h_pos));
+        contents = contents.substr(h_pos + 1);
+
+        std::cout << "222. contents: " << contents << std::endl;
+
+
+        // GetWeightDHW
+        h_pos = contents.find(h_sep);
+        buf = contents.substr(0, h_pos);
+        n = std::count(buf.begin(), buf.end(), x_sep);
+
+        if (n == 2) {
+        // spatial_dims > 2            
+            x_pos = contents.find(x_sep);
+            command["fil_d"] = std::stoi(contents.substr(0, x_pos));
+            contents = contents.substr(x_pos + 1);
+        }
+        x_pos = contents.find(x_sep);
+        command["fil_h"] = std::stoi(contents.substr(0, x_pos));
+        contents = contents.substr(x_pos + 1);
+        
+        h_pos = contents.find(h_sep);
+        command["fil_w"] = std::stoi(contents.substr(0, h_pos));
+        contents = contents.substr(h_pos + 1);        
+
+        std::cout << "333. contents: " << contents << std::endl;
+
+
+        // GetOutChannels
+        h_pos = contents.find(h_sep);
+        command["out_channels"] = std::stoi(contents.substr(0, h_pos));
+        contents = contents.substr(h_pos + 1);
+
+        std::cout << "444. contents: " << contents << std::endl;
+
+
+        // GetOutDHW
+        // set through GetOutputTensorLengths using InputTensorLengths & WeightTensorLengths
+        x_pos = contents.find(x_sep);
+        buf = contents.substr(0, x_pos);
+        n = std::count(buf.begin(), buf.end(), h_sep);
+
+        if (n == 4) {
+        // n include's batchsize's hyphen
+        // spatial_dims > 2            
+            h_pos = contents.find(h_sep);
+            //command["out_d"] = std::stoi(contents.substr(0, h_pos));
+            contents = contents.substr(h_pos + 1);
+        }
+        h_pos = contents.find(h_sep);
+        //command["out_h"] = std::stoi(contents.substr(0, h_pos));
+        contents = contents.substr(h_pos + 1);
+
+        h_pos = contents.find(h_sep);
+        //command["out_w"] = std::stoi(contents.substr(0, h_pos));
+        contents = contents.substr(h_pos + 1);
+
+        std::cout << "555. contents: " << contents << std::endl;
+
+
+        // GetInBatchSize
+        h_pos = contents.find(h_sep);
+        command["batchsize"] = std::stoi(contents.substr(0, h_pos));
+        contents = contents.substr(h_pos + 1);
+
+        std::cout << "666. contents: " << contents << std::endl;
+
+
+        // GetPadDHW
+        h_pos = contents.find(h_sep);
+        buf = contents.substr(0, h_pos);
+        n = std::count(buf.begin(), buf.end(), x_sep);
+
+        if (n == 2) {
+        // spatial_dims > 2            
+            x_pos = contents.find(x_sep);
+            command["pad_d"] = std::stoi(contents.substr(0, x_pos));
+            contents = contents.substr(x_pos + 1);
+        }
+        x_pos = contents.find(x_sep);
+        command["pad_h"] = std::stoi(contents.substr(0, x_pos));
+        contents = contents.substr(x_pos + 1);
+
+        h_pos = contents.find(h_sep);
+        command["pad_w"] = std::stoi(contents.substr(0, h_pos));
+        contents = contents.substr(h_pos + 1);
+
+        std::cout << "888. contents: " << contents << std::endl;
+
+
+        // GetStrideDHW
+        h_pos = contents.find(h_sep);
+        buf = contents.substr(0, h_pos);
+        n = std::count(buf.begin(), buf.end(), x_sep);
+
+        if (n == 2) {
+        // spatial_dims > 2            
+            x_pos = contents.find(x_sep);
+            command["conv_stride_d"] = std::stoi(contents.substr(0, x_pos));
+            contents = contents.substr(x_pos + 1);
+        }
+        x_pos = contents.find(x_sep);
+        command["conv_stride_h"] = std::stoi(contents.substr(0, x_pos));
+        contents = contents.substr(x_pos + 1);
+
+        h_pos = contents.find(h_sep);
+        command["conv_stride_w"] = std::stoi(contents.substr(0, h_pos));
+        contents = contents.substr(h_pos + 1);
+
+        
+        std::cout << "999. contents: " << contents << std::endl;
+
+
+        // GetDilationDHW
+        h_pos = contents.find(h_sep);
+        buf = contents.substr(0, h_pos);
+        n = std::count(buf.begin(), buf.end(), x_sep);
+
+        if (n == 2) {
+        // spatial_dims > 2            
+            x_pos = contents.find(x_sep);
+            command["dilation_d"] = std::stoi(contents.substr(0, x_pos));
+            contents = contents.substr(x_pos + 1);
+        }
+        x_pos = contents.find(x_sep);
+        command["dilation_h"] = std::stoi(contents.substr(0, x_pos));
+        contents = contents.substr(x_pos + 1);
+
+        h_pos = contents.find(h_sep);
+        command["dilation_w"] = std::stoi(contents.substr(0, h_pos));
+        contents = contents.substr(h_pos + 1);
+
+
+        std::cout << "aaa. contents: " << contents << std::endl;
+
+        // GetBias
+        h_pos = contents.find(h_sep);
+        command["bias"] = std::stoi(contents.substr(0, h_pos));
+        contents = contents.substr(h_pos + 1);
+
+
+        std::cout << "bbb. contents: " << contents << std::endl;
+
+        // GetLayouts
+        h_pos = contents.find(h_sep);
+        command["in_layout"] = contents.substr(0, h_pos);
+        contents = contents.substr(h_pos + 1);
+
+        h_pos = contents.find(h_sep);
+        // string contents' first character is 'N', more layout coming
+        if (contents[0] == 'N') {
+            command["wei_layout"] = contents.substr(0, h_pos);
+            contents = contents.substr(h_pos + 1);
+
+            h_pos = contents.find(h_sep);
+            command["out_layout"] = contents.substr(0, h_pos);
+            contents = contents.substr(h_pos + 1);
+        } else {
+            command["wei_layout"] = command["in_layout"];
+            command["out_layout"] = command["in_layout"];
+        }
+
+        std::cout << "ccc. contents: " << contents << std::endl;
+
+        // GetDataType
+        h_pos = contents.find(h_sep);
+        // FIXME, fin.hpp, class Fin
+        if (contents.substr(0, h_pos).compare("FP32")) { data_type = miopenFloat; }
+        else if (contents.substr(0, h_pos).compare("FP16")) { data_type = miopenHalf; }
+        else if (contents.substr(0, h_pos).compare("BF16")) { data_type = miopenBFloat16; }
+        else {
+            std::cerr << "Invalid data type" << std::endl;
+            exit(1);
+        }
+
+        contents = contents.substr(h_pos + 1);
+
+        std::cout << "ddd. contents: " << contents << std::endl;
+
+        // GetDirection
+        if (contents[0] == 'F') { is_fwd = true; }
+        else if(contents[0] == 'B') { is_bwd = true; }
+        else if(contents[0] == 'W') { is_wrw = true; }
+        else {
+            std::cerr << "Invalid direction" << std::endl;
+            exit(1);
+        }
+    }    
 
     // Getters and setters
     std::vector<int> GetInputTensorLengths();
@@ -161,6 +392,7 @@ class ConvFin : public Fin
     int MIOpenFind();
     int MIOpenFindCompile();
     int MIOpenFindEval();
+    int Test();
 
     // Utility functions
     bool IsInputTensorTransform() const;
@@ -1013,6 +1245,10 @@ int ConvFin<Tgpu, Tref>::ProcessStep(const std::string& step_name)
     {
         return MIOpenFindEval();
     }
+    if (step_name == "test")
+    {
+        return Test();
+    }
     return 0;
 }
 
@@ -1061,7 +1297,8 @@ std::vector<int> ConvFin<Tgpu, Tref>::GetInputTensorLengths()
 {
     std::vector<int> in_lens;
 
-    int spatial_dim = command["spatial_dim"];
+    // int spatial_dim = command["spatial_dim"];
+    int spatial_dim = 2;
     in_lens.resize(2 + spatial_dim);
 
     in_lens[0] = command["batchsize"];
@@ -1093,12 +1330,14 @@ std::vector<int> ConvFin<Tgpu, Tref>::GetWeightTensorLengths()
 {
     std::vector<int> wei_lens;
 
-    int spatial_dim = command["spatial_dim"];
+    // int spatial_dim = command["spatial_dim"];
+    int spatial_dim = 2;
     wei_lens.resize(2 + spatial_dim);
 
     auto wei_spatial_lens = boost::adaptors::slice(wei_lens, 2, 2 + spatial_dim);
 
-    int group_count = std::max(int(command["group_count"]), 1);
+    // int group_count = std::max(int(command["group_count"]), 1);
+    int group_count = 1;
 
     int wei_k_len = command["out_channels"];
     int wei_c_len = command["in_channels"];
@@ -1128,19 +1367,19 @@ std::vector<int> ConvFin<Tgpu, Tref>::GetWeightTensorLengths()
         }
     }
 
-    miopenConvolutionMode_t mode;
-    if((command["conv_mode"]) == "conv")
-    {
-        mode = miopenConvolution;
-    }
-    else if((command["conv_mode"]) == "trans")
-    {
-        mode = miopenTranspose;
-    }
-    else
-    {
-        FIN_THROW("Incorrect Convolution Mode\n");
-    }
+    miopenConvolutionMode_t mode = miopenConvolution;
+    // if((command["conv_mode"]) == "conv")
+    // {
+    //     mode = miopenConvolution;
+    // }
+    // else if((command["conv_mode"]) == "trans")
+    // {
+    //     mode = miopenTranspose;
+    // }
+    // else
+    // {
+    //     FIN_THROW("Incorrect Convolution Mode\n");
+    // }
 
     if(mode == miopenTranspose)
     {
@@ -1171,7 +1410,8 @@ std::vector<int> ConvFin<Tgpu, Tref>::GetBiasTensorLengths()
 template <typename Tgpu, typename Tref>
 int ConvFin<Tgpu, Tref>::SetConvDescriptor()
 {
-    size_t spatial_dim = command["spatial_dim"];
+    // size_t spatial_dim = command["spatial_dim"];
+    size_t spatial_dim = 2;
 
     std::vector<int> in_spatial_lens(spatial_dim);
     std::vector<int> wei_spatial_lens(spatial_dim);
@@ -1223,7 +1463,8 @@ int ConvFin<Tgpu, Tref>::SetConvDescriptor()
 
     int out_c       = command["out_channels"];
     int in_c        = command["in_channels"];
-    int group_count = std::max(int(command["group_count"]), 1);
+    // int group_count = std::max(int(command["group_count"]), 1);
+    int group_count = 1;
 
     if(group_count > 1)
     {
@@ -1235,26 +1476,27 @@ int ConvFin<Tgpu, Tref>::SetConvDescriptor()
         }
     }
 
-    miopenConvolutionMode_t c_mode;
-    if((command["conv_mode"]) == "conv")
-    {
-        c_mode = miopenConvolution;
-    }
-    else if((command["conv_mode"]) == "trans")
-    {
-        c_mode = miopenTranspose;
-    }
-    else
-    {
-        printf("Incorrect Convolution Mode\n");
-        exit(0);
-    }
+    // miopenConvolutionMode_t c_mode;
+    // if((command["conv_mode"]) == "conv")
+    // {
+    //     c_mode = miopenConvolution;
+    // }
+    // else if((command["conv_mode"]) == "trans")
+    // {
+    //     c_mode = miopenTranspose;
+    // }
+    // else
+    // {
+    //     printf("Incorrect Convolution Mode\n");
+    //     exit(0);
+    // }
+    miopenConvolutionMode_t c_mode = miopenConvolution;
 
     miopenPaddingMode_t p_mode = miopenPaddingDefault;
-    if((command["pad_mode"]) == "same")
-        p_mode = miopenPaddingSame;
-    else if((command["pad_mode"]) == "valid")
-        p_mode = miopenPaddingValid;
+    // if((command["pad_mode"]) == "same")
+    //     p_mode = miopenPaddingSame;
+    // else if((command["pad_mode"]) == "valid")
+    //     p_mode = miopenPaddingValid;
 
     // adjust padding based on user-defined padding mode
     if(c_mode == miopenConvolution &&
@@ -1471,5 +1713,53 @@ int ConvFin<Tgpu, Tref>::FillBuffers()
 #endif
     return 0;
 }
+
+template <typename Tgpu, typename Tref>
+int ConvFin<Tgpu, Tref>::Test()
+{
+    std::cout << "aaaa" << std::endl;
+    std::string test_key = "1-1-1-3x3-2-3-3-256-0x0-1x1-1x1-0-NCHW-FP32-B";
+
+    ParseKey(test_key);
+
+    // PrepConvolution();
+    std::cout << "bbbb" << std::endl;
+    VerifyDevProps();
+    std::cout << "cccc" << std::endl;
+    SetConvDescriptor();
+
+    std::cout << "dddd" << std::endl;
+    const auto conv_dir = GetDirection();
+
+    // FIXME(iwooook) from GetandSetData()
+    // auto in_len  = GetInputTensorLengths();
+    // std::cout << "eeeee" << std::endl;
+    // auto wei_len = GetWeightTensorLengths();
+    // std::cout << "ffff" << std::endl;
+
+    // inputTensor = {GetHandle().GetStream(), in_len, (is_fwd || is_wrw), is_bwd};
+    // weightTensor = {GetHandle().GetStream(), wei_len, (is_fwd || is_bwd), is_wrw};
+    // // conv, input and weight tensor descriptors need to be set before we can know the
+    // // output lengths
+    // std::cout << "gggg" << std::endl;
+    // auto out_len = GetOutputTensorLengths();
+    // outputTensor = {GetHandle().GetStream(), out_len, (is_bwd || is_wrw), is_fwd};
+    ////
+
+    std::cout << "hhhh" << std::endl;
+    const miopen::ProblemDescription problem(
+        inputTensor.desc, weightTensor.desc, outputTensor.desc, convDesc, conv_dir);
+
+    size_t solutionCount;
+    miopenConvSolution_t solution;
+    bool fallbackPathTaken = false;
+    std::cout << "iiii" << std::endl;
+    convDesc.GetForwardSolutions(GetHandle(), inputTensor.desc, weightTensor.desc, outputTensor.desc,
+        1, &solutionCount, &solution, &fallbackPathTaken);
+
+    std::cout << "Solution Count: " << solutionCount << std::endl;
+    
+}
+
 } // namespace fin
 #endif // GUARD_MIOPEN_CONV_FIN_HPP
