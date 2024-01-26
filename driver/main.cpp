@@ -36,6 +36,8 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/range/adaptors.hpp>
 
+#include <miopen/find_db.hpp>
+
 // globals
 InputFlags inflags;
 int convDirection;
@@ -747,12 +749,10 @@ int main() {
 
     miopenCreateConvolutionDescriptor(&convDesc);
 
-    //AddCmdLineArgs();
-
     // FIXME
     //std::string filename = "/data/MIOpen_moreh/MIOpen/src/kernels/gfx90a68.HIP.fdb.txt";
     std::string in_filename = "/data/MIOpen_moreh/MIOpen/build_ocl/test.fdb.txt";
-    std::string out_filename = "/data/MIOpen_moreh/MIOpen/build_ocl/maf.db.txt";
+    std::string out_filename = "/data/MIOpen_moreh/MIOpen/build_ocl/maf.db.txt2";
 
     std::ifstream in_file(in_filename);
     std::ofstream out_file(out_filename);
@@ -788,8 +788,11 @@ int main() {
         }
         const auto current_key = line.substr(0, key_size);
 
+        // init desc
         AddCmdLineArgs();
+        // set desc
         ParseKey(current_key);
+        // generate desc
         GetandSetData();
 
         size_t solutionCount;
@@ -798,63 +801,115 @@ int main() {
 
         miopen::ConvolutionDescriptor convDesc_ = miopen::deref(convDesc);
         miopen::Handle handle;
-        miopen::ProblemDescription *problem;
+        //miopen::ProblemDescription problem;
+        miopen::ConvolutionContext ctx;
 
+        
+        bool ignoreAsmBuild = true;
+
+        bool ret_kernel = true, ret_program = true;
+
+#if 1
+        // get solution
         if (convDirection == 0) {
-            convDesc_.GetForwardSolutions(handle, miopen::deref(weightTensor), miopen::deref(inputTensor),  
-                miopen::deref(outputTensor), 1, &solutionCount, &solution, &fallbackPathTaken);
 
-            problem = new miopen::ProblemDescription(miopen::deref(inputTensor), miopen::deref(weightTensor), 
-            miopen::deref(outputTensor), convDesc_, miopen::conv::Direction::Forward);
+            
+            // convDesc_.GetForwardSolutions(handle, miopen::deref(weightTensor), miopen::deref(inputTensor),  
+            //     miopen::deref(outputTensor), 1, &solutionCount, &solution, &fallbackPathTaken);
+
         } else if (convDirection == 1) {
-            convDesc_.GetBackwardSolutions(handle, miopen::deref(inputTensor), miopen::deref(weightTensor), 
+            // set problem
+            miopen::ProblemDescription problem(miopen::deref(outputTensor), miopen::deref(weightTensor), 
+                miopen::deref(inputTensor), convDesc_, miopen::conv::Direction::BackwardData);
+
+            // set ctx
+            ctx = miopen::ConvolutionContext{problem};
+            ctx.SetStream(&handle);
+
+            // get solution
+            miopen::deref(convDesc).GetBackwardSolutions(handle, miopen::deref(inputTensor), miopen::deref(weightTensor), 
                 miopen::deref(outputTensor), 1, &solutionCount, &solution, &fallbackPathTaken);
 
-            problem = new miopen::ProblemDescription(miopen::deref(outputTensor), miopen::deref(weightTensor), 
-            miopen::deref(inputTensor), convDesc_, miopen::conv::Direction::BackwardData);
-        } else if (convDirection == 2) {
-            // FIXME(iwooook) : check 3 tensors order
-            convDesc_.GetWrwSolutions(handle, miopen::deref(inputTensor), miopen::deref(outputTensor), 
-                miopen::deref(weightTensor), 1, &solutionCount, &solution, &fallbackPathTaken);
+            // get solver
+            auto solver_id = miopen::solver::Id(solution.solution_id);
 
-            problem = new miopen::ProblemDescription(miopen::deref(outputTensor), miopen::deref(weightTensor), 
-            miopen::deref(inputTensor), convDesc_, miopen::conv::Direction::BackwardWeights);            
+            miopen::FindDbRecord fdb_record{handle, ctx};
+
+            bool ret_kernel = true;
+            for(const auto& pair : fdb_record)
+            {
+                if(miopen::solver::Id{pair.second.solver_id} != solver_id)
+                    continue;
+
+                const auto&& kernels = handle.GetKernels(pair.second.kcache_key.algorithm_name,
+                                                        pair.second.kcache_key.network_config);
+
+                if(!kernels.empty())
+                    continue;
+
+                auto solver   = solver_id.GetSolver();
+                auto db       = GetDb(ctx);
+                auto solution = solver.FindSolution(ctx, db, {});
+
+                auto algorithm_name = pair.second.kcache_key.algorithm_name;
+                auto network_config = pair.second.kcache_key.network_config;
+
+                if(algorithm_name.empty() || network_config.empty())
+                {
+                    assert(algorithm_name.empty() && network_config.empty());
+                }
+
+                ret_program = true;
+                for(auto& k : solution.construction_params)
+                {
+                    if(ignoreAsmBuild && boost::algorithm::ends_with(k.kernel_file, ".s"))
+                    {
+                        MIOPEN_LOG_I2("Passing because ignoreAsmBuild=1, kernel_name = " << k.kernel_name);
+                        continue;
+                    }
+                    bool has_pre_compiled_program = handle.HasPreCompiledProgram(k.kernel_file, k.comp_options);
+
+                    MIOPEN_LOG_I2("has_pre_compiled_program = " << has_pre_compiled_program
+                                                                << ", kernel_name = " << k.kernel_name);
+                    ret_program = ret_program && has_pre_compiled_program;
+                }
+                ret_kernel = ret_kernel && ret_program;
+            }
+
+        } else if (convDirection == 2) {
+
+
+            // convDesc_.GetWrwSolutions(handle, miopen::deref(inputTensor), miopen::deref(outputTensor), 
+            //     miopen::deref(weightTensor), 1, &solutionCount, &solution, &fallbackPathTaken);    
+
         } else {
             std::cerr << "Invalid convDirection" << std::endl;
             exit(1);
         }
+#else
+        ConstData_t i1, i2;
+        Data_t o1;
+        i1 = (ConstData_t)1;
+        i2 = (ConstData_t)1;
+        o1 = (Data_t)1;
 
-        auto ctx    = miopen::ConvolutionContext{*problem};
-        ctx.SetStream(&handle);
+        bool ignoreAsmBuild = true;
 
-        auto solver_id = miopen::solver::Id(solution.solution_id);
-        auto solver   = solver_id.GetSolver();
-        auto db             = miopen::GetDb(ctx);
-        auto solution_ = solver.FindSolution(ctx, db, {});
-
-        // FIXME(iwooook)
-        // 1. ignoreAsmBuild
-        // 2. multiple kernel, which kernel name?
-        bool ignoreAsmBuild = false;
-
-        bool ret = true;
-        for(auto& k : solution_.construction_params)
-        {
-            if(ignoreAsmBuild && boost::algorithm::ends_with(k.kernel_file, ".s"))
-            {
-                MIOPEN_LOG_I2("Passing because ignoreAsmBuild=1, kernel_name = " << k.kernel_name);
-                continue;
-            }
-            bool has_pre_compiled_program = handle.HasPreCompiledProgram(k.kernel_file, k.comp_options);
-
-            MIOPEN_LOG_I2("has_pre_compiled_program = " << has_pre_compiled_program
-                                                        << ", kernel_name = " << k.kernel_name);
-            ret = ret && has_pre_compiled_program;
+        if (convDirection == 0) {
+            convDesc_.CheckConvFwdUsePreCompiledKernel(handle, miopen::deref(inputTensor), i1, miopen::deref(weightTensor),  
+                i2, miopen::deref(outputTensor), o1, ignoreAsmBuild, &ret);
+        } else if (convDirection == 1) {
+            convDesc_.CheckConvBwdDataUsePreCompiledKernel(handle, miopen::deref(inputTensor), i1, miopen::deref(weightTensor),  
+                i2, miopen::deref(outputTensor), o1, ignoreAsmBuild, &ret);
+        } else if (convDirection == 2) {
+            convDesc_.CheckConvBwdWeightsUsePreCompiledKernel(handle, miopen::deref(inputTensor), i1, miopen::deref(outputTensor),  
+                i2, miopen::deref(weightTensor), o1, ignoreAsmBuild, &ret);                    
+        } else {
+            std::cerr << "Invalid convDirection" << std::endl;
+            exit(1);
         }
-
-        out_file << current_key << ":" << ret << std::endl;
-
-        //break;        
+#endif        
+        if (ret_kernel) out_file << current_key << std::endl;
     }
 
     miopenDestroyTensorDescriptor(biasTensor);
