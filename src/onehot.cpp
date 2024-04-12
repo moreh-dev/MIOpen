@@ -43,6 +43,31 @@ miopenStatus_t OneHot(Handle& handle,
                       void* output,
                       int numClasses)
 {
+    // If num classes is to -1(default), the number of classes will be inferred as one greater than
+    // the largest class value in the input tensor.
+    if(numClasses == -1)
+    {
+        for(auto i = 0; i < inputSize; ++i)
+        {
+            numClasses = std::max(numClasses, static_cast<const int*>(input)[i] + 1);
+        }
+    }
+
+    const int* input_int = static_cast<const int*>(input);
+    for(auto i = 0; i < inputSize; ++i)
+    {
+        if(input_int[i] < 0)
+        {
+            MIOPEN_THROW(miopenStatusBadParm,
+                         "OneHot: tensor values must be non-negative integers.");
+        }
+        if(input_int[i] >= numClasses)
+        {
+            MIOPEN_THROW(miopenStatusBadParm,
+                         "OneHot: tensor values must be less than numClasses.");
+        }
+    }
+
     const auto problem = onehot::ProblemDescription{inDesc, outDesc, inputSize, numClasses};
 
     const auto invoke_params = [&]() {

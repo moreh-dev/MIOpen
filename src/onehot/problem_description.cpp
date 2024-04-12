@@ -35,11 +35,12 @@ namespace onehot {
 
 NetworkConfig ProblemDescription::MakeNetworkConfig() const
 {
-    auto dtype = inDesc.GetType();
+    auto dtype       = inDesc.GetType();
     long outputNumel = inputSize * numClasses;
 
     std::ostringstream ss;
 
+    ss << "onehot";
     ss << "dtype" << dtype;
     ss << "input_size" << inputSize;
     ss << "output_numel" << outputNumel;
@@ -47,6 +48,6 @@ NetworkConfig ProblemDescription::MakeNetworkConfig() const
     return NetworkConfig{ss.str()};
 }
 
-} // namespace onehot 
+} // namespace onehot
 
 } // namespace miopen

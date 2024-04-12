@@ -16,16 +16,5 @@ OneHotContiguous(const int* input, int* output, long input_size, int num_classes
 
     int val = input[gid];
 
-    if(val >= num_classes)
-    {
-        printf("ERROR_CODE_LARGER_THAN_NUM_CLASS");
-        return;
-    }
-    if(val < 0)
-    {
-        printf("ERROR_CODE_NEG_VALUE");
-        return;
-    }
-
     output[gid * num_classes + val] = 1;
 }

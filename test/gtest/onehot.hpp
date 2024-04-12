@@ -81,23 +81,15 @@ struct OneHotTestCase
 };
 
 std::vector<OneHotTestCase> OneHotTestConfigs()
-{ // n c d h w dim nanPropagation
-    // clang-format off
+{ // n c d h w
     return {
-        { 1,    0,  0,  0,   10, 10, 1},  //bart
-        { 8,    120,  0,  0,   1, 10, 1},
-        { 8,    1023, 0,  0,   1, 100, 1},  //gpt_neo
-        { 8,    1024, 0,  0,   768,100, 1},
-        { 8,    1023, 0,  0,   1, 50, 1},
-        { 8,    1024, 0,  0,   768, 50, 1},
-        { 16,   1024, 0,  0,   768, 20, 1 },  //gpt2
-        { 16,   1024, 0,  0,   768, 20, 1 },
-        // { 48,   8,    0,  512, 512, 1000, 1 },  //t5
-        // { 48,   8,    0,  512, 512, 1000, 1 },
-        // { 16, 311,    0,  98,  512, 1000, 1 },  //rnnt
-        // { 16, 311,    0,  98,  512, 1000, 1 }
-      };
-    // clang-format on
+        {1, 0, 0, 0, 10, 10, 1},
+        {2, 0, 0, 10, 10, 10, 1},
+        {4, 1, 0, 100, 100, 100, 1},
+        {8, 3, 1, 20, 100, 200, 1},
+        {16, 3, 1, 100, 100, 200, 1},
+        {1, 1, 1, 1, 5000, 5000, 1},
+    };
 }
 
 template <typename T = int>
@@ -138,7 +130,6 @@ protected:
     {
         auto&& handle = get_handle();
 
-        cpu_onehot<T>(input, ref_output, onehot_config.input_size, onehot_config.num_classes);
         miopenStatus_t status;
 
         status = miopen::OneHot(handle,
@@ -150,6 +141,7 @@ protected:
                                 onehot_config.num_classes);
 
         EXPECT_EQ(status, miopenStatusSuccess);
+        cpu_onehot<T>(input, ref_output, onehot_config.input_size, onehot_config.num_classes);
 
         output.data = handle.Read<T>(output_dev, output.data.size());
     }

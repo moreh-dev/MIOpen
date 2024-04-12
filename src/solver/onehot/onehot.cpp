@@ -67,10 +67,6 @@ ConvSolution OneHot::GetSolution(const ExecutionContext& context,
     kernel.kernel_name = "OneHotContiguous";
 
     const auto build_params = KernelBuildParameters{
-        {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
-        {"MIOPEN_USE_FP32", static_cast<int>(dtype == miopenFloat)},
-        {"MIOPEN_USE_FP64", static_cast<int>(dtype == miopenDouble)},
-        {"MIOPEN_USE_BFP16", static_cast<int>(dtype == miopenBFloat16)},
         {"MIOPEN_USE_INT32", static_cast<int>(dtype == miopenInt32)},
         {"LOCAL_SIZE", LOCAL_SIZE},
     };

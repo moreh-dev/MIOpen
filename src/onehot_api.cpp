@@ -24,12 +24,49 @@
  *
  *******************************************************************************/
 
+#include "miopen/miopen.h"
 #include <__clang_hip_math.h>
 #include <miopen/onehot.hpp>
 #include <miopen/errors.hpp>
 #include <miopen/handle.hpp>
 #include <miopen/logger.hpp>
 #include <miopen/tensor_ops.hpp>
+
+static void LogCmdOneHot(const miopenTensorDescriptor_t inDesc)
+{
+    if(miopen::IsLoggingCmd())
+    {
+        std::stringstream ss;
+
+        int32_t size = {0};
+        miopenGetTensorDescriptorSize(inDesc, &size);
+        ss << " -n " << miopen::deref(inDesc).GetLengths()[0];
+        if(size == 5)
+        {
+            ss << " -c " << miopen::deref(inDesc).GetLengths()[1] << " -D "
+               << miopen::deref(inDesc).GetLengths()[2] << " -H "
+               << miopen::deref(inDesc).GetLengths()[3] << " -W "
+               << miopen::deref(inDesc).GetLengths()[4];
+        }
+        else if(size == 4)
+        {
+            ss << " -c " << miopen::deref(inDesc).GetLengths()[1] << " -H "
+               << miopen::deref(inDesc).GetLengths()[2] << " -W "
+               << miopen::deref(inDesc).GetLengths()[3];
+        }
+        else if(size == 3)
+        {
+            ss << " -c " << miopen::deref(inDesc).GetLengths()[1] << " -W "
+               << miopen::deref(inDesc).GetLengths()[2];
+        }
+        else if(size == 2)
+        {
+            ss << " -c " << miopen::deref(inDesc).GetLengths()[1];
+        }
+
+        MIOPEN_LOG_DRIVER_CMD(ss.str());
+    }
+}
 
 extern "C" miopenStatus_t miopenOneHot(miopenHandle_t handle,
                                        const miopenTensorDescriptor_t inDesc,
@@ -39,18 +76,9 @@ extern "C" miopenStatus_t miopenOneHot(miopenHandle_t handle,
                                        void* output,
                                        int numClasses)
 {
-    // If num classes is to -1(default), the number of classes will be inferred as one greater than
-    // the largest class value in the input tensor.
-    if(numClasses == -1)
-    {
-        for(auto i = 0; i < miopen::deref(inDesc).GetSize(); i++)
-        {
-            numClasses = std::max(numClasses, static_cast<const int*>(input)[i] + 1);
-        }
-    }
-
     MIOPEN_LOG_FUNCTION(handle, inDesc, input, inputSize, outDesc, output, numClasses);
 
+    LogCmdOneHot(inDesc);
     return miopen::try_([&] {
         miopen::OneHot(miopen::deref(handle),
                        miopen::deref(inDesc),
