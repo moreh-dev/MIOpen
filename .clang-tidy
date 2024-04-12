@@ -186,6 +186,8 @@ Checks: >-
   -readability-simplify-boolean-expr,
   -readability-suspicious-call-argument,
   -readability-uppercase-literal-suffix,
+  -readability-avoid-const-params-in-decls,
+  -modernize-use-using,
 
 CheckOptions:
   - key: google-readability-braces-around-statements.ShortStatementLines

@@ -35,38 +35,24 @@
 
 namespace miopen {
 
-std::size_t GetOneHotWorkspaceSize(Handle& handle,
-                                const TensorDescriptor& inDesc,
-                                const long inputSize,
-                                const TensorDescriptor& outDesc,
-                                const long numClasses)
-{
-    auto ctx = ExecutionContext{&handle};
-    const auto problem = onehot::ProblemDescription{inDesc, outDesc, inputSize, numClasses};
-
-    const auto solvers = solver::SolverContainer<solver::onehot::OneHot>{};
-
-    auto pair_size_vector = solvers.GetWorkspaceSizes(ctx, problem);
-
-    return pair_size_vector.empty() ? static_cast<size_t>(-1) : pair_size_vector.front().second;
-}
-
 miopenStatus_t OneHot(Handle& handle,
-                          TensorDescriptor& inDesc,
-                          const void* input, long inputSize, 
-                          TensorDescriptor& outDesc,
-                          void* output, long numClasses)
+                      TensorDescriptor& inDesc,
+                      const void* input,
+                      long inputSize,
+                      TensorDescriptor& outDesc,
+                      void* output,
+                      int numClasses)
 {
     const auto problem = onehot::ProblemDescription{inDesc, outDesc, inputSize, numClasses};
 
     const auto invoke_params = [&]() {
-        auto tmp           = onehot::InvokeParams{};
-        tmp.inDesc         = &inDesc;
-        tmp.outDesc        = &outDesc;
-        tmp.input          = input;
-        tmp.output         = output;
-        tmp.input_size     = inputSize;
-        tmp.num_classes    = numClasses;
+        auto tmp        = onehot::InvokeParams{};
+        tmp.inDesc      = &inDesc;
+        tmp.outDesc     = &outDesc;
+        tmp.input       = input;
+        tmp.output      = output;
+        tmp.input_size  = inputSize;
+        tmp.num_classes = numClasses;
         return tmp;
     }();
 

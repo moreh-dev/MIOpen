@@ -33,17 +33,13 @@ namespace miopen {
 struct Handle;
 struct TensorDescriptor;
 
-std::size_t GetOneHotWorkspaceSize(Handle& handle,
-                                const TensorDescriptor& inDesc,
-                                long inputSize,
-                                const TensorDescriptor& outDesc,
-                                long numClasses);
-
 miopenStatus_t OneHot(Handle& handle,
-                          TensorDescriptor& inDesc,
-                          ConstData_t input, long inputSize, 
-                          TensorDescriptor& outDesc,
-                          void* output, long numClasses);
+                      TensorDescriptor& inDesc,
+                      ConstData_t input,
+                      long inputSize,
+                      TensorDescriptor& outDesc,
+                      void* output,
+                      int numClasses);
 
 } // namespace miopen
 #endif // MIOPEN_ONEHOT_HPP_

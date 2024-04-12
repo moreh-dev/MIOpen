@@ -24,43 +24,40 @@
  *
  *******************************************************************************/
 
+#include <__clang_hip_math.h>
 #include <miopen/onehot.hpp>
 #include <miopen/errors.hpp>
 #include <miopen/handle.hpp>
 #include <miopen/logger.hpp>
 #include <miopen/tensor_ops.hpp>
 
-extern "C" miopenStatus_t miopenGetOneHostWorkspaceSize(miopenHandle_t handle,
-                                                       const miopenTensorDescriptor_t inDesc,
-                                                       const long inputSize,
-                                                       const miopenTensorDescriptor_t outDesc,
-                                                       const long numClasses,
-                                                       size_t* sizeInBytes)
+extern "C" miopenStatus_t miopenOneHot(miopenHandle_t handle,
+                                       const miopenTensorDescriptor_t inDesc,
+                                       const void* input,
+                                       const long inputSize,
+                                       const miopenTensorDescriptor_t outDesc,
+                                       void* output,
+                                       int numClasses)
 {
+    // If num classes is to -1(default), the number of classes will be inferred as one greater than
+    // the largest class value in the input tensor.
+    if(numClasses == -1)
+    {
+        for(auto i = 0; i < miopen::deref(inDesc).GetSize(); i++)
+        {
+            numClasses = std::max(numClasses, static_cast<const int*>(input)[i] + 1);
+        }
+    }
 
-    MIOPEN_LOG_FUNCTION(handle, inDesc, inputSize, outDesc, numClasses);
-
-    return miopen::try_([&] {
-        miopen::deref(sizeInBytes) = miopen::GetOneHotWorkspaceSize(
-            miopen::deref(handle), miopen::deref(inDesc), inputSize, miopen::deref(outDesc), numClasses);
-    });
-};
-
-extern "C" miopenStatus_t miopenOneHotForward(miopenHandle_t handle,
-                                              const miopenTensorDescriptor_t inDesc,
-                                              const void* input, const long inputSize, 
-                                              const miopenTensorDescriptor_t outDesc,
-                                              void* output, const long numClasses)
-{
     MIOPEN_LOG_FUNCTION(handle, inDesc, input, inputSize, outDesc, output, numClasses);
 
     return miopen::try_([&] {
         miopen::OneHot(miopen::deref(handle),
-                           miopen::deref(inDesc),
-                           DataCast(input),
-                           inputSize,
-                           miopen::deref(outDesc),
-                           DataCast(output),
-                           numClasses);
+                       miopen::deref(inDesc),
+                       DataCast(input),
+                       inputSize,
+                       miopen::deref(outDesc),
+                       DataCast(output),
+                       numClasses);
     });
 }

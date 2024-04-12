@@ -6,12 +6,9 @@
 
 #include "float_types.h"
 
-#define VDTYPE int
-#define output_t VDTYPE
-
 // Output should be initialized with `off_value`.
 extern "C" __global__ void
-OneHotContiguous(const int* input, output_t* output, long input_size, long num_classes)
+OneHotContiguous(const int* input, int* output, long input_size, int num_classes)
 {
     size_t gid = threadIdx.x + blockIdx.x * blockDim.x;
     if(gid >= input_size)
@@ -30,6 +27,5 @@ OneHotContiguous(const int* input, output_t* output, long input_size, long num_c
         return;
     }
 
-    output_t on_val                 = output_t(1);
-    output[gid * num_classes + val] = on_val;
+    output[gid * num_classes + val] = 1;
 }

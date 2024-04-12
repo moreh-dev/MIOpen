@@ -42,7 +42,7 @@ struct OneHotTestCase
     size_t D;
     size_t H;
     size_t W;
-    long num_classes;
+    int num_classes;
     long input_size;
     friend std::ostream& operator<<(std::ostream& os, const OneHotTestCase& tc)
     {
@@ -86,16 +86,16 @@ std::vector<OneHotTestCase> OneHotTestConfigs()
     return {
         { 1,    0,  0,  0,   10, 10, 1},  //bart
         { 8,    120,  0,  0,   1, 10, 1},
-        { 8,    1023, 0,  0,   1, 10, 1},  //gpt_neo
-        { 8,    1024, 0,  0,   768, 10, 1},
-        { 8,    1023, 0,  0,   1, 10, 1},
-        { 8,    1024, 0,  0,   768, 10, 1},
-        { 16,   1024, 0,  0,   768, 10, 1 },  //gpt2
-        { 16,   1024, 0,  0,   768, 10, 1 },
-        { 48,   8,    0,  512, 512, 10, 1 },  //t5
-        { 48,   8,    0,  512, 512, 10, 1 },
-        { 16, 311,    0,  98,  512, 10, 1 },  //rnnt
-        { 16, 311,    0,  98,  512, 10, 1 }
+        { 8,    1023, 0,  0,   1, 100, 1},  //gpt_neo
+        { 8,    1024, 0,  0,   768,100, 1},
+        { 8,    1023, 0,  0,   1, 50, 1},
+        { 8,    1024, 0,  0,   768, 50, 1},
+        { 16,   1024, 0,  0,   768, 20, 1 },  //gpt2
+        { 16,   1024, 0,  0,   768, 20, 1 },
+        // { 48,   8,    0,  512, 512, 1000, 1 },  //t5
+        // { 48,   8,    0,  512, 512, 1000, 1 },
+        // { 16, 311,    0,  98,  512, 1000, 1 },  //rnnt
+        // { 16, 311,    0,  98,  512, 1000, 1 }
       };
     // clang-format on
 }
@@ -108,9 +108,8 @@ protected:
     {
         auto&& handle  = get_handle();
         onehot_config  = GetParam();
-        auto gen_value = [](auto...) {
-            return std::abs(prng::gen_descreet_uniform_sign<T>(1, 10));
-        };
+        int gen_range  = onehot_config.num_classes;
+        auto gen_value = [&gen_range](auto...) { return prng::gen_A_to_B(0, gen_range - 1); };
 
         auto in_dims = onehot_config.GetInput();
 

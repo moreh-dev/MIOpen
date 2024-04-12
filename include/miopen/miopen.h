@@ -6578,18 +6578,13 @@ MIOPEN_EXPORT miopenStatus_t miopenBackendInitialize(miopenBackendDescriptor_t d
                                                      miopenBackendDescriptorType_t descriptorType,
                                                      size_t sizeInBytes);
 
-MIOPEN_EXPORT miopenStatus_t miopenGetOneHotWorkspaceSize(miopenHandle_t handle,
-                                                       const miopenTensorDescriptor_t inDesc,
-                                                       const long inputSize,
-                                                       const miopenTensorDescriptor_t outDesc,
-                                                       const long numClasses,
-                                                       size_t* sizeInBytes);
-
 MIOPEN_EXPORT miopenStatus_t miopenOneHot(miopenHandle_t handle,
-                                              const miopenTensorDescriptor_t inDesc,
-                                              const void* input, const long inputSize, 
-                                              const miopenTensorDescriptor_t outDesc,
-                                              void* output, const long numClasses);         
+                                          const miopenTensorDescriptor_t inDesc,
+                                          const void* input,
+                                          const long inputSize,
+                                          const miopenTensorDescriptor_t outDesc,
+                                          void* output,
+                                          int numClasses = -1);
 
 /** @} */
 // CLOSEOUT BackendAPI DOXYGEN GROUP

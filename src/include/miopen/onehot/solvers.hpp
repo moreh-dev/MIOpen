@@ -46,7 +46,7 @@ struct OneHot final : OneHotSolver
                              const miopen::onehot::ProblemDescription& problem) const override;
     std::size_t GetWorkspaceSize(const ExecutionContext& context,
                                  const miopen::onehot::ProblemDescription& problem) const override;
-    bool MayNeedWorkspace() const override { return true; }
+    bool MayNeedWorkspace() const override { return false; }
 };
 
 } // namespace onehot

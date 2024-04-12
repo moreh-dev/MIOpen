@@ -39,13 +39,15 @@ struct ProblemDescription : ProblemDescriptionBase
     ProblemDescription(const TensorDescriptor& inDesc_,
                        const TensorDescriptor& outDesc_,
                        long inputSize_,
-                       long numClasses_)
-        : inDesc(inDesc_), outDesc(outDesc_), inputSize(inputSize_), numClasses(numClasses_) {}
+                       int numClasses_)
+        : inDesc(inDesc_), outDesc(outDesc_), inputSize(inputSize_), numClasses(numClasses_)
+    {
+    }
 
     const TensorDescriptor& GetInDesc() const { return inDesc; }
     const TensorDescriptor& GetOutDesc() const { return outDesc; }
     long getInputSize() const { return inputSize; }
-    long getNumClasses() const { return numClasses; }
+    int getNumClasses() const { return numClasses; }
 
     NetworkConfig MakeNetworkConfig() const override;
 
@@ -53,7 +55,7 @@ private:
     TensorDescriptor inDesc;
     TensorDescriptor outDesc;
     long inputSize;
-    long numClasses;
+    int numClasses;
 
     NetworkConfig MakeForwardNetworkConfig() const;
 };

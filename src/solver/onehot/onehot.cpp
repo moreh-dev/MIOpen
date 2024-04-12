@@ -39,35 +39,6 @@ namespace solver {
 
 namespace onehot {
 
-size_t get_reqd_work_item_cnt(const ExecutionContext& context)
-{
-    // At least 4 WGs per one CU
-    return static_cast<size_t>(LOCAL_SIZE * context.GetStream().GetMaxComputeUnits() * 4);
-}
-
-size_t get_reqd_work_item_cnt(const Handle& handle)
-{
-    // At least 4 WGs per one CU
-    return static_cast<size_t>(LOCAL_SIZE * handle.GetMaxComputeUnits() * 4);
-}
-
-size_t get_parallelism_size(size_t reqd_work_item_cnt, size_t output_numel, size_t reduce_size)
-{
-    size_t parallelism_size = 1ULL;
-    while(parallelism_size * output_numel < reqd_work_item_cnt &&
-          parallelism_size < std::sqrt(reduce_size))
-    {
-        parallelism_size *= 2ULL;
-    }
-    return parallelism_size;
-}
-
-bool is_parallelism(size_t reqd_work_item_cnt, size_t output_numel, size_t reduce_size)
-{
-    return !(output_numel > reqd_work_item_cnt) &&
-           (output_numel * reduce_size > reqd_work_item_cnt);
-}
-
 bool OneHot::IsApplicable(const ExecutionContext& context,
                           const miopen::onehot::ProblemDescription& problem) const
 {
@@ -81,42 +52,42 @@ ConvSolution OneHot::GetSolution(const ExecutionContext& context,
 
     auto result = ConvSolution{miopenStatusSuccess};
 
-    {
-        auto dtype = problem.GetInDesc().GetType();
+    auto dtype = problem.GetInDesc().GetType();
 
-        size_t xlocalsize = LOCAL_SIZE;
-        size_t xgridsize  = AlignUp(problem.getInputSize(), xlocalsize);
-        size_t ylocalsize = 1;
-        size_t ygridsize  = 1;
-        size_t zlocalsize = 1;
-        size_t zgridsize  = 1;
+    size_t xlocalsize = LOCAL_SIZE;
+    size_t xgridsize  = AlignUp(problem.getInputSize(), xlocalsize);
+    size_t ylocalsize = 1;
+    size_t ygridsize  = 1;
+    size_t zlocalsize = 1;
+    size_t zgridsize  = 1;
 
-        auto kernel = KernelInfo{};
+    auto kernel = KernelInfo{};
 
-        kernel.kernel_file = "MIOpenOneHot.cpp";
-        kernel.kernel_name = "OneHotContiguous";
+    kernel.kernel_file = "MIOpenOneHot.cpp";
+    kernel.kernel_name = "OneHotContiguous";
 
-        const auto build_params = KernelBuildParameters{
-            {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
-            {"MIOPEN_USE_FP32", static_cast<int>(dtype == miopenFloat)},
-            {"MIOPEN_USE_FP64", static_cast<int>(dtype == miopenDouble)},
-            {"MIOPEN_USE_BFP16", static_cast<int>(dtype == miopenBFloat16)},
-            {"MIOPEN_USE_INT32", static_cast<int>(dtype == miopenInt32)},
-            {"LOCAL_SIZE", LOCAL_SIZE},
-        };
+    const auto build_params = KernelBuildParameters{
+        {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
+        {"MIOPEN_USE_FP32", static_cast<int>(dtype == miopenFloat)},
+        {"MIOPEN_USE_FP64", static_cast<int>(dtype == miopenDouble)},
+        {"MIOPEN_USE_BFP16", static_cast<int>(dtype == miopenBFloat16)},
+        {"MIOPEN_USE_INT32", static_cast<int>(dtype == miopenInt32)},
+        {"LOCAL_SIZE", LOCAL_SIZE},
+    };
 
-        kernel.comp_options = build_params.GenerateFor(kbp::HIP{});
+    kernel.comp_options = build_params.GenerateFor(kbp::HIP{});
 
-        kernel.l_wk.push_back(xlocalsize);
-        kernel.l_wk.push_back(ylocalsize);
-        kernel.l_wk.push_back(zlocalsize);
+    kernel.l_wk.push_back(xlocalsize);
+    kernel.l_wk.push_back(ylocalsize);
+    kernel.l_wk.push_back(zlocalsize);
 
-        kernel.g_wk.push_back(xgridsize);
-        kernel.g_wk.push_back(ygridsize);
-        kernel.g_wk.push_back(zgridsize);
+    kernel.g_wk.push_back(xgridsize);
+    kernel.g_wk.push_back(ygridsize);
+    kernel.g_wk.push_back(zgridsize);
 
-        result.construction_params.push_back(kernel);
-    }
+    result.construction_params.push_back(kernel);
+    result.construction_params.push_back(kernel);
+    result.construction_params.push_back(kernel);
 
     result.invoker_factory = [](const std::vector<Kernel>& kernels) {
         return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {

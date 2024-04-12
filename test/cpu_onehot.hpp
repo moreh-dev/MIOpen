@@ -29,15 +29,20 @@
 #include "tensor_holder.hpp"
 
 template <class T>
-void cpu_onehot(tensor<T> input,
-                     tensor<T>& ref_output,
-                     long input_size,
-                     long num_classes)
+void cpu_onehot(tensor<T> input, tensor<T>& ref_output, long input_size, long num_classes = -1)
 {
+    if(num_classes == -1)
+    {
+        for(int i = 0; i < input_size; ++i)
+        {
+            num_classes = std::max(num_classes, static_cast<long>(input[i]) + 1);
+        }
+    }
     auto input_dims  = input.desc.GetLengths();
     auto output_dims = ref_output.desc.GetLengths();
 
-    for (int i = 0; i < input_size; ++i) {
+    for(int i = 0; i < input_size; ++i)
+    {
         ref_output[i * num_classes + static_cast<int>(input[i])] = 1;
     }
 }
