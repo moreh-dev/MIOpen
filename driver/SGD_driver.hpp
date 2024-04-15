@@ -177,9 +177,15 @@ template <typename Tgpu, typename Tref>
 int SGDDriver<Tgpu, Tref>::GetandSetData()
 {
     std::vector<int> len = GetInputTensorLengthsFromCmdLine();
+    lr = inflags.GetValueDouble("lr");
+    momentum = inflags.GetValueDouble("momentum");
+    dampening = inflags.GetValueDouble("dampening");
+    weight_decay = inflags.GetValueDouble("weight_decay");
+    nesterov = inflags.GetValueInt("nesterov");
+    momentum_initialized = inflags.GetValueInt("momentum_initialized");
 
     SetTensorNd(paramInDesc, len, data_type);
-    SetTensorNd(paramInDesc, len, data_type);
+    SetTensorNd(paramOutDesc, len, data_type);
     SetTensorNd(gradDesc, len, data_type);
     SetTensorNd(momentumBufferInDesc, len, data_type);
     SetTensorNd(momentumBufferOutDesc, len, data_type);
@@ -200,9 +206,9 @@ int SGDDriver<Tgpu, Tref>::AddCmdLineArgs()
     inflags.AddInputFlag("lr", 'l', "0.01", "Learning rate (Default=0.01)", "double");
     inflags.AddInputFlag("momentum", 'm', "0.1", "Momentum factor (Default=0.1)", "double");
     inflags.AddInputFlag("dampening", 'd', "0", "Dampening for momentum (Default=0)", "double");
-    inflags.AddInputFlag("weight_decay", 'w', "0", "Weight decay (Default=0)", "double");
-    inflags.AddInputFlag("nesterov", 'W', "N", "Enables Nesterow momentum (Default=0)", "char");
-    inflags.AddInputFlag("momentum_initiated", 'M', "0", "Is momentum initiated (Default=0)", "char");
+    inflags.AddInputFlag("weight_decay", 'e', "0", "Weight decay (Default=0)", "double");
+    inflags.AddInputFlag("nesterov", 'N', "0", "Enables Nesterow momentum (Default=0)", "char");
+    inflags.AddInputFlag("momentum_initialized", 'M', "0", "Is momentum initiated (Default=0)", "char");
 
     inflags.AddInputFlag("iter", 'i', "10", "Number of Iterations (Default=10)", "int");
     inflags.AddInputFlag("verify", 'V', "1", "Verify Each Layer (Default=1)", "int");
@@ -299,5 +305,138 @@ int SGDDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     return miopenStatusSuccess;
 }
 
+template <typename Tgpu, typename Tref>
+int SGDDriver<Tgpu, Tref>::RunForwardGPU()
+{
+    float kernel_total_time = 0;
+    float kernel_first_time = 0;
+
+    Timer t;
+    START_TIME
+
+    for(int i = 0; i < inflags.GetValueInt("iter"); i++)
+    {
+        miopenSGDForward(GetHandle(), 
+                         paramInDesc,
+                         param_in_dev->GetMem(),
+                         paramOutDesc,
+                         param_out_dev->GetMem(),
+                         gradDesc,
+                         grad_dev->GetMem(),
+                         momentumBufferInDesc,
+                         momentum_buffer_in_dev->GetMem(),
+                         momentumBufferOutDesc,
+                         momentum_buffer_out_dev->GetMem(),
+                         lr,
+                         momentum,
+                         dampening,
+                         weight_decay,
+                         nesterov,
+                         momentum_initialized);
+
+        float time = 0.0;
+        miopenGetKernelTime(GetHandle(), &time);
+        kernel_total_time += time;
+        if(i == 0)
+            kernel_first_time = time;
+    }
+
+    if(inflags.GetValueInt("time") == 1)
+    {
+        STOP_TIME
+        int iter = inflags.GetValueInt("iter");
+        if(WALL_CLOCK)
+            std::cout << "Wall-clock Time Forward SGD Elapsed: " << t.gettime_ms() / iter
+                      << " ms\n";
+        
+        float kernel_average_time = 
+            iter > 1 ? (kernel_total_time - kernel_first_time) / (iter - 1) : kernel_first_time;
+        std::cout << "GPU Kernel Time Forward SGD Elapsed: " << kernel_average_time << " ms\n";
+    }
+
+    if(param_out_dev->FromGPU(GetStream(), param_out.data()) != 0)
+        std::cerr << "Error copying (param_out_dev) from GPU, size: " << param_out_dev->GetSize() << std::endl;
+
+    if(momentum_buffer_out_dev->FromGPU(GetStream(), momentum_buffer_out.data()) != 0)
+        std::cerr << "Error copying (momentum_buffer_out_dev) from GPU, size: " << momentum_buffer_out_dev->GetSize() << std::endl;
+
+    return miopenStatusSuccess;
+}
+
+template <typename Tgpu, typename Tref>
+int SGDDriver<Tgpu, Tref>::RunForwardCPU()
+{
+    mloSGDForwardRunHost<Tgpu, Tref>(paramInDesc,
+                                     param_in.data(),
+                                     paramOutDesc,
+                                     param_outhost.data(),
+                                     gradDesc,
+                                     grad.data(),
+                                     momentumBufferInDesc,
+                                     momentum_buffer_in.data(),
+                                     momentumBufferOutDesc,
+                                     momentum_buffer_outhost.data(),
+                                     lr,
+                                     momentum,
+                                     dampening,
+                                     weight_decay,
+                                     nesterov,
+                                     momentum_initialized);
+    return miopenStatusSuccess;
+}
+
+template <typename Tgpu, typename Tref>
+int SGDDriver<Tgpu, Tref>::RunBackwardGPU()
+{
+    return miopenStatusSuccess;
+}
+
+template <typename Tgpu, typename Tref>
+Tref SGDDriver<Tgpu, Tref>::GetTolerance()
+{
+    // Computation error of fp16 is ~2^13 (=8192) bigger than
+    // the one of fp32 because mantissa is shorter by 13 bits.
+    auto tolerance = std::is_same<Tgpu, float>::value ? 1.5e-6 : 8.2e-3;
+
+    // bf16 mantissa has 7 bits, by 3 bits shorter than fp16.
+    if(std::is_same<Tgpu, bfloat16>::value)
+        tolerance *= 8.0;
+    return tolerance;
+} 
+
+template <typename Tgpu, typename Tref>
+int SGDDriver<Tgpu, Tref>::VerifyForward()
+{
+    RunForwardCPU();
+    const Tref tolerance = GetTolerance();
+    auto param_error = miopen::rms_range(param_outhost, param_out);
+    auto momentum_buffer_error = miopen::rms_range(momentum_buffer_outhost, momentum_buffer_out);
+
+    if(!std::isfinite(param_error) || param_error > tolerance)
+    {
+        std::cout << "Forward SGD Param Verifies FAILED: " << param_error << " > " << tolerance << std::endl;
+        return EC_VerifyFwd;
+    }
+    else if(!std::isfinite(momentum_buffer_error) || momentum_buffer_error > tolerance)
+    {
+        std::cout << "Forward SGD Momentum Buffer Verifies FAILED: " << momentum_buffer_error << " > " << tolerance << std::endl;
+        return EC_VerifyFwd;
+    }
+    else
+    {
+        std::cout << "Forward SGD Verifies OK on CPU reference "
+                  << "(param_error:" << param_error << " < " << tolerance << ", "
+                  << "momentum_buffer_error:" << momentum_buffer_error << " < " << tolerance << ')' 
+                  << std::endl;
+    }
+
+    return miopenStatusSuccess;
+}
+
+template <typename Tgpu, typename Tref>
+int SGDDriver<Tgpu, Tref>::VerifyBackward()
+{
+    return miopenStatusSuccess;
+}
 
 #endif // GUARD_MIOPEN_SGD_DRIVER_HPP

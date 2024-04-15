@@ -46,6 +46,7 @@
 #include "sum_driver.hpp"
 #include "argmax_driver.hpp"
 #include "cat_driver.hpp"
+#include "SGD_driver.hpp"
 #include <miopen/config.h>
 #include <miopen/stringutils.hpp>
 
@@ -259,6 +260,18 @@ int main(int argc, char* argv[])
     else if(base_arg == "catbfp16")
     {
         drv = new CatDriver<bfloat16>();
+    }
+    else if(base_arg == "SGD")
+    {
+        drv = new SGDDriver<float, float>();
+    }
+    else if(base_arg == "SGDfp16")
+    {
+        drv = new SGDDriver<float16, float>();
+    }
+    else if(base_arg == "SGDbfp16")
+    {
+        drv = new SGDDriver<bfloat16, float>();
     }
     else
     {
