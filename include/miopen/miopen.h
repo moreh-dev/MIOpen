@@ -6577,6 +6577,8 @@ MIOPEN_EXPORT miopenStatus_t miopenBackendDestroyDescriptor(miopenBackendDescrip
 MIOPEN_EXPORT miopenStatus_t miopenBackendInitialize(miopenBackendDescriptor_t descriptor,
                                                      miopenBackendDescriptorType_t descriptorType,
                                                      size_t sizeInBytes);
+/** @} */
+// CLOSEOUT BackendAPI DOXYGEN GROUP
 
 /** @addtogroup OneHot
  *
@@ -6605,7 +6607,7 @@ MIOPEN_EXPORT miopenStatus_t miopenOneHot(miopenHandle_t handle,
                                           int numClasses = -1);
 
 /** @} */
-// CLOSEOUT BackendAPI DOXYGEN GROUP
+// CLOSEOUT one_hot DOXYGEN GROUP
 #endif // MIOPEN_BETA_API
 
 #ifdef __cplusplus

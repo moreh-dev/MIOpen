@@ -51,6 +51,32 @@ struct ProblemDescription : ProblemDescriptionBase
 
     NetworkConfig MakeNetworkConfig() const override;
 
+    bool IsSameType() const
+    {
+        if(inDesc.GetType() != outDesc.GetType())
+        {
+#if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+            MIOPEN_THROW(miopenStatusBadParm, "Reduce: Tensor types do not match.");
+#else
+            return false;
+#endif
+        }
+        return true;
+    }
+
+    bool IsAllPacked() const
+    {
+        if(!(inDesc.IsPacked() && outDesc.IsPacked()))
+        {
+#if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+            MIOPEN_THROW(miopenStatusBadParm, "Reduce: Unpacked tensors not supported.");
+#else
+            return false;
+#endif
+        }
+        return true;
+    }
+
 private:
     TensorDescriptor inDesc;
     TensorDescriptor outDesc;

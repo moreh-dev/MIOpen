@@ -42,6 +42,10 @@ namespace onehot {
 bool OneHot::IsApplicable(const ExecutionContext& context,
                           const miopen::onehot::ProblemDescription& problem) const
 {
+    if(!problem.IsSameType())
+        return false;
+    if(!problem.IsAllPacked())
+        return false;
     return true;
 }
 
@@ -52,7 +56,9 @@ ConvSolution OneHot::GetSolution(const ExecutionContext& context,
 
     auto result = ConvSolution{miopenStatusSuccess};
 
-    auto dtype = problem.GetInDesc().GetType();
+    auto dtype        = problem.GetInDesc().GetType();
+    auto input_dtype  = miopen::GetDataType(problem.GetInDesc().GetType());
+    auto output_dtype = miopen::GetDataType(problem.GetOutDesc().GetType());
 
     size_t xlocalsize = LOCAL_SIZE;
     size_t xgridsize  = AlignUp(problem.getInputSize(), xlocalsize);
@@ -68,6 +74,8 @@ ConvSolution OneHot::GetSolution(const ExecutionContext& context,
 
     const auto build_params = KernelBuildParameters{
         {"MIOPEN_USE_INT32", static_cast<int>(dtype == miopenInt32)},
+        {"INPUT_TYPE", input_dtype},
+        {"OUTPUT_TYPE", output_dtype},
         {"LOCAL_SIZE", LOCAL_SIZE},
     };
 
