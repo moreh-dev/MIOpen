@@ -65,6 +65,7 @@
  * @defgroup TensorReduce
  * @defgroup find2
  * @defgroup sum
+ * @defgroup take
  * @defgroup argmax
  * @defgroup groupnorm
  * @defgroup cat
@@ -5791,6 +5792,41 @@ MIOPEN_EXPORT miopenStatus_t miopenSumForward(miopenHandle_t handle,
 
 /** @} */
 // CLOSEOUT SUM DOXYGEN GROUP
+#endif
+
+#ifdef MIOPEN_BETA_API
+
+// Take APIs
+/** @addtogroup take
+ *
+ *  @{
+ */
+
+/*! @brief Helper function to query the minimum workspace size required by the TakeForward call
+ *
+ // TODO: add params
+ */
+MIOPEN_EXPORT miopenStatus_t miopenGetTakeWorkspaceSize(miopenHandle_t handle,
+                                                       const miopenTensorDescriptor_t xDesc,
+                                                       const miopenTensorDescriptor_t indexDesc,
+                                                       const miopenTensorDescriptor_t yDesc,
+                                                       size_t* sizeInBytes);
+
+/*! @brief Execute TakeForward
+ * //TODO: add params
+ */
+MIOPEN_EXPORT miopenStatus_t miopenTakeForward(miopenHandle_t handle,
+                                              void* workspace,
+                                              size_t workspaceSizeInBytes,
+                                              const miopenTensorDescriptor_t xDesc,
+                                              const void* x,
+                                              const miopenTensorDescriptor_t indexDesc,
+                                              const void* index,
+                                              const miopenTensorDescriptor_t yDesc,
+                                              void* y);
+
+/** @} */
+// CLOSEOUT TAKE DOXYGEN GROUP
 #endif
 
 #ifdef MIOPEN_BETA_API
