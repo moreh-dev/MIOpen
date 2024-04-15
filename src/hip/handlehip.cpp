@@ -520,8 +520,6 @@ Program Handle::LoadProgram(const std::string& program_name,
         CompileTimer ct;
         auto p = HIPOCProgram{program_name, params, this->GetTargetProperties(), kernel_src};
         ct.Log("Kernel", program_name);
-        printf("asdasdfasdf Kernel: %s\n", program_name.c_str());
-        fflush(stdout);
 
 // Save to cache
 #if MIOPEN_ENABLE_SQLITE_KERN_CACHE

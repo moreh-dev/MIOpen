@@ -2,7 +2,7 @@
  *
  * MIT License
  *
- * Copyright (c) 2023 Advanced Micro Devices, Inc.
+ * Copyright (c) 2024 Advanced Micro Devices, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -148,12 +148,12 @@ protected:
 
     void Verify()
     {
-        int threshold = 1;
-        auto error    = miopen::rms_range(ref_output, output);
+        double threshold = 1e-6;
+        auto error       = miopen::rms_range(ref_output, output);
 
         EXPECT_TRUE(miopen::range_distance(ref_output) == miopen::range_distance(output));
-        EXPECT_TRUE(error < threshold) << "Error output beyond tolerance Error:" << error
-                                       << ",  Thresholdx10: " << threshold * 10;
+        EXPECT_TRUE(error < threshold)
+            << "Error output beyond tolerance Error:" << error << ",  Threshold: " << threshold;
     }
     OneHotTestCase onehot_config;
 
