@@ -6578,6 +6578,24 @@ MIOPEN_EXPORT miopenStatus_t miopenBackendInitialize(miopenBackendDescriptor_t d
                                                      miopenBackendDescriptorType_t descriptorType,
                                                      size_t sizeInBytes);
 
+/** @addtogroup OneHot
+ *
+ *  @{
+ */
+
+/*! @brief Execute a one_hot encoding
+ *
+ * @param handle                   MIOpen handle (input)
+ * @param inDesc                   Tensor descriptor for input tensor (input)
+ * @param input                    Input data tensor (input)
+ * @param inputSize                Total elements in input tensor (input)
+ * @param outDesc                  Tensor descriptor for output tensor (input)
+ * @param output                   Output data tensor (output)
+ * @param numClasses               Total number of classes. If set to -1, the number of classes will
+                                   be infered as one greater than the largest class value in the
+                                   input tensor.
+ * @return                         miopenStatus_t
+ */
 MIOPEN_EXPORT miopenStatus_t miopenOneHot(miopenHandle_t handle,
                                           const miopenTensorDescriptor_t inDesc,
                                           const void* input,
