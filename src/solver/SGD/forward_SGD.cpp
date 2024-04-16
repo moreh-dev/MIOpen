@@ -22,7 +22,7 @@ bool SGDForward::IsApplicable([[maybe_unused]] const ExecutionContext &constext,
     return true;
 }
 
-ConvSolution SGDForward::GetSolution(const ExecutionContext &context, 
+ConvSolution SGDForward::GetSolution([[maybe_unused]] const ExecutionContext &context, 
                                      const miopen::SGD::ProblemDescription &problem) const
 {
     auto result = ConvSolution{miopenStatusSuccess};
@@ -31,9 +31,9 @@ ConvSolution SGDForward::GetSolution(const ExecutionContext &context,
     auto dims = problem.GetParamInDesc().GetLengths();
 
     size_t param_size = 0;
-    for(int32_t i = 0; i < dims.size(); ++i)
+    for(auto dim : dims)
     {
-        param_size += dims[i];
+        param_size += dim;
     }
 
     size_t xlocalsize = LOCAL_SIZE;

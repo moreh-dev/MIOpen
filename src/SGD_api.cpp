@@ -57,9 +57,9 @@ extern "C" miopenStatus_t miopenSGDForward(miopenHandle_t handle,
                                               const double dampening,
                                               const double weightDecay,
                                               const char nesterov,
-                                              const char momentum_initialized)
+                                              const char momentumInitialized)
 {
-    MIOPEN_LOG_FUNCTION(handle, paramInDesc, paramOutDesc, gradDesc, momentumBufferInDesc, momentumBufferOutDesc, lr, momentum, dampening, weightDecay, (int)nesterov, (int)momentum_initialized);
+    MIOPEN_LOG_FUNCTION(handle, paramInDesc, paramOutDesc, gradDesc, momentumBufferInDesc, momentumBufferOutDesc, lr, momentum, dampening, weightDecay, (int)nesterov, (int)momentumInitialized);
     LogCmdSGD(paramInDesc, true);
     return miopen::try_([&] {
 
@@ -81,7 +81,7 @@ extern "C" miopenStatus_t miopenSGDForward(miopenHandle_t handle,
                            dampening,
                            weightDecay,
                            nesterov,
-                           momentum_initialized);
+                           momentumInitialized);
     }); 
 
 }
