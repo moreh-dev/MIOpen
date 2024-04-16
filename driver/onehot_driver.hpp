@@ -168,15 +168,7 @@ int OneHotDriver<Tgpu, Tref>::AddCmdLineArgs()
     inflags.AddInputFlag("in_d", 'D', "0", "Input Depth (Default=0)", "int");
     inflags.AddInputFlag("in_h", 'H', "0", "Input Height (Default=32)", "int");
     inflags.AddInputFlag("in_w", 'W', "8732", "Input Width (Default=32)", "int");
-
-    inflags.AddInputFlag(
-        "num_classes",
-        'R',
-        "-1",
-        "Total number of classes. If set to -1(default), the number of classes will be inferred as "
-        "one greater than the largest class value in the input tensor.",
-        "int");
-
+    inflags.AddInputFlag("num_classes", 'R', "-1", "Total number of Classes (Default=-1)", "int");
     inflags.AddInputFlag("iter", 'i', "10", "Number of Iterations (Default=10)", "int");
     inflags.AddInputFlag("verify", 'V', "1", "Verify Each Layer (Default=1)", "int");
     inflags.AddInputFlag("time", 't', "0", "Time Each Layer (Default=0)", "int");
@@ -314,18 +306,16 @@ template <typename Tgpu, typename Tref>
 int OneHotDriver<Tgpu, Tref>::VerifyForward()
 {
     RunForwardCPU();
-    double tolerance = 1e-6;
-    auto error       = miopen::rms_range(outhost, out);
+    int max_diff = (int)miopen::max_diff(outhost, out);
 
-    if(!std::isfinite(error) || error > tolerance)
+    if(max_diff > 0)
     {
-        std::cout << "One Hot FAILED: " << error << " > " << tolerance << std::endl;
+        std::cout << "One Hot FAILED: max_diff " << max_diff << std::endl;
         return EC_VerifyFwd;
     }
     else
     {
-        std::cout << "One Hot Verifies OK on CPU reference (" << error << " < " << tolerance << ')'
-                  << std::endl;
+        std::cout << "One Hot Verifies OK on CPU reference max_diff = " << max_diff << std::endl;
     }
 
     return miopenStatusSuccess;

@@ -56,7 +56,7 @@ struct ProblemDescription : ProblemDescriptionBase
         if(inDesc.GetType() != outDesc.GetType())
         {
 #if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
-            MIOPEN_THROW(miopenStatusBadParm, "Reduce: Tensor types do not match.");
+            MIOPEN_THROW(miopenStatusBadParm, "OneHot: Tensor types do not match.");
 #else
             return false;
 #endif
@@ -69,7 +69,7 @@ struct ProblemDescription : ProblemDescriptionBase
         if(!(inDesc.IsPacked() && outDesc.IsPacked()))
         {
 #if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
-            MIOPEN_THROW(miopenStatusBadParm, "Reduce: Unpacked tensors not supported.");
+            MIOPEN_THROW(miopenStatusBadParm, "OneHot: Unpacked tensors not supported.");
 #else
             return false;
 #endif

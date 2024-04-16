@@ -81,7 +81,7 @@ struct OneHotTestCase
 };
 
 std::vector<OneHotTestCase> OneHotTestConfigs()
-{ // n c d h w
+{ // n c d h w num_classes input_size(N*C*D*H*W)
     return {
         {1, 0, 0, 0, 10, 10, 1},
         {2, 0, 0, 10, 10, 10, 1},
@@ -148,12 +148,10 @@ protected:
 
     void Verify()
     {
-        double threshold = 1e-6;
-        auto error       = miopen::rms_range(ref_output, output);
+        int max_diff = miopen::max_diff(ref_output, output);
 
         EXPECT_TRUE(miopen::range_distance(ref_output) == miopen::range_distance(output));
-        EXPECT_TRUE(error < threshold)
-            << "Error output beyond tolerance Error:" << error << ",  Threshold: " << threshold;
+        EXPECT_TRUE(max_diff == 0) << "Error: max_diff between CPU and GPU " << max_diff;
     }
     OneHotTestCase onehot_config;
 

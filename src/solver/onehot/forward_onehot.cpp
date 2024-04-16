@@ -31,6 +31,7 @@
 #include <miopen/onehot.hpp>
 #include <miopen/target_properties.hpp>
 
+// TODO - trungbui: find optimal local_size
 #define LOCAL_SIZE 256
 
 namespace miopen {
@@ -39,7 +40,7 @@ namespace solver {
 
 namespace onehot {
 
-bool OneHot::IsApplicable(const ExecutionContext& context,
+bool OneHot::IsApplicable(const ExecutionContext& /*context*/,
                           const miopen::onehot::ProblemDescription& problem) const
 {
     if(!problem.IsSameType())
@@ -103,12 +104,6 @@ ConvSolution OneHot::GetSolution(const ExecutionContext& context,
     };
 
     return result;
-}
-
-std::size_t OneHot::GetWorkspaceSize(const ExecutionContext& context,
-                                     const miopen::onehot::ProblemDescription& problem) const
-{
-    return 0;
 }
 
 } // namespace onehot

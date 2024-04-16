@@ -24,7 +24,6 @@
  *
  *******************************************************************************/
 
-#include <cstdio>
 #include <miopen/config.h>
 #include <miopen/handle.hpp>
 

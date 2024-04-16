@@ -29,8 +29,6 @@
 #include <hip/hip_runtime.h>
 #endif
 
-#include "float_types.h"
-
 template <typename TI, typename TO>
 __device__ void
 oneHotContiguousKernel(const int* input, int* output, long input_size, int num_classes)
