@@ -35,15 +35,12 @@ namespace onehot {
 
 NetworkConfig ProblemDescription::MakeNetworkConfig() const
 {
-    auto dtype       = inDesc.GetType();
-    long outputNumel = inputSize * numClasses;
-
     std::ostringstream ss;
 
-    ss << "onehot";
-    ss << "dtype" << dtype;
+    ss << "in_dtype" << inDesc.GetType();
+    ss << "out_dtype" << outDesc.GetType();
     ss << "input_size" << inputSize;
-    ss << "output_numel" << outputNumel;
+    ss << "num_classes" << numClasses;
 
     return NetworkConfig{ss.str()};
 }

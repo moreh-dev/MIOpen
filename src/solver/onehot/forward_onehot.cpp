@@ -43,7 +43,9 @@ namespace onehot {
 bool OneHot::IsApplicable(const ExecutionContext& /*context*/,
                           const miopen::onehot::ProblemDescription& problem) const
 {
-    if(!problem.IsSameType())
+    if(!problem.IsShapeMatch())
+        return false;
+    if(!problem.IsNumClassesValid())
         return false;
     if(!problem.IsAllPacked())
         return false;
@@ -57,7 +59,6 @@ ConvSolution OneHot::GetSolution(const ExecutionContext& context,
 
     auto result = ConvSolution{miopenStatusSuccess};
 
-    auto dtype        = problem.GetInDesc().GetType();
     auto input_dtype  = miopen::GetDataType(problem.GetInDesc().GetType());
     auto output_dtype = miopen::GetDataType(problem.GetOutDesc().GetType());
 
@@ -74,7 +75,6 @@ ConvSolution OneHot::GetSolution(const ExecutionContext& context,
     kernel.kernel_name = "OneHotContiguous";
 
     const auto build_params = KernelBuildParameters{
-        {"MIOPEN_USE_INT32", static_cast<int>(dtype == miopenInt32)},
         {"INPUT_TYPE", input_dtype},
         {"OUTPUT_TYPE", output_dtype},
         {"LOCAL_SIZE", LOCAL_SIZE},
@@ -90,8 +90,6 @@ ConvSolution OneHot::GetSolution(const ExecutionContext& context,
     kernel.g_wk.push_back(ygridsize);
     kernel.g_wk.push_back(zgridsize);
 
-    result.construction_params.push_back(kernel);
-    result.construction_params.push_back(kernel);
     result.construction_params.push_back(kernel);
 
     result.invoker_factory = [](const std::vector<Kernel>& kernels) {

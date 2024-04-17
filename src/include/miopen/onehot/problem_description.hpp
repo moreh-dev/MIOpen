@@ -25,6 +25,7 @@
  *******************************************************************************/
 #pragma once
 
+#include <algorithm>
 #include <miopen/problem_description_base.hpp>
 #include <miopen/tensor.hpp>
 
@@ -51,17 +52,33 @@ struct ProblemDescription : ProblemDescriptionBase
 
     NetworkConfig MakeNetworkConfig() const override;
 
-    bool IsSameType() const
+    bool IsNumClassesValid() const
     {
-        if(inDesc.GetType() != outDesc.GetType())
+        if(numClasses != outDesc.GetLengths().back())
         {
 #if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
-            MIOPEN_THROW(miopenStatusBadParm, "OneHot: Tensor types do not match.");
+            MIOPEN_THROW(miopenStatusBadParm,
+                         "OneHot: Num classes not match output tensor last dim.");
 #else
             return false;
 #endif
         }
         return true;
+    }
+
+    bool IsShapeMatch() const
+    {
+        if(inDesc.GetSize() + 1 == outDesc.GetSize() && std::equal(inDesc.GetLengths().begin(),
+                                                                   inDesc.GetLengths().end(),
+                                                                   outDesc.GetLengths().begin()))
+        {
+            return true;
+        }
+#if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+        MIOPEN_THROW(miopenStatusBadParm, "OneHot: Input and output tensor shape do not match.");
+#else
+        return false;
+#endif
     }
 
     bool IsAllPacked() const
