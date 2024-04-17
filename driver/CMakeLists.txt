@@ -50,6 +50,7 @@ add_executable(MIOpenDriver
     dm_rnn.cpp
     dm_softmax.cpp
     dm_sum.cpp
+    dm_take.cpp
     dm_tensorop.cpp
     main.cpp
     registry_driver_maker.cpp

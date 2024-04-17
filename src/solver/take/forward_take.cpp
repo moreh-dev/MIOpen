@@ -45,8 +45,6 @@ bool TakeForward::IsApplicable(const ExecutionContext& context,
 {
     if(!problem.IsSameType())
         return false;
-    if(!problem.IsInt32Index())
-        return false;
     if(!problem.IsRightLength())
         return false;
     if(!problem.IsAllPacked())

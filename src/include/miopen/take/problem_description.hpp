@@ -64,20 +64,6 @@ struct ProblemDescription : ProblemDescriptionBase
         return true;
     }
 
-    // Check if index elements is int type
-    bool IsInt32Index() const
-    {
-        if(indexDesc.GetType() != miopenInt32)
-        {
-#if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
-            MIOPEN_THROW(miopenStatusBadParm, "Take: Index tensor type is not int32.");
-#else
-            return false;
-#endif
-        }
-        return true;
-    }
-
     bool IsRightLength() const
     {
         int32_t posy = 0;
