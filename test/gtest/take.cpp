@@ -42,7 +42,6 @@ std::string GetFloatArg()
     return tmp;
 }
 
-// TODO: apply clang format
 // TODO: add test for half, bfloat16
 struct TakeTestFloat : TakeTest<float>
 {

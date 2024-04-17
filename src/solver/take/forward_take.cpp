@@ -31,7 +31,8 @@
 #include <miopen/take.hpp>
 #include <miopen/target_properties.hpp>
 
-// TODO: tuning this param
+// TODO: as my function is in 2024H2, I don't have test examples now
+// I have tuned this param with random tests I generated (TODO)
 #define LOCAL_SIZE 256
 
 namespace miopen {
@@ -57,41 +58,42 @@ ConvSolution TakeForward::GetSolution(const ExecutionContext& context,
 {
     auto result = ConvSolution{miopenStatusSuccess};
 
-    auto dtype = problem.GetXDesc().GetType();
-    auto ydims = problem.GetYDesc().GetLengths();
+    auto input_dtype  = miopen::GetDataType(problem.GetXDesc().GetType());
+    auto output_dtype = miopen::GetDataType(problem.GetYDesc().GetType());
+    auto ydims        = problem.GetYDesc().GetLengths();
     auto output_numel =
         std::accumulate(ydims.begin(), ydims.end(), 1ULL, std::multiplies<size_t>());
 
-    size_t xlocalsize = LOCAL_SIZE;
-    size_t xgridsize  = AlignUp(output_numel, xlocalsize);
-    size_t ylocalsize = 1;
-    size_t ygridsize  = 1;
-    size_t zlocalsize = 1;
-    size_t zgridsize  = 1;
+    {
+        size_t xlocalsize = LOCAL_SIZE;
+        size_t xgridsize  = AlignUp(output_numel, xlocalsize);
+        size_t ylocalsize = 1;
+        size_t ygridsize  = 1;
+        size_t zlocalsize = 1;
+        size_t zgridsize  = 1;
 
-    auto kernel = KernelInfo{};
+        auto kernel = KernelInfo{};
 
-    kernel.kernel_file = "MIOpenTake.cpp";
-    kernel.kernel_name = "TakeFwdContiguous";
+        kernel.kernel_file = "MIOpenTake.cpp";
+        kernel.kernel_name = "TakeFwdContiguous";
 
-    const auto build_params = KernelBuildParameters{
-        {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
-        {"MIOPEN_USE_FP32", static_cast<int>(dtype == miopenFloat)},
-        {"MIOPEN_USE_FP64", static_cast<int>(dtype == miopenDouble)},
-        {"MIOPEN_USE_BFP16", static_cast<int>(dtype == miopenBFloat16)},
-    };
+        const auto build_params = KernelBuildParameters{
+            {"INPUT_TYPE", input_dtype == "bfloat16" ? "ushort" : input_dtype},
+            {"OUTPUT_TYPE", output_dtype == "bfloat16" ? "ushort" : output_dtype},
+        };
 
-    kernel.comp_options = build_params.GenerateFor(kbp::HIP{});
+        kernel.comp_options = build_params.GenerateFor(kbp::HIP{});
 
-    kernel.l_wk.push_back(xlocalsize);
-    kernel.l_wk.push_back(ylocalsize);
-    kernel.l_wk.push_back(zlocalsize);
+        kernel.l_wk.push_back(xlocalsize);
+        kernel.l_wk.push_back(ylocalsize);
+        kernel.l_wk.push_back(zlocalsize);
 
-    kernel.g_wk.push_back(xgridsize);
-    kernel.g_wk.push_back(ygridsize);
-    kernel.g_wk.push_back(zgridsize);
+        kernel.g_wk.push_back(xgridsize);
+        kernel.g_wk.push_back(ygridsize);
+        kernel.g_wk.push_back(zgridsize);
 
-    result.construction_params.push_back(kernel);
+        result.construction_params.push_back(kernel);
+    }
 
     result.invoker_factory = [](const std::vector<Kernel>& kernels) {
         return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {

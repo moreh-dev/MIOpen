@@ -35,9 +35,6 @@ namespace take {
 
 NetworkConfig ProblemDescription::MakeNetworkConfig() const
 {
-    // TODO: what to add to ss?
-    // https://morehvietnam.slack.com/archives/C06RZ10CKAA/p1713323946555479
-
     auto dtype        = xDesc.GetType();
     auto ylength      = yDesc.GetLengths();
     auto output_numel = std::accumulate(

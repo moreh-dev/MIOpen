@@ -42,8 +42,8 @@
 #include <../test/tensor_holder.hpp>
 #include <../test/verify.hpp>
 
-#ifndef MLO_SUMMHOST_H_
-#define MLO_SUMMHOST_H_
+#ifndef MLO_TAKEMHOST_H_
+#define MLO_TAKEMHOST_H_
 
 template <typename Tgpu, typename Tcheck>
 int32_t mloTakeForwardRunHost(miopenTensorDescriptor_t inputDesc,
@@ -323,12 +323,12 @@ int TakeDriver<Tgpu, Tref>::RunForwardGPU()
         STOP_TIME
         int iter = inflags.GetValueInt("iter");
         if(WALL_CLOCK)
-            std::cout << "Wall-clock Time Forward Sum Elapsed: " << t.gettime_ms() / iter
+            std::cout << "Wall-clock Time Forward Take Elapsed: " << t.gettime_ms() / iter
                       << " ms\n";
 
         float kernel_average_time =
             iter > 1 ? (kernel_total_time - kernel_first_time) / (iter - 1) : kernel_first_time;
-        std::cout << "GPU Kernel Time Forward Sum Elapsed: " << kernel_average_time << " ms\n";
+        std::cout << "GPU Kernel Time Forward Take Elapsed: " << kernel_average_time << " ms\n";
     }
 
     if(out_dev->FromGPU(GetStream(), out.data()) != 0)

@@ -30,13 +30,13 @@
 
 #include "float_types.h"
 
-// TODO: edit like this
-// https://github.com/ROCm/MIOpen/pull/2583/files#diff-7dd07357da54a672f7926d98e6219f9c9f93b16f977a836f670561f0af046b98
-extern "C" __global__ void TakeFwdContiguous(const FLOAT* __restrict__ x,
-                                             FLOAT* __restrict__ y,
-                                             const int32_t* __restrict__ index,
-                                             int64_t output_numel,
-                                             int64_t input_numel)
+// TODO: add FLOAT_ACCUM https://github.com/moreh-dev/MIOpen/pull/6#discussion_r1567733879
+template <typename TI, typename TO>
+__device__ void takefwdcontiguous(const TI* __restrict__ x,
+                                  TO* __restrict__ y,
+                                  const int32_t* __restrict__ index,
+                                  int64_t output_numel,
+                                  int64_t input_numel)
 {
     const uint64_t gid = threadIdx.x + blockIdx.x * blockDim.x;
     if(gid >= output_numel)
@@ -47,4 +47,14 @@ extern "C" __global__ void TakeFwdContiguous(const FLOAT* __restrict__ x,
         return;
     index_v += input_numel * static_cast<uint64_t>(index_v < 0);
     y[gid] = x[index_v];
+}
+
+extern "C" __global__ void TakeFwdContiguous(const INPUT_TYPE* __restrict__ x,
+                                             OUTPUT_TYPE* __restrict__ y,
+                                             const int32_t* __restrict__ index,
+                                             int64_t output_numel,
+                                             int64_t input_numel)
+{
+    // instantiate the kernel
+    takefwdcontiguous<INPUT_TYPE, OUTPUT_TYPE>(x, y, index, output_numel, input_numel);
 }
