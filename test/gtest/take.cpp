@@ -42,8 +42,15 @@ std::string GetFloatArg()
     return tmp;
 }
 
-// TODO: add test for half, bfloat16
 struct TakeTestFloat : TakeTest<float>
+{
+};
+
+struct TakeTestHalf : TakeTest<half_float::half>
+{
+};
+
+struct TakeTestBFloat16 : TakeTest<bfloat16>
 {
 };
 
@@ -64,4 +71,32 @@ TEST_P(TakeTestFloat, TakeTestFw)
     }
 };
 
+TEST_P(TakeTestHalf, TakeTestFw)
+{
+    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && (GetFloatArg() == "--half"))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
+
+TEST_P(TakeTestBFloat16, TakeTestFw)
+{
+    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && (GetFloatArg() == "--bfloat16"))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
+
 INSTANTIATE_TEST_SUITE_P(TakeTestSet, TakeTestFloat, testing::ValuesIn(TakeTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(TakeTestSet, TakeTestHalf, testing::ValuesIn(TakeTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(TakeTestSet, TakeTestBFloat16, testing::ValuesIn(TakeTestConfigs()));

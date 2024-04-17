@@ -352,7 +352,6 @@ int TakeDriver<Tgpu, Tref>::RunBackwardGPU()
     return miopenStatusSuccess;
 }
 
-// TODO: check pull request
 template <typename Tgpu, typename Tref>
 Tref TakeDriver<Tgpu, Tref>::GetTolerance()
 {
