@@ -50,7 +50,7 @@ struct TakeForward final : TakeSolver
     bool MayNeedWorkspace() const override { return true; }
 };
 
-}  // namespace take
+} // namespace take
 
 } // namespace solver
 

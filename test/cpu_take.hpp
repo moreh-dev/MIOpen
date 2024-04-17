@@ -29,22 +29,21 @@
 #include "tensor_holder.hpp"
 
 template <class T>
-void cpu_take_forward(tensor<T> input,
-                     tensor<T>& ref_output,
-                     tensor<int32_t> index)
+void cpu_take_forward(tensor<T> input, tensor<T>& ref_output, tensor<int32_t> index)
 {
     auto input_dims  = input.desc.GetLengths();
     auto output_dims = ref_output.desc.GetLengths();
 
     auto output_numel =
         std::accumulate(output_dims.begin(), output_dims.end(), 1L, std::multiplies<int64_t>());
- 
-    auto input_numel = 
+
+    auto input_numel =
         std::accumulate(input_dims.begin(), input_dims.end(), 1L, std::multiplies<int64_t>());
 
     par_ford(output_numel)([&](size_t o) {
         int32_t index_v = index[o];
-        if (index_v < -input_numel || index_v >= input_numel) return;
+        if(index_v < -input_numel || index_v >= input_numel)
+            return;
         index_v += input_numel * (index_v < 0);
         ref_output[o] = input[index_v];
     });

@@ -41,7 +41,7 @@ namespace solver {
 namespace take {
 
 bool TakeForward::IsApplicable(const ExecutionContext& context,
-                              const miopen::take::ProblemDescription& problem) const
+                               const miopen::take::ProblemDescription& problem) const
 {
     if(!problem.IsSameType())
         return false;
@@ -55,7 +55,7 @@ bool TakeForward::IsApplicable(const ExecutionContext& context,
 }
 
 ConvSolution TakeForward::GetSolution(const ExecutionContext& context,
-                                     const miopen::take::ProblemDescription& problem) const
+                                      const miopen::take::ProblemDescription& problem) const
 {
     auto result = ConvSolution{miopenStatusSuccess};
 
@@ -84,7 +84,7 @@ ConvSolution TakeForward::GetSolution(const ExecutionContext& context,
     };
 
     kernel.comp_options = build_params.GenerateFor(kbp::HIP{});
-    
+
     kernel.l_wk.push_back(xlocalsize);
     kernel.l_wk.push_back(ylocalsize);
     kernel.l_wk.push_back(zlocalsize);
@@ -107,27 +107,23 @@ ConvSolution TakeForward::GetSolution(const ExecutionContext& context,
             auto output_numel =
                 std::accumulate(ydims.begin(), ydims.end(), 1ULL, std::multiplies<size_t>());
 
-            auto input_numel = std::accumulate(
-                xdims.begin(), xdims.end(), 1ULL, std::multiplies<size_t>());
+            auto input_numel =
+                std::accumulate(xdims.begin(), xdims.end(), 1ULL, std::multiplies<size_t>());
 
-            kernel(params.x,
-                    params.y,
-                    params.index,
-                    output_numel,
-                    input_numel);
+            kernel(params.x, params.y, params.index, output_numel, input_numel);
         };
     };
 
     return result;
-}                           
+}
 
 std::size_t TakeForward::GetWorkspaceSize(const ExecutionContext& context,
-                                         const miopen::take::ProblemDescription& problem) const
+                                          const miopen::take::ProblemDescription& problem) const
 {
     return 0;
 }
 
-}  // namespace take
+} // namespace take
 
 } // namespace solver
 

@@ -30,19 +30,21 @@
 
 #include "float_types.h"
 
-// TODO: edit like this https://github.com/ROCm/MIOpen/pull/2583/files#diff-7dd07357da54a672f7926d98e6219f9c9f93b16f977a836f670561f0af046b98
+// TODO: edit like this
+// https://github.com/ROCm/MIOpen/pull/2583/files#diff-7dd07357da54a672f7926d98e6219f9c9f93b16f977a836f670561f0af046b98
 extern "C" __global__ void TakeFwdContiguous(const FLOAT* __restrict__ x,
                                              FLOAT* __restrict__ y,
                                              const int32_t* __restrict__ index,
                                              int64_t output_numel,
-                                             int64_t input_numel) 
+                                             int64_t input_numel)
 {
     const uint64_t gid = threadIdx.x + blockIdx.x * blockDim.x;
-    if (gid >= output_numel)
+    if(gid >= output_numel)
         return;
 
     int32_t index_v = index[gid];
-    if (index_v < -input_numel || index_v >= input_numel) return;
+    if(index_v < -input_numel || index_v >= input_numel)
+        return;
     index_v += input_numel * static_cast<uint64_t>(index_v < 0);
     y[gid] = x[index_v];
 }

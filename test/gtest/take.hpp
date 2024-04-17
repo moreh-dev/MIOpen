@@ -49,9 +49,9 @@ struct TakeTestCase
     friend std::ostream& operator<<(std::ostream& os, const TakeTestCase& tc)
     {
         return os << " in_N:" << tc.in_N << " in_C:" << tc.in_C << " in_D:" << tc.in_D
-                  << " in_H:" << tc.in_H << " in_W:" << tc.in_W 
-                  << " out_N:" << tc.out_N << " out_C:" << tc.out_C << " out_D:" << tc.out_D
-                  << " out_H:" << tc.out_H << " out_W:" << tc.out_W;
+                  << " in_H:" << tc.in_H << " in_W:" << tc.in_W << " out_N:" << tc.out_N
+                  << " out_C:" << tc.out_C << " out_D:" << tc.out_D << " out_H:" << tc.out_H
+                  << " out_W:" << tc.out_W;
     }
 
     std::vector<size_t> GetInput()
@@ -114,11 +114,11 @@ struct TakeTestCase
 };
 
 std::vector<TakeTestCase> TakeTestConfigs()
-{ 
+{
     // clang-format off
     return {
-        // { 6, 0, 0, 0, 0,
-        //   4, 0, 0, 0, 0},
+        { 6, 0, 0, 0, 0,
+          4, 0, 0, 0, 0}, // small test
         { 8, 120, 0, 0, 1,    
              96, 0, 0, 0, 0},  // 3d input, 1d output
         { 8, 120, 0, 0, 1,
@@ -153,13 +153,13 @@ struct TakeTest : public ::testing::TestWithParam<TakeTestCase>
 protected:
     void SetUp() override
     {
-        auto&& handle  = get_handle();
-        take_config     = GetParam();
-        
-        auto in_dims = take_config.GetInput();
+        auto&& handle = get_handle();
+        take_config   = GetParam();
+
+        auto in_dims   = take_config.GetInput();
         auto gen_value = [](auto...) { return prng::gen_descreet_uniform_sign<T>(1e-2, 100); };
-        input = tensor<T>{in_dims}.generate(gen_value);
-        
+        input          = tensor<T>{in_dims}.generate(gen_value);
+
         int32_t input_numel =
             std::accumulate(in_dims.begin(), in_dims.end(), 1ULL, std::multiplies<size_t>());
         auto out_dims = take_config.GetOutput();
@@ -167,7 +167,8 @@ protected:
             std::accumulate(out_dims.begin(), out_dims.end(), 1ULL, std::multiplies<size_t>());
 
         index = tensor<int32_t>{out_dims};
-        for (auto i = 0; i < output_numel; i++) {
+        for(auto i = 0; i < output_numel; i++)
+        {
             // Generate random index elements from [-input_numel, input_numel)
             index[i] = prng::gen_descreet_uniform_sign<int32_t>(1, input_numel);
         }
@@ -191,32 +192,16 @@ protected:
             workspace_dev = handle.Write(workspace.data);
         }
 
-        input_dev = handle.Write(input.data);
-        index_dev = handle.Write(index.data);
+        input_dev  = handle.Write(input.data);
+        index_dev  = handle.Write(index.data);
         output_dev = handle.Write(output.data);
     }
     void RunTest()
     {
         auto&& handle = get_handle();
 
-        // printf("input:\n");
-        // for (auto x = input.data.begin(); x != input.data.end(); x++) {
-        //     printf("%f ", *x);
-        // }
-        // printf("\n");
-
-        // printf("index:\n");
-        // for (auto x = index.data.begin(); x != index.data.end(); x++) {
-        //     printf("%d ", *x);
-        // }
-        // printf("\n");
-
         cpu_take_forward<T>(input, ref_output, index);
-        // printf("cpu_take_forward result:\n");
-        // for (auto x = ref_output.data.begin(); x != ref_output.data.end(); x++) {
-        //     printf("%f ", *x);
-    // }
-        // printf("\n");
+
         miopenStatus_t status;
 
         status = miopen::TakeForward(handle,
@@ -232,11 +217,6 @@ protected:
         EXPECT_EQ(status, miopenStatusSuccess);
 
         output.data = handle.Read<T>(output_dev, output.data.size());
-        // printf("take_forward result:\n");
-        // for (auto x = output.data.begin(); x != output.data.end(); x++) {
-        //     printf("%f ", *x);
-        // }
-        // printf("\n");
     }
 
     void Verify()
@@ -251,7 +231,7 @@ protected:
     TakeTestCase take_config;
 
     tensor<T> input;
-    tensor<int32_t> index; 
+    tensor<int32_t> index;
     tensor<T> output;
     tensor<T> workspace;
 

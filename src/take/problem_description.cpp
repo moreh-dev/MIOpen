@@ -36,14 +36,14 @@ namespace take {
 NetworkConfig ProblemDescription::MakeNetworkConfig() const
 {
     // TODO: what to add to ss?
+    // https://morehvietnam.slack.com/archives/C06RZ10CKAA/p1713323946555479
 
-    auto dtype = xDesc.GetType();
-    auto ylength = yDesc.GetLengths();
+    auto dtype        = xDesc.GetType();
+    auto ylength      = yDesc.GetLengths();
     auto output_numel = std::accumulate(
         ylength.begin(), ylength.end(), static_cast<size_t>(1), std::multiplies<size_t>());
-    auto xdims = xDesc.GetLengths();
-    auto input_numel = std::accumulate(
-                xdims.begin(), xdims.end(), 1ULL, std::multiplies<size_t>());
+    auto xdims       = xDesc.GetLengths();
+    auto input_numel = std::accumulate(xdims.begin(), xdims.end(), 1ULL, std::multiplies<size_t>());
 
     std::ostringstream ss;
 
@@ -54,6 +54,6 @@ NetworkConfig ProblemDescription::MakeNetworkConfig() const
     return NetworkConfig{ss.str()};
 }
 
-}  // namespace take
+} // namespace take
 
 } // namespace miopen

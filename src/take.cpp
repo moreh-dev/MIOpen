@@ -36,13 +36,12 @@
 namespace miopen {
 
 std::size_t GetTakeWorkspaceSize(Handle& handle,
-                                const TensorDescriptor& xDesc,
-                                const TensorDescriptor& indexDesc,
-                                const TensorDescriptor& yDesc)
+                                 const TensorDescriptor& xDesc,
+                                 const TensorDescriptor& indexDesc,
+                                 const TensorDescriptor& yDesc)
 {
-    auto ctx = ExecutionContext{&handle};
-    const auto problem =
-        take::ProblemDescription{xDesc, indexDesc, yDesc};
+    auto ctx           = ExecutionContext{&handle};
+    const auto problem = take::ProblemDescription{xDesc, indexDesc, yDesc};
 
     const auto algo    = AlgorithmName{"TakeForward"};
     const auto solvers = solver::SolverContainer<solver::take::TakeForward>{};
@@ -53,14 +52,14 @@ std::size_t GetTakeWorkspaceSize(Handle& handle,
 }
 
 miopenStatus_t TakeForward(Handle& handle,
-                          Data_t workspace,
-                          size_t workspaceSizeInBytes,
-                          const TensorDescriptor& xDesc,
-                          ConstData_t x,
-                          const TensorDescriptor& indexDesc,
-                          ConstData_t index,
-                          const TensorDescriptor& yDesc,
-                          Data_t y)
+                           Data_t workspace,
+                           size_t workspaceSizeInBytes,
+                           const TensorDescriptor& xDesc,
+                           ConstData_t x,
+                           const TensorDescriptor& indexDesc,
+                           ConstData_t index,
+                           const TensorDescriptor& yDesc,
+                           Data_t y)
 {
     const auto problem = take::ProblemDescription{xDesc, indexDesc, yDesc};
 

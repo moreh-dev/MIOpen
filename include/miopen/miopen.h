@@ -5796,41 +5796,6 @@ MIOPEN_EXPORT miopenStatus_t miopenSumForward(miopenHandle_t handle,
 
 #ifdef MIOPEN_BETA_API
 
-// Take APIs
-/** @addtogroup take
- *
- *  @{
- */
-
-/*! @brief Helper function to query the minimum workspace size required by the TakeForward call
- *
- // TODO: add params
- */
-MIOPEN_EXPORT miopenStatus_t miopenGetTakeWorkspaceSize(miopenHandle_t handle,
-                                                       const miopenTensorDescriptor_t xDesc,
-                                                       const miopenTensorDescriptor_t indexDesc,
-                                                       const miopenTensorDescriptor_t yDesc,
-                                                       size_t* sizeInBytes);
-
-/*! @brief Execute TakeForward
- * //TODO: add params
- */
-MIOPEN_EXPORT miopenStatus_t miopenTakeForward(miopenHandle_t handle,
-                                              void* workspace,
-                                              size_t workspaceSizeInBytes,
-                                              const miopenTensorDescriptor_t xDesc,
-                                              const void* x,
-                                              const miopenTensorDescriptor_t indexDesc,
-                                              const void* index,
-                                              const miopenTensorDescriptor_t yDesc,
-                                              void* y);
-
-/** @} */
-// CLOSEOUT TAKE DOXYGEN GROUP
-#endif
-
-#ifdef MIOPEN_BETA_API
-
 /*! @ingroup argmax
  * @brief Find the index of the maximum value of a tensor across dimensions.
  *
@@ -6617,6 +6582,41 @@ MIOPEN_EXPORT miopenStatus_t miopenBackendInitialize(miopenBackendDescriptor_t d
 /** @} */
 // CLOSEOUT BackendAPI DOXYGEN GROUP
 #endif // MIOPEN_BETA_API
+
+#ifdef MIOPEN_BETA_API
+
+// Take APIs
+/** @addtogroup take
+ *
+ *  @{
+ */
+
+/*! @brief Helper function to query the minimum workspace size required by the TakeForward call
+ *
+ // TODO: add params
+ */
+MIOPEN_EXPORT miopenStatus_t miopenGetTakeWorkspaceSize(miopenHandle_t handle,
+                                                        const miopenTensorDescriptor_t xDesc,
+                                                        const miopenTensorDescriptor_t indexDesc,
+                                                        const miopenTensorDescriptor_t yDesc,
+                                                        size_t* sizeInBytes);
+
+/*! @brief Execute TakeForward
+ * //TODO: add params
+ */
+MIOPEN_EXPORT miopenStatus_t miopenTakeForward(miopenHandle_t handle,
+                                               void* workspace,
+                                               size_t workspaceSizeInBytes,
+                                               const miopenTensorDescriptor_t xDesc,
+                                               const void* x,
+                                               const miopenTensorDescriptor_t indexDesc,
+                                               const void* index,
+                                               const miopenTensorDescriptor_t yDesc,
+                                               void* y);
+
+/** @} */
+// CLOSEOUT TAKE DOXYGEN GROUP
+#endif
 
 #ifdef __cplusplus
 }
