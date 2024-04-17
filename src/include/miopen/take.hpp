@@ -33,14 +33,7 @@ namespace miopen {
 struct Handle;
 struct TensorDescriptor;
 
-std::size_t GetTakeWorkspaceSize(Handle& handle,
-                                 const TensorDescriptor& xDesc,
-                                 const TensorDescriptor& indexDesc,
-                                 const TensorDescriptor& yDesc);
-
 miopenStatus_t TakeForward(Handle& handle,
-                           Data_t workspace,
-                           size_t workspaceSizeInBytes,
                            const TensorDescriptor& xDesc,
                            ConstData_t x,
                            const TensorDescriptor& indexDesc,

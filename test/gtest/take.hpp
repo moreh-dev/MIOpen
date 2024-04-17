@@ -179,19 +179,6 @@ protected:
         ref_output = tensor<T>{out_dims};
         std::fill(ref_output.begin(), ref_output.end(), std::numeric_limits<T>::quiet_NaN());
 
-        std::vector<size_t> workspace_dims;
-        ws_sizeInBytes = miopen::GetTakeWorkspaceSize(handle, input.desc, index.desc, output.desc);
-        if(ws_sizeInBytes == static_cast<size_t>(-1))
-            GTEST_SKIP();
-
-        workspace_dims.push_back(ws_sizeInBytes / sizeof(T));
-        if(ws_sizeInBytes != 0)
-        {
-            workspace = tensor<T>{workspace_dims};
-            std::fill(workspace.begin(), workspace.end(), std::numeric_limits<T>::quiet_NaN());
-            workspace_dev = handle.Write(workspace.data);
-        }
-
         input_dev  = handle.Write(input.data);
         index_dev  = handle.Write(index.data);
         output_dev = handle.Write(output.data);
@@ -205,8 +192,6 @@ protected:
         miopenStatus_t status;
 
         status = miopen::TakeForward(handle,
-                                     workspace_dev.get(),
-                                     ws_sizeInBytes,
                                      input.desc,
                                      input_dev.get(),
                                      index.desc,
@@ -233,14 +218,10 @@ protected:
     tensor<T> input;
     tensor<int32_t> index;
     tensor<T> output;
-    tensor<T> workspace;
 
     tensor<T> ref_output;
 
     miopen::Allocator::ManageDataPtr input_dev;
     miopen::Allocator::ManageDataPtr index_dev;
     miopen::Allocator::ManageDataPtr output_dev;
-    miopen::Allocator::ManageDataPtr workspace_dev;
-
-    size_t ws_sizeInBytes;
 };

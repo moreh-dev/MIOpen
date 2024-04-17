@@ -30,27 +30,7 @@
 #include <miopen/logger.hpp>
 #include <miopen/tensor_ops.hpp>
 
-// TODO: is this necessary?
-extern "C" miopenStatus_t miopenGetTakeWorkspaceSize(miopenHandle_t handle,
-                                                     const miopenTensorDescriptor_t xDesc,
-                                                     const miopenTensorDescriptor_t indexDesc,
-                                                     const miopenTensorDescriptor_t yDesc,
-                                                     size_t* sizeInBytes)
-{
-
-    MIOPEN_LOG_FUNCTION(handle, xDesc, indexDesc, yDesc);
-
-    return miopen::try_([&] {
-        miopen::deref(sizeInBytes) = miopen::GetTakeWorkspaceSize(miopen::deref(handle),
-                                                                  miopen::deref(xDesc),
-                                                                  miopen::deref(indexDesc),
-                                                                  miopen::deref(yDesc));
-    });
-};
-
 extern "C" miopenStatus_t miopenTakeForward(miopenHandle_t handle,
-                                            void* workspace,
-                                            size_t workspaceSizeInBytes,
                                             const miopenTensorDescriptor_t xDesc,
                                             const void* x,
                                             const miopenTensorDescriptor_t indexDesc,
@@ -58,13 +38,10 @@ extern "C" miopenStatus_t miopenTakeForward(miopenHandle_t handle,
                                             const miopenTensorDescriptor_t yDesc,
                                             void* y)
 {
-    MIOPEN_LOG_FUNCTION(
-        handle, workspace, workspaceSizeInBytes, xDesc, x, indexDesc, index, yDesc, y);
+    MIOPEN_LOG_FUNCTION(handle, xDesc, x, indexDesc, index, yDesc, y);
 
     return miopen::try_([&] {
         miopen::TakeForward(miopen::deref(handle),
-                            DataCast(workspace),
-                            workspaceSizeInBytes,
                             miopen::deref(xDesc),
                             DataCast(x),
                             miopen::deref(indexDesc),

@@ -35,25 +35,7 @@
 
 namespace miopen {
 
-std::size_t GetTakeWorkspaceSize(Handle& handle,
-                                 const TensorDescriptor& xDesc,
-                                 const TensorDescriptor& indexDesc,
-                                 const TensorDescriptor& yDesc)
-{
-    auto ctx           = ExecutionContext{&handle};
-    const auto problem = take::ProblemDescription{xDesc, indexDesc, yDesc};
-
-    const auto algo    = AlgorithmName{"TakeForward"};
-    const auto solvers = solver::SolverContainer<solver::take::TakeForward>{};
-
-    auto pair_size_vector = solvers.GetWorkspaceSizes(ctx, problem);
-
-    return pair_size_vector.empty() ? static_cast<size_t>(-1) : pair_size_vector.front().second;
-}
-
 miopenStatus_t TakeForward(Handle& handle,
-                           Data_t workspace,
-                           size_t workspaceSizeInBytes,
                            const TensorDescriptor& xDesc,
                            ConstData_t x,
                            const TensorDescriptor& indexDesc,
@@ -64,16 +46,14 @@ miopenStatus_t TakeForward(Handle& handle,
     const auto problem = take::ProblemDescription{xDesc, indexDesc, yDesc};
 
     const auto invoke_params = [&]() {
-        auto tmp           = take::InvokeParams{};
-        tmp.type           = InvokeType::Run;
-        tmp.xDesc          = &xDesc;
-        tmp.yDesc          = &yDesc;
-        tmp.indexDesc      = &indexDesc;
-        tmp.x              = x;
-        tmp.y              = y;
-        tmp.index          = index;
-        tmp.workspace      = workspace;
-        tmp.workspace_size = workspaceSizeInBytes;
+        auto tmp      = take::InvokeParams{};
+        tmp.type      = InvokeType::Run;
+        tmp.xDesc     = &xDesc;
+        tmp.yDesc     = &yDesc;
+        tmp.indexDesc = &indexDesc;
+        tmp.x         = x;
+        tmp.y         = y;
+        tmp.index     = index;
         return tmp;
     }();
 

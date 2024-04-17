@@ -513,7 +513,7 @@ typedef enum
     miopenActivationABS      = 5, /*!< Absolute value \f$abs(x)\f$ */
     miopenActivationPOWER = 6, /*!< Scaled and shifted power \f$(\alpha + \beta * x)^{gamma}\f$ */
     miopenActivationCLIPPEDRELU =
-        7, /*!< Clipped Rectified Linear Unit \f$ min(\alpha, max(0,x)) \f$ */
+        7,                     /*!< Clipped Rectified Linear Unit \f$ min(\alpha, max(0,x)) \f$ */
     miopenActivationLEAKYRELU =
         8, /*!< Leaky Rectified Linear Unit \f$ \alpha * x | x <= 0; x | x > 0 \f$ */
     miopenActivationELU =
@@ -6591,22 +6591,19 @@ MIOPEN_EXPORT miopenStatus_t miopenBackendInitialize(miopenBackendDescriptor_t d
  *  @{
  */
 
-/*! @brief Helper function to query the minimum workspace size required by the TakeForward call
- *
- // TODO: add params
- */
-MIOPEN_EXPORT miopenStatus_t miopenGetTakeWorkspaceSize(miopenHandle_t handle,
-                                                        const miopenTensorDescriptor_t xDesc,
-                                                        const miopenTensorDescriptor_t indexDesc,
-                                                        const miopenTensorDescriptor_t yDesc,
-                                                        size_t* sizeInBytes);
-
 /*! @brief Execute TakeForward
- * //TODO: add params
+ *
+ * @param handle                   MIOpen handle (input)
+ * @param xDesc                    Tensor descriptor for input data tensor x (input)
+ * @param x                        Data tensor x (input)
+ * @param indexDesc                    Tensor descriptor for index data tensor index (input)
+ * @param index                        Data tensor index, which contains the indices into tensor
+ * (input)
+ * @param yDesc                    Tensor descriptor for output data tensor y (input)
+ * @param y                        Data tensor y (output)
+ * @return                         miopenStatus_t
  */
 MIOPEN_EXPORT miopenStatus_t miopenTakeForward(miopenHandle_t handle,
-                                               void* workspace,
-                                               size_t workspaceSizeInBytes,
                                                const miopenTensorDescriptor_t xDesc,
                                                const void* x,
                                                const miopenTensorDescriptor_t indexDesc,

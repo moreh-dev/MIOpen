@@ -45,9 +45,6 @@ struct TakeForward final : TakeSolver
                       const miopen::take::ProblemDescription& problem) const override;
     ConvSolution GetSolution(const ExecutionContext& context,
                              const miopen::take::ProblemDescription& problem) const override;
-    std::size_t GetWorkspaceSize(const ExecutionContext& context,
-                                 const miopen::take::ProblemDescription& problem) const override;
-    bool MayNeedWorkspace() const override { return true; }
 };
 
 } // namespace take
