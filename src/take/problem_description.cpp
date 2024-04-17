@@ -35,7 +35,7 @@ namespace take {
 
 NetworkConfig ProblemDescription::MakeNetworkConfig() const
 {
-    // TODO: what to add to ss? How NetworkConfig work?
+    // TODO: what to add to ss?
 
     auto dtype = xDesc.GetType();
     auto ylength = yDesc.GetLengths();

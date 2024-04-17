@@ -34,8 +34,8 @@
 extern "C" __global__ void TakeFwdContiguous(const FLOAT* __restrict__ x,
                                              FLOAT* __restrict__ y,
                                              const int32_t* __restrict__ index,
-                                             uint64_t output_numel,
-                                             uint64_t input_numel) 
+                                             int64_t output_numel,
+                                             int64_t input_numel) 
 {
     const uint64_t gid = threadIdx.x + blockIdx.x * blockDim.x;
     if (gid >= output_numel)

@@ -121,6 +121,11 @@ ConvSolution TakeForward::GetSolution(const ExecutionContext& context,
     return result;
 }                           
 
+std::size_t TakeForward::GetWorkspaceSize(const ExecutionContext& context,
+                                         const miopen::take::ProblemDescription& problem) const
+{
+    return 0;
+}
 
 }  // namespace take
 

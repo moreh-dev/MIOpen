@@ -23,35 +23,46 @@
  * SOFTWARE.
  *
  *******************************************************************************/
-#pragma once
 
-#include <miopen/take/problem_description.hpp>
-#include <miopen/solver.hpp>
-#include <utility>
+#include "take.hpp"
+#include <miopen/env.hpp>
 
-namespace miopen {
-
-namespace solver {
+MIOPEN_DECLARE_ENV_VAR_STR(MIOPEN_TEST_FLOAT_ARG)
+MIOPEN_DECLARE_ENV_VAR_BOOL(MIOPEN_TEST_ALL)
 
 namespace take {
 
-using TakeSolver = NonTunableSolverBase<ExecutionContext, miopen::take::ProblemDescription>;
-
-struct TakeForward final : TakeSolver
+std::string GetFloatArg()
 {
-    const std::string& SolverDbId() const override { return GetSolverDbId<TakeForward>(); }
+    const auto& tmp = miopen::GetStringEnv(ENV(MIOPEN_TEST_FLOAT_ARG));
+    if(tmp.empty())
+    {
+        return "";
+    }
+    return tmp;
+}
 
-    bool IsApplicable(const ExecutionContext& context,
-                      const miopen::take::ProblemDescription& problem) const override;
-    ConvSolution GetSolution(const ExecutionContext& context,
-                             const miopen::take::ProblemDescription& problem) const override;
-    std::size_t GetWorkspaceSize(const ExecutionContext& context,
-                                 const miopen::take::ProblemDescription& problem) const override;
-    bool MayNeedWorkspace() const override { return true; }
+// TODO: apply clang format
+// TODO: add test for half, bfloat16
+struct TakeTestFloat : TakeTest<float>
+{
 };
 
-}  // namespace take
+} // namespace take
 
-} // namespace solver
+using namespace take;
 
-} // namespace miopen
+TEST_P(TakeTestFloat, TakeTestFw)
+{
+    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && (GetFloatArg() == "--float"))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
+
+INSTANTIATE_TEST_SUITE_P(TakeTestSet, TakeTestFloat, testing::ValuesIn(TakeTestConfigs()));

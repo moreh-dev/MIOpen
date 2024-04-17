@@ -23,35 +23,30 @@
  * SOFTWARE.
  *
  *******************************************************************************/
-#pragma once
+#ifndef GUARD_CPU_TAKE_HPP
+#define GUARD_CPU_TAKE_HPP
 
-#include <miopen/take/problem_description.hpp>
-#include <miopen/solver.hpp>
-#include <utility>
+#include "tensor_holder.hpp"
 
-namespace miopen {
-
-namespace solver {
-
-namespace take {
-
-using TakeSolver = NonTunableSolverBase<ExecutionContext, miopen::take::ProblemDescription>;
-
-struct TakeForward final : TakeSolver
+template <class T>
+void cpu_take_forward(tensor<T> input,
+                     tensor<T>& ref_output,
+                     tensor<int32_t> index)
 {
-    const std::string& SolverDbId() const override { return GetSolverDbId<TakeForward>(); }
+    auto input_dims  = input.desc.GetLengths();
+    auto output_dims = ref_output.desc.GetLengths();
 
-    bool IsApplicable(const ExecutionContext& context,
-                      const miopen::take::ProblemDescription& problem) const override;
-    ConvSolution GetSolution(const ExecutionContext& context,
-                             const miopen::take::ProblemDescription& problem) const override;
-    std::size_t GetWorkspaceSize(const ExecutionContext& context,
-                                 const miopen::take::ProblemDescription& problem) const override;
-    bool MayNeedWorkspace() const override { return true; }
-};
+    auto output_numel =
+        std::accumulate(output_dims.begin(), output_dims.end(), 1L, std::multiplies<int64_t>());
+ 
+    auto input_numel = 
+        std::accumulate(input_dims.begin(), input_dims.end(), 1L, std::multiplies<int64_t>());
 
-}  // namespace take
-
-} // namespace solver
-
-} // namespace miopen
+    par_ford(output_numel)([&](size_t o) {
+        int32_t index_v = index[o];
+        if (index_v < -input_numel || index_v >= input_numel) return;
+        index_v += input_numel * (index_v < 0);
+        ref_output[o] = input[index_v];
+    });
+}
+#endif
