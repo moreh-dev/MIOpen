@@ -186,7 +186,6 @@ std::vector<int> TakeDriver<Tgpu, Tref>::GetInputTensorLengthsFromCmdLine()
     int in_c = inflags.GetValueInt("in_c");
     int in_w = inflags.GetValueInt("in_w");
     int in_h = inflags.GetValueInt("in_h");
-    // int in_h = 32;
     int in_d = inflags.GetValueInt("in_d");
 
     if((in_n != 0) && (in_c != 0) && (in_d != 0) && (in_h != 0) && (in_w != 0))
@@ -289,6 +288,15 @@ int TakeDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     if(out_dev->ToGPU(GetStream(), out.data()) != 0)
         std::cerr << "Error copying (out) to GPU, size: " << out_dev->GetSize() << std::endl;
 
+    printf("in = ");
+    for(auto x = in.begin(); x != in.end(); x++)
+        printf("%f ", *x);
+    printf("\n");
+
+    printf("index = ");
+    for(auto x = index.begin(); x != index.end(); x++)
+        printf("%d ", *x);
+    printf("\n");
     return miopenStatusSuccess;
 }
 
@@ -334,6 +342,10 @@ int TakeDriver<Tgpu, Tref>::RunForwardGPU()
     if(out_dev->FromGPU(GetStream(), out.data()) != 0)
         std::cerr << "Error copying (out_dev) from GPU, size: " << out_dev->GetSize() << std::endl;
 
+    printf("out = ");
+    for(auto x = out.begin(); x != out.end(); x++)
+        printf("%f ", *x);
+    printf("\n");
     return miopenStatusSuccess;
 }
 
@@ -342,7 +354,10 @@ int TakeDriver<Tgpu, Tref>::RunForwardCPU()
 {
     mloTakeForwardRunHost<Tgpu, Tref>(
         inputDesc, indexDesc, outputDesc, in.data(), index.data(), outhost.data());
-
+    printf("outhost = ");
+    for(auto x = outhost.begin(); x != outhost.end(); x++)
+        printf("%f ", *x);
+    printf("\n");
     return miopenStatusSuccess;
 }
 
