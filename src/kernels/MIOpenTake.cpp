@@ -30,7 +30,6 @@
 
 #include "float_types.h"
 
-// TODO: add FLOAT_ACCUM https://github.com/moreh-dev/MIOpen/pull/6#discussion_r1567733879
 template <typename TI, typename TO>
 __device__ void takefwdcontiguous(const TI* __restrict__ x,
                                   TO* __restrict__ y,

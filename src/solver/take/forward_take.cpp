@@ -32,8 +32,8 @@
 #include <miopen/target_properties.hpp>
 
 // TODO: as my function is in 2024H2, I don't have test examples now
-// I have tuned this param with random tests I generated (TODO)
-#define LOCAL_SIZE 256
+// I have tuned this param with random tests I generated
+#define LOCAL_SIZE 1024
 
 namespace miopen {
 

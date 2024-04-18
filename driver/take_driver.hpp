@@ -269,6 +269,9 @@ int TakeDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     out     = std::vector<Tgpu>(out_sz, static_cast<Tgpu>(0));
     outhost = std::vector<Tref>(out_sz, static_cast<Tref>(0));
 
+    // TODO: We have a bug. For fp16 and bfp16, this will generate 0 for all in[i]. This bug also
+    // happened in many drivers: sum_driver, argmax_driver, ... However, you can still see correct
+    // result because sum of many 0 still equal 0, and argmax of 0 is still 0 =)))))))))
     for(int i = 0; i < in_sz; i++)
     {
         in[i] = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(-1), static_cast<Tgpu>(1));
@@ -288,15 +291,6 @@ int TakeDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     if(out_dev->ToGPU(GetStream(), out.data()) != 0)
         std::cerr << "Error copying (out) to GPU, size: " << out_dev->GetSize() << std::endl;
 
-    printf("in = ");
-    for(auto x = in.begin(); x != in.end(); x++)
-        printf("%f ", *x);
-    printf("\n");
-
-    printf("index = ");
-    for(auto x = index.begin(); x != index.end(); x++)
-        printf("%d ", *x);
-    printf("\n");
     return miopenStatusSuccess;
 }
 
@@ -342,10 +336,6 @@ int TakeDriver<Tgpu, Tref>::RunForwardGPU()
     if(out_dev->FromGPU(GetStream(), out.data()) != 0)
         std::cerr << "Error copying (out_dev) from GPU, size: " << out_dev->GetSize() << std::endl;
 
-    printf("out = ");
-    for(auto x = out.begin(); x != out.end(); x++)
-        printf("%f ", *x);
-    printf("\n");
     return miopenStatusSuccess;
 }
 
@@ -354,10 +344,6 @@ int TakeDriver<Tgpu, Tref>::RunForwardCPU()
 {
     mloTakeForwardRunHost<Tgpu, Tref>(
         inputDesc, indexDesc, outputDesc, in.data(), index.data(), outhost.data());
-    printf("outhost = ");
-    for(auto x = outhost.begin(); x != outhost.end(); x++)
-        printf("%f ", *x);
-    printf("\n");
     return miopenStatusSuccess;
 }
 
