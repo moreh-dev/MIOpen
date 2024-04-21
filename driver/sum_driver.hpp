@@ -363,7 +363,7 @@ int SumDriver<Tgpu, Tref>::VerifyForward()
 {
     RunForwardCPU();
     const Tref tolerance = GetTolerance();
-    auto error           = miopen::rms_range(outhost, out);
+    auto error           = miopen::rms_range(outhost, outout);
 
     if(!std::isfinite(error) || error > tolerance)
     {

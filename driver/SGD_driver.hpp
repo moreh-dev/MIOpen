@@ -1,3 +1,29 @@
+/*******************************************************************************
+ *
+ * MIT License
+ *
+ * Copyright (c) 2024 Advanced Micro Devices, Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ *******************************************************************************/
+
 #ifndef GUARD_MIOPEN_SGD_DRIVER_HPP
 #define GUARD_MIOPEN_SGD_DRIVER_HPP
 
@@ -8,7 +34,6 @@
 #include "random.hpp"
 #include <algorithm>
 #include <cfloat>
-#include <cstddef>
 #include <cstdlib>
 #include <memory>
 #include <miopen/miopen.h>
@@ -31,13 +56,13 @@ int32_t mloSGDForwardRunHost(miopenTensorDescriptor_t paramInputDesc,
                              miopenTensorDescriptor_t momentumBufferInputDesc,
                              Tgpu* momentumBufferInput,
                              miopenTensorDescriptor_t momentumBufferOutputDesc,
-                             Tcheck* momentumBufferOut,
+                             Tcheck* momentumBufferOutputHost,
                              double lr,
                              double momentum,
                              double dampening,
-                             double weight_decay,
+                             double weightDecay,
                              char nesterov,
-                             char momentum_initialized)
+                             char momentumInitialized)
 {
     auto dims = miopen::deref(paramInputDesc).GetLengths();
     size_t param_size = 0;
@@ -53,28 +78,28 @@ int32_t mloSGDForwardRunHost(miopenTensorDescriptor_t paramInputDesc,
         Tcheck param = static_cast<Tcheck>(paramInput[id]);
         Tcheck d_p = static_cast<Tcheck>(grad[id]);
 
-        if (weight_decay != 0)
+        if (weightDecay != 0)
         {
-            d_p += param * weight_decay;
+            d_p += param * static_cast<Tcheck>(weightDecay);
         }
 
         if (momentum != 0)
         {
             Tcheck momentum_v;
-            if (momentum_initialized)
+            if (momentumInitialized)
             {
                 momentum_v = static_cast<Tcheck>(momentumBufferInput[id]);
-                momentum_v = momentum_v * momentum + d_p * (1 - dampening);
+                momentum_v = momentum_v * static_cast<Tcheck>(momentum) + d_p * static_cast<Tcheck>(1 - dampening);
             }
             else
             {
                 momentum_v = d_p;
             }
-            momentumBufferOut[id] = momentum_v;
+            momentumBufferOutputHost[id] = momentum_v;
 
             if (nesterov)
             {
-                d_p = d_p + momentum_v * momentum;
+                d_p = d_p + momentum_v * static_cast<Tcheck>(momentum);
             }
             else
             {
@@ -82,7 +107,7 @@ int32_t mloSGDForwardRunHost(miopenTensorDescriptor_t paramInputDesc,
             }
         }
 
-        paramOutputHost[id] = param - lr * d_p;
+        paramOutputHost[id] = param - static_cast<Tcheck>(lr) * d_p;
     }
     return ret;
 }
@@ -207,8 +232,8 @@ int SGDDriver<Tgpu, Tref>::AddCmdLineArgs()
     inflags.AddInputFlag("momentum", 'm', "0.1", "Momentum factor (Default=0.1)", "double");
     inflags.AddInputFlag("dampening", 'd', "0", "Dampening for momentum (Default=0)", "double");
     inflags.AddInputFlag("weight_decay", 'e', "0", "Weight decay (Default=0)", "double");
-    inflags.AddInputFlag("nesterov", 'N', "0", "Enables Nesterow momentum (Default=0)", "char");
-    inflags.AddInputFlag("momentum_initialized", 'M', "0", "Is momentum initiated (Default=0)", "char");
+    inflags.AddInputFlag("nesterov", 'N', "0", "Enables Nesterow momentum (Default=0)", "int");
+    inflags.AddInputFlag("momentum_initialized", 'M', "0", "Is momentum initiated (Default=0)", "int");
 
     inflags.AddInputFlag("iter", 'i', "10", "Number of Iterations (Default=10)", "int");
     inflags.AddInputFlag("verify", 'V', "1", "Verify Each Layer (Default=1)", "int");
@@ -285,10 +310,8 @@ int SGDDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     for(int i = 0; i < param_sz; i++)
     {
         param_in[i]            = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.0), static_cast<Tgpu>(1.0));
-        param_out[i]           = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.0), static_cast<Tgpu>(1.0));
         grad[i]                = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.0), static_cast<Tgpu>(1.0));
         momentum_buffer_in[i]  = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.0), static_cast<Tgpu>(1.0));
-        momentum_buffer_out[i] = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.0), static_cast<Tgpu>(1.0));
     }
 
     if(param_in_dev->ToGPU(GetStream(), param_in.data()) != 0)
