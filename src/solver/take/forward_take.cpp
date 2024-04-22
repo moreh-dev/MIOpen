@@ -50,6 +50,8 @@ bool TakeForward::IsApplicable(const ExecutionContext& context,
         return false;
     if(!problem.IsAllPacked())
         return false;
+    if(!problem.IsInt32Index())
+        return false;
     return true;
 }
 

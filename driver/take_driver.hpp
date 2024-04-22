@@ -174,7 +174,7 @@ int TakeDriver<Tgpu, Tref>::GetandSetData()
     SetTensorNd(inputDesc, in_len, data_type);
     std::vector<int> out_len = GetOutputTensorLengthsFromCmdLine();
     SetTensorNd(outputDesc, out_len, data_type);
-    SetTensorNd(indexDesc, out_len, data_type);
+    SetTensorNd(indexDesc, out_len, miopenInt32);
 
     return 0;
 }

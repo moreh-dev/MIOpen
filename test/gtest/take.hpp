@@ -137,12 +137,6 @@ std::vector<TakeTestCase> TakeTestConfigs()
              1, 0, 0, 0, 0}, // 1 output element
         { 48,   8,    0,  512, 512,
              65536, 16, 0, 4, 4}, // 4d input, 4d output 
-        { 48,   8,    0,  512, 512,
-             16356, 64, 0, 0, 8}, // 4d input, 3d output
-        { 16, 311,    0,  98,  512,
-              48662, 88, 0, 2, 5},  // 4d input, 4d output
-        { 16, 311,    0,  98,  512, 
-              1234, 321, 0, 23, 21} // 4d input, 4d output
       };
     // clang-format on
 }

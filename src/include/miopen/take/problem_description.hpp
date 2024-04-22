@@ -96,6 +96,19 @@ struct ProblemDescription : ProblemDescriptionBase
         return true;
     }
 
+    bool IsInt32Index() const
+    {
+        if(indexDesc.GetType() != miopenInt32)
+        {
+#if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+            MIOPEN_THROW(miopenStatusBadParm, "Take: Tensor index must be an int32 tensor.");
+#else
+            return false;
+#endif
+        }
+        return true;
+    }
+
     NetworkConfig MakeNetworkConfig() const override;
 
 private:
