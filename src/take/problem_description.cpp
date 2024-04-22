@@ -36,11 +36,8 @@ namespace take {
 NetworkConfig ProblemDescription::MakeNetworkConfig() const
 {
     auto dtype        = xDesc.GetType();
-    auto ylength      = yDesc.GetLengths();
-    auto output_numel = std::accumulate(
-        ylength.begin(), ylength.end(), static_cast<size_t>(1), std::multiplies<size_t>());
-    auto xdims       = xDesc.GetLengths();
-    auto input_numel = std::accumulate(xdims.begin(), xdims.end(), 1ULL, std::multiplies<size_t>());
+    auto output_numel = yDesc.GetElementSize();
+    auto input_numel  = xDesc.GetElementSize();
 
     std::ostringstream ss;
 

@@ -60,9 +60,7 @@ ConvSolution TakeForward::GetSolution(const ExecutionContext& context,
 
     auto input_dtype  = miopen::GetDataType(problem.GetXDesc().GetType());
     auto output_dtype = miopen::GetDataType(problem.GetYDesc().GetType());
-    auto ydims        = problem.GetYDesc().GetLengths();
-    auto output_numel =
-        std::accumulate(ydims.begin(), ydims.end(), 1ULL, std::multiplies<size_t>());
+    auto output_numel = problem.GetYDesc().GetElementSize();
 
     {
         size_t xlocalsize = LOCAL_SIZE;
@@ -100,15 +98,8 @@ ConvSolution TakeForward::GetSolution(const ExecutionContext& context,
             decltype(auto) kernel = handle_.Run(kernels.front());
             decltype(auto) params = raw_params.CastTo<miopen::take::InvokeParams>();
 
-            auto xdims = params.xDesc->GetLengths();
-
-            auto ydims = params.yDesc->GetLengths();
-
-            auto output_numel =
-                std::accumulate(ydims.begin(), ydims.end(), 1ULL, std::multiplies<size_t>());
-
-            auto input_numel =
-                std::accumulate(xdims.begin(), xdims.end(), 1ULL, std::multiplies<size_t>());
+            auto output_numel = params.yDesc->GetElementSize();
+            auto input_numel  = params.xDesc->GetElementSize();
 
             kernel(params.x, params.y, params.index, output_numel, input_numel);
         };
