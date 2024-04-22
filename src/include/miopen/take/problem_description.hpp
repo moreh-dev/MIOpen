@@ -66,10 +66,9 @@ struct ProblemDescription : ProblemDescriptionBase
 
     bool IsRightLength() const
     {
-        int32_t posy = 0;
         for(int32_t i = 0; i < indexDesc.GetLengths().size(); i++)
         {
-            if(indexDesc.GetLengths()[i] != yDesc.GetLengths()[posy])
+            if(indexDesc.GetLengths()[i] != yDesc.GetLengths()[i])
             {
 #if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
                 MIOPEN_THROW(miopenStatusBadParm, "Take: Tensor dimension lengths do not match.");
@@ -77,8 +76,6 @@ struct ProblemDescription : ProblemDescriptionBase
                 return false;
 #endif
             }
-
-            posy++;
         }
         return true;
     }
