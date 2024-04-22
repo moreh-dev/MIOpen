@@ -261,17 +261,14 @@ int TakeDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     uint32_t ctx = 0;
 
     in_dev    = std::unique_ptr<GPUMem>(new GPUMem(ctx, in_sz, sizeof(Tgpu)));
-    index_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, out_sz, sizeof(Tgpu)));
+    index_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, out_sz, sizeof(int32_t)));
     out_dev   = std::unique_ptr<GPUMem>(new GPUMem(ctx, out_sz, sizeof(Tgpu)));
 
     in      = std::vector<Tgpu>(in_sz, static_cast<Tgpu>(0));
-    index   = std::vector<int32_t>(out_sz, static_cast<Tgpu>(0));
+    index   = std::vector<int32_t>(out_sz, static_cast<int32_t>(0));
     out     = std::vector<Tgpu>(out_sz, static_cast<Tgpu>(0));
     outhost = std::vector<Tref>(out_sz, static_cast<Tref>(0));
 
-    // TODO: We have a bug. For fp16 and bfp16, this will generate 0 for all in[i]. This bug also
-    // happened in many drivers: sum_driver, argmax_driver, ... However, you can still see correct
-    // result because sum of many 0 still equal 0, and argmax of 0 is still 0 =)))))))))
     for(int i = 0; i < in_sz; i++)
     {
         in[i] = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(-1), static_cast<Tgpu>(1));
@@ -279,14 +276,15 @@ int TakeDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     for(int i = 0; i < out_sz; i++)
     {
         // Generate random index from [-in_sz, insz)
-        index[i] = prng::gen_A_to_B<int32_t>(static_cast<Tgpu>(-10), static_cast<Tgpu>(10));
+        index[i] =
+            prng::gen_A_to_B<int32_t>(static_cast<int32_t>(-in_sz), static_cast<int32_t>(in_sz));
     }
 
     if(in_dev->ToGPU(GetStream(), in.data()) != 0)
         std::cerr << "Error copying (in) to GPU, size: " << in_dev->GetSize() << std::endl;
 
     if(index_dev->ToGPU(GetStream(), index.data()) != 0)
-        std::cerr << "Error copying (index) to GPU, size: " << in_dev->GetSize() << std::endl;
+        std::cerr << "Error copying (index) to GPU, size: " << index_dev->GetSize() << std::endl;
 
     if(out_dev->ToGPU(GetStream(), out.data()) != 0)
         std::cerr << "Error copying (out) to GPU, size: " << out_dev->GetSize() << std::endl;
