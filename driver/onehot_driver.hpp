@@ -28,6 +28,7 @@
 
 #include "InputFlags.hpp"
 #include "driver.hpp"
+#include "miopen/errors.hpp"
 #include "tensor_driver.hpp"
 #include "timer.hpp"
 #include "random.hpp"
@@ -78,6 +79,7 @@ public:
     {
         miopenCreateTensorDescriptor(&inputDesc);
         miopenCreateTensorDescriptor(&outputDesc);
+        miopenCreateTensorDescriptor(&errDesc);
 
         data_type = miopen_type<Tgpu>{};
     }
@@ -103,6 +105,7 @@ public:
     {
         miopenDestroyTensorDescriptor(inputDesc);
         miopenDestroyTensorDescriptor(outputDesc);
+        miopenDestroyTensorDescriptor(errDesc);
     }
 
 private:
@@ -110,12 +113,15 @@ private:
 
     miopenTensorDescriptor_t inputDesc;
     miopenTensorDescriptor_t outputDesc;
+    miopenTensorDescriptor_t errDesc;
 
     std::unique_ptr<GPUMem> in_dev;
     std::unique_ptr<GPUMem> out_dev;
+    std::unique_ptr<GPUMem> err_dev;
 
     std::vector<Tgpu> in;
     std::vector<Tgpu> out;
+    std::vector<Tgpu> err;
     std::vector<Tref> outhost;
 
     long input_size;
@@ -155,6 +161,10 @@ int OneHotDriver<Tgpu, Tref>::GetandSetData()
         out_len.push_back(1);
 
     SetTensorNd(outputDesc, out_len, data_type);
+
+    std::vector<int> err_len;
+    err_len.push_back(1);
+    SetTensorNd(errDesc, err_len, data_type);
 
     return 0;
 }
@@ -219,19 +229,23 @@ int OneHotDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
 {
     size_t in_sz  = GetTensorSize(inputDesc);
     size_t out_sz = GetTensorSize(outputDesc);
+    size_t err_sz = GetTensorSize(errDesc);
 
     uint32_t ctx = 0;
 
     in_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, in_sz, sizeof(Tgpu)));
     out_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, out_sz, sizeof(Tgpu)));
+    err_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, err_sz, sizeof(Tgpu)));
 
     in      = std::vector<Tgpu>(in_sz, static_cast<Tgpu>(0));
     out     = std::vector<Tgpu>(out_sz, static_cast<Tgpu>(0));
+    err     = std::vector<Tgpu>(err_sz, static_cast<Tgpu>(0));
     outhost = std::vector<Tref>(out_sz, static_cast<Tref>(0));
 
     for(int i = 0; i < in_sz; i++)
     {
-        in[i] = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.0), static_cast<Tgpu>(inflags.GetValueInt("num_classes")));
+        in[i] = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.0),
+                                       static_cast<Tgpu>(inflags.GetValueInt("num_classes")));
     }
 
     if(in_dev->ToGPU(GetStream(), in.data()) != 0)
@@ -239,6 +253,9 @@ int OneHotDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
 
     if(out_dev->ToGPU(GetStream(), out.data()) != 0)
         std::cerr << "Error copying (out) to GPU, size: " << out_dev->GetSize() << std::endl;
+
+    if(err_dev->ToGPU(GetStream(), err.data()) != 0)
+        std::cerr << "Error copying (err) to GPU, size: " << err_dev->GetSize() << std::endl;
 
     return miopenStatusSuccess;
 }
@@ -260,6 +277,8 @@ int OneHotDriver<Tgpu, Tref>::RunForwardGPU()
                      input_size,
                      outputDesc,
                      out_dev->GetMem(),
+                     errDesc,
+                     err_dev->GetMem(),
                      num_classes);
 
         float time = 0.0;
@@ -283,6 +302,18 @@ int OneHotDriver<Tgpu, Tref>::RunForwardGPU()
 
     if(out_dev->FromGPU(GetStream(), out.data()) != 0)
         std::cerr << "Error copying (out_dev) from GPU, size: " << out_dev->GetSize() << std::endl;
+    if(err_dev->FromGPU(GetStream(), err.data()) != 0)
+        std::cerr << "Error copying (err_dev) from GPU, size: " << err_dev->GetSize() << std::endl;
+
+    if(err.data()[0] == 1)
+    {
+        MIOPEN_THROW(miopenStatusBadParm, "Error: input tensor must not contains negative value.");
+    }
+    if(err.data()[0] == 2)
+    {
+        MIOPEN_THROW(miopenStatusBadParm,
+                     "Error: input tensor value must be less than num_classes");
+    }
 
     return miopenStatusSuccess;
 }

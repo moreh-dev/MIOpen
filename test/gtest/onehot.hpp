@@ -101,7 +101,7 @@ protected:
         auto&& handle  = get_handle();
         onehot_config  = GetParam();
         int gen_range  = onehot_config.num_classes;
-        auto gen_value = [&gen_range](auto...) { return prng::gen_A_to_B(0, gen_range - 1); };
+        auto gen_value = [&gen_range](auto...) { return prng::gen_A_to_B(-0, gen_range - 1); };
 
         auto in_dims = onehot_config.GetInput();
 
@@ -120,11 +120,15 @@ protected:
         output = tensor<T>{out_dims};
         std::fill(output.begin(), output.end(), 0);
 
+        err = tensor<T>(1);
+        std::fill(err.begin(), err.end(), 0);
+
         ref_output = tensor<T>{out_dims};
         std::fill(ref_output.begin(), ref_output.end(), 0);
 
         input_dev  = handle.Write(input.data);
         output_dev = handle.Write(output.data);
+        err_dev    = handle.Write(err.data);
     }
     void RunTest()
     {
@@ -138,9 +142,16 @@ protected:
                                 onehot_config.input_size,
                                 output.desc,
                                 output_dev.get(),
+                                err.desc,
+                                err_dev.get(),
                                 onehot_config.num_classes);
 
         EXPECT_EQ(status, miopenStatusSuccess);
+
+        err.data = handle.Read<T>(err_dev, err.data.size());
+        EXPECT_EQ(err.data[0], 0)
+            << "Error: input tensor value is negative or greater than num_classes";
+
         cpu_onehot<T>(input, ref_output, onehot_config.input_size, onehot_config.num_classes);
 
         output.data = handle.Read<T>(output_dev, output.data.size());
@@ -157,10 +168,12 @@ protected:
 
     tensor<T> input;
     tensor<T> output;
+    tensor<T> err;
     tensor<T> ref_output;
 
     miopen::Allocator::ManageDataPtr input_dev;
     miopen::Allocator::ManageDataPtr output_dev;
+    miopen::Allocator::ManageDataPtr err_dev;
 
     long input_size;
     long num_classes;

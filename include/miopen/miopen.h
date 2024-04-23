@@ -6606,6 +6606,8 @@ MIOPEN_EXPORT miopenStatus_t miopenOneHot(miopenHandle_t handle,
                                           const long inputSize,
                                           const miopenTensorDescriptor_t outDesc,
                                           void* output,
+                                          const miopenTensorDescriptor_t errDesc,
+                                          void* err,
                                           int numClasses = -1);
 
 /** @} */

@@ -74,6 +74,8 @@ extern "C" miopenStatus_t miopenOneHot(miopenHandle_t handle,
                                        const long inputSize,
                                        const miopenTensorDescriptor_t outDesc,
                                        void* output,
+                                       const miopenTensorDescriptor_t errDesc,
+                                       void* error,
                                        int numClasses)
 {
     MIOPEN_LOG_FUNCTION(handle, inDesc, input, inputSize, outDesc, output, numClasses);
@@ -86,6 +88,8 @@ extern "C" miopenStatus_t miopenOneHot(miopenHandle_t handle,
                        inputSize,
                        miopen::deref(outDesc),
                        DataCast(output),
+                       miopen::deref(errDesc),
+                       DataCast(error),
                        numClasses);
     });
 }

@@ -39,14 +39,20 @@ struct ProblemDescription : ProblemDescriptionBase
 {
     ProblemDescription(const TensorDescriptor& inDesc_,
                        const TensorDescriptor& outDesc_,
+                       const TensorDescriptor& errDesc_,
                        long inputSize_,
                        int numClasses_)
-        : inDesc(inDesc_), outDesc(outDesc_), inputSize(inputSize_), numClasses(numClasses_)
+        : inDesc(inDesc_),
+          outDesc(outDesc_),
+          errDesc(errDesc_),
+          inputSize(inputSize_),
+          numClasses(numClasses_)
     {
     }
 
     const TensorDescriptor& GetInDesc() const { return inDesc; }
     const TensorDescriptor& GetOutDesc() const { return outDesc; }
+    const TensorDescriptor& GetErrDesc() const { return errDesc; }
     long getInputSize() const { return inputSize; }
     int getNumClasses() const { return numClasses; }
 
@@ -97,6 +103,7 @@ struct ProblemDescription : ProblemDescriptionBase
 private:
     TensorDescriptor inDesc;
     TensorDescriptor outDesc;
+    TensorDescriptor errDesc;
     long inputSize;
     int numClasses;
 

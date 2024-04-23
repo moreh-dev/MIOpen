@@ -61,6 +61,7 @@ ConvSolution OneHot::GetSolution(const ExecutionContext& context,
 
     auto input_dtype  = miopen::GetDataType(problem.GetInDesc().GetType());
     auto output_dtype = miopen::GetDataType(problem.GetOutDesc().GetType());
+    auto err_dtype    = miopen::GetDataType(problem.GetErrDesc().GetType());
 
     size_t xlocalsize = LOCAL_SIZE;
     size_t xgridsize  = AlignUp(problem.getInputSize(), xlocalsize);
@@ -77,6 +78,7 @@ ConvSolution OneHot::GetSolution(const ExecutionContext& context,
     const auto build_params = KernelBuildParameters{
         {"INPUT_TYPE", input_dtype},
         {"OUTPUT_TYPE", output_dtype},
+        {"ERR_TYPE", err_dtype},
         {"LOCAL_SIZE", LOCAL_SIZE},
     };
 
@@ -97,7 +99,7 @@ ConvSolution OneHot::GetSolution(const ExecutionContext& context,
             decltype(auto) kernel = handle_.Run(kernels.front());
             decltype(auto) params = raw_params.CastTo<miopen::onehot::InvokeParams>();
 
-            kernel(params.input, params.output, params.input_size, params.num_classes);
+            kernel(params.input, params.output, params.err, params.input_size, params.num_classes);
         };
     };
 

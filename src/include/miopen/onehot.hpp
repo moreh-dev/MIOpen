@@ -39,6 +39,8 @@ miopenStatus_t OneHot(Handle& handle,
                       long inputSize,
                       TensorDescriptor& outDesc,
                       void* output,
+                      TensorDescriptor& errDesc,
+                      void* err,
                       int numClasses);
 
 } // namespace miopen

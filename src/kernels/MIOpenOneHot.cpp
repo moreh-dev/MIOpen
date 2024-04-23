@@ -28,21 +28,35 @@
 #include <hip/hip_runtime.h>
 #endif
 
-template <typename TI, typename TO>
+#define ERROR_CODE_NEG_VALUE 1
+#define ERROR_CODE_LARGER_THAN_NUM_CLASS 2
+
+template <typename TI, typename TO, typename TE>
 __device__ void
-oneHotContiguousKernel(const TI* input, TO* output, long input_size, int num_classes)
+oneHotContiguousKernel(const TI* input, TO* output, TE* err, long input_size, int num_classes)
 {
     size_t gid = threadIdx.x + blockIdx.x * blockDim.x;
     if(gid >= input_size)
         return;
 
     TI val = input[gid];
+    if(val < 0)
+    {
+        *err = ERROR_CODE_NEG_VALUE;
+        return;
+    }
+    if(val >= num_classes)
+    {
+        *err = ERROR_CODE_LARGER_THAN_NUM_CLASS;
+        return;
+    }
 
     output[gid * num_classes + val] = 1;
 }
 
-extern "C" __global__ void
-OneHotContiguous(const INPUT_TYPE* input, OUTPUT_TYPE* output, long input_size, int num_classes)
+extern "C" __global__ void OneHotContiguous(
+    const INPUT_TYPE* input, OUTPUT_TYPE* output, ERR_TYPE* err, long input_size, int num_classes)
 {
-    oneHotContiguousKernel<INPUT_TYPE, OUTPUT_TYPE>(input, output, input_size, num_classes);
+    oneHotContiguousKernel<INPUT_TYPE, OUTPUT_TYPE, ERR_TYPE>(
+        input, output, err, input_size, num_classes);
 }

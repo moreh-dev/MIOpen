@@ -38,9 +38,11 @@ struct InvokeParams : public miopen::InvokeParams
 
     const TensorDescriptor* inDesc  = nullptr;
     const TensorDescriptor* outDesc = nullptr;
+    const TensorDescriptor* errDesc = nullptr;
 
     ConstData_t input          = nullptr;
     Data_t output              = nullptr;
+    Data_t err                 = nullptr;
     Data_t workspace           = nullptr;
     std::size_t workspace_size = 0;
     long input_size            = 0;
