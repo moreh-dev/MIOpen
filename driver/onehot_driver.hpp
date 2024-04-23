@@ -163,12 +163,12 @@ template <typename Tgpu, typename Tref>
 int OneHotDriver<Tgpu, Tref>::AddCmdLineArgs()
 {
     inflags.AddInputFlag("forw", 'F', "1", "Run only Forward (Default=1)", "int");
-    inflags.AddInputFlag("batchsize", 'n', "256", "Mini-batch size (Default=100)", "int");
-    inflags.AddInputFlag("in_channels", 'c', "4", "Number of Input Channels (Default=3)", "int");
-    inflags.AddInputFlag("in_d", 'D', "0", "Input Depth (Default=0)", "int");
-    inflags.AddInputFlag("in_h", 'H', "0", "Input Height (Default=32)", "int");
-    inflags.AddInputFlag("in_w", 'W', "8732", "Input Width (Default=32)", "int");
-    inflags.AddInputFlag("num_classes", 'R', "-1", "Total number of Classes (Default=-1)", "int");
+    inflags.AddInputFlag("batchsize", 'n', "1", "Mini-batch size (Default=1)", "int");
+    inflags.AddInputFlag("in_channels", 'c', "1", "Number of Input Channels (Default=1)", "int");
+    inflags.AddInputFlag("in_d", 'D', "1", "Input Depth (Default=1)", "int");
+    inflags.AddInputFlag("in_h", 'H', "1", "Input Height (Default=1)", "int");
+    inflags.AddInputFlag("in_w", 'W', "1", "Input Width (Default=1)", "int");
+    inflags.AddInputFlag("num_classes", 'R', "10", "Total number of Classes (Default=10)", "int");
     inflags.AddInputFlag("iter", 'i', "10", "Number of Iterations (Default=10)", "int");
     inflags.AddInputFlag("verify", 'V', "1", "Verify Each Layer (Default=1)", "int");
     inflags.AddInputFlag("time", 't', "0", "Time Each Layer (Default=0)", "int");
@@ -231,7 +231,7 @@ int OneHotDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
 
     for(int i = 0; i < in_sz; i++)
     {
-        in[i] = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.0), static_cast<Tgpu>(1.0));
+        in[i] = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.0), static_cast<Tgpu>(inflags.GetValueInt("num_classes")));
     }
 
     if(in_dev->ToGPU(GetStream(), in.data()) != 0)
