@@ -28,8 +28,8 @@
 #include <hip/hip_runtime.h>
 #endif
 
-#define ERROR_CODE_NEG_VALUE 1
-#define ERROR_CODE_LARGER_THAN_NUM_CLASS 2
+#define ONEHOT_ERROR_CODE_NEG_VALUE 1
+#define ONEHOT_ERROR_CODE_LARGER_THAN_NUM_CLASS 2
 
 template <typename TI, typename TO, typename TE>
 __device__ void
@@ -42,12 +42,12 @@ oneHotContiguousKernel(const TI* input, TO* output, TE* err, long input_size, in
     TI val = input[gid];
     if(val < 0)
     {
-        *err = ERROR_CODE_NEG_VALUE;
+        *err = ONEHOT_ERROR_CODE_NEG_VALUE;
         return;
     }
     if(val >= num_classes)
     {
-        *err = ERROR_CODE_LARGER_THAN_NUM_CLASS;
+        *err = ONEHOT_ERROR_CODE_LARGER_THAN_NUM_CLASS;
         return;
     }
 
