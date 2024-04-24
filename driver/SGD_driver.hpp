@@ -65,10 +65,10 @@ int32_t mloSGDForwardRunHost(miopenTensorDescriptor_t paramInputDesc,
                              char momentumInitialized)
 {
     auto dims         = miopen::deref(paramInputDesc).GetLengths();
-    size_t param_size = 0;
+    size_t param_size = 1;
     for(size_t dim : dims)
     {
-        param_size += dim;
+        param_size *= dim;
     }
 
     int32_t ret = 0;
@@ -286,10 +286,10 @@ template <typename Tgpu, typename Tref>
 int SGDDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
 {
     auto dims       = miopen::deref(paramInDesc).GetLengths();
-    size_t param_sz = 0;
+    size_t param_sz = 1;
     for(size_t dim : dims)
     {
-        param_sz += dim;
+        param_sz *= dim;
     }
 
     uint32_t ctx = 0;

@@ -37,10 +37,10 @@ NetworkConfig ProblemDescription::MakeNetworkConfig() const
     auto dtype         = paramInDesc.GetType();
     int32_t total_dims = paramInDesc.GetLengths().size();
 
-    int32_t param_size = 0;
+    int32_t param_size = 1;
     for(int32_t i = 0; i < total_dims; ++i)
     {
-        param_size += paramInDesc.GetLengths()[i];
+        param_size *= paramInDesc.GetLengths()[i];
     }
 
     std::ostringstream ss;

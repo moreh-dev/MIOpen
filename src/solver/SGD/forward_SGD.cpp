@@ -56,10 +56,10 @@ ConvSolution SGDForward::GetSolution([[maybe_unused]] const ExecutionContext& co
     auto dtype = problem.GetParamInDesc().GetType();
     auto dims  = problem.GetParamInDesc().GetLengths();
 
-    size_t param_size = 0;
+    size_t param_size = 1;
     for(auto dim : dims)
     {
-        param_size += dim;
+        param_size *= dim;
     }
 
     size_t xlocalsize = LOCAL_SIZE;

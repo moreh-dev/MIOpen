@@ -31,10 +31,10 @@
 
 template <class T>
 void cpu_SGD_forward(tensor<T> param_input,
-                     tensor<T> ref_param_output,
+                     tensor<T>& ref_param_output,
                      tensor<T> grad,
                      tensor<T> momentum_buffer_input,
-                     tensor<T> ref_momentum_buffer_output,
+                     tensor<T>& ref_momentum_buffer_output,
                      double lr,
                      double momentum,
                      double dampening,
@@ -43,10 +43,10 @@ void cpu_SGD_forward(tensor<T> param_input,
                      char momentum_initialized)
 {
     auto dims         = param_input.desc.GetLengths();
-    size_t param_size = 0;
+    size_t param_size = 1;
     for(size_t dim : dims)
     {
-        param_size += dim;
+        param_size *= dim;
     }
 
     for(int id = 0; id < param_size; ++id)
