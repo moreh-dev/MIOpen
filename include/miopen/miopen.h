@@ -6587,6 +6587,9 @@ MIOPEN_EXPORT miopenStatus_t miopenBackendInitialize(miopenBackendDescriptor_t d
  *  @{
  */
 
+#define ERROR_CODE_NEG_VALUE 1
+#define ERROR_CODE_LARGER_THAN_NUM_CLASS 2
+
 /*! @brief Execute a one_hot encoding
  *
  * @param handle                   MIOpen handle (input)

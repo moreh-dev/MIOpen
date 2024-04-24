@@ -305,11 +305,11 @@ int OneHotDriver<Tgpu, Tref>::RunForwardGPU()
     if(err_dev->FromGPU(GetStream(), err.data()) != 0)
         std::cerr << "Error copying (err_dev) from GPU, size: " << err_dev->GetSize() << std::endl;
 
-    if(err.data()[0] == 1)
+    if(err.data()[0] == ERROR_CODE_NEG_VALUE)
     {
         MIOPEN_THROW(miopenStatusBadParm, "Error: input tensor must not contains negative value.");
     }
-    if(err.data()[0] == 2)
+    if(err.data()[0] == ERROR_CODE_LARGER_THAN_NUM_CLASS)
     {
         MIOPEN_THROW(miopenStatusBadParm,
                      "Error: input tensor value must be less than num_classes");
