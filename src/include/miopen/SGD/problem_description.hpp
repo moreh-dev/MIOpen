@@ -23,7 +23,7 @@
  * SOFTWARE.
  *
  *******************************************************************************/
- 
+
 #pragma once
 
 #include "miopen/errors.hpp"
@@ -54,8 +54,17 @@ struct ProblemDescription : ProblemDescriptionBase
                        double weightDecay_,
                        char nesterov_,
                        char momentumInitialized_)
-        : paramInDesc(paramInDesc_), paramOutDesc(paramOutDesc_), gradDesc(gradDesc_), momentumBufferInDesc(momentumBufferInDesc_), momentumBufferOutDesc(momentumBufferOutDesc_),
-        lr(lr_), momentum(momentum_), dampening(dampening_), weightDecay(weightDecay_), nesterov(nesterov_), momentumInitialized(momentumInitialized_) 
+        : paramInDesc(paramInDesc_),
+          paramOutDesc(paramOutDesc_),
+          gradDesc(gradDesc_),
+          momentumBufferInDesc(momentumBufferInDesc_),
+          momentumBufferOutDesc(momentumBufferOutDesc_),
+          lr(lr_),
+          momentum(momentum_),
+          dampening(dampening_),
+          weightDecay(weightDecay_),
+          nesterov(nesterov_),
+          momentumInitialized(momentumInitialized_)
     {
     }
 
@@ -91,19 +100,19 @@ struct ProblemDescription : ProblemDescriptionBase
         for(int32_t i = 0; i < paramInDesc.GetLengths().size(); ++i)
         {
             size_t len = paramInDesc.GetLengths()[i];
-            if (paramOutDesc.GetLengths()[i] != len)
+            if(paramOutDesc.GetLengths()[i] != len)
             {
                 return false;
             }
-            if (gradDesc.GetLengths()[i] != len)
+            if(gradDesc.GetLengths()[i] != len)
             {
                 return false;
             }
-            if (momentumBufferInDesc.GetLengths()[i] != len)
+            if(momentumBufferInDesc.GetLengths()[i] != len)
             {
                 return false;
             }
-            if (momentumBufferOutDesc.GetLengths()[i] != len)
+            if(momentumBufferOutDesc.GetLengths()[i] != len)
             {
                 return false;
             }
@@ -113,14 +122,13 @@ struct ProblemDescription : ProblemDescriptionBase
 
     bool IsAllPacked() const
     {
-        if (!(paramInDesc.IsPacked() && paramOutDesc.IsPacked() && gradDesc.IsPacked() && momentumBufferInDesc.IsPacked() && momentumBufferOutDesc.IsPacked()))
+        if(!(paramInDesc.IsPacked() && paramOutDesc.IsPacked() && gradDesc.IsPacked() &&
+             momentumBufferInDesc.IsPacked() && momentumBufferOutDesc.IsPacked()))
         {
             return false;
         }
         return true;
     }
-
-
 
     NetworkConfig MakeNetworkConfig() const override;
 
@@ -130,11 +138,11 @@ private:
     TensorDescriptor gradDesc;
     TensorDescriptor momentumBufferInDesc;
     TensorDescriptor momentumBufferOutDesc;
-    double lr = 0;
-    double momentum = 0;
-    double dampening = 0;
-    double weightDecay = 0;
-    char nesterov = 0;
+    double lr                = 0;
+    double momentum          = 0;
+    double dampening         = 0;
+    double weightDecay       = 0;
+    char nesterov            = 0;
     char momentumInitialized = 0;
 
     NetworkConfig MakeForwardNetworkConfig() const;

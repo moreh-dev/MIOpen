@@ -23,7 +23,7 @@
  * SOFTWARE.
  *
  *******************************************************************************/
- 
+
 #include "miopen/conv_solution.hpp"
 #include "miopen/miopen.h"
 #include <miopen/SGD/solvers.hpp>
@@ -40,21 +40,21 @@ namespace miopen {
 namespace solver {
 namespace SGD {
 
-bool SGDForward::IsApplicable([[maybe_unused]] const ExecutionContext &constext,
-                              const miopen::SGD::ProblemDescription &problem) const
+bool SGDForward::IsApplicable([[maybe_unused]] const ExecutionContext& constext,
+                              const miopen::SGD::ProblemDescription& problem) const
 {
-    if (!(problem.IsAllPacked() && problem.IsRightLength() && problem.IsSameType()))
+    if(!(problem.IsAllPacked() && problem.IsRightLength() && problem.IsSameType()))
         return false;
     return true;
 }
 
-ConvSolution SGDForward::GetSolution([[maybe_unused]] const ExecutionContext &context, 
-                                     const miopen::SGD::ProblemDescription &problem) const
+ConvSolution SGDForward::GetSolution([[maybe_unused]] const ExecutionContext& context,
+                                     const miopen::SGD::ProblemDescription& problem) const
 {
     auto result = ConvSolution{miopenStatusSuccess};
 
     auto dtype = problem.GetParamInDesc().GetType();
-    auto dims = problem.GetParamInDesc().GetLengths();
+    auto dims  = problem.GetParamInDesc().GetLengths();
 
     size_t param_size = 0;
     for(auto dim : dims)

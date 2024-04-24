@@ -23,7 +23,7 @@
  * SOFTWARE.
  *
  *******************************************************************************/
- 
+
 #ifndef GUARD_CPU_SGD_HPP
 #define GUARD_CPU_SGD_HPP
 
@@ -42,7 +42,7 @@ void cpu_SGD_forward(tensor<T> param_input,
                      char nesterov,
                      char momentum_initialized)
 {
-    auto dims = param_input.desc.GetLengths();
+    auto dims         = param_input.desc.GetLengths();
     size_t param_size = 0;
     for(size_t dim : dims)
     {
@@ -52,17 +52,17 @@ void cpu_SGD_forward(tensor<T> param_input,
     for(int id = 0; id < param_size; ++id)
     {
         T param = param_input[id];
-        T d_p = grad[id];
+        T d_p   = grad[id];
 
-        if (weight_decay != 0)
+        if(weight_decay != 0)
         {
             d_p += param * weight_decay;
         }
 
-        if (momentum != 0)
+        if(momentum != 0)
         {
             T momentum_v;
-            if (momentum_initialized)
+            if(momentum_initialized)
             {
                 momentum_v = momentum_buffer_input[id];
                 momentum_v = momentum_v * momentum + d_p * (1 - dampening);
@@ -73,7 +73,7 @@ void cpu_SGD_forward(tensor<T> param_input,
             }
             ref_momentum_buffer_output[id] = momentum_v;
 
-            if (nesterov)
+            if(nesterov)
             {
                 d_p = d_p + momentum_v * momentum;
             }

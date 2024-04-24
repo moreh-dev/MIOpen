@@ -41,7 +41,7 @@ static void LogCmdSGD(const miopenTensorDescriptor_t& praramInDesc, bool is_fwd)
     {
         std::stringstream ss;
         auto dtype = miopen::deref(praramInDesc).GetType();
-        if (dtype == miopenHalf)
+        if(dtype == miopenHalf)
         {
             ss << "SGDfp16";
         }
@@ -68,27 +68,37 @@ static void LogCmdSGD(const miopenTensorDescriptor_t& praramInDesc, bool is_fwd)
 }
 
 extern "C" miopenStatus_t miopenSGDForward(miopenHandle_t handle,
-                                              const miopenTensorDescriptor_t paramInDesc,
-                                              const void* paramIn,
-                                              const miopenTensorDescriptor_t paramOutDesc,
-                                              void* paramOut,
-                                              const miopenTensorDescriptor_t gradDesc,
-                                              const void* grad,
-                                              const miopenTensorDescriptor_t momentumBufferInDesc,
-                                              const void* momentumBufferIn,
-                                              const miopenTensorDescriptor_t momentumBufferOutDesc,
-                                              void* momentumBufferOut,
-                                              const double lr,
-                                              const double momentum,
-                                              const double dampening,
-                                              const double weightDecay,
-                                              const char nesterov,
-                                              const char momentumInitialized)
+                                           const miopenTensorDescriptor_t paramInDesc,
+                                           const void* paramIn,
+                                           const miopenTensorDescriptor_t paramOutDesc,
+                                           void* paramOut,
+                                           const miopenTensorDescriptor_t gradDesc,
+                                           const void* grad,
+                                           const miopenTensorDescriptor_t momentumBufferInDesc,
+                                           const void* momentumBufferIn,
+                                           const miopenTensorDescriptor_t momentumBufferOutDesc,
+                                           void* momentumBufferOut,
+                                           const double lr,
+                                           const double momentum,
+                                           const double dampening,
+                                           const double weightDecay,
+                                           const char nesterov,
+                                           const char momentumInitialized)
 {
-    MIOPEN_LOG_FUNCTION(handle, paramInDesc, paramOutDesc, gradDesc, momentumBufferInDesc, momentumBufferOutDesc, lr, momentum, dampening, weightDecay, (int)nesterov, (int)momentumInitialized);
+    MIOPEN_LOG_FUNCTION(handle,
+                        paramInDesc,
+                        paramOutDesc,
+                        gradDesc,
+                        momentumBufferInDesc,
+                        momentumBufferOutDesc,
+                        lr,
+                        momentum,
+                        dampening,
+                        weightDecay,
+                        (int)nesterov,
+                        (int)momentumInitialized);
     LogCmdSGD(paramInDesc, true);
     return miopen::try_([&] {
-
         std::vector<ConstData_t> xCast;
         std::vector<miopen::TensorDescriptor*> xDescCast;
         miopen::SGDForward(miopen::deref(handle),
@@ -108,6 +118,5 @@ extern "C" miopenStatus_t miopenSGDForward(miopenHandle_t handle,
                            weightDecay,
                            nesterov,
                            momentumInitialized);
-    }); 
-
+    });
 }

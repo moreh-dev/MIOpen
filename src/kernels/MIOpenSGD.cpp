@@ -52,35 +52,37 @@ extern "C" __global__ void SGDFwdContiguous(const FLOAT* __restrict__ param_in,
                                             size_t param_size)
 {
     const size_t gid = threadIdx.x + blockIdx.x * blockDim.x;
-    if (gid >= param_size) return;
+    if(gid >= param_size)
+        return;
 
     FLOAT_ACCUM param = CVT_FLOAT2ACCUM(param_in[gid]);
-    FLOAT_ACCUM d_p = CVT_FLOAT2ACCUM(grad[gid]);
+    FLOAT_ACCUM d_p   = CVT_FLOAT2ACCUM(grad[gid]);
 
-    if (weight_decay != 0) 
+    if(weight_decay != 0)
     {
         d_p += param * CVT_FLOAT2ACCUM(weight_decay);
     }
 
-    if (momentum != 0)
+    if(momentum != 0)
     {
         FLOAT_ACCUM momentum_v;
-        if (momentum_initialized) 
+        if(momentum_initialized)
         {
             momentum_v = CVT_FLOAT2ACCUM(momentum_buffer_in[gid]);
-            momentum_v = momentum_v * CVT_FLOAT2ACCUM(momentum) + d_p * CVT_FLOAT2ACCUM(1 - dampening);
+            momentum_v =
+                momentum_v * CVT_FLOAT2ACCUM(momentum) + d_p * CVT_FLOAT2ACCUM(1 - dampening);
         }
-        else 
+        else
         {
             momentum_v = d_p;
         }
         momentum_buffer_out[gid] = CVT_FLOAT2ACCUM(momentum_v);
 
-        if (nesterov)
+        if(nesterov)
         {
             d_p = d_p + momentum_v * CVT_FLOAT2ACCUM(momentum);
         }
-        else 
+        else
         {
             d_p = momentum_v;
         }
@@ -88,6 +90,3 @@ extern "C" __global__ void SGDFwdContiguous(const FLOAT* __restrict__ param_in,
 
     param_out[gid] = CVT_ACCUM2FLOAT(param - CVT_FLOAT2ACCUM(lr) * d_p);
 }
-
-                                            
-

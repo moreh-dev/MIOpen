@@ -23,11 +23,10 @@
  * SOFTWARE.
  *
  *******************************************************************************/
- 
+
 #include "SGD.hpp"
 #include "../tensor_holder.hpp"
 #include <miopen/env.hpp>
-
 
 MIOPEN_DECLARE_ENV_VAR_STR(MIOPEN_TEST_FLOAT_ARG)
 MIOPEN_DECLARE_ENV_VAR_BOOL(MIOPEN_TEST_ALL)
@@ -98,15 +97,8 @@ TEST_P(SGDTestBFloat16, SGDTestFw)
     }
 };
 
-INSTANTIATE_TEST_SUITE_P(SGDTestSet, 
-                         SGDTestFloat,
-                         testing::ValuesIn(SGDTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(SGDTestSet, SGDTestFloat, testing::ValuesIn(SGDTestConfigs()));
 
-INSTANTIATE_TEST_SUITE_P(SGDTestSet, 
-                         SGDTestHalf, 
-                         testing::ValuesIn(SGDTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(SGDTestSet, SGDTestHalf, testing::ValuesIn(SGDTestConfigs()));
 
-INSTANTIATE_TEST_SUITE_P(SGDTestSet, 
-                         SGDTestBFloat16, 
-                         testing::ValuesIn(SGDTestConfigs()));
-
+INSTANTIATE_TEST_SUITE_P(SGDTestSet, SGDTestBFloat16, testing::ValuesIn(SGDTestConfigs()));

@@ -23,7 +23,7 @@
  * SOFTWARE.
  *
  *******************************************************************************/
- 
+
 #pragma once
 
 #include <miopen/solver.hpp>
@@ -39,14 +39,15 @@ using SGDSolver = NonTunableSolverBase<ExecutionContext, miopen::SGD::ProblemDes
 
 struct SGDForward final : SGDSolver
 {
-    const std::string& SolverDbId() const override { return GetSolverDbId<SGDForward>();}
+    const std::string& SolverDbId() const override { return GetSolverDbId<SGDForward>(); }
 
     bool IsApplicable(const ExecutionContext& constext,
                       const miopen::SGD::ProblemDescription& problem) const override;
     ConvSolution GetSolution(const ExecutionContext& context,
                              const miopen::SGD::ProblemDescription& problem) const override;
-    std::size_t GetWorkspaceSize([[maybe_unused]] const ExecutionContext& context,
-                                 [[maybe_unused]] const miopen::SGD::ProblemDescription& problem) const override
+    std::size_t
+    GetWorkspaceSize([[maybe_unused]] const ExecutionContext& context,
+                     [[maybe_unused]] const miopen::SGD::ProblemDescription& problem) const override
     {
         return 0;
     }

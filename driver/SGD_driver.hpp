@@ -64,7 +64,7 @@ int32_t mloSGDForwardRunHost(miopenTensorDescriptor_t paramInputDesc,
                              char nesterov,
                              char momentumInitialized)
 {
-    auto dims = miopen::deref(paramInputDesc).GetLengths();
+    auto dims         = miopen::deref(paramInputDesc).GetLengths();
     size_t param_size = 0;
     for(size_t dim : dims)
     {
@@ -76,20 +76,21 @@ int32_t mloSGDForwardRunHost(miopenTensorDescriptor_t paramInputDesc,
     for(int id = 0; id < param_size; ++id)
     {
         Tcheck param = static_cast<Tcheck>(paramInput[id]);
-        Tcheck d_p = static_cast<Tcheck>(grad[id]);
+        Tcheck d_p   = static_cast<Tcheck>(grad[id]);
 
-        if (weightDecay != 0)
+        if(weightDecay != 0)
         {
             d_p += param * static_cast<Tcheck>(weightDecay);
         }
 
-        if (momentum != 0)
+        if(momentum != 0)
         {
             Tcheck momentum_v;
-            if (momentumInitialized)
+            if(momentumInitialized)
             {
                 momentum_v = static_cast<Tcheck>(momentumBufferInput[id]);
-                momentum_v = momentum_v * static_cast<Tcheck>(momentum) + d_p * static_cast<Tcheck>(1 - dampening);
+                momentum_v = momentum_v * static_cast<Tcheck>(momentum) +
+                             d_p * static_cast<Tcheck>(1 - dampening);
             }
             else
             {
@@ -97,7 +98,7 @@ int32_t mloSGDForwardRunHost(miopenTensorDescriptor_t paramInputDesc,
             }
             momentumBufferOutputHost[id] = momentum_v;
 
-            if (nesterov)
+            if(nesterov)
             {
                 d_p = d_p + momentum_v * static_cast<Tcheck>(momentum);
             }
@@ -163,11 +164,11 @@ private:
     miopenTensorDescriptor_t momentumBufferInDesc;
     miopenTensorDescriptor_t momentumBufferOutDesc;
 
-    std::unique_ptr<GPUMem>  param_in_dev;
-    std::unique_ptr<GPUMem>  param_out_dev;
-    std::unique_ptr<GPUMem>  grad_dev;
-    std::unique_ptr<GPUMem>  momentum_buffer_in_dev;
-    std::unique_ptr<GPUMem>  momentum_buffer_out_dev;
+    std::unique_ptr<GPUMem> param_in_dev;
+    std::unique_ptr<GPUMem> param_out_dev;
+    std::unique_ptr<GPUMem> grad_dev;
+    std::unique_ptr<GPUMem> momentum_buffer_in_dev;
+    std::unique_ptr<GPUMem> momentum_buffer_out_dev;
 
     std::vector<Tgpu> param_in;
     std::vector<Tgpu> param_out;
@@ -183,7 +184,7 @@ private:
     double dampening;
     double weight_decay;
     char nesterov;
-    char momentum_initialized;   
+    char momentum_initialized;
 };
 
 template <typename Tgpu, typename Tref>
@@ -202,11 +203,11 @@ template <typename Tgpu, typename Tref>
 int SGDDriver<Tgpu, Tref>::GetandSetData()
 {
     std::vector<int> len = GetInputTensorLengthsFromCmdLine();
-    lr = inflags.GetValueDouble("lr");
-    momentum = inflags.GetValueDouble("momentum");
-    dampening = inflags.GetValueDouble("dampening");
-    weight_decay = inflags.GetValueDouble("weight_decay");
-    nesterov = inflags.GetValueInt("nesterov");
+    lr                   = inflags.GetValueDouble("lr");
+    momentum             = inflags.GetValueDouble("momentum");
+    dampening            = inflags.GetValueDouble("dampening");
+    weight_decay         = inflags.GetValueDouble("weight_decay");
+    nesterov             = inflags.GetValueInt("nesterov");
     momentum_initialized = inflags.GetValueInt("momentum_initialized");
 
     SetTensorNd(paramInDesc, len, data_type);
@@ -233,7 +234,8 @@ int SGDDriver<Tgpu, Tref>::AddCmdLineArgs()
     inflags.AddInputFlag("dampening", 'd', "0", "Dampening for momentum (Default=0)", "double");
     inflags.AddInputFlag("weight_decay", 'e', "0", "Weight decay (Default=0)", "double");
     inflags.AddInputFlag("nesterov", 'N', "0", "Enables Nesterow momentum (Default=0)", "int");
-    inflags.AddInputFlag("momentum_initialized", 'M', "0", "Is momentum initiated (Default=0)", "int");
+    inflags.AddInputFlag(
+        "momentum_initialized", 'M', "0", "Is momentum initiated (Default=0)", "int");
 
     inflags.AddInputFlag("iter", 'i', "10", "Number of Iterations (Default=10)", "int");
     inflags.AddInputFlag("verify", 'V', "1", "Verify Each Layer (Default=1)", "int");
@@ -283,7 +285,7 @@ std::vector<int> SGDDriver<Tgpu, Tref>::GetInputTensorLengthsFromCmdLine()
 template <typename Tgpu, typename Tref>
 int SGDDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
 {
-    auto dims = miopen::deref(paramInDesc).GetLengths();
+    auto dims       = miopen::deref(paramInDesc).GetLengths();
     size_t param_sz = 0;
     for(size_t dim : dims)
     {
@@ -309,22 +311,27 @@ int SGDDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
 
     for(int i = 0; i < param_sz; i++)
     {
-        param_in[i]            = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.0), static_cast<Tgpu>(1.0));
-        grad[i]                = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.0), static_cast<Tgpu>(1.0));
-        momentum_buffer_in[i]  = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.0), static_cast<Tgpu>(1.0));
+        param_in[i] = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.0), static_cast<Tgpu>(1.0));
+        grad[i]     = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.0), static_cast<Tgpu>(1.0));
+        momentum_buffer_in[i] =
+            prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.0), static_cast<Tgpu>(1.0));
     }
 
     if(param_in_dev->ToGPU(GetStream(), param_in.data()) != 0)
-        std::cerr << "Error copying param (in) to GPU, size: " << param_in_dev->GetSize() << std::endl;
+        std::cerr << "Error copying param (in) to GPU, size: " << param_in_dev->GetSize()
+                  << std::endl;
     if(param_out_dev->ToGPU(GetStream(), param_out.data()) != 0)
-        std::cerr << "Error copying param (out) to GPU, size: " << param_out_dev->GetSize() << std::endl;
+        std::cerr << "Error copying param (out) to GPU, size: " << param_out_dev->GetSize()
+                  << std::endl;
     if(grad_dev->ToGPU(GetStream(), grad.data()) != 0)
         std::cerr << "Error copying grad (in) to GPU, size: " << grad_dev->GetSize() << std::endl;
     if(momentum_buffer_in_dev->ToGPU(GetStream(), momentum_buffer_in.data()) != 0)
-        std::cerr << "Error copying momentum buffer (in) to GPU, size: " << momentum_buffer_in_dev->GetSize() << std::endl;
+        std::cerr << "Error copying momentum buffer (in) to GPU, size: "
+                  << momentum_buffer_in_dev->GetSize() << std::endl;
     if(momentum_buffer_out_dev->ToGPU(GetStream(), momentum_buffer_out.data()) != 0)
-        std::cerr << "Error copying momentum buffer (out) to GPU, size: " << momentum_buffer_out_dev->GetSize() << std::endl;
-    
+        std::cerr << "Error copying momentum buffer (out) to GPU, size: "
+                  << momentum_buffer_out_dev->GetSize() << std::endl;
+
     return miopenStatusSuccess;
 }
 
@@ -339,7 +346,7 @@ int SGDDriver<Tgpu, Tref>::RunForwardGPU()
 
     for(int i = 0; i < inflags.GetValueInt("iter"); i++)
     {
-        miopenSGDForward(GetHandle(), 
+        miopenSGDForward(GetHandle(),
                          paramInDesc,
                          param_in_dev->GetMem(),
                          paramOutDesc,
@@ -371,17 +378,19 @@ int SGDDriver<Tgpu, Tref>::RunForwardGPU()
         if(WALL_CLOCK)
             std::cout << "Wall-clock Time Forward SGD Elapsed: " << t.gettime_ms() / iter
                       << " ms\n";
-        
-        float kernel_average_time = 
+
+        float kernel_average_time =
             iter > 1 ? (kernel_total_time - kernel_first_time) / (iter - 1) : kernel_first_time;
         std::cout << "GPU Kernel Time Forward SGD Elapsed: " << kernel_average_time << " ms\n";
     }
 
     if(param_out_dev->FromGPU(GetStream(), param_out.data()) != 0)
-        std::cerr << "Error copying (param_out_dev) from GPU, size: " << param_out_dev->GetSize() << std::endl;
+        std::cerr << "Error copying (param_out_dev) from GPU, size: " << param_out_dev->GetSize()
+                  << std::endl;
 
     if(momentum_buffer_out_dev->FromGPU(GetStream(), momentum_buffer_out.data()) != 0)
-        std::cerr << "Error copying (momentum_buffer_out_dev) from GPU, size: " << momentum_buffer_out_dev->GetSize() << std::endl;
+        std::cerr << "Error copying (momentum_buffer_out_dev) from GPU, size: "
+                  << momentum_buffer_out_dev->GetSize() << std::endl;
 
     return miopenStatusSuccess;
 }
@@ -425,31 +434,33 @@ Tref SGDDriver<Tgpu, Tref>::GetTolerance()
     if(std::is_same<Tgpu, bfloat16>::value)
         tolerance *= 8.0;
     return tolerance;
-} 
+}
 
 template <typename Tgpu, typename Tref>
 int SGDDriver<Tgpu, Tref>::VerifyForward()
 {
     RunForwardCPU();
-    const Tref tolerance = GetTolerance();
-    auto param_error = miopen::rms_range(param_outhost, param_out);
+    const Tref tolerance       = GetTolerance();
+    auto param_error           = miopen::rms_range(param_outhost, param_out);
     auto momentum_buffer_error = miopen::rms_range(momentum_buffer_outhost, momentum_buffer_out);
 
     if(!std::isfinite(param_error) || param_error > tolerance)
     {
-        std::cout << "Forward SGD Param Verifies FAILED: " << param_error << " > " << tolerance << std::endl;
+        std::cout << "Forward SGD Param Verifies FAILED: " << param_error << " > " << tolerance
+                  << std::endl;
         return EC_VerifyFwd;
     }
     else if(!std::isfinite(momentum_buffer_error) || momentum_buffer_error > tolerance)
     {
-        std::cout << "Forward SGD Momentum Buffer Verifies FAILED: " << momentum_buffer_error << " > " << tolerance << std::endl;
+        std::cout << "Forward SGD Momentum Buffer Verifies FAILED: " << momentum_buffer_error
+                  << " > " << tolerance << std::endl;
         return EC_VerifyFwd;
     }
     else
     {
         std::cout << "Forward SGD Verifies OK on CPU reference "
                   << "(param_error:" << param_error << " < " << tolerance << ", "
-                  << "momentum_buffer_error:" << momentum_buffer_error << " < " << tolerance << ')' 
+                  << "momentum_buffer_error:" << momentum_buffer_error << " < " << tolerance << ')'
                   << std::endl;
     }
 

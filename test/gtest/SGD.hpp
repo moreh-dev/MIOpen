@@ -23,7 +23,7 @@
  * SOFTWARE.
  *
  *******************************************************************************/
- 
+
 #include <cstddef>
 #include <limits>
 #include <ostream>
@@ -55,10 +55,11 @@ struct SGDTestCase
     char momentumInitialized;
     friend std::ostream& operator<<(std::ostream& os, const SGDTestCase& tc)
     {
-        return os << " N:" << tc.N << " C:" << tc.C << " D:" << tc.D << " H:" << tc.H 
+        return os << " N:" << tc.N << " C:" << tc.C << " D:" << tc.D << " H:" << tc.H
                   << " W:" << tc.W << " LearningRate:" << tc.lr << " Momentum:" << tc.momentum
                   << " Dampening:" << tc.dampening << " WeightDecay:" << tc.weightDecay
-                  << " Nesterov:" << tc.nesterov << " MomentumInitialized:" << tc.momentumInitialized;
+                  << " Nesterov:" << tc.nesterov
+                  << " MomentumInitialized:" << tc.momentumInitialized;
     }
 
     std::vector<size_t> GetInput()
@@ -121,44 +122,58 @@ struct SGDTest : public ::testing::TestWithParam<SGDTestCase>
 protected:
     void SetUp() override
     {
-        auto&& handle = get_handle();
-        SGD_config = GetParam();
-        auto gen_value = [](auto...) {return prng::gen_descreet_uniform_sign<T>(1e-2, 100); };
+        auto&& handle  = get_handle();
+        SGD_config     = GetParam();
+        auto gen_value = [](auto...) { return prng::gen_descreet_uniform_sign<T>(1e-2, 100); };
 
-        lr = SGD_config.lr;
-        momentum = SGD_config.momentum;
-        dampening = SGD_config.dampening;
-        weight_decay = SGD_config.weightDecay;
-        nesterov = SGD_config.nesterov;
+        lr                   = SGD_config.lr;
+        momentum             = SGD_config.momentum;
+        dampening            = SGD_config.dampening;
+        weight_decay         = SGD_config.weightDecay;
+        nesterov             = SGD_config.nesterov;
         momentum_initialized = SGD_config.momentumInitialized;
 
-        auto in_dims = SGD_config.GetInput();
-        param_input = tensor<T>{in_dims}.generate(gen_value);
-        grad = tensor<T>{in_dims}.generate(gen_value);
+        auto in_dims          = SGD_config.GetInput();
+        param_input           = tensor<T>{in_dims}.generate(gen_value);
+        grad                  = tensor<T>{in_dims}.generate(gen_value);
         momentum_buffer_input = tensor<T>{in_dims}.generate(gen_value);
 
         std::vector<size_t> out_dims = in_dims;
-        param_output = tensor<T>{out_dims};
-        momentum_buffer_output = tensor<T>{out_dims};
-        ref_param_output = tensor<T>{out_dims};
-        ref_momentum_buffer_output = tensor<T>{out_dims};
+        param_output                 = tensor<T>{out_dims};
+        momentum_buffer_output       = tensor<T>{out_dims};
+        ref_param_output             = tensor<T>{out_dims};
+        ref_momentum_buffer_output   = tensor<T>{out_dims};
         std::fill(param_output.begin(), param_output.end(), std::numeric_limits<T>::quiet_NaN());
-        std::fill(momentum_buffer_output.begin(), momentum_buffer_output.end(), std::numeric_limits<T>::quiet_NaN());
-        std::fill(ref_param_output.begin(), ref_param_output.end(), std::numeric_limits<T>::quiet_NaN());
-        std::fill(ref_momentum_buffer_output.begin(), ref_momentum_buffer_output.end(), std::numeric_limits<T>::quiet_NaN());
+        std::fill(momentum_buffer_output.begin(),
+                  momentum_buffer_output.end(),
+                  std::numeric_limits<T>::quiet_NaN());
+        std::fill(
+            ref_param_output.begin(), ref_param_output.end(), std::numeric_limits<T>::quiet_NaN());
+        std::fill(ref_momentum_buffer_output.begin(),
+                  ref_momentum_buffer_output.end(),
+                  std::numeric_limits<T>::quiet_NaN());
 
-        param_input_dev = handle.Write(param_input.data);
-        param_output_dev = handle.Write(param_output.data);
-        grad_dev = handle.Write(grad.data);
-        momentum_buffer_input_dev = handle.Write(momentum_buffer_input.data);
+        param_input_dev            = handle.Write(param_input.data);
+        param_output_dev           = handle.Write(param_output.data);
+        grad_dev                   = handle.Write(grad.data);
+        momentum_buffer_input_dev  = handle.Write(momentum_buffer_input.data);
         momentum_buffer_output_dev = handle.Write(momentum_buffer_output.data);
     }
 
     void RunTest()
     {
         auto&& handle = get_handle();
-        cpu_SGD_forward<T>(param_input, ref_param_output, grad, momentum_buffer_input, ref_momentum_buffer_output,
-                           lr, momentum, dampening, weight_decay, nesterov, momentum_initialized);
+        cpu_SGD_forward<T>(param_input,
+                           ref_param_output,
+                           grad,
+                           momentum_buffer_input,
+                           ref_momentum_buffer_output,
+                           lr,
+                           momentum,
+                           dampening,
+                           weight_decay,
+                           nesterov,
+                           momentum_initialized);
         miopenStatus_t status;
 
         status = miopen::SGDForward(handle,
@@ -172,32 +187,38 @@ protected:
                                     momentum_buffer_input_dev.get(),
                                     momentum_buffer_output.desc,
                                     momentum_buffer_output_dev.get(),
-                                    lr,    
+                                    lr,
                                     momentum,
-                                    dampening,    
+                                    dampening,
                                     weight_decay,
                                     nesterov,
                                     momentum_initialized);
-        
+
         EXPECT_EQ(status, miopenStatusSuccess);
 
         param_output.data = handle.Read<T>(param_output_dev, param_output.data.size());
-        momentum_buffer_output.data = handle.Read<T>(momentum_buffer_output_dev, momentum_buffer_output.data.size());
+        momentum_buffer_output.data =
+            handle.Read<T>(momentum_buffer_output_dev, momentum_buffer_output.data.size());
     }
 
     void Verify()
     {
         double threshold = std::numeric_limits<T>::epsilon();
         auto param_error = miopen::rms_range(ref_param_output, param_output);
-        auto momentum_buffer_error = miopen::rms_range(ref_momentum_buffer_output, momentum_buffer_output);
+        auto momentum_buffer_error =
+            miopen::rms_range(ref_momentum_buffer_output, momentum_buffer_output);
 
-        EXPECT_TRUE(miopen::range_distance(ref_param_output) == miopen::range_distance(param_output));
-        EXPECT_TRUE(param_error < threshold * 10) << "Error param output beyond tolerance Error:" << param_error
-                                            << ",  Thresholdx10: " << threshold * 10;
+        EXPECT_TRUE(miopen::range_distance(ref_param_output) ==
+                    miopen::range_distance(param_output));
+        EXPECT_TRUE(param_error < threshold * 10)
+            << "Error param output beyond tolerance Error:" << param_error
+            << ",  Thresholdx10: " << threshold * 10;
 
-        EXPECT_TRUE(miopen::range_distance(ref_momentum_buffer_output) == miopen::range_distance(momentum_buffer_output));
-        EXPECT_TRUE(momentum_buffer_error < threshold * 10) << "Error momentum buffer output beyond tolerance Error:" << momentum_buffer_error
-                                            << ",  Thresholdx10: " << threshold * 10;
+        EXPECT_TRUE(miopen::range_distance(ref_momentum_buffer_output) ==
+                    miopen::range_distance(momentum_buffer_output));
+        EXPECT_TRUE(momentum_buffer_error < threshold * 10)
+            << "Error momentum buffer output beyond tolerance Error:" << momentum_buffer_error
+            << ",  Thresholdx10: " << threshold * 10;
     }
     SGDTestCase SGD_config;
 
@@ -221,6 +242,5 @@ protected:
     double dampening;
     double weight_decay;
     char nesterov;
-    char momentum_initialized;    
+    char momentum_initialized;
 };
-

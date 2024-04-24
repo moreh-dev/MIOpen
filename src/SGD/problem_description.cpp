@@ -23,7 +23,7 @@
  * SOFTWARE.
  *
  *******************************************************************************/
- 
+
 #include <miopen/SGD/problem_description.hpp>
 #include <miopen/names.hpp>
 
@@ -34,7 +34,7 @@ namespace SGD {
 
 NetworkConfig ProblemDescription::MakeNetworkConfig() const
 {
-    auto dtype = paramInDesc.GetType();
+    auto dtype         = paramInDesc.GetType();
     int32_t total_dims = paramInDesc.GetLengths().size();
 
     int32_t param_size = 0;

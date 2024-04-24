@@ -23,7 +23,7 @@
  * SOFTWARE.
  *
  *******************************************************************************/
- 
+
 #include "registry_driver_maker.hpp"
 #include "SGD_driver.hpp"
 
