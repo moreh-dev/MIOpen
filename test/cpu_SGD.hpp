@@ -43,11 +43,7 @@ void cpu_SGD_forward(tensor<T> param_input,
                      char momentum_initialized)
 {
     auto dims         = param_input.desc.GetLengths();
-    size_t param_size = 1;
-    for(size_t dim : dims)
-    {
-        param_size *= dim;
-    }
+    size_t param_size = std::accumulate(dims.begin(), dims.end(), 1ULL, std::multiplies<size_t>());
 
     for(int id = 0; id < param_size; ++id)
     {

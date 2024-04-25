@@ -32,7 +32,6 @@
 #include "tensor_driver.hpp"
 #include "timer.hpp"
 #include "random.hpp"
-#include <algorithm>
 #include <cfloat>
 #include <cstdlib>
 #include <memory>
@@ -65,11 +64,7 @@ int32_t mloSGDForwardRunHost(miopenTensorDescriptor_t paramInputDesc,
                              char momentumInitialized)
 {
     auto dims         = miopen::deref(paramInputDesc).GetLengths();
-    size_t param_size = 1;
-    for(size_t dim : dims)
-    {
-        param_size *= dim;
-    }
+    size_t param_size = std::accumulate(dims.begin(), dims.end(), 1ULL, std::multiplies<size_t>());
 
     int32_t ret = 0;
 
@@ -223,14 +218,14 @@ template <typename Tgpu, typename Tref>
 int SGDDriver<Tgpu, Tref>::AddCmdLineArgs()
 {
     inflags.AddInputFlag("forw", 'F', "1", "Run only Forward SGD (Default=1)", "int");
-    inflags.AddInputFlag("batchsize", 'n', "256", "Mini-batch size (Default=100)", "int");
-    inflags.AddInputFlag("in_channels", 'c', "4", "Number of Input Channels (Default=3)", "int");
+    inflags.AddInputFlag("batchsize", 'n', "100", "Mini-batch size (Default=100)", "int");
+    inflags.AddInputFlag("in_channels", 'c', "3", "Number of Input Channels (Default=3)", "int");
     inflags.AddInputFlag("in_d", 'D', "0", "Input Depth (Default=0)", "int");
-    inflags.AddInputFlag("in_h", 'H', "0", "Input Height (Default=32)", "int");
-    inflags.AddInputFlag("in_w", 'W', "8732", "Input Width (Default=32)", "int");
+    inflags.AddInputFlag("in_h", 'H', "0", "Input Height (Default=0)", "int");
+    inflags.AddInputFlag("in_w", 'W', "0", "Input Width (Default=0)", "int");
 
     inflags.AddInputFlag("lr", 'l', "0.01", "Learning rate (Default=0.01)", "double");
-    inflags.AddInputFlag("momentum", 'm', "0.1", "Momentum factor (Default=0.1)", "double");
+    inflags.AddInputFlag("momentum", 'm', "0.9", "Momentum factor (Default=0.9)", "double");
     inflags.AddInputFlag("dampening", 'd', "0", "Dampening for momentum (Default=0)", "double");
     inflags.AddInputFlag("weight_decay", 'e', "0", "Weight decay (Default=0)", "double");
     inflags.AddInputFlag("nesterov", 'N', "0", "Enables Nesterow momentum (Default=0)", "int");
@@ -285,31 +280,27 @@ std::vector<int> SGDDriver<Tgpu, Tref>::GetInputTensorLengthsFromCmdLine()
 template <typename Tgpu, typename Tref>
 int SGDDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
 {
-    auto dims       = miopen::deref(paramInDesc).GetLengths();
-    size_t param_sz = 1;
-    for(size_t dim : dims)
-    {
-        param_sz *= dim;
-    }
+    auto dims         = miopen::deref(paramInDesc).GetLengths();
+    size_t param_size = std::accumulate(dims.begin(), dims.end(), 1ULL, std::multiplies<size_t>());
 
     uint32_t ctx = 0;
 
-    param_in_dev            = std::unique_ptr<GPUMem>(new GPUMem(ctx, param_sz, sizeof(Tgpu)));
-    param_out_dev           = std::unique_ptr<GPUMem>(new GPUMem(ctx, param_sz, sizeof(Tgpu)));
-    grad_dev                = std::unique_ptr<GPUMem>(new GPUMem(ctx, param_sz, sizeof(Tgpu)));
-    momentum_buffer_in_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, param_sz, sizeof(Tgpu)));
-    momentum_buffer_out_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, param_sz, sizeof(Tgpu)));
+    param_in_dev            = std::unique_ptr<GPUMem>(new GPUMem(ctx, param_size, sizeof(Tgpu)));
+    param_out_dev           = std::unique_ptr<GPUMem>(new GPUMem(ctx, param_size, sizeof(Tgpu)));
+    grad_dev                = std::unique_ptr<GPUMem>(new GPUMem(ctx, param_size, sizeof(Tgpu)));
+    momentum_buffer_in_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, param_size, sizeof(Tgpu)));
+    momentum_buffer_out_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, param_size, sizeof(Tgpu)));
 
-    param_in            = std::vector<Tgpu>(param_sz, static_cast<Tgpu>(0));
-    param_out           = std::vector<Tgpu>(param_sz, static_cast<Tgpu>(0));
-    grad                = std::vector<Tgpu>(param_sz, static_cast<Tgpu>(0));
-    momentum_buffer_in  = std::vector<Tgpu>(param_sz, static_cast<Tgpu>(0));
-    momentum_buffer_out = std::vector<Tgpu>(param_sz, static_cast<Tgpu>(0));
+    param_in            = std::vector<Tgpu>(param_size, static_cast<Tgpu>(0));
+    param_out           = std::vector<Tgpu>(param_size, static_cast<Tgpu>(0));
+    grad                = std::vector<Tgpu>(param_size, static_cast<Tgpu>(0));
+    momentum_buffer_in  = std::vector<Tgpu>(param_size, static_cast<Tgpu>(0));
+    momentum_buffer_out = std::vector<Tgpu>(param_size, static_cast<Tgpu>(0));
 
-    param_outhost           = std::vector<Tref>(param_sz, static_cast<Tref>(0));
-    momentum_buffer_outhost = std::vector<Tref>(param_sz, static_cast<Tref>(0));
+    param_outhost           = std::vector<Tref>(param_size, static_cast<Tref>(0));
+    momentum_buffer_outhost = std::vector<Tref>(param_size, static_cast<Tref>(0));
 
-    for(int i = 0; i < param_sz; i++)
+    for(int i = 0; i < param_size; i++)
     {
         param_in[i] = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.0), static_cast<Tgpu>(1.0));
         grad[i]     = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.0), static_cast<Tgpu>(1.0));

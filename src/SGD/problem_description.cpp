@@ -34,18 +34,13 @@ namespace SGD {
 
 NetworkConfig ProblemDescription::MakeNetworkConfig() const
 {
-    auto dtype         = paramInDesc.GetType();
-    int32_t total_dims = paramInDesc.GetLengths().size();
+    auto dtype = paramInDesc.GetType();
+    auto dims  = paramInDesc.GetLengths();
 
-    int32_t param_size = 1;
-    for(int32_t i = 0; i < total_dims; ++i)
-    {
-        param_size *= paramInDesc.GetLengths()[i];
-    }
+    size_t param_size = std::accumulate(dims.begin(), dims.end(), 1ULL, std::multiplies<size_t>());
 
     std::ostringstream ss;
     ss << "dtype" << dtype;
-    ss << "total_dims" << total_dims;
     ss << "param_size" << param_size;
 
     return NetworkConfig{ss.str()};
