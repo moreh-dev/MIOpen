@@ -273,17 +273,16 @@ set( MIOpen_Source
     solver/reduce/forward_sum.cpp
     solver/softmax/attn_softmax.cpp
     solver/softmax/softmax.cpp
-    solver/SGD/forward_SGD.cpp
+    solver/sgd/forward_sgd.cpp
     subbuffers.cpp
+    sgd_api.cpp
+    sgd/problem_description.cpp
     sum_api.cpp
     target_properties.cpp
     temp_file.cpp
     tensor.cpp
     tensor_api.cpp
     seq_tensor.cpp
-    SGD_api.cpp
-    SGD/problem_description.cpp
-
 )
 
 if(MIOPEN_ENABLE_AI_KERNEL_TUNING OR MIOPEN_ENABLE_AI_IMMED_MODE_FALLBACK)
@@ -608,8 +607,8 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         pooling.cpp
         ocl/fusionopconvocl.cpp
         ocl/fusionopbiasbnactivocl.cpp
+        sgd.cpp
         sum.cpp
-        SGD.cpp
         ${PROJECT_BINARY_DIR}/db_path.cpp
         )
 

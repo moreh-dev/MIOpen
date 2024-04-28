@@ -2,7 +2,7 @@
  *
  * MIT License
  *
- * Copyright (c) 2024 Advanced Micro Devices, Inc.
+ * Copyright (c) 2023 Advanced Micro Devices, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,36 +24,27 @@
  *
  *******************************************************************************/
 
-#pragma once
+#include <miopen/sgd/problem_description.hpp>
+#include <miopen/names.hpp>
 
-#include <miopen/solver.hpp>
-#include <miopen/SGD/problem_description.hpp>
-
-#include <utility>
+#include <sstream>
 
 namespace miopen {
-namespace solver {
 namespace SGD {
 
-using SGDSolver = NonTunableSolverBase<ExecutionContext, miopen::SGD::ProblemDescription>;
-
-struct SGDForward final : SGDSolver
+NetworkConfig ProblemDescription::MakeNetworkConfig() const
 {
-    const std::string& SolverDbId() const override { return GetSolverDbId<SGDForward>(); }
+    auto dtype = paramInDesc.GetType();
+    auto dims  = paramInDesc.GetLengths();
 
-    bool IsApplicable(const ExecutionContext& constext,
-                      const miopen::SGD::ProblemDescription& problem) const override;
-    ConvSolution GetSolution(const ExecutionContext& context,
-                             const miopen::SGD::ProblemDescription& problem) const override;
-    std::size_t
-    GetWorkspaceSize([[maybe_unused]] const ExecutionContext& context,
-                     [[maybe_unused]] const miopen::SGD::ProblemDescription& problem) const override
-    {
-        return 0;
-    }
-    bool MayNeedWorkspace() const override { return false; }
-};
+    size_t param_size = std::accumulate(dims.begin(), dims.end(), 1ULL, std::multiplies<size_t>());
+
+    std::ostringstream ss;
+    ss << "dtype" << dtype;
+    ss << "param_size" << param_size;
+
+    return NetworkConfig{ss.str()};
+}
 
 } // namespace SGD
-} // namespace solver
 } // namespace miopen

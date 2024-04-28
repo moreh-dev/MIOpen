@@ -29,7 +29,7 @@ The MIOpen API library is structured as follows:
   * :doc:`Find <../doxygen/html/group__find2>`
   * :doc:`Layernorm <../doxygen/html/group__layernorm>` (experimental)
   * :doc:`Sum <../doxygen/html/group__sum>` (experimental)
-  * :doc:`SGD <../doxygen/html/group__SGD>` (experimental)
+  * :doc:`SGD <../doxygen/html/group__sgd>` (experimental)
   * :doc:`GroupNorm <../doxygen/html/group__groupnorm>` (experimental)
   * :doc:`Cat <../doxygen/html/group__cat>` (experimental)
   * :doc:`Argmax<./argmax>` (experimental)

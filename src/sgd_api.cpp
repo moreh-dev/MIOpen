@@ -27,7 +27,7 @@
 #include "miopen/common.hpp"
 #include "miopen/tensor.hpp"
 #include <algorithm>
-#include <miopen/SGD.hpp>
+#include <miopen/sgd.hpp>
 #include <miopen/errors.hpp>
 #include <miopen/handle.hpp>
 #include <miopen/logger.hpp>

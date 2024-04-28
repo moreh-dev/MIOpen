@@ -26,11 +26,11 @@
 
 #include "miopen/conv_solution.hpp"
 #include "miopen/miopen.h"
-#include <miopen/SGD/solvers.hpp>
+#include <miopen/sgd/solvers.hpp>
 
-#include <miopen/SGD/invoke_params.hpp>
+#include <miopen/sgd/invoke_params.hpp>
 #include <miopen/datatype.hpp>
-#include <miopen/SGD.hpp>
+#include <miopen/sgd.hpp>
 #include <miopen/kernel_build_params.hpp>
 #include <miopen/target_properties.hpp>
 

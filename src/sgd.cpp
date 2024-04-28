@@ -1,17 +1,17 @@
-#include "miopen/SGD/problem_description.hpp"
+#include "miopen/sgd/problem_description.hpp"
 #include "miopen/invoke_params.hpp"
 #include "miopen/miopen.h"
 #include "miopen/names.hpp"
 #include "miopen/reduce/invoke_params.hpp"
 #include "miopen/reducetensor.hpp"
-#include <miopen/SGD.hpp>
+#include <miopen/sgd.hpp>
 #include <miopen/kernel_cache.hpp>
 #include <miopen/float_equal.hpp>
 #include <miopen/check_numerics.hpp>
 #include <miopen/tensor.hpp>
 #include <miopen/datatype.hpp>
-#include <miopen/SGD/invoke_params.hpp>
-#include <miopen/SGD/solvers.hpp>
+#include <miopen/sgd/invoke_params.hpp>
+#include <miopen/sgd/solvers.hpp>
 #include <miopen/find_solution.hpp>
 
 namespace miopen {

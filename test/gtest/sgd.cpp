@@ -24,7 +24,7 @@
  *
  *******************************************************************************/
 
-#include "SGD.hpp"
+#include "sgd.hpp"
 #include "../tensor_holder.hpp"
 #include <miopen/env.hpp>
 

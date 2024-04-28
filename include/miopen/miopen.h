@@ -2602,7 +2602,7 @@ MIOPEN_EXPORT miopenStatus_t miopenCatForward(miopenHandle_t handle,
 
 #ifdef MIOPEN_BETA_API
 // SGD APIs
-/** @addtogroup SGD
+/** @addtogroup sgd
  *
  * @{
  */

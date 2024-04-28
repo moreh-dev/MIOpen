@@ -30,14 +30,14 @@
 #include <vector>
 #define MIOPEN_BETA_API 1
 
-#include "cpu_SGD.hpp"
+#include "cpu_sgd.hpp"
 #include "get_handle.hpp"
 #include "random.hpp"
 #include "tensor_holder.hpp"
 #include "verify.hpp"
 #include <gtest/gtest.h>
 #include <miopen/miopen.h>
-#include <miopen/SGD.hpp>
+#include <miopen/sgd.hpp>
 
 struct SGDTestCase
 {
