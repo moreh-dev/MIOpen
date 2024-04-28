@@ -176,7 +176,7 @@ inline std::string ParseBaseArg(int argc, char* argv[])
        arg != "layernormfp16" && arg != "layernormbfp16" && arg != "sum" && arg != "sumfp16" &&
        arg != "sumbfp16" && arg != "argmax" && arg != "argmaxfp16" && arg != "argmaxbfp16" &&
        arg != "groupnorm" && arg != "groupnormfp16" && arg != "groupnormbfp16" && arg != "cat" &&
-       arg != "catfp16" && arg != "catbfp16" && arg != "SGD" && arg != "SGDfp16" && arg != "SGDbfp16" &&
+       arg != "catfp16" && arg != "catbfp16" && arg != "sgd" && arg != "sgdfp16" && arg != "sgdbfp16" &&
        arg != "--version")
     {
         printf("FAILED: Invalid Base Input Argument\n");

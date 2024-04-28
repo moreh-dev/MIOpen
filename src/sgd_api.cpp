@@ -43,15 +43,15 @@ static void LogCmdSGD(const miopenTensorDescriptor_t& praramInDesc, bool is_fwd)
         auto dtype = miopen::deref(praramInDesc).GetType();
         if(dtype == miopenHalf)
         {
-            ss << "SGDfp16";
+            ss << "sgdfp16";
         }
         else if(dtype == miopenFloat)
         {
-            ss << "SGDfp32";
+            ss << "sgdfp32";
         }
         else if(dtype == miopenBFloat16)
         {
-            ss << "SGDbf16";
+            ss << "sgdbf16";
         }
         std::string batch_sz;
         auto dims = miopen::deref(praramInDesc).GetLengths();
