@@ -34,30 +34,40 @@ miopenStatus_t SGDForward(Handle& handle,
                           char nesterov,
                           char momentum_initialized)
 {
-    const auto problem = SGD::ProblemDescription{paramInDesc, paramOutDesc, gradDesc, momentumBufferInDesc, momentumBufferOutDesc, lr, momentum, dampening, weightDecay, nesterov, momentum_initialized};
+    const auto problem       = SGD::ProblemDescription{paramInDesc,
+                                                 paramOutDesc,
+                                                 gradDesc,
+                                                 momentumBufferInDesc,
+                                                 momentumBufferOutDesc,
+                                                 lr,
+                                                 momentum,
+                                                 dampening,
+                                                 weightDecay,
+                                                 nesterov,
+                                                 momentum_initialized};
     const auto invoke_params = [&]() {
-        auto tmp = SGD::InvokeParams{};
-        tmp.type = InvokeType::Run;
-        tmp.paramInDesc = &paramInDesc;
-        tmp.paramIn = paramIn;
-        tmp.paramOutDesc = &paramOutDesc;
-        tmp.paramOut = paramOut;
-        tmp.gradDesc = &gradDesc;
-        tmp.grad = grad;
-        tmp.momentumBufferInDesc = &momentumBufferInDesc;
-        tmp.momentumBufferIn = momentumBufferIn;
+        auto tmp                  = SGD::InvokeParams{};
+        tmp.type                  = InvokeType::Run;
+        tmp.paramInDesc           = &paramInDesc;
+        tmp.paramIn               = paramIn;
+        tmp.paramOutDesc          = &paramOutDesc;
+        tmp.paramOut              = paramOut;
+        tmp.gradDesc              = &gradDesc;
+        tmp.grad                  = grad;
+        tmp.momentumBufferInDesc  = &momentumBufferInDesc;
+        tmp.momentumBufferIn      = momentumBufferIn;
         tmp.momentumBufferOutDesc = &momentumBufferOutDesc;
-        tmp.momentumBufferOut = momentumBufferOut;
-        tmp.lr = lr;
-        tmp.momentum = momentum;
-        tmp.dampening = dampening;
-        tmp.weightDecay = weightDecay;
-        tmp.nesterov = nesterov;
-        tmp.momentum_initialized = momentum_initialized;
+        tmp.momentumBufferOut     = momentumBufferOut;
+        tmp.lr                    = lr;
+        tmp.momentum              = momentum;
+        tmp.dampening             = dampening;
+        tmp.weightDecay           = weightDecay;
+        tmp.nesterov              = nesterov;
+        tmp.momentum_initialized  = momentum_initialized;
         return tmp;
     }();
-    
-    const auto algo = AlgorithmName{"SGDForward"};
+
+    const auto algo    = AlgorithmName{"SGDForward"};
     const auto solvers = solver::SolverContainer<solver::SGD::SGDForward>{};
     solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
 

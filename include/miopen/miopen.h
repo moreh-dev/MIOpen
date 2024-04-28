@@ -2626,7 +2626,7 @@ MIOPEN_EXPORT miopenStatus_t miopenCatForward(miopenHandle_t handle,
  * @param nesterov                 Enables Nesterow momentum (input)
  * @param momentumInitialized      Is momentum initiated (input)
  * @return                         miopenStatus_t
-*/
+ */
 
 MIOPEN_EXPORT miopenStatus_t miopenSGDForward(miopenHandle_t handle,
                                               const miopenTensorDescriptor_t paramInDesc,
@@ -2639,9 +2639,9 @@ MIOPEN_EXPORT miopenStatus_t miopenSGDForward(miopenHandle_t handle,
                                               const void* momentumBufferIn,
                                               const miopenTensorDescriptor_t momentumBufferOutDesc,
                                               void* momentumBufferOut,
-                                              const double lr,    
+                                              const double lr,
                                               const double momentum,
-                                              const double dampening,    
+                                              const double dampening,
                                               const double weightDecay,
                                               const char nesterov,
                                               const char momentumInitialized);
