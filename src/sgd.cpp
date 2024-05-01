@@ -34,7 +34,7 @@ miopenStatus_t SGDForward(Handle& handle,
                           char nesterov,
                           char momentum_initialized)
 {
-    const auto problem       = SGD::ProblemDescription{paramInDesc,
+    const auto problem = SGD::ProblemDescription{paramInDesc,
                                                  paramOutDesc,
                                                  gradDesc,
                                                  momentumBufferInDesc,
@@ -45,6 +45,15 @@ miopenStatus_t SGDForward(Handle& handle,
                                                  weightDecay,
                                                  nesterov,
                                                  momentum_initialized};
+
+    std::vector<size_t> dims_h                  = paramInDesc.GetLengths();
+    miopen::Allocator::ManageDataPtr dims_d_ptr = handle.Write(dims_h);
+    ConstData_t dims_d                          = dims_d_ptr.get();
+
+    std::vector<size_t> strides_h                  = paramInDesc.GetStrides();
+    miopen::Allocator::ManageDataPtr strides_d_ptr = handle.Write(strides_h);
+    ConstData_t stride_d                           = strides_d_ptr.get();
+
     const auto invoke_params = [&]() {
         auto tmp                  = SGD::InvokeParams{};
         tmp.type                  = InvokeType::Run;
@@ -64,6 +73,8 @@ miopenStatus_t SGDForward(Handle& handle,
         tmp.weightDecay           = weightDecay;
         tmp.nesterov              = nesterov;
         tmp.momentum_initialized  = momentum_initialized;
+        tmp.dims                  = dims_d;
+        tmp.strides               = stride_d;
         return tmp;
     }();
 

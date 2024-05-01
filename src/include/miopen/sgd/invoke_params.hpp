@@ -52,6 +52,8 @@ struct InvokeParams : public miopen::InvokeParams
     double weightDecay                            = 0;
     char nesterov                                 = 0;
     char momentum_initialized                     = 0;
+    ConstData_t dims                              = nullptr;
+    ConstData_t strides                           = nullptr;
 
     std::size_t GetWorkspaceSize() const { return 0; }
     Data_t GetWorkspace() const { return nullptr; }

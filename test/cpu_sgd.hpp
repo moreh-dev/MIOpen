@@ -43,10 +43,23 @@ void cpu_SGD_forward(tensor<T> param_input,
                      char momentum_initialized)
 {
     auto dims         = param_input.desc.GetLengths();
+    auto strides      = param_input.desc.GetStrides();
     size_t param_size = std::accumulate(dims.begin(), dims.end(), 1ULL, std::multiplies<size_t>());
 
-    for(int id = 0; id < param_size; ++id)
+    for(size_t i = 0; i < param_size; ++i)
     {
+        size_t id = 0;
+        size_t ii = i;
+        for(int j = dims.size() - 1; j >= 0; --j)
+        {
+            size_t striding = strides[j] * (ii % dims[j]);
+            ii /= dims[j];
+            id += striding;
+        }
+
+        if(id >= param_size)
+            continue;
+
         T param = param_input[id];
         T d_p   = grad[id];
 

@@ -128,6 +128,33 @@ struct ProblemDescription : ProblemDescriptionBase
         return true;
     }
 
+    bool IsSameStrides() const
+    {
+        std::vector<size_t> paramInStrides           = paramInDesc.GetStrides();
+        std::vector<size_t> paramOutStrides          = paramOutDesc.GetStrides();
+        std::vector<size_t> gradStrides              = gradDesc.GetStrides();
+        std::vector<size_t> momentumBufferInStrides  = momentumBufferInDesc.GetStrides();
+        std::vector<size_t> momentumBufferOutStrides = momentumBufferOutDesc.GetStrides();
+
+        if(paramInStrides != paramOutStrides)
+        {
+            return false;
+        }
+        if(paramOutStrides != gradStrides)
+        {
+            return false;
+        }
+        if(gradStrides != momentumBufferInStrides)
+        {
+            return false;
+        }
+        if(momentumBufferInStrides != momentumBufferOutStrides)
+        {
+            return false;
+        }
+        return true;
+    }
+
     NetworkConfig MakeNetworkConfig() const override;
 
 private:

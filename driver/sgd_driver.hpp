@@ -64,12 +64,25 @@ int32_t mloSGDForwardRunHost(miopenTensorDescriptor_t paramInputDesc,
                              char momentumInitialized)
 {
     auto dims         = miopen::deref(paramInputDesc).GetLengths();
+    auto strides      = miopen::deref(paramInputDesc).GetStrides();
     size_t param_size = std::accumulate(dims.begin(), dims.end(), 1ULL, std::multiplies<size_t>());
 
     int32_t ret = 0;
 
-    for(int id = 0; id < param_size; ++id)
+    for(int i = 0; i < param_size; ++i)
     {
+        size_t id = 0;
+        size_t ii = i;
+        for(int j = dims.size() - 1; j >= 0; --j)
+        {
+            size_t striding = strides[j] * (ii % dims[j]);
+            ii /= dims[j];
+            id += striding;
+        }
+
+        if(id >= param_size)
+            continue;
+
         Tcheck param = static_cast<Tcheck>(paramInput[id]);
         Tcheck d_p   = static_cast<Tcheck>(grad[id]);
 
@@ -130,6 +143,7 @@ public:
 
     int GetandSetData() override;
     std::vector<int> GetInputTensorLengthsFromCmdLine();
+    std::vector<int> GetInputTensorStridesFromCmdLine();
 
     int AllocateBuffersAndCopy() override;
 
@@ -197,7 +211,9 @@ int SGDDriver<Tgpu, Tref>::ParseCmdLineArgs(int argc, char* argv[])
 template <typename Tgpu, typename Tref>
 int SGDDriver<Tgpu, Tref>::GetandSetData()
 {
-    std::vector<int> len = GetInputTensorLengthsFromCmdLine();
+    std::vector<int> dims    = GetInputTensorLengthsFromCmdLine();
+    std::vector<int> strides = GetInputTensorStridesFromCmdLine();
+
     lr                   = inflags.GetValueDouble("lr");
     momentum             = inflags.GetValueDouble("momentum");
     dampening            = inflags.GetValueDouble("dampening");
@@ -205,11 +221,22 @@ int SGDDriver<Tgpu, Tref>::GetandSetData()
     nesterov             = inflags.GetValueInt("nesterov");
     momentum_initialized = inflags.GetValueInt("momentum_initialized");
 
-    SetTensorNd(paramInDesc, len, data_type);
-    SetTensorNd(paramOutDesc, len, data_type);
-    SetTensorNd(gradDesc, len, data_type);
-    SetTensorNd(momentumBufferInDesc, len, data_type);
-    SetTensorNd(momentumBufferOutDesc, len, data_type);
+    if(strides.empty())
+    {
+        SetTensorNd(paramInDesc, dims, data_type);
+        SetTensorNd(paramOutDesc, dims, data_type);
+        SetTensorNd(gradDesc, dims, data_type);
+        SetTensorNd(momentumBufferInDesc, dims, data_type);
+        SetTensorNd(momentumBufferOutDesc, dims, data_type);
+    }
+    else
+    {
+        SetTensorNd(paramInDesc, dims, strides, data_type);
+        SetTensorNd(paramOutDesc, dims, strides, data_type);
+        SetTensorNd(gradDesc, dims, strides, data_type);
+        SetTensorNd(momentumBufferInDesc, dims, strides, data_type);
+        SetTensorNd(momentumBufferOutDesc, dims, strides, data_type);
+    }
 
     return 0;
 }
@@ -220,9 +247,16 @@ int SGDDriver<Tgpu, Tref>::AddCmdLineArgs()
     inflags.AddInputFlag("forw", 'F', "1", "Run only Forward SGD (Default=1)", "int");
     inflags.AddInputFlag("batchsize", 'n', "100", "Mini-batch size (Default=100)", "int");
     inflags.AddInputFlag("in_channels", 'c', "3", "Number of Input Channels (Default=3)", "int");
-    inflags.AddInputFlag("in_d", 'D', "0", "Input Depth (Default=0)", "int");
     inflags.AddInputFlag("in_h", 'H', "0", "Input Height (Default=0)", "int");
     inflags.AddInputFlag("in_w", 'W', "0", "Input Width (Default=0)", "int");
+    inflags.AddInputFlag("in_d", 'D', "0", "Input Depth (Default=0)", "int");
+
+    inflags.AddInputFlag("strides",
+                         'S',
+                         "",
+                         "The jump necessary to go from one element to the next one in the "
+                         "specified dimension (Default=Based on dimensions)",
+                         "string");
 
     inflags.AddInputFlag("lr", 'l', "0.01", "Learning rate (Default=0.01)", "double");
     inflags.AddInputFlag("momentum", 'm', "0.9", "Momentum factor (Default=0.9)", "double");
@@ -250,31 +284,58 @@ std::vector<int> SGDDriver<Tgpu, Tref>::GetInputTensorLengthsFromCmdLine()
     int in_h = inflags.GetValueInt("in_h");
     int in_d = inflags.GetValueInt("in_d");
 
-    if((in_n != 0) && (in_c != 0) && (in_d != 0) && (in_h != 0) && (in_w != 0))
+    std::vector<int> dims;
+    if(in_n != 0)
+        dims.push_back(in_n);
+    if(in_c != 0)
+        dims.push_back(in_c);
+    if(in_w != 0)
+        dims.push_back(in_w);
+    if(in_h != 0)
+        dims.push_back(in_h);
+    if(in_d != 0)
+        dims.push_back(in_d);
+
+    if(dims.empty())
     {
-        return std::vector<int>({in_n, in_c, in_d, in_h, in_w});
-    }
-    else if((in_n != 0) && (in_c != 0) && (in_h != 0) && (in_w != 0))
-    {
-        return std::vector<int>({in_n, in_c, in_h, in_w});
-    }
-    else if((in_n != 0) && (in_c != 0) && (in_w != 0))
-    {
-        return std::vector<int>({in_n, in_c, in_w});
-    }
-    else if((in_n != 0) && (in_w != 0))
-    {
-        return std::vector<int>({in_n, in_w});
-    }
-    else if(in_n != 0)
-    {
-        return std::vector<int>({in_n});
-    }
-    else
-    {
-        std::cerr << "Error Input Tensor Lengths\n" << std::endl;
+        std::cout << "Error Input Tensor Lengths\n" << std::endl;
         return std::vector<int>({0});
     }
+
+    return dims;
+}
+
+template <typename Tgpu, typename Tref>
+std::vector<int> SGDDriver<Tgpu, Tref>::GetInputTensorStridesFromCmdLine()
+{
+    std::string strides_str = inflags.GetValueStr("strides");
+    std::vector<int> strides;
+
+    if(strides_str != "")
+    {
+        std::size_t pos = 0;
+        std::size_t new_pos;
+
+        new_pos = strides_str.find(',', pos);
+        while(new_pos != std::string::npos)
+        {
+            std::string stride_str = strides_str.substr(pos, new_pos - pos);
+
+            int stride = std::stoi(stride_str);
+
+            strides.push_back(stride);
+
+            pos     = new_pos + 1;
+            new_pos = strides_str.find(',', pos);
+        };
+
+        std::string stride_str = strides_str.substr(pos);
+        int stride             = std::stoi(stride_str);
+
+        strides.push_back(stride);
+    }
+
+    return strides;
 }
 
 template <typename Tgpu, typename Tref>

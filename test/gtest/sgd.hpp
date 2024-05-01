@@ -43,15 +43,16 @@ struct SGDTestCase
 {
     size_t N;
     size_t C;
-    size_t D;
     size_t H;
     size_t W;
+    size_t D;
     double lr;
     double momentum;
     double dampening;
     double weightDecay;
     char nesterov;
     char momentumInitialized;
+    std::vector<size_t> strides;
     friend std::ostream& operator<<(std::ostream& os, const SGDTestCase& tc)
     {
         return os << " N:" << tc.N << " C:" << tc.C << " D:" << tc.D << " H:" << tc.H
@@ -61,33 +62,39 @@ struct SGDTestCase
                   << " MomentumInitialized:" << (int)tc.momentumInitialized;
     }
 
-    std::vector<size_t> GetInput()
+    std::vector<size_t> GetDims()
     {
-        if((N != 0) && (C != 0) && (D != 0) && (H != 0) && (W != 0))
-        {
-            return std::vector<size_t>({N, C, D, H, W});
-        }
-        else if((N != 0) && (C != 0) && (H != 0) && (W != 0))
-        {
-            return std::vector<size_t>({N, C, H, W});
-        }
-        else if((N != 0) && (C != 0) && (W != 0))
-        {
-            return std::vector<size_t>({N, C, W});
-        }
-        else if((N != 0) && (W != 0))
-        {
-            return std::vector<size_t>({N, W});
-        }
-        else if((N != 0))
-        {
-            return std::vector<size_t>({N});
-        }
-        else
+        std::vector<size_t> dims;
+        if(N != 0)
+            dims.push_back(N);
+        if(C != 0)
+            dims.push_back(C);
+        if(H != 0)
+            dims.push_back(H);
+        if(W != 0)
+            dims.push_back(W);
+        if(D != 0)
+            dims.push_back(D);
+
+        if(dims.empty())
         {
             std::cout << "Error Input Tensor Lengths\n" << std::endl;
             return std::vector<size_t>({0});
         }
+
+        return dims;
+    }
+
+    std::vector<size_t> GetStrides()
+    {
+        size_t n_dims = GetDims().size();
+        if(!strides.empty() && strides.size() != n_dims)
+        {
+            std::cout << "Error Input Tensor Strides\n" << std::endl;
+            return std::vector<size_t>({0});
+        }
+
+        return strides;
     }
 };
 
@@ -95,22 +102,25 @@ std::vector<SGDTestCase> SGDTestConfigs()
 { // n c d h w lr momentum dampening weightDecay nesterov momentumInitialized
     // clang-format off
     return {
-        {32, 0, 0, 0, 0,     0.004, 0.9, 0,       0,      1, 0},
-        {32, 3, 0, 3, 3,     0.004, 0.9, 0,       0,      1, 0},
-        {32, 32, 3, 3, 3,    0.004, 0.9, 0,       0,      1, 0},
-        {64, 32, 3, 3, 3,    0.004, 0.9, 0,       0,      1, 0},
-        {32, 0, 0, 0, 0,     0.004, 0.9, 0,       0,      1, 1},
-        {32, 3, 0, 3, 3,     0.004, 0.9, 0,       0,      1, 1},
-        {32, 32, 3, 3, 3,    0.004, 0.9, 0,       0,      1, 1},
-        {64, 32, 3, 3, 3,    0.004, 0.9, 0,       0,      1, 1},
-        {61, 3, 0, 11, 11,   0.01,  0.9, 0,       0.0005, 0, 0},
-        {192, 64, 0, 5, 5,   0.01,  0.9, 0,       0.0005, 0, 0},
-        {61, 3, 0, 11, 11,   0.01,  0.9, 0,       0.0005, 0, 1},
-        {192, 64, 0, 5, 5,   0.01,  0.9, 0,       0.0005, 0, 1},
-        {64, 3, 0, 3, 3,     0.01,  0.9, 0.0005,  0,      0, 0},
-        {64, 64, 0, 1, 1,    0.01,  0.9, 0.0005,  0,      0, 0},
-        {64, 3, 0, 3, 3,     0.01,  0.9, 0.0005,  0,      0, 1},
-        {64, 64, 0, 1, 1,    0.01,  0.9, 0.0005,  0,      0, 1}
+        {32, 0, 0, 0, 0,     0.004, 0.9, 0,       0,      1, 0, {}},
+        {32, 3, 0, 3, 3,     0.004, 0.9, 0,       0,      1, 0, {}},
+        {32, 32, 3, 3, 3,    0.004, 0.9, 0,       0,      1, 0, {}},
+        {64, 32, 3, 3, 3,    0.004, 0.9, 0,       0,      1, 0, {}},
+        {32, 0, 0, 0, 0,     0.004, 0.9, 0,       0,      1, 1, {}},
+        {32, 3, 0, 3, 3,     0.004, 0.9, 0,       0,      1, 1, {}},
+        {32, 32, 3, 3, 3,    0.004, 0.9, 0,       0,      1, 1, {}},
+        {64, 32, 3, 3, 3,    0.004, 0.9, 0,       0,      1, 1, {}},
+        {61, 3, 0, 11, 11,   0.01,  0.9, 0,       0.0005, 0, 0, {}},
+        {192, 64, 0, 5, 5,   0.01,  0.9, 0,       0.0005, 0, 0, {}},
+        {61, 3, 0, 11, 11,   0.01,  0.9, 0,       0.0005, 0, 1, {}},
+        {192, 64, 0, 5, 5,   0.01,  0.9, 0,       0.0005, 0, 1, {}},
+        {64, 3, 0, 3, 3,     0.01,  0.9, 0.0005,  0,      0, 0, {}},
+        {64, 64, 0, 1, 1,    0.01,  0.9, 0.0005,  0,      0, 0, {}},
+        {64, 3, 0, 3, 3,     0.01,  0.9, 0.0005,  0,      0, 1, {}},
+        {64, 64, 0, 1, 1,    0.01,  0.9, 0.0005,  0,      0, 1, {}},
+        {32, 0, 0, 0, 0,     0.004, 0.9, 0,       0,      1, 0, {4}},
+        {32, 4, 4, 4, 0,     0.004, 0.9, 0,       0,      1, 0, {64, 16, 4, 2}},
+        {32, 4, 4, 4, 0,     0.004, 0.9, 0,       0,      1, 0, {64, 16, 8, 1}},
     };
     // clang-format on
 }
@@ -132,25 +142,29 @@ protected:
         nesterov             = SGD_config.nesterov;
         momentum_initialized = SGD_config.momentumInitialized;
 
-        auto in_dims          = SGD_config.GetInput();
-        param_input           = tensor<T>{in_dims}.generate(gen_value);
-        grad                  = tensor<T>{in_dims}.generate(gen_value);
-        momentum_buffer_input = tensor<T>{in_dims}.generate(gen_value);
+        auto dims    = SGD_config.GetDims();
+        auto strides = SGD_config.GetStrides();
 
-        std::vector<size_t> out_dims = in_dims;
-        param_output                 = tensor<T>{out_dims};
-        momentum_buffer_output       = tensor<T>{out_dims};
-        ref_param_output             = tensor<T>{out_dims};
-        ref_momentum_buffer_output   = tensor<T>{out_dims};
-        std::fill(param_output.begin(), param_output.end(), std::numeric_limits<T>::quiet_NaN());
-        std::fill(momentum_buffer_output.begin(),
-                  momentum_buffer_output.end(),
-                  std::numeric_limits<T>::quiet_NaN());
-        std::fill(
-            ref_param_output.begin(), ref_param_output.end(), std::numeric_limits<T>::quiet_NaN());
-        std::fill(ref_momentum_buffer_output.begin(),
-                  ref_momentum_buffer_output.end(),
-                  std::numeric_limits<T>::quiet_NaN());
+        if(strides.empty())
+        {
+            param_input                = tensor<T>{dims}.generate(gen_value);
+            grad                       = tensor<T>{dims}.generate(gen_value);
+            momentum_buffer_input      = tensor<T>{dims}.generate(gen_value);
+            param_output               = tensor<T>{dims}.generate(gen_value);
+            momentum_buffer_output     = tensor<T>{dims}.generate(gen_value);
+            ref_param_output           = tensor<T>(param_output);
+            ref_momentum_buffer_output = tensor<T>(momentum_buffer_output);
+        }
+        else
+        {
+            param_input                = tensor<T>{dims, strides}.generate(gen_value);
+            grad                       = tensor<T>{dims, strides}.generate(gen_value);
+            momentum_buffer_input      = tensor<T>{dims, strides}.generate(gen_value);
+            param_output               = tensor<T>{dims, strides}.generate(gen_value);
+            momentum_buffer_output     = tensor<T>{dims, strides}.generate(gen_value);
+            ref_param_output           = tensor<T>(param_output);
+            ref_momentum_buffer_output = tensor<T>(momentum_buffer_output);
+        }
 
         param_input_dev            = handle.Write(param_input.data);
         param_output_dev           = handle.Write(param_output.data);

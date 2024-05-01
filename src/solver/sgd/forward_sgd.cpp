@@ -43,8 +43,11 @@ namespace SGD {
 bool SGDForward::IsApplicable([[maybe_unused]] const ExecutionContext& constext,
                               const miopen::SGD::ProblemDescription& problem) const
 {
-    if(!(problem.IsAllPacked() && problem.IsRightLength() && problem.IsSameType()))
+    if(!(problem.IsRightLength() && problem.IsSameType() && problem.IsSameStrides()))
+    {
         return false;
+    }
+
     return true;
 }
 
@@ -56,19 +59,9 @@ ConvSolution SGDForward::GetSolution([[maybe_unused]] const ExecutionContext& co
     auto dtype = problem.GetParamInDesc().GetType();
     auto dims  = problem.GetParamInDesc().GetLengths();
 
-    size_t param_size = std::accumulate(dims.begin(), dims.end(), 1ULL, std::multiplies<size_t>());
-
-    size_t xlocalsize = LOCAL_SIZE;
-    size_t xgridsize  = AlignUp(param_size, xlocalsize);
-    size_t ylocalsize = 1;
-    size_t ygridsize  = 1;
-    size_t zlocalsize = 1;
-    size_t zgridsize  = 1;
-
-    auto kernel = KernelInfo{};
-
-    kernel.kernel_file = "MIOpenSGD.cpp";
-    kernel.kernel_name = "SGDFwdContiguous";
+    bool is_contiguous = problem.IsAllPacked();
+    size_t param_size  = std::accumulate(dims.begin(), dims.end(), 1ULL, std::multiplies<size_t>());
+    size_t n_dims      = dims.size();
 
     const auto build_params = KernelBuildParameters{
         {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
@@ -77,6 +70,15 @@ ConvSolution SGDForward::GetSolution([[maybe_unused]] const ExecutionContext& co
         {"MIOPEN_USE_BFP16", static_cast<int>(dtype == miopenBFloat16)},
     };
 
+    size_t xlocalsize = LOCAL_SIZE;
+    size_t xgridsize  = AlignUp(param_size, xlocalsize);
+    size_t ylocalsize = 1;
+    size_t ygridsize  = 1;
+    size_t zlocalsize = 1;
+    size_t zgridsize  = 1;
+
+    auto kernel         = KernelInfo{};
+    kernel.kernel_file  = "MIOpenSGD.cpp";
     kernel.comp_options = build_params.GenerateFor(kbp::HIP{});
 
     kernel.l_wk.push_back(xlocalsize);
@@ -87,25 +89,55 @@ ConvSolution SGDForward::GetSolution([[maybe_unused]] const ExecutionContext& co
     kernel.g_wk.push_back(ygridsize);
     kernel.g_wk.push_back(zgridsize);
 
-    result.invoker_factory = [&](const std::vector<Kernel>& kernels) {
-        return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
-            decltype(auto) kernel = handle_.Run(kernels.front());
-            decltype(auto) params = raw_params.CastTo<miopen::SGD::InvokeParams>();
+    if(is_contiguous)
+    {
+        kernel.kernel_name     = "SGDFwdContiguous";
+        result.invoker_factory = [param_size](const std::vector<Kernel>& kernels) {
+            return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
+                decltype(auto) kernel = handle_.Run(kernels.front());
+                decltype(auto) params = raw_params.CastTo<miopen::SGD::InvokeParams>();
 
-            kernel(params.paramIn,
-                   params.paramOut,
-                   params.grad,
-                   params.momentumBufferIn,
-                   params.momentumBufferOut,
-                   params.lr,
-                   params.momentum,
-                   params.dampening,
-                   params.weightDecay,
-                   params.nesterov,
-                   params.momentum_initialized,
-                   param_size);
+                kernel(params.paramIn,
+                       params.paramOut,
+                       params.grad,
+                       params.momentumBufferIn,
+                       params.momentumBufferOut,
+                       params.lr,
+                       params.momentum,
+                       params.dampening,
+                       params.weightDecay,
+                       params.nesterov,
+                       params.momentum_initialized,
+                       param_size);
+            };
         };
-    };
+    }
+    else
+    {
+        kernel.kernel_name     = "SGDFwd";
+        result.invoker_factory = [param_size, n_dims](const std::vector<Kernel>& kernels) {
+            return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
+                decltype(auto) kernel = handle_.Run(kernels.front());
+                decltype(auto) params = raw_params.CastTo<miopen::SGD::InvokeParams>();
+
+                kernel(params.paramIn,
+                       params.paramOut,
+                       params.grad,
+                       params.momentumBufferIn,
+                       params.momentumBufferOut,
+                       params.lr,
+                       params.momentum,
+                       params.dampening,
+                       params.weightDecay,
+                       params.nesterov,
+                       params.momentum_initialized,
+                       param_size,
+                       n_dims,
+                       params.dims,
+                       params.strides);
+            };
+        };
+    }
     result.construction_params.push_back(kernel);
     return result;
 }
