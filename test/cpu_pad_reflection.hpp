@@ -33,7 +33,7 @@ void cpu_pad_reflection(tensor<T> input_tensor,
                         tensor<T>& ref_output_tensor,
                         const std::vector<size_t> padding)
 {
-    auto input_size = input_tensor.desc.GetSize();
+    auto input_size    = input_tensor.desc.GetSize();
     auto input_dims    = input_tensor.desc.GetLengths();
     auto output_dims   = ref_output_tensor.desc.GetLengths();
     auto input         = input_tensor.data.data();
@@ -42,18 +42,18 @@ void cpu_pad_reflection(tensor<T> input_tensor,
     auto output_size =
         std::accumulate(output_dims.begin(), output_dims.end(), 1L, std::multiplies<int64_t>());
 
-    if (input_size == 3)
+    if(input_size == 3)
     {
-        long padding_l     = padding[0];
-        size_t in_W = input_dims[2];
+        long padding_l = padding[0];
+        size_t in_W    = input_dims[2];
 
         for(size_t gid = 0; gid < output_size; ++gid)
         {
             long n, c, w;
-            ulong nc  = gid / output_dims[2];
-            w         = gid % output_dims[2];
-            n         = nc / output_dims[1];
-            c         = nc % output_dims[1];
+            ulong nc = gid / output_dims[2];
+            w        = gid % output_dims[2];
+            n        = nc / output_dims[1];
+            c        = nc % output_dims[1];
 
             long in_start_x  = max(0L, -padding_l);
             long out_start_x = max(0L, padding_l);
@@ -69,17 +69,17 @@ void cpu_pad_reflection(tensor<T> input_tensor,
             {
                 w = (in_W + padding_l - 1) * 2 - w;
             }
-            w = w - out_start_x + in_start_x;
-            output[gid] = input[(input_strides[2] * (w)) +
-                                (input_strides[1] * (c)) + (input_strides[0] * (n)) + 0];
+            w           = w - out_start_x + in_start_x;
+            output[gid] = input[(input_strides[2] * (w)) + (input_strides[1] * (c)) +
+                                (input_strides[0] * (n)) + 0];
         }
     }
-    else if (input_size == 4)
+    else if(input_size == 4)
     {
-        long padding_l     = padding[0];
-        long padding_t     = padding[2];
-        size_t in_H = input_dims[2];
-        size_t in_W = input_dims[3];
+        long padding_l = padding[0];
+        long padding_t = padding[2];
+        size_t in_H    = input_dims[2];
+        size_t in_W    = input_dims[3];
 
         for(size_t gid = 0; gid < output_size; ++gid)
         {
@@ -127,6 +127,5 @@ void cpu_pad_reflection(tensor<T> input_tensor,
                                 (input_strides[1] * (c)) + (input_strides[0] * (n)) + 0];
         }
     }
-
 }
 #endif

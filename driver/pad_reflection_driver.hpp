@@ -52,12 +52,12 @@ void mloPadReflectionRunHost(miopenTensorDescriptor_t inputDesc,
                              Tcheck* outputhost,
                              std::vector<size_t> padding)
 {
-    auto input_size = miopen::deref(inputDesc).GetSize();
+    auto input_size  = miopen::deref(inputDesc).GetSize();
     auto input_dims  = miopen::deref(inputDesc).GetLengths();
     auto output_dims = miopen::deref(outputDesc).GetLengths();
     auto output_numel =
         std::accumulate(output_dims.begin(), output_dims.end(), 1L, std::multiplies<int64_t>());
-    if (input_size == 3)
+    if(input_size == 3)
     {
         long padding_l     = padding[0];
         auto input_strides = miopen::deref(inputDesc).GetStrides();
@@ -69,10 +69,10 @@ void mloPadReflectionRunHost(miopenTensorDescriptor_t inputDesc,
         for(size_t gid = 0; gid < output_numel; gid++)
         {
             long n, c, w;
-            ulong nc  = gid / output_dims[2];
-            w         = gid % output_dims[2];
-            n         = nc / output_dims[1];
-            c         = nc % output_dims[1];
+            ulong nc = gid / output_dims[2];
+            w        = gid % output_dims[2];
+            n        = nc / output_dims[1];
+            c        = nc % output_dims[1];
 
             if(w < padding_l)
             {
@@ -86,9 +86,9 @@ void mloPadReflectionRunHost(miopenTensorDescriptor_t inputDesc,
 
             outputhost[gid] = input[(input_strides[2] * (w)) + (input_strides[1] * (c)) +
                                     (input_strides[0] * (n)) + 0];
-        } 
+        }
     }
-    else if (input_size == 4) 
+    else if(input_size == 4)
     {
         long padding_l     = padding[0];
         long padding_t     = padding[2];
@@ -142,7 +142,6 @@ void mloPadReflectionRunHost(miopenTensorDescriptor_t inputDesc,
                                     (input_strides[1] * (c)) + (input_strides[0] * (n)) + 0];
         }
     }
-
 }
 #endif
 
@@ -233,7 +232,7 @@ int PadReflectionDriver<Tgpu, Tref>::GetandSetData()
 
     std::vector<int> out_len;
     auto in_len_size = in_len.size();
-    if (in_len_size == 3) 
+    if(in_len_size == 3)
     {
         for(int i = 0; i < in_len_size; i++)
         {
@@ -248,7 +247,7 @@ int PadReflectionDriver<Tgpu, Tref>::GetandSetData()
             }
         }
     }
-    else if (in_len_size == 4)
+    else if(in_len_size == 4)
     {
         for(int i = 0; i < in_len.size(); i++)
         {

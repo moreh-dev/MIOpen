@@ -39,7 +39,7 @@ __device__ void padReflection1dFwdContiguous(const TI* __restrict__ input,
                                              const size_t in_W,
                                              const size_t output_size_1,
                                              const size_t output_size_2,
-                                             const size_t input_stride_0, 
+                                             const size_t input_stride_0,
                                              const size_t input_stride_1,
                                              const size_t input_stride_2)
 {
@@ -48,10 +48,10 @@ __device__ void padReflection1dFwdContiguous(const TI* __restrict__ input,
         return;
 
     long n, c, w;
-    ulong nc  = gid / output_size_2;
-    w         = gid % output_size_2;
-    n         = nc / output_size_1;
-    c         = nc % output_size_1;
+    ulong nc = gid / output_size_2;
+    w        = gid % output_size_2;
+    n        = nc / output_size_1;
+    c        = nc % output_size_1;
 
     long in_start_x  = max(0L, -padding_left);
     long out_start_x = max(0L, padding_left);
@@ -64,20 +64,20 @@ __device__ void padReflection1dFwdContiguous(const TI* __restrict__ input,
     {
         w = (in_W + padding_left - 1) * 2 - w;
     }
-    w = w - out_start_x + in_start_x;
+    w           = w - out_start_x + in_start_x;
     output[gid] = input[input_stride_2 * w + input_stride_1 * c + input_stride_0 * n + 0];
 }
 
 extern "C" __global__ void PadReflection1dFwdContiguous(const INPUT_TYPE* __restrict__ input,
-                                              OUTPUT_TYPE* __restrict__ output,
-                                              uint64_t output_size,
-                                              long padding_left,
-                                              const size_t in_W,
-                                              const size_t output_size_1,
-                                              const size_t output_size_2,
-                                              const size_t input_stride_0,
-                                              const size_t input_stride_1,
-                                              const size_t input_stride_2)
+                                                        OUTPUT_TYPE* __restrict__ output,
+                                                        uint64_t output_size,
+                                                        long padding_left,
+                                                        const size_t in_W,
+                                                        const size_t output_size_1,
+                                                        const size_t output_size_2,
+                                                        const size_t input_stride_0,
+                                                        const size_t input_stride_1,
+                                                        const size_t input_stride_2)
 {
     padReflection1dFwdContiguous<INPUT_TYPE, OUTPUT_TYPE>(input,
                                                           output,
@@ -86,36 +86,36 @@ extern "C" __global__ void PadReflection1dFwdContiguous(const INPUT_TYPE* __rest
                                                           in_W,
                                                           output_size_1,
                                                           output_size_2,
-                                                          input_stride_0, 
+                                                          input_stride_0,
                                                           input_stride_1,
                                                           input_stride_2);
 }
 
 template <typename TI, typename TO>
 __device__ void padReflection1dFwd(const TI* __restrict__ input,
-                                             TO* __restrict__ output,
-                                             uint64_t output_size,
-                                             long padding_left,
-                                             const size_t in_W,
-                                             const size_t output_size_1,
-                                             const size_t output_size_2,
-                                             const size_t output_stride_0, 
-                                             const size_t output_stride_1, 
-                                             const size_t output_stride_2, 
-                                             const size_t output_offset, 
-                                             const size_t input_stride_0, 
-                                             const size_t input_stride_1,
-                                             const size_t input_stride_2)
+                                   TO* __restrict__ output,
+                                   uint64_t output_size,
+                                   long padding_left,
+                                   const size_t in_W,
+                                   const size_t output_size_1,
+                                   const size_t output_size_2,
+                                   const size_t output_stride_0,
+                                   const size_t output_stride_1,
+                                   const size_t output_stride_2,
+                                   const size_t output_offset,
+                                   const size_t input_stride_0,
+                                   const size_t input_stride_1,
+                                   const size_t input_stride_2)
 {
     const size_t gid = threadIdx.x + blockIdx.x * blockDim.x;
     if(gid >= output_size)
         return;
 
     long n, c, w;
-    ulong nc  = gid / output_size_2;
-    w         = gid % output_size_2;
-    n         = nc / output_size_1;
-    c         = nc % output_size_1;
+    ulong nc = gid / output_size_2;
+    w        = gid % output_size_2;
+    n        = nc / output_size_1;
+    c        = nc % output_size_1;
 
     long in_start_x  = max(0L, -padding_left);
     long out_start_x = max(0L, padding_left);
@@ -128,13 +128,12 @@ __device__ void padReflection1dFwd(const TI* __restrict__ input,
     {
         w = (in_W + padding_left - 1) * 2 - w;
     }
-    w = w - out_start_x + in_start_x;
-    size_t output_idx = output_stride_0 * gid / output_size_2 / output_size_1 + 
-                        output_stride_1 * gid / output_size_2 % output_size_1 + 
+    w                 = w - out_start_x + in_start_x;
+    size_t output_idx = output_stride_0 * gid / output_size_2 / output_size_1 +
+                        output_stride_1 * gid / output_size_2 % output_size_1 +
                         output_stride_2 * gid % output_size_2 + output_offset;
     output[output_idx] = input[input_stride_2 * w + input_stride_1 * c + input_stride_0 * n + 0];
 }
-
 
 extern "C" __global__ void PadReflection1dFwd(const INPUT_TYPE* __restrict__ input,
                                               OUTPUT_TYPE* __restrict__ output,
@@ -158,11 +157,11 @@ extern "C" __global__ void PadReflection1dFwd(const INPUT_TYPE* __restrict__ inp
                                                 in_W,
                                                 output_size_1,
                                                 output_size_2,
-                                                output_stride_0, 
-                                                output_stride_1, 
-                                                output_stride_2, 
-                                                output_offset, 
-                                                input_stride_0, 
+                                                output_stride_0,
+                                                output_stride_1,
+                                                output_stride_2,
+                                                output_offset,
+                                                input_stride_0,
                                                 input_stride_1,
                                                 input_stride_2);
 }

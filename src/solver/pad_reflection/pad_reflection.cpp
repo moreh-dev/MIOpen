@@ -62,9 +62,9 @@ PadReflection::GetSolution([[maybe_unused]] const ExecutionContext& context,
     auto output_dtype = miopen::GetDataType(problem.GetYDesc().GetType());
     auto xdims        = problem.GetXDesc().GetLengths();
     auto ydims        = problem.GetYDesc().GetLengths();
-    auto xsize = problem.GetXDesc().GetSize();
-    
-    if (xsize == 3) 
+    auto xsize        = problem.GetXDesc().GetSize();
+
+    if(xsize == 3)
     {
         auto kernel = KernelInfo{};
 
@@ -96,7 +96,7 @@ PadReflection::GetSolution([[maybe_unused]] const ExecutionContext& context,
 
         result.construction_params.push_back(kernel);
     }
-    else if (xsize == 4)
+    else if(xsize == 4)
     {
         auto kernel = KernelInfo{};
 
@@ -129,7 +129,7 @@ PadReflection::GetSolution([[maybe_unused]] const ExecutionContext& context,
         result.construction_params.push_back(kernel);
     }
 
-    if (xsize == 3) 
+    if(xsize == 3)
     {
         result.invoker_factory = [](const std::vector<Kernel>& kernels) {
             return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
@@ -144,7 +144,7 @@ PadReflection::GetSolution([[maybe_unused]] const ExecutionContext& context,
                 auto output_size =
                     std::accumulate(ydims.begin(), ydims.end(), 1ULL, std::multiplies<size_t>());
 
-                auto padding     = params.padding;
+                auto padding = params.padding;
                 long padding_l;
                 padding_l = padding[0];
 
@@ -155,19 +155,19 @@ PadReflection::GetSolution([[maybe_unused]] const ExecutionContext& context,
                 size_t input_stride_1 = xstrides[1];
                 size_t input_stride_2 = xstrides[2];
                 kernel(params.x,
-                    params.y,
-                    output_size,
-                    padding_l,
-                    in_W,
-                    output_size_1,
-                    output_size_2,
-                    input_stride_0,
-                    input_stride_1,
-                    input_stride_2);
+                       params.y,
+                       output_size,
+                       padding_l,
+                       in_W,
+                       output_size_1,
+                       output_size_2,
+                       input_stride_0,
+                       input_stride_1,
+                       input_stride_2);
             };
         };
     }
-    else if (xsize == 4)
+    else if(xsize == 4)
     {
         result.invoker_factory = [](const std::vector<Kernel>& kernels) {
             return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
@@ -205,19 +205,19 @@ PadReflection::GetSolution([[maybe_unused]] const ExecutionContext& context,
                 size_t input_stride_2 = xstrides[2];
                 size_t input_stride_3 = xstrides[3];
                 kernel(params.x,
-                    params.y,
-                    output_size,
-                    padding_l,
-                    padding_t,
-                    in_H,
-                    in_W,
-                    output_size_1,
-                    output_size_2,
-                    output_size_3,
-                    input_stride_0,
-                    input_stride_1,
-                    input_stride_2,
-                    input_stride_3);
+                       params.y,
+                       output_size,
+                       padding_l,
+                       padding_t,
+                       in_H,
+                       in_W,
+                       output_size_1,
+                       output_size_2,
+                       output_size_3,
+                       input_stride_0,
+                       input_stride_1,
+                       input_stride_2,
+                       input_stride_3);
             };
         };
     }
