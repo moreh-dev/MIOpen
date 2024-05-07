@@ -52,62 +52,97 @@ void mloPadReflectionRunHost(miopenTensorDescriptor_t inputDesc,
                              Tcheck* outputhost,
                              std::vector<size_t> padding)
 {
+    auto input_size = miopen::deref(inputDesc).GetSize();
     auto input_dims  = miopen::deref(inputDesc).GetLengths();
     auto output_dims = miopen::deref(outputDesc).GetLengths();
     auto output_numel =
         std::accumulate(output_dims.begin(), output_dims.end(), 1L, std::multiplies<int64_t>());
-
-    long padding_l     = padding[0];
-    long padding_t     = padding[2];
-    auto input_strides = miopen::deref(inputDesc).GetStrides();
-    size_t in_H        = input_dims[2];
-    size_t in_W        = input_dims[3];
-
-    for(size_t gid = 0; gid < output_numel; gid++)
+    if (input_size == 3)
     {
-        long n, c, h, w;
-        // GET_NCHW(n, c, h, w, gid, output);
-        ulong nch = (gid) / output_dims[3];
-        w         = (gid) % output_dims[3];
-        ulong nc  = nch / output_dims[2];
-        h         = nch % output_dims[2];
-        n         = nc / output_dims[1];
-        c         = nc % output_dims[1];
+        long padding_l     = padding[0];
+        auto input_strides = miopen::deref(inputDesc).GetStrides();
+        size_t in_W        = input_dims[2];
 
         long in_start_x  = max(0L, -padding_l);
-        long in_start_y  = max(0L, -padding_t);
         long out_start_x = max(0L, padding_l);
-        long out_start_y = max(0L, padding_t);
 
-        if(w < padding_l)
+        for(size_t gid = 0; gid < output_numel; gid++)
         {
-            w = padding_l * 2 - w;
-        }
-        else if(padding_l <= w && w < in_W + padding_l)
-        {
-        }
-        else
-        {
-            w = (in_W + padding_l - 1) * 2 - w;
-        }
-        w = w - out_start_x + in_start_x;
+            long n, c, w;
+            ulong nc  = gid / output_dims[2];
+            w         = gid % output_dims[2];
+            n         = nc / output_dims[1];
+            c         = nc % output_dims[1];
 
-        if(h < padding_t)
-        {
-            h = padding_t * 2 - h;
-        }
-        else if(padding_t <= h && h < in_H + padding_t)
-        {
-        }
-        else
-        {
-            h = (in_H + padding_t - 1) * 2 - h;
-        }
-        h = h - out_start_y + in_start_y;
+            if(w < padding_l)
+            {
+                w = padding_l * 2 - w;
+            }
+            else if(!(padding_l <= w && w < in_W + padding_l))
+            {
+                w = (in_W + padding_l - 1) * 2 - w;
+            }
+            w = w - out_start_x + in_start_x;
 
-        outputhost[gid] = input[(input_strides[3] * (w)) + (input_strides[2] * (h)) +
-                                (input_strides[1] * (c)) + (input_strides[0] * (n)) + 0];
+            outputhost[gid] = input[(input_strides[2] * (w)) + (input_strides[1] * (c)) +
+                                    (input_strides[0] * (n)) + 0];
+        } 
     }
+    else if (input_size == 4) 
+    {
+        long padding_l     = padding[0];
+        long padding_t     = padding[2];
+        auto input_strides = miopen::deref(inputDesc).GetStrides();
+        size_t in_H        = input_dims[2];
+        size_t in_W        = input_dims[3];
+
+        for(size_t gid = 0; gid < output_numel; gid++)
+        {
+            long n, c, h, w;
+            // GET_NCHW(n, c, h, w, gid, output);
+            ulong nch = (gid) / output_dims[3];
+            w         = (gid) % output_dims[3];
+            ulong nc  = nch / output_dims[2];
+            h         = nch % output_dims[2];
+            n         = nc / output_dims[1];
+            c         = nc % output_dims[1];
+
+            long in_start_x  = max(0L, -padding_l);
+            long in_start_y  = max(0L, -padding_t);
+            long out_start_x = max(0L, padding_l);
+            long out_start_y = max(0L, padding_t);
+
+            if(w < padding_l)
+            {
+                w = padding_l * 2 - w;
+            }
+            else if(padding_l <= w && w < in_W + padding_l)
+            {
+            }
+            else
+            {
+                w = (in_W + padding_l - 1) * 2 - w;
+            }
+            w = w - out_start_x + in_start_x;
+
+            if(h < padding_t)
+            {
+                h = padding_t * 2 - h;
+            }
+            else if(padding_t <= h && h < in_H + padding_t)
+            {
+            }
+            else
+            {
+                h = (in_H + padding_t - 1) * 2 - h;
+            }
+            h = h - out_start_y + in_start_y;
+
+            outputhost[gid] = input[(input_strides[3] * (w)) + (input_strides[2] * (h)) +
+                                    (input_strides[1] * (c)) + (input_strides[0] * (n)) + 0];
+        }
+    }
+
 }
 #endif
 
@@ -187,7 +222,7 @@ int PadReflectionDriver<Tgpu, Tref>::GetandSetData()
         padding.push_back(std::stoul(token));
     }
 
-    if(!(padding.size() == 1 or padding.size() == 4))
+    if(!(padding.size() == 1 || padding.size() == 4))
     {
         std::cerr << "Error Padding Lengths\n" << std::endl;
     }
@@ -197,21 +232,40 @@ int PadReflectionDriver<Tgpu, Tref>::GetandSetData()
     SetTensorNd(inputDesc, in_len, data_type);
 
     std::vector<int> out_len;
-    for(int i = 0; i < in_len.size(); i++)
+    auto in_len_size = in_len.size();
+    if (in_len_size == 3) 
     {
-        // If H
-        if(i == 2)
+        for(int i = 0; i < in_len_size; i++)
         {
-            out_len.push_back(in_len[i] + 2 * padding[2]);
+            // If W
+            if(i == 2)
+            {
+                out_len.push_back(in_len[i] + 2 * padding[0]);
+            }
+            else
+            {
+                out_len.push_back(in_len[i]);
+            }
         }
-        // If W
-        else if(i == 3)
+    }
+    else if (in_len_size == 4)
+    {
+        for(int i = 0; i < in_len.size(); i++)
         {
-            out_len.push_back(in_len[i] + 2 * padding[0]);
-        }
-        else
-        {
-            out_len.push_back(in_len[i]);
+            // If H
+            if(i == 2)
+            {
+                out_len.push_back(in_len[i] + 2 * padding[2]);
+            }
+            // If W
+            else if(i == 3)
+            {
+                out_len.push_back(in_len[i] + 2 * padding[0]);
+            }
+            else
+            {
+                out_len.push_back(in_len[i]);
+            }
         }
     }
 

@@ -77,14 +77,17 @@ struct ProblemDescription : ProblemDescriptionBase
 
     bool IsRightNumPadding() const
     {
-        if(!(num_padding == 1 || num_padding == 4))
+        if (!(num_padding == 1))
         {
+            if (!((num_padding == 4 && xDesc.GetSize() == 4) || xDesc.GetSize() == 3))
+            {
 #if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
             MIOPEN_THROW(miopenStatusBadParm,
-                         "Pad Reflection: Padding input needs to have 1 or 4 elements only.");
+                         "Pad Reflection: Padding input accepts 1 value only, or 4 values for padding 2d");
 #else
             return false;
 #endif
+            }
         }
         return true;
     }
