@@ -245,8 +245,8 @@ template <typename Tgpu, typename Tref>
 int SGDDriver<Tgpu, Tref>::AddCmdLineArgs()
 {
     inflags.AddInputFlag("forw", 'F', "1", "Run only Forward SGD (Default=1)", "int");
-    inflags.AddInputFlag("batchsize", 'n', "100", "Mini-batch size (Default=100)", "int");
-    inflags.AddInputFlag("in_channels", 'c', "3", "Number of Input Channels (Default=3)", "int");
+    inflags.AddInputFlag("batchsize", 'n', "0", "Mini-batch size (Default=0)", "int");
+    inflags.AddInputFlag("in_channels", 'c', "0", "Number of Input Channels (Default=0)", "int");
     inflags.AddInputFlag("in_h", 'H', "0", "Input Height (Default=0)", "int");
     inflags.AddInputFlag("in_w", 'W', "0", "Input Width (Default=0)", "int");
     inflags.AddInputFlag("in_d", 'D', "0", "Input Depth (Default=0)", "int");

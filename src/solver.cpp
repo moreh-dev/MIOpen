@@ -35,6 +35,7 @@
 #include <miopen/reduce/solvers.hpp>
 #include <miopen/mha/solvers.hpp>
 #include <miopen/softmax/solvers.hpp>
+#include <miopen/sgd/solvers.hpp>
 
 #include <miopen/conv_algo_name.hpp>
 #include <miopen/db.hpp>
@@ -616,6 +617,7 @@ inline SolverRegistrar::SolverRegistrar(IdRegistryData& registry)
         registry, ++id, Primitive::Normalization, layernorm::Layernorm4DCKForward{}.SolverDbId());
     Register(registry, ++id, Primitive::Normalization, layernorm::LayernormForward{}.SolverDbId());
     Register(registry, ++id, Primitive::Reduce, reduce::SumForward{}.SolverDbId());
+    Register(registry, ++id, Primitive::SGD, SGD::SGDForward{}.SolverDbId());
     RegisterWithSolver(registry,
                        ++id,
                        conv::ConvHipImplicitGemmF16F8F16FwdXdlops{},
