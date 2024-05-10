@@ -5794,7 +5794,6 @@ MIOPEN_EXPORT miopenStatus_t miopenSumForward(miopenHandle_t handle,
 // CLOSEOUT SUM DOXYGEN GROUP
 #endif
 
-
 #ifdef MIOPEN_BETA_API
 // Padreflection APIs
 /** @addtogroup pad
@@ -5833,13 +5832,14 @@ MIOPEN_EXPORT miopenStatus_t miopenSumForward(miopenHandle_t handle,
  * @param num_padding              Number of elements in padding, equals 1 or 4 (input)
  * @return                         miopenStatus_t
  */
-MIOPEN_EXPORT miopenStatus_t miopenPadReflection1dFwdContiguous(miopenHandle_t handle,
-                                                 const miopenTensorDescriptor_t xDesc,
-                                                 const void* x,
-                                                 const miopenTensorDescriptor_t yDesc,
-                                                 void* y,
-                                                 const size_t* padding,
-                                                 const size_t num_padding);
+MIOPEN_EXPORT miopenStatus_t
+miopenPadReflection1dFwdContiguous(miopenHandle_t handle,
+                                   const miopenTensorDescriptor_t xDesc,
+                                   const void* x,
+                                   const miopenTensorDescriptor_t yDesc,
+                                   void* y,
+                                   const size_t* padding,
+                                   const size_t num_padding);
 
 /*! @brief Add padding by the reflection of the tensor
  *
@@ -5853,12 +5853,12 @@ MIOPEN_EXPORT miopenStatus_t miopenPadReflection1dFwdContiguous(miopenHandle_t h
  * @return                         miopenStatus_t
  */
 MIOPEN_EXPORT miopenStatus_t miopenPadReflection1dFwd(miopenHandle_t handle,
-                                                 const miopenTensorDescriptor_t xDesc,
-                                                 const void* x,
-                                                 const miopenTensorDescriptor_t yDesc,
-                                                 void* y,
-                                                 const size_t* padding,
-                                                 const size_t num_padding);
+                                                      const miopenTensorDescriptor_t xDesc,
+                                                      const void* x,
+                                                      const miopenTensorDescriptor_t yDesc,
+                                                      void* y,
+                                                      const size_t* padding,
+                                                      const size_t num_padding);
 
 /*! @brief Add padding by the reflection of the tensor
  *
@@ -5871,13 +5871,14 @@ MIOPEN_EXPORT miopenStatus_t miopenPadReflection1dFwd(miopenHandle_t handle,
  * @param num_padding              Number of elements in padding, equals to 1 (input)
  * @return                         miopenStatus_t
  */
-MIOPEN_EXPORT miopenStatus_t miopenPadReflection1dBwdContiguous(miopenHandle_t handle,
-                                                 const miopenTensorDescriptor_t xDesc,
-                                                 const void* x,
-                                                 const miopenTensorDescriptor_t yDesc,
-                                                 void* y,
-                                                 const size_t* padding,
-                                                 const size_t num_padding);
+MIOPEN_EXPORT miopenStatus_t
+miopenPadReflection1dBwdContiguous(miopenHandle_t handle,
+                                   const miopenTensorDescriptor_t xDesc,
+                                   const void* x,
+                                   const miopenTensorDescriptor_t yDesc,
+                                   void* y,
+                                   const size_t* padding,
+                                   const size_t num_padding);
 
 /*! @brief Add padding by the reflection of the tensor
  *
@@ -5891,13 +5892,12 @@ MIOPEN_EXPORT miopenStatus_t miopenPadReflection1dBwdContiguous(miopenHandle_t h
  * @return                         miopenStatus_t
  */
 MIOPEN_EXPORT miopenStatus_t miopenPadReflection1dBwd(miopenHandle_t handle,
-                                                 const miopenTensorDescriptor_t xDesc,
-                                                 const void* x,
-                                                 const miopenTensorDescriptor_t yDesc,
-                                                 void* y,
-                                                 const size_t* padding,
-                                                 const size_t num_padding);
-
+                                                      const miopenTensorDescriptor_t xDesc,
+                                                      const void* x,
+                                                      const miopenTensorDescriptor_t yDesc,
+                                                      void* y,
+                                                      const size_t* padding,
+                                                      const size_t num_padding);
 
 /** @} */
 

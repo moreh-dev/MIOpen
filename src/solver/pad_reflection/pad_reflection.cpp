@@ -164,7 +164,8 @@ namespace pad_reflection {
 //         result.invoker_factory = [](const std::vector<Kernel>& kernels) {
 //             return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
 //                 decltype(auto) kernel = handle_.Run(kernels[0]);
-//                 decltype(auto) params = raw_params.CastTo<miopen::pad_reflection::InvokeParams>();
+//                 decltype(auto) params =
+//                 raw_params.CastTo<miopen::pad_reflection::InvokeParams>();
 
 //                 auto xdims = params.xDesc->GetLengths();
 //                 auto ydims = params.yDesc->GetLengths();
@@ -202,7 +203,8 @@ namespace pad_reflection {
 //         result.invoker_factory = [](const std::vector<Kernel>& kernels) {
 //             return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
 //                 decltype(auto) kernel = handle_.Run(kernels[0]);
-//                 decltype(auto) params = raw_params.CastTo<miopen::pad_reflection::InvokeParams>();
+//                 decltype(auto) params =
+//                 raw_params.CastTo<miopen::pad_reflection::InvokeParams>();
 
 //                 auto xdims = params.xDesc->GetLengths();
 //                 auto ydims = params.yDesc->GetLengths();
@@ -247,7 +249,8 @@ namespace pad_reflection {
 //         result.invoker_factory = [](const std::vector<Kernel>& kernels) {
 //             return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
 //                 decltype(auto) kernel = handle_.Run(kernels[0]);
-//                 decltype(auto) params = raw_params.CastTo<miopen::pad_reflection::InvokeParams>();
+//                 decltype(auto) params =
+//                 raw_params.CastTo<miopen::pad_reflection::InvokeParams>();
 
 //                 auto xdims = params.xDesc->GetLengths();
 //                 auto ydims = params.yDesc->GetLengths();
@@ -299,8 +302,9 @@ namespace pad_reflection {
 //     return result;
 // }
 
-bool PadReflection1dFwdContiguous::IsApplicable([[maybe_unused]] const ExecutionContext& context,
-                                 const miopen::pad_reflection::PadReflection1dFwdContiguousProblemDescription& problem) const
+bool PadReflection1dFwdContiguous::IsApplicable(
+    [[maybe_unused]] const ExecutionContext& context,
+    const miopen::pad_reflection::PadReflection1dFwdContiguousProblemDescription& problem) const
 {
     if(!problem.IsSameType())
         return false;
@@ -311,18 +315,19 @@ bool PadReflection1dFwdContiguous::IsApplicable([[maybe_unused]] const Execution
     return true;
 }
 
-ConvSolution PadReflection1dFwdContiguous::GetSolution([[maybe_unused]] const ExecutionContext& context,
-                           const miopen::pad_reflection::PadReflection1dFwdContiguousProblemDescription& problem) const
+ConvSolution PadReflection1dFwdContiguous::GetSolution(
+    [[maybe_unused]] const ExecutionContext& context,
+    const miopen::pad_reflection::PadReflection1dFwdContiguousProblemDescription& problem) const
 {
-    auto result = ConvSolution{miopenStatusSuccess};
+    auto result       = ConvSolution{miopenStatusSuccess};
     auto input_dtype  = miopen::GetDataType(problem.GetXDesc().GetType());
     auto output_dtype = miopen::GetDataType(problem.GetYDesc().GetType());
     auto xdims        = problem.GetXDesc().GetLengths();
     auto ydims        = problem.GetYDesc().GetLengths();
-    auto dtype = problem.GetXDesc().GetType();
+    auto dtype        = problem.GetXDesc().GetType();
 
     {
-        auto kernel = KernelInfo{};
+        auto kernel        = KernelInfo{};
         kernel.kernel_file = "MIOpenPadReflection.cpp";
         kernel.kernel_name = "PadReflection1dFwdContiguous";
         auto output_numel =
@@ -396,8 +401,9 @@ ConvSolution PadReflection1dFwdContiguous::GetSolution([[maybe_unused]] const Ex
     return result;
 }
 
-bool PadReflection1dFwd::IsApplicable([[maybe_unused]] const ExecutionContext& context,
-                                 const miopen::pad_reflection::PadReflection1dFwdProblemDescription& problem) const
+bool PadReflection1dFwd::IsApplicable(
+    [[maybe_unused]] const ExecutionContext& context,
+    const miopen::pad_reflection::PadReflection1dFwdProblemDescription& problem) const
 {
     if(!problem.IsSameType())
         return false;
@@ -408,17 +414,18 @@ bool PadReflection1dFwd::IsApplicable([[maybe_unused]] const ExecutionContext& c
     return true;
 }
 
-ConvSolution PadReflection1dFwd::GetSolution([[maybe_unused]] const ExecutionContext& context,
-                           const miopen::pad_reflection::PadReflection1dFwdProblemDescription& problem) const
+ConvSolution PadReflection1dFwd::GetSolution(
+    [[maybe_unused]] const ExecutionContext& context,
+    const miopen::pad_reflection::PadReflection1dFwdProblemDescription& problem) const
 {
-    auto result = ConvSolution{miopenStatusSuccess};
+    auto result       = ConvSolution{miopenStatusSuccess};
     auto input_dtype  = miopen::GetDataType(problem.GetXDesc().GetType());
     auto output_dtype = miopen::GetDataType(problem.GetYDesc().GetType());
     auto xdims        = problem.GetXDesc().GetLengths();
     auto ydims        = problem.GetYDesc().GetLengths();
-    auto dtype = problem.GetXDesc().GetType();
+    auto dtype        = problem.GetXDesc().GetType();
     {
-        auto kernel = KernelInfo{};
+        auto kernel        = KernelInfo{};
         kernel.kernel_file = "MIOpenPadReflection.cpp";
         kernel.kernel_name = "PadReflection1dFwd";
         auto output_numel =
@@ -471,15 +478,15 @@ ConvSolution PadReflection1dFwd::GetSolution([[maybe_unused]] const ExecutionCon
                 long padding_l;
                 padding_l = padding[0];
 
-                size_t in_W           = xdims[2];
-                size_t output_size_1  = ydims[1];
-                size_t output_size_2  = ydims[2];
+                size_t in_W            = xdims[2];
+                size_t output_size_1   = ydims[1];
+                size_t output_size_2   = ydims[2];
                 size_t output_stride_0 = ystrides[0];
                 size_t output_stride_1 = ystrides[1];
                 size_t output_stride_2 = ystrides[2];
-                size_t input_stride_0 = xstrides[0];
-                size_t input_stride_1 = xstrides[1];
-                size_t input_stride_2 = xstrides[2];
+                size_t input_stride_0  = xstrides[0];
+                size_t input_stride_1  = xstrides[1];
+                size_t input_stride_2  = xstrides[2];
                 kernel(params.x,
                        params.y,
                        output_size,
@@ -499,9 +506,9 @@ ConvSolution PadReflection1dFwd::GetSolution([[maybe_unused]] const ExecutionCon
     return result;
 }
 
-
-bool PadReflection1dBwdContiguous::IsApplicable([[maybe_unused]] const ExecutionContext& context,
-                                 const miopen::pad_reflection::PadReflection1dBwdContiguousProblemDescription& problem) const
+bool PadReflection1dBwdContiguous::IsApplicable(
+    [[maybe_unused]] const ExecutionContext& context,
+    const miopen::pad_reflection::PadReflection1dBwdContiguousProblemDescription& problem) const
 {
     if(!problem.IsSameType())
         return false;
@@ -512,18 +519,19 @@ bool PadReflection1dBwdContiguous::IsApplicable([[maybe_unused]] const Execution
     return true;
 }
 
-ConvSolution PadReflection1dBwdContiguous::GetSolution([[maybe_unused]] const ExecutionContext& context,
-                           const miopen::pad_reflection::PadReflection1dBwdContiguousProblemDescription& problem) const
+ConvSolution PadReflection1dBwdContiguous::GetSolution(
+    [[maybe_unused]] const ExecutionContext& context,
+    const miopen::pad_reflection::PadReflection1dBwdContiguousProblemDescription& problem) const
 {
-    auto result = ConvSolution{miopenStatusSuccess};
+    auto result       = ConvSolution{miopenStatusSuccess};
     auto input_dtype  = miopen::GetDataType(problem.GetXDesc().GetType());
     auto output_dtype = miopen::GetDataType(problem.GetYDesc().GetType());
     auto xdims        = problem.GetXDesc().GetLengths();
     auto ydims        = problem.GetYDesc().GetLengths();
-    auto dtype = problem.GetXDesc().GetType();
+    auto dtype        = problem.GetXDesc().GetType();
 
     {
-        auto kernel = KernelInfo{};
+        auto kernel        = KernelInfo{};
         kernel.kernel_file = "MIOpenPadReflection.cpp";
         kernel.kernel_name = "PadReflection1dBwdContiguous";
         auto output_numel =
@@ -597,8 +605,9 @@ ConvSolution PadReflection1dBwdContiguous::GetSolution([[maybe_unused]] const Ex
     return result;
 }
 
-bool PadReflection1dBwd::IsApplicable([[maybe_unused]] const ExecutionContext& context,
-                                 const miopen::pad_reflection::PadReflection1dBwdProblemDescription& problem) const
+bool PadReflection1dBwd::IsApplicable(
+    [[maybe_unused]] const ExecutionContext& context,
+    const miopen::pad_reflection::PadReflection1dBwdProblemDescription& problem) const
 {
     if(!problem.IsSameType())
         return false;
@@ -609,19 +618,19 @@ bool PadReflection1dBwd::IsApplicable([[maybe_unused]] const ExecutionContext& c
     return true;
 }
 
-
-ConvSolution PadReflection1dBwd::GetSolution([[maybe_unused]] const ExecutionContext& context,
-                           const miopen::pad_reflection::PadReflection1dBwdProblemDescription& problem) const
+ConvSolution PadReflection1dBwd::GetSolution(
+    [[maybe_unused]] const ExecutionContext& context,
+    const miopen::pad_reflection::PadReflection1dBwdProblemDescription& problem) const
 {
-    auto result = ConvSolution{miopenStatusSuccess};
+    auto result       = ConvSolution{miopenStatusSuccess};
     auto input_dtype  = miopen::GetDataType(problem.GetXDesc().GetType());
     auto output_dtype = miopen::GetDataType(problem.GetYDesc().GetType());
     auto xdims        = problem.GetXDesc().GetLengths();
     auto ydims        = problem.GetYDesc().GetLengths();
-    auto dtype = problem.GetXDesc().GetType();
+    auto dtype        = problem.GetXDesc().GetType();
 
     {
-        auto kernel = KernelInfo{};
+        auto kernel        = KernelInfo{};
         kernel.kernel_file = "MIOpenPadReflection.cpp";
         kernel.kernel_name = "PadReflection1dBwd";
         auto output_numel =
@@ -674,15 +683,15 @@ ConvSolution PadReflection1dBwd::GetSolution([[maybe_unused]] const ExecutionCon
                 long padding_l;
                 padding_l = padding[0];
 
-                size_t in_W           = xdims[2];
-                size_t output_size_1  = ydims[1];
-                size_t output_size_2  = ydims[2];
+                size_t in_W            = xdims[2];
+                size_t output_size_1   = ydims[1];
+                size_t output_size_2   = ydims[2];
                 size_t output_stride_0 = ystrides[0];
                 size_t output_stride_1 = ystrides[1];
                 size_t output_stride_2 = ystrides[2];
-                size_t input_stride_0 = xstrides[0];
-                size_t input_stride_1 = xstrides[1];
-                size_t input_stride_2 = xstrides[2];
+                size_t input_stride_0  = xstrides[0];
+                size_t input_stride_1  = xstrides[1];
+                size_t input_stride_2  = xstrides[2];
                 kernel(params.x,
                        params.y,
                        output_size,

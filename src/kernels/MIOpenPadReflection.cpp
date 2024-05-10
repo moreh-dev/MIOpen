@@ -131,7 +131,7 @@ __device__ void padReflection1dFwd(const TI* __restrict__ input,
     size_t output_idx = output_stride_0 * (gid / output_size_2 / output_size_1) +
                         output_stride_1 * ((gid / output_size_2) % output_size_1) +
                         output_stride_2 * (gid % output_size_2) + 0;
-    TO val = input[input_stride_2 * w + input_stride_1 * c + input_stride_0 * n + 0];
+    TO val             = input[input_stride_2 * w + input_stride_1 * c + input_stride_0 * n + 0];
     output[output_idx] = val;
 }
 
@@ -197,12 +197,11 @@ __device__ void padReflection1dBwdContiguous(TI* __restrict__ input_grad,
     {
         w = (in_W + padding_left - 1) * 2 - w;
     }
-    w           = w - out_start_x + in_start_x;
+    w = w - out_start_x + in_start_x;
 
     TO val = output_grad[gid];
-    atomic_add_g(
-        &input_grad[input_stride_2 * w + input_stride_1 * c + input_stride_0 * n + 0],
-        val);
+    atomic_add_g(&input_grad[input_stride_2 * w + input_stride_1 * c + input_stride_0 * n + 0],
+                 val);
 }
 
 extern "C" __global__ void PadReflection1dBwdContiguous(INPUT_TYPE* __restrict__ input,
@@ -264,14 +263,13 @@ __device__ void padReflection1dBwd(TI* __restrict__ input_grad,
     {
         w = (in_W + padding_left - 1) * 2 - w;
     }
-    w           = w - out_start_x + in_start_x;
+    w                 = w - out_start_x + in_start_x;
     size_t output_idx = output_stride_0 * (gid / output_size_2 / output_size_1) +
                         output_stride_1 * ((gid / output_size_2) % output_size_1) +
                         output_stride_2 * (gid % output_size_2) + 0;
     TO val = output_grad[output_idx];
-    atomic_add_g(
-        &input_grad[input_stride_2 * w + input_stride_1 * c + input_stride_0 * n + 0],
-        val);
+    atomic_add_g(&input_grad[input_stride_2 * w + input_stride_1 * c + input_stride_0 * n + 0],
+                 val);
 }
 
 extern "C" __global__ void PadReflection1dBwd(INPUT_TYPE* __restrict__ input_grad,

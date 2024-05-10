@@ -69,14 +69,15 @@ namespace miopen {
 // }
 
 miopenStatus_t PadReflection1dFwdContiguous(Handle& handle,
-                             const TensorDescriptor& xDesc,
-                             ConstData_t x,
-                             const TensorDescriptor& yDesc,
-                             Data_t y,
-                             const size_t* padding,
-                             const size_t num_padding)
+                                            const TensorDescriptor& xDesc,
+                                            ConstData_t x,
+                                            const TensorDescriptor& yDesc,
+                                            Data_t y,
+                                            const size_t* padding,
+                                            const size_t num_padding)
 {
-    const auto problem = pad_reflection::PadReflection1dFwdContiguousProblemDescription{xDesc, yDesc, num_padding};
+    const auto problem =
+        pad_reflection::PadReflection1dFwdContiguousProblemDescription{xDesc, yDesc, num_padding};
 
     const auto invoke_params = [&]() {
         auto tmp        = pad_reflection::InvokeParams{};
@@ -90,22 +91,24 @@ miopenStatus_t PadReflection1dFwdContiguous(Handle& handle,
         return tmp;
     }();
 
-    const auto algo    = AlgorithmName{"PadReflection1dFwdContiguous"};
-    const auto solvers = solver::SolverContainer<solver::pad_reflection::PadReflection1dFwdContiguous>{};
+    const auto algo = AlgorithmName{"PadReflection1dFwdContiguous"};
+    const auto solvers =
+        solver::SolverContainer<solver::pad_reflection::PadReflection1dFwdContiguous>{};
     solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
 
     return miopenStatusSuccess;
 }
 
 miopenStatus_t PadReflection1dFwd(Handle& handle,
-                             const TensorDescriptor& xDesc,
-                             ConstData_t x,
-                             const TensorDescriptor& yDesc,
-                             Data_t y,
-                             const size_t* padding,
-                             const size_t num_padding)
+                                  const TensorDescriptor& xDesc,
+                                  ConstData_t x,
+                                  const TensorDescriptor& yDesc,
+                                  Data_t y,
+                                  const size_t* padding,
+                                  const size_t num_padding)
 {
-    const auto problem = pad_reflection::PadReflection1dFwdProblemDescription{xDesc, yDesc, num_padding};
+    const auto problem =
+        pad_reflection::PadReflection1dFwdProblemDescription{xDesc, yDesc, num_padding};
 
     const auto invoke_params = [&]() {
         auto tmp        = pad_reflection::InvokeParams{};
@@ -127,14 +130,15 @@ miopenStatus_t PadReflection1dFwd(Handle& handle,
 }
 
 miopenStatus_t PadReflection1dBwdContiguous(Handle& handle,
-                             const TensorDescriptor& xDesc,
-                             ConstData_t x,
-                             const TensorDescriptor& yDesc,
-                             Data_t y,
-                             const size_t* padding,
-                             const size_t num_padding)
+                                            const TensorDescriptor& xDesc,
+                                            ConstData_t x,
+                                            const TensorDescriptor& yDesc,
+                                            Data_t y,
+                                            const size_t* padding,
+                                            const size_t num_padding)
 {
-    const auto problem = pad_reflection::PadReflection1dBwdContiguousProblemDescription{xDesc, yDesc, num_padding};
+    const auto problem =
+        pad_reflection::PadReflection1dBwdContiguousProblemDescription{xDesc, yDesc, num_padding};
 
     const auto invoke_params = [&]() {
         auto tmp        = pad_reflection::InvokeParams{};
@@ -148,22 +152,24 @@ miopenStatus_t PadReflection1dBwdContiguous(Handle& handle,
         return tmp;
     }();
 
-    const auto algo    = AlgorithmName{"PadReflection1dBwdContiguous"};
-    const auto solvers = solver::SolverContainer<solver::pad_reflection::PadReflection1dBwdContiguous>{};
+    const auto algo = AlgorithmName{"PadReflection1dBwdContiguous"};
+    const auto solvers =
+        solver::SolverContainer<solver::pad_reflection::PadReflection1dBwdContiguous>{};
     solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
 
     return miopenStatusSuccess;
 }
 
 miopenStatus_t PadReflection1dBwd(Handle& handle,
-                             const TensorDescriptor& xDesc,
-                             ConstData_t x,
-                             const TensorDescriptor& yDesc,
-                             Data_t y,
-                             const size_t* padding,
-                             const size_t num_padding)
+                                  const TensorDescriptor& xDesc,
+                                  ConstData_t x,
+                                  const TensorDescriptor& yDesc,
+                                  Data_t y,
+                                  const size_t* padding,
+                                  const size_t num_padding)
 {
-    const auto problem = pad_reflection::PadReflection1dBwdProblemDescription{xDesc, yDesc, num_padding};
+    const auto problem =
+        pad_reflection::PadReflection1dBwdProblemDescription{xDesc, yDesc, num_padding};
 
     const auto invoke_params = [&]() {
         auto tmp        = pad_reflection::InvokeParams{};

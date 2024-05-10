@@ -35,7 +35,7 @@ namespace pad_reflection {
 
 struct InvokeParams : public miopen::InvokeParams
 {
-    InvokeParams() = default;
+    InvokeParams()                = default;
     const TensorDescriptor* xDesc = nullptr;
     const TensorDescriptor* yDesc = nullptr;
 

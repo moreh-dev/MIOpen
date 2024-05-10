@@ -78,7 +78,7 @@ struct PadReflectionCase
         }
     }
 
-     std::vector<size_t> GetPadding() const
+    std::vector<size_t> GetPadding() const
     {
         std::vector<size_t> paddingVector;
         paddingVector.push_back(padding);
@@ -89,10 +89,7 @@ struct PadReflectionCase
         return paddingVector;
     }
 
-    int GetContiguous() const 
-    {
-        return contiguous;
-    }
+    int GetContiguous() const { return contiguous; }
 };
 
 std::vector<PadReflectionCase> PadReflectionTestFloatConfigs()
@@ -144,11 +141,11 @@ protected:
         pad_reflection_config = GetParam();
         auto gen_value = [](auto...) { return prng::gen_descreet_uniform_sign<T>(1e-2, 100); };
 
-        auto in_dims = pad_reflection_config.GetInput();
-        auto padding = pad_reflection_config.GetPadding();
-        auto contiguous = pad_reflection_config.GetContiguous();
+        auto in_dims       = pad_reflection_config.GetInput();
+        auto padding       = pad_reflection_config.GetPadding();
+        auto contiguous    = pad_reflection_config.GetContiguous();
         auto input_strides = GetStrides(in_dims, contiguous == 1);
-        input        = tensor<T>{in_dims, input_strides}.generate(gen_value);
+        input              = tensor<T>{in_dims, input_strides}.generate(gen_value);
         std::vector<size_t> out_dims;
 
         for(int i = 0; i < in_dims.size(); i++)
@@ -168,7 +165,7 @@ protected:
             }
         }
         auto output_strides = GetStrides(out_dims, contiguous == 1);
-        output = tensor<T>{out_dims, output_strides};
+        output              = tensor<T>{out_dims, output_strides};
         std::fill(output.begin(), output.end(), std::numeric_limits<T>::quiet_NaN());
 
         ref_output = tensor<T>{out_dims, output_strides};
@@ -179,23 +176,23 @@ protected:
     }
     void RunTest()
     {
-        auto&& handle = get_handle();
-        auto padding  = pad_reflection_config.GetPadding();
+        auto&& handle   = get_handle();
+        auto padding    = pad_reflection_config.GetPadding();
         auto contiguous = pad_reflection_config.GetContiguous();
 
         cpu_pad_reflection_fwd<T>(input, ref_output, contiguous, padding);
         miopenStatus_t status;
-        if (contiguous == 1)
+        if(contiguous == 1)
         {
             status = miopen::PadReflection1dFwdContiguous(handle,
-                                                input.desc,
-                                                input_dev.get(),
-                                                output.desc,
-                                                output_dev.get(),
-                                                padding.data(),
-                                                padding.size());
+                                                          input.desc,
+                                                          input_dev.get(),
+                                                          output.desc,
+                                                          output_dev.get(),
+                                                          padding.data(),
+                                                          padding.size());
         }
-        else if (contiguous == 0)
+        else if(contiguous == 0)
         {
             status = miopen::PadReflection1dFwd(handle,
                                                 input.desc,
@@ -236,12 +233,12 @@ protected:
     {
         auto&& handle         = get_handle();
         pad_reflection_config = GetParam();
-        auto gen_value = [](auto...) { return prng::gen_descreet_uniform_sign<T>(1e-2, 100); };
-        auto in_dims = pad_reflection_config.GetInput();
-        auto padding = pad_reflection_config.GetPadding();
-        auto contiguous = pad_reflection_config.GetContiguous();
+        auto gen_value     = [](auto...) { return prng::gen_descreet_uniform_sign<T>(1e-2, 100); };
+        auto in_dims       = pad_reflection_config.GetInput();
+        auto padding       = pad_reflection_config.GetPadding();
+        auto contiguous    = pad_reflection_config.GetContiguous();
         auto input_strides = GetStrides(in_dims, contiguous == 1);
-        input        = tensor<T>{in_dims, input_strides};
+        input              = tensor<T>{in_dims, input_strides};
         std::fill(input.begin(), input.end(), 0.5);
 
         std::vector<size_t> out_dims;
@@ -257,8 +254,8 @@ protected:
             }
         }
         auto output_strides = GetStrides(out_dims, contiguous == 1);
-        output = tensor<T>{out_dims, output_strides}.generate(gen_value);
-        
+        output              = tensor<T>{out_dims, output_strides}.generate(gen_value);
+
         ref_input = tensor<T>{in_dims, input_strides};
         std::fill(ref_input.begin(), ref_input.end(), 0.5);
 
@@ -267,23 +264,23 @@ protected:
     }
     void RunTest()
     {
-        auto&& handle = get_handle();
-        auto padding  = pad_reflection_config.GetPadding();
+        auto&& handle   = get_handle();
+        auto padding    = pad_reflection_config.GetPadding();
         auto contiguous = pad_reflection_config.GetContiguous();
 
         cpu_pad_reflection_bwd<T>(ref_input, output, contiguous, padding);
         miopenStatus_t status;
-        if (contiguous == 1)
+        if(contiguous == 1)
         {
             status = miopen::PadReflection1dBwdContiguous(handle,
-                                                input.desc,
-                                                input_dev.get(),
-                                                output.desc,
-                                                output_dev.get(),
-                                                padding.data(),
-                                                padding.size());
+                                                          input.desc,
+                                                          input_dev.get(),
+                                                          output.desc,
+                                                          output_dev.get(),
+                                                          padding.data(),
+                                                          padding.size());
         }
-        else if (contiguous == 0)
+        else if(contiguous == 0)
         {
             status = miopen::PadReflection1dBwd(handle,
                                                 input.desc,
@@ -298,7 +295,7 @@ protected:
     }
 
     void Verify()
-    {\
+    {
         double tolerance = std::is_same<T, float>::value ? 1.5e-6 : 8.2e-3;
         if(std::is_same<T, bfloat16>::value)
             tolerance *= 8.0;

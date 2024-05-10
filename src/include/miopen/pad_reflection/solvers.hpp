@@ -51,63 +51,79 @@ namespace pad_reflection {
 // };
 
 using PadReflection1dFwdContiguousSolver =
-    NonTunableSolverBase<ExecutionContext, miopen::pad_reflection::PadReflection1dFwdContiguousProblemDescription>;
+    NonTunableSolverBase<ExecutionContext,
+                         miopen::pad_reflection::PadReflection1dFwdContiguousProblemDescription>;
 
 struct PadReflection1dFwdContiguous final : PadReflection1dFwdContiguousSolver
 {
-    const std::string& SolverDbId() const override { return GetSolverDbId<PadReflection1dFwdContiguous>(); }
+    const std::string& SolverDbId() const override
+    {
+        return GetSolverDbId<PadReflection1dFwdContiguous>();
+    }
 
     bool IsApplicable(const ExecutionContext& context,
-                      const miopen::pad_reflection::PadReflection1dFwdContiguousProblemDescription& problem) const override;
+                      const miopen::pad_reflection::PadReflection1dFwdContiguousProblemDescription&
+                          problem) const override;
 
     ConvSolution
     GetSolution(const ExecutionContext& context,
-                const miopen::pad_reflection::PadReflection1dFwdContiguousProblemDescription& problem) const override;
+                const miopen::pad_reflection::PadReflection1dFwdContiguousProblemDescription&
+                    problem) const override;
 };
 
 using PadReflection1dFwdSolver =
-    NonTunableSolverBase<ExecutionContext, miopen::pad_reflection::PadReflection1dFwdProblemDescription>;
+    NonTunableSolverBase<ExecutionContext,
+                         miopen::pad_reflection::PadReflection1dFwdProblemDescription>;
 
 struct PadReflection1dFwd final : PadReflection1dFwdSolver
 {
     const std::string& SolverDbId() const override { return GetSolverDbId<PadReflection1dFwd>(); }
 
-    bool IsApplicable(const ExecutionContext& context,
-                      const miopen::pad_reflection::PadReflection1dFwdProblemDescription& problem) const override;
+    bool IsApplicable(
+        const ExecutionContext& context,
+        const miopen::pad_reflection::PadReflection1dFwdProblemDescription& problem) const override;
 
-    ConvSolution
-    GetSolution(const ExecutionContext& context,
-                const miopen::pad_reflection::PadReflection1dFwdProblemDescription& problem) const override;
+    ConvSolution GetSolution(
+        const ExecutionContext& context,
+        const miopen::pad_reflection::PadReflection1dFwdProblemDescription& problem) const override;
 };
 
 using PadReflection1dBwdContiguousSolver =
-    NonTunableSolverBase<ExecutionContext, miopen::pad_reflection::PadReflection1dBwdContiguousProblemDescription>;
+    NonTunableSolverBase<ExecutionContext,
+                         miopen::pad_reflection::PadReflection1dBwdContiguousProblemDescription>;
 
 struct PadReflection1dBwdContiguous final : PadReflection1dBwdContiguousSolver
 {
-    const std::string& SolverDbId() const override { return GetSolverDbId<PadReflection1dBwdContiguous>(); }
+    const std::string& SolverDbId() const override
+    {
+        return GetSolverDbId<PadReflection1dBwdContiguous>();
+    }
 
     bool IsApplicable(const ExecutionContext& context,
-                      const miopen::pad_reflection::PadReflection1dBwdContiguousProblemDescription& problem) const override;
+                      const miopen::pad_reflection::PadReflection1dBwdContiguousProblemDescription&
+                          problem) const override;
 
     ConvSolution
     GetSolution(const ExecutionContext& context,
-                const miopen::pad_reflection::PadReflection1dBwdContiguousProblemDescription& problem) const override;
+                const miopen::pad_reflection::PadReflection1dBwdContiguousProblemDescription&
+                    problem) const override;
 };
 
 using PadReflection1dBwdSolver =
-    NonTunableSolverBase<ExecutionContext, miopen::pad_reflection::PadReflection1dBwdProblemDescription>;
+    NonTunableSolverBase<ExecutionContext,
+                         miopen::pad_reflection::PadReflection1dBwdProblemDescription>;
 
 struct PadReflection1dBwd final : PadReflection1dBwdSolver
 {
     const std::string& SolverDbId() const override { return GetSolverDbId<PadReflection1dBwd>(); }
 
-    bool IsApplicable(const ExecutionContext& context,
-                      const miopen::pad_reflection::PadReflection1dBwdProblemDescription& problem) const override;
+    bool IsApplicable(
+        const ExecutionContext& context,
+        const miopen::pad_reflection::PadReflection1dBwdProblemDescription& problem) const override;
 
-    ConvSolution
-    GetSolution(const ExecutionContext& context,
-                const miopen::pad_reflection::PadReflection1dBwdProblemDescription& problem) const override;
+    ConvSolution GetSolution(
+        const ExecutionContext& context,
+        const miopen::pad_reflection::PadReflection1dBwdProblemDescription& problem) const override;
 };
 
 } // namespace pad_reflection

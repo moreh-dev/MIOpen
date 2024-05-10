@@ -94,7 +94,6 @@ namespace pad_reflection {
 //         return true;
 //     }
 
-
 // protected:
 //     TensorDescriptor xDesc;
 //     TensorDescriptor yDesc;
@@ -106,8 +105,8 @@ namespace pad_reflection {
 struct PadReflection1dFwdContiguousProblemDescription : ProblemDescriptionBase
 {
     PadReflection1dFwdContiguousProblemDescription(const TensorDescriptor& xDesc_,
-                       const TensorDescriptor& yDesc_,
-                       const size_t num_padding_)
+                                                   const TensorDescriptor& yDesc_,
+                                                   const size_t num_padding_)
         : xDesc(xDesc_), yDesc(yDesc_), num_padding(num_padding_)
     {
     }
@@ -148,10 +147,9 @@ struct PadReflection1dFwdContiguousProblemDescription : ProblemDescriptionBase
             // if(!((num_padding == 4 && xDesc.GetSize() == 4) || xDesc.GetSize() == 3))
             // {
 #if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
-                MIOPEN_THROW(miopenStatusBadParm,
-                             "Pad Reflection: Padding input accepts 1 value only");
+            MIOPEN_THROW(miopenStatusBadParm, "Pad Reflection: Padding input accepts 1 value only");
 #else
-                return false;
+            return false;
 #endif
             // }
         }
@@ -165,10 +163,9 @@ struct PadReflection1dFwdContiguousProblemDescription : ProblemDescriptionBase
             // if(!((num_padding == 4 && xDesc.GetSize() == 4) || xDesc.GetSize() == 3))
             // {
 #if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
-                MIOPEN_THROW(miopenStatusBadParm,
-                             "Pad Reflection: Padding input accepts 1 value only");
+            MIOPEN_THROW(miopenStatusBadParm, "Pad Reflection: Padding input accepts 1 value only");
 #else
-                return false;
+            return false;
 #endif
             // }
         }
@@ -181,14 +178,13 @@ private:
     TensorDescriptor yDesc;
     size_t num_padding;
     // NetworkConfig MakeNetworkConfig() const;
-
 };
 
 struct PadReflection1dFwdProblemDescription : ProblemDescriptionBase
 {
     PadReflection1dFwdProblemDescription(const TensorDescriptor& xDesc_,
-                       const TensorDescriptor& yDesc_,
-                       const size_t num_padding_)
+                                         const TensorDescriptor& yDesc_,
+                                         const size_t num_padding_)
         : xDesc(xDesc_), yDesc(yDesc_), num_padding(num_padding_)
     {
     }
@@ -229,10 +225,9 @@ struct PadReflection1dFwdProblemDescription : ProblemDescriptionBase
             // if(!((num_padding == 4 && xDesc.GetSize() == 4) || xDesc.GetSize() == 3))
             // {
 #if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
-                MIOPEN_THROW(miopenStatusBadParm,
-                             "Pad Reflection: Padding input accepts 1 value only");
+            MIOPEN_THROW(miopenStatusBadParm, "Pad Reflection: Padding input accepts 1 value only");
 #else
-                return false;
+            return false;
 #endif
             // }
         }
@@ -246,10 +241,9 @@ struct PadReflection1dFwdProblemDescription : ProblemDescriptionBase
             // if(!((num_padding == 4 && xDesc.GetSize() == 4) || xDesc.GetSize() == 3))
             // {
 #if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
-                MIOPEN_THROW(miopenStatusBadParm,
-                             "Pad Reflection: Padding input accepts 1 value only");
+            MIOPEN_THROW(miopenStatusBadParm, "Pad Reflection: Padding input accepts 1 value only");
 #else
-                return false;
+            return false;
 #endif
             // }
         }
@@ -262,14 +256,13 @@ private:
     TensorDescriptor yDesc;
     size_t num_padding;
     // NetworkConfig MakeNetworkConfig() const;
-
 };
 
 struct PadReflection1dBwdContiguousProblemDescription : ProblemDescriptionBase
 {
     PadReflection1dBwdContiguousProblemDescription(const TensorDescriptor& xDesc_,
-                       const TensorDescriptor& yDesc_,
-                       const size_t num_padding_)
+                                                   const TensorDescriptor& yDesc_,
+                                                   const size_t num_padding_)
         : xDesc(xDesc_), yDesc(yDesc_), num_padding(num_padding_)
     {
     }
@@ -310,10 +303,9 @@ struct PadReflection1dBwdContiguousProblemDescription : ProblemDescriptionBase
             // if(!((num_padding == 4 && xDesc.GetSize() == 4) || xDesc.GetSize() == 3))
             // {
 #if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
-                MIOPEN_THROW(miopenStatusBadParm,
-                             "Pad Reflection: Padding input accepts 1 value only");
+            MIOPEN_THROW(miopenStatusBadParm, "Pad Reflection: Padding input accepts 1 value only");
 #else
-                return false;
+            return false;
 #endif
             // }
         }
@@ -327,10 +319,9 @@ struct PadReflection1dBwdContiguousProblemDescription : ProblemDescriptionBase
             // if(!((num_padding == 4 && xDesc.GetSize() == 4) || xDesc.GetSize() == 3))
             // {
 #if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
-                MIOPEN_THROW(miopenStatusBadParm,
-                             "Pad Reflection: Padding input accepts 1 value only");
+            MIOPEN_THROW(miopenStatusBadParm, "Pad Reflection: Padding input accepts 1 value only");
 #else
-                return false;
+            return false;
 #endif
             // }
         }
@@ -343,14 +334,13 @@ private:
     TensorDescriptor yDesc;
     size_t num_padding;
     // NetworkConfig MakeNetworkConfig() const;
-
 };
 
 struct PadReflection1dBwdProblemDescription : ProblemDescriptionBase
 {
     PadReflection1dBwdProblemDescription(const TensorDescriptor& xDesc_,
-                       const TensorDescriptor& yDesc_,
-                       const size_t num_padding_)
+                                         const TensorDescriptor& yDesc_,
+                                         const size_t num_padding_)
         : xDesc(xDesc_), yDesc(yDesc_), num_padding(num_padding_)
     {
     }
@@ -391,10 +381,9 @@ struct PadReflection1dBwdProblemDescription : ProblemDescriptionBase
             // if(!((num_padding == 4 && xDesc.GetSize() == 4) || xDesc.GetSize() == 3))
             // {
 #if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
-                MIOPEN_THROW(miopenStatusBadParm,
-                             "Pad Reflection: Padding input accepts 1 value only");
+            MIOPEN_THROW(miopenStatusBadParm, "Pad Reflection: Padding input accepts 1 value only");
 #else
-                return false;
+            return false;
 #endif
             // }
         }
@@ -408,10 +397,9 @@ struct PadReflection1dBwdProblemDescription : ProblemDescriptionBase
             // if(!((num_padding == 4 && xDesc.GetSize() == 4) || xDesc.GetSize() == 3))
             // {
 #if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
-                MIOPEN_THROW(miopenStatusBadParm,
-                             "Pad Reflection: Padding input accepts 1 value only");
+            MIOPEN_THROW(miopenStatusBadParm, "Pad Reflection: Padding input accepts 1 value only");
 #else
-                return false;
+            return false;
 #endif
             // }
         }
@@ -424,7 +412,6 @@ private:
     TensorDescriptor yDesc;
     size_t num_padding;
     // NetworkConfig MakeNetworkConfig() const;
-
 };
 
 } // namespace pad_reflection
