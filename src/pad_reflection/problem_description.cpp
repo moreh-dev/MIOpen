@@ -33,7 +33,23 @@ namespace miopen {
 
 namespace pad_reflection {
 
-NetworkConfig ProblemDescription::MakeNetworkConfig() const
+// NetworkConfig ProblemDescription::MakeNetworkConfig() const
+// {
+//     auto xlength = xDesc.GetLengths();
+//     auto ylength = yDesc.GetLengths();
+
+//     auto output_size = std::accumulate(
+//         ylength.begin(), ylength.end(), static_cast<size_t>(1), std::multiplies<size_t>());
+//     auto dtype = xDesc.GetType();
+
+//     std::ostringstream ss;
+
+//     ss << "dtype" << dtype;
+//     ss << "output_size" << output_size;
+//     return NetworkConfig{ss.str()};
+// }
+
+NetworkConfig PadReflection1dFwdContiguousProblemDescription::MakeNetworkConfig() const
 {
     auto xlength = xDesc.GetLengths();
     auto ylength = yDesc.GetLengths();
@@ -43,7 +59,55 @@ NetworkConfig ProblemDescription::MakeNetworkConfig() const
     auto dtype = xDesc.GetType();
 
     std::ostringstream ss;
+    ss << "PadReflection1dFwdContiguous";
+    ss << "dtype" << dtype;
+    ss << "output_size" << output_size;
+    return NetworkConfig{ss.str()};
+}
 
+NetworkConfig PadReflection1dFwdProblemDescription::MakeNetworkConfig() const
+{
+    auto xlength = xDesc.GetLengths();
+    auto ylength = yDesc.GetLengths();
+
+    auto output_size = std::accumulate(
+        ylength.begin(), ylength.end(), static_cast<size_t>(1), std::multiplies<size_t>());
+    auto dtype = xDesc.GetType();
+
+    std::ostringstream ss;
+    ss << "PadReflection1dFwd";
+    ss << "dtype" << dtype;
+    ss << "output_size" << output_size;
+    return NetworkConfig{ss.str()};
+}
+
+NetworkConfig PadReflection1dBwdContiguousProblemDescription::MakeNetworkConfig() const
+{
+    auto xlength = xDesc.GetLengths();
+    auto ylength = yDesc.GetLengths();
+
+    auto output_size = std::accumulate(
+        ylength.begin(), ylength.end(), static_cast<size_t>(1), std::multiplies<size_t>());
+    auto dtype = xDesc.GetType();
+
+    std::ostringstream ss;
+    ss << "PadReflection1dBwdContiguous";
+    ss << "dtype" << dtype;
+    ss << "output_size" << output_size;
+    return NetworkConfig{ss.str()};
+}
+
+NetworkConfig PadReflection1dBwdProblemDescription::MakeNetworkConfig() const
+{
+    auto xlength = xDesc.GetLengths();
+    auto ylength = yDesc.GetLengths();
+
+    auto output_size = std::accumulate(
+        ylength.begin(), ylength.end(), static_cast<size_t>(1), std::multiplies<size_t>());
+    auto dtype = xDesc.GetType();
+
+    std::ostringstream ss;
+    ss << "PadReflection1dBwd";
     ss << "dtype" << dtype;
     ss << "output_size" << output_size;
     return NetworkConfig{ss.str()};

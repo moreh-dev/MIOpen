@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "miopen/miopen.h"
 #include <miopen/invoke_params.hpp>
 #include <miopen/tensor.hpp>
 
@@ -35,7 +36,6 @@ namespace pad_reflection {
 struct InvokeParams : public miopen::InvokeParams
 {
     InvokeParams() = default;
-
     const TensorDescriptor* xDesc = nullptr;
     const TensorDescriptor* yDesc = nullptr;
 

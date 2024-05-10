@@ -25,6 +25,7 @@
  *******************************************************************************/
 #pragma once
 
+#include "miopen/miopen.h"
 #include <miopen/activ.hpp>
 #include <miopen/problem_description_base.hpp>
 #include <miopen/tensor.hpp>
@@ -37,9 +38,74 @@ struct NetworkConfig;
 
 namespace pad_reflection {
 
-struct ProblemDescription : ProblemDescriptionBase
+// struct PadReflectionProblemDescription : ProblemDescriptionBase
+// {
+//     PadReflectionProblemDescription(const TensorDescriptor& xDesc_,
+//                        const TensorDescriptor& yDesc_,
+//                        const size_t num_padding_)
+//         : xDesc(xDesc_), yDesc(yDesc_), num_padding(num_padding_)
+//     {
+//     }
+
+//     const TensorDescriptor& GetXDesc() const { return xDesc; }
+//     const TensorDescriptor& GetYDesc() const { return yDesc; }
+//     size_t GetNumPadding() const { return num_padding; }
+
+//     bool IsSameType() const
+//     {
+//         if(xDesc.GetType() != yDesc.GetType())
+//         {
+// #if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+//             MIOPEN_THROW(miopenStatusBadParm, "Pad Reflection: Tensor types do not match.");
+// #else
+//             return false;
+// #endif
+//         }
+//         return true;
+//     }
+
+//     bool IsAllPacked() const
+//     {
+//         if(!(xDesc.IsPacked() && yDesc.IsPacked()))
+//         {
+// #if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+//             MIOPEN_THROW(miopenStatusBadParm, "Pad Reflection: Unpacked tensors not supported.");
+// #else
+//             return false;
+// #endif
+//         }
+//         return true;
+//     }
+
+//     bool IsRightNumPadding() const
+//     {
+//         if(!(num_padding == 1))
+//         {
+//             // if(!((num_padding == 4 && xDesc.GetSize() == 4) || xDesc.GetSize() == 3))
+//             // {
+// #if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+//                 MIOPEN_THROW(miopenStatusBadParm,
+//                              "Pad Reflection: Padding input accepts 1 value only");
+// #else
+//                 return false;
+// #endif
+//             // }
+//         }
+//         return true;
+//     }
+
+
+// protected:
+//     TensorDescriptor xDesc;
+//     TensorDescriptor yDesc;
+//     size_t num_padding;
+//     NetworkConfig MakeNetworkConfig() const;
+
+// };
+
+struct PadReflection1dFwdContiguousProblemDescription : ProblemDescriptionBase
 {
-    ProblemDescription(const TensorDescriptor& xDesc_,
+    PadReflection1dFwdContiguousProblemDescription(const TensorDescriptor& xDesc_,
                        const TensorDescriptor& yDesc_,
                        const size_t num_padding_)
         : xDesc(xDesc_), yDesc(yDesc_), num_padding(num_padding_)
@@ -79,26 +145,286 @@ struct ProblemDescription : ProblemDescriptionBase
     {
         if(!(num_padding == 1))
         {
-            if(!((num_padding == 4 && xDesc.GetSize() == 4) || xDesc.GetSize() == 3))
-            {
+            // if(!((num_padding == 4 && xDesc.GetSize() == 4) || xDesc.GetSize() == 3))
+            // {
 #if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
                 MIOPEN_THROW(miopenStatusBadParm,
-                             "Pad Reflection: Padding input accepts 1 value only, or 4 values for "
-                             "padding 2d");
+                             "Pad Reflection: Padding input accepts 1 value only");
 #else
                 return false;
 #endif
-            }
+            // }
         }
         return true;
     }
 
+    bool IsRightDim() const
+    {
+        if(!(xDesc.GetSize() == 3 && yDesc.GetSize() == 3))
+        {
+            // if(!((num_padding == 4 && xDesc.GetSize() == 4) || xDesc.GetSize() == 3))
+            // {
+#if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+                MIOPEN_THROW(miopenStatusBadParm,
+                             "Pad Reflection: Padding input accepts 1 value only");
+#else
+                return false;
+#endif
+            // }
+        }
+        return true;
+    }
     NetworkConfig MakeNetworkConfig() const override;
 
 private:
     TensorDescriptor xDesc;
     TensorDescriptor yDesc;
     size_t num_padding;
+    // NetworkConfig MakeNetworkConfig() const;
+
+};
+
+struct PadReflection1dFwdProblemDescription : ProblemDescriptionBase
+{
+    PadReflection1dFwdProblemDescription(const TensorDescriptor& xDesc_,
+                       const TensorDescriptor& yDesc_,
+                       const size_t num_padding_)
+        : xDesc(xDesc_), yDesc(yDesc_), num_padding(num_padding_)
+    {
+    }
+    const TensorDescriptor& GetXDesc() const { return xDesc; }
+    const TensorDescriptor& GetYDesc() const { return yDesc; }
+    size_t GetNumPadding() const { return num_padding; }
+
+    bool IsSameType() const
+    {
+        if(xDesc.GetType() != yDesc.GetType())
+        {
+#if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+            MIOPEN_THROW(miopenStatusBadParm, "Pad Reflection: Tensor types do not match.");
+#else
+            return false;
+#endif
+        }
+        return true;
+    }
+
+    bool IsAllPacked() const
+    {
+        if(!(xDesc.IsPacked() && yDesc.IsPacked()))
+        {
+#if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+            MIOPEN_THROW(miopenStatusBadParm, "Pad Reflection: Unpacked tensors not supported.");
+#else
+            return false;
+#endif
+        }
+        return true;
+    }
+
+    bool IsRightNumPadding() const
+    {
+        if(!(num_padding == 1))
+        {
+            // if(!((num_padding == 4 && xDesc.GetSize() == 4) || xDesc.GetSize() == 3))
+            // {
+#if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+                MIOPEN_THROW(miopenStatusBadParm,
+                             "Pad Reflection: Padding input accepts 1 value only");
+#else
+                return false;
+#endif
+            // }
+        }
+        return true;
+    }
+
+    bool IsRightDim() const
+    {
+        if(!(xDesc.GetSize() == 3 && yDesc.GetSize() == 3))
+        {
+            // if(!((num_padding == 4 && xDesc.GetSize() == 4) || xDesc.GetSize() == 3))
+            // {
+#if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+                MIOPEN_THROW(miopenStatusBadParm,
+                             "Pad Reflection: Padding input accepts 1 value only");
+#else
+                return false;
+#endif
+            // }
+        }
+        return true;
+    }
+    NetworkConfig MakeNetworkConfig() const override;
+
+private:
+    TensorDescriptor xDesc;
+    TensorDescriptor yDesc;
+    size_t num_padding;
+    // NetworkConfig MakeNetworkConfig() const;
+
+};
+
+struct PadReflection1dBwdContiguousProblemDescription : ProblemDescriptionBase
+{
+    PadReflection1dBwdContiguousProblemDescription(const TensorDescriptor& xDesc_,
+                       const TensorDescriptor& yDesc_,
+                       const size_t num_padding_)
+        : xDesc(xDesc_), yDesc(yDesc_), num_padding(num_padding_)
+    {
+    }
+    const TensorDescriptor& GetXDesc() const { return xDesc; }
+    const TensorDescriptor& GetYDesc() const { return yDesc; }
+    size_t GetNumPadding() const { return num_padding; }
+
+    bool IsSameType() const
+    {
+        if(xDesc.GetType() != yDesc.GetType())
+        {
+#if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+            MIOPEN_THROW(miopenStatusBadParm, "Pad Reflection: Tensor types do not match.");
+#else
+            return false;
+#endif
+        }
+        return true;
+    }
+
+    bool IsAllPacked() const
+    {
+        if(!(xDesc.IsPacked() && yDesc.IsPacked()))
+        {
+#if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+            MIOPEN_THROW(miopenStatusBadParm, "Pad Reflection: Unpacked tensors not supported.");
+#else
+            return false;
+#endif
+        }
+        return true;
+    }
+
+    bool IsRightNumPadding() const
+    {
+        if(!(num_padding == 1))
+        {
+            // if(!((num_padding == 4 && xDesc.GetSize() == 4) || xDesc.GetSize() == 3))
+            // {
+#if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+                MIOPEN_THROW(miopenStatusBadParm,
+                             "Pad Reflection: Padding input accepts 1 value only");
+#else
+                return false;
+#endif
+            // }
+        }
+        return true;
+    }
+
+    bool IsRightDim() const
+    {
+        if(!(xDesc.GetSize() == 3 && yDesc.GetSize() == 3))
+        {
+            // if(!((num_padding == 4 && xDesc.GetSize() == 4) || xDesc.GetSize() == 3))
+            // {
+#if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+                MIOPEN_THROW(miopenStatusBadParm,
+                             "Pad Reflection: Padding input accepts 1 value only");
+#else
+                return false;
+#endif
+            // }
+        }
+        return true;
+    }
+    NetworkConfig MakeNetworkConfig() const override;
+
+private:
+    TensorDescriptor xDesc;
+    TensorDescriptor yDesc;
+    size_t num_padding;
+    // NetworkConfig MakeNetworkConfig() const;
+
+};
+
+struct PadReflection1dBwdProblemDescription : ProblemDescriptionBase
+{
+    PadReflection1dBwdProblemDescription(const TensorDescriptor& xDesc_,
+                       const TensorDescriptor& yDesc_,
+                       const size_t num_padding_)
+        : xDesc(xDesc_), yDesc(yDesc_), num_padding(num_padding_)
+    {
+    }
+    const TensorDescriptor& GetXDesc() const { return xDesc; }
+    const TensorDescriptor& GetYDesc() const { return yDesc; }
+    size_t GetNumPadding() const { return num_padding; }
+
+    bool IsSameType() const
+    {
+        if(xDesc.GetType() != yDesc.GetType())
+        {
+#if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+            MIOPEN_THROW(miopenStatusBadParm, "Pad Reflection: Tensor types do not match.");
+#else
+            return false;
+#endif
+        }
+        return true;
+    }
+
+    bool IsAllPacked() const
+    {
+        if(!(xDesc.IsPacked() && yDesc.IsPacked()))
+        {
+#if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+            MIOPEN_THROW(miopenStatusBadParm, "Pad Reflection: Unpacked tensors not supported.");
+#else
+            return false;
+#endif
+        }
+        return true;
+    }
+
+    bool IsRightNumPadding() const
+    {
+        if(!(num_padding == 1))
+        {
+            // if(!((num_padding == 4 && xDesc.GetSize() == 4) || xDesc.GetSize() == 3))
+            // {
+#if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+                MIOPEN_THROW(miopenStatusBadParm,
+                             "Pad Reflection: Padding input accepts 1 value only");
+#else
+                return false;
+#endif
+            // }
+        }
+        return true;
+    }
+
+    bool IsRightDim() const
+    {
+        if(!(xDesc.GetSize() == 3 && yDesc.GetSize() == 3))
+        {
+            // if(!((num_padding == 4 && xDesc.GetSize() == 4) || xDesc.GetSize() == 3))
+            // {
+#if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+                MIOPEN_THROW(miopenStatusBadParm,
+                             "Pad Reflection: Padding input accepts 1 value only");
+#else
+                return false;
+#endif
+            // }
+        }
+        return true;
+    }
+    NetworkConfig MakeNetworkConfig() const override;
+
+private:
+    TensorDescriptor xDesc;
+    TensorDescriptor yDesc;
+    size_t num_padding;
+    // NetworkConfig MakeNetworkConfig() const;
+
 };
 
 } // namespace pad_reflection

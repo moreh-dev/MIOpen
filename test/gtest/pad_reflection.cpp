@@ -42,22 +42,34 @@ std::string GetFloatArg()
     return tmp;
 }
 
-struct PadReflectionTestFloat : PadReflectionTest<float>
+struct PadReflectionFwdTestFloat : PadReflectionFwdTest<float>
 {
 };
 
-struct PadReflectionTestHalf : PadReflectionTest<half_float::half>
+struct PadReflectionFwdTestHalf : PadReflectionFwdTest<half_float::half>
 {
 };
 
-struct PadReflectionTestBF16 : PadReflectionTest<bfloat16>
+struct PadReflectionFwdTestBF16 : PadReflectionFwdTest<bfloat16>
+{
+};
+
+struct PadReflectionBwdTestFloat : PadReflectionBwdTest<float>
+{
+};
+
+struct PadReflectionBwdTestHalf : PadReflectionBwdTest<half_float::half>
+{
+};
+
+struct PadReflectionBwdTestBF16 : PadReflectionBwdTest<bfloat16>
 {
 };
 
 } // namespace pad_reflection
 using namespace pad_reflection;
 
-TEST_P(PadReflectionTestFloat, PadReflectionFw)
+TEST_P(PadReflectionFwdTestFloat, PadReflectionFw)
 {
     if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && (GetFloatArg() == "--float"))
     {
@@ -70,7 +82,7 @@ TEST_P(PadReflectionTestFloat, PadReflectionFw)
     }
 };
 
-TEST_P(PadReflectionTestHalf, PadReflectionFw)
+TEST_P(PadReflectionFwdTestHalf, PadReflectionFw)
 {
     if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && (GetFloatArg() == "--half"))
     {
@@ -83,7 +95,46 @@ TEST_P(PadReflectionTestHalf, PadReflectionFw)
     }
 };
 
-TEST_P(PadReflectionTestBF16, PadReflectionFw)
+TEST_P(PadReflectionFwdTestBF16, PadReflectionFw)
+{
+    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && (GetFloatArg() == "--bfloat16"))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
+
+TEST_P(PadReflectionBwdTestFloat, PadReflectionBw)
+{
+    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && (GetFloatArg() == "--float"))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
+
+TEST_P(PadReflectionBwdTestHalf, PadReflectionBw)
+{
+    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && (GetFloatArg() == "--half"))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
+
+TEST_P(PadReflectionBwdTestBF16, PadReflectionBw)
 {
     if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && (GetFloatArg() == "--bfloat16"))
     {
@@ -97,13 +148,24 @@ TEST_P(PadReflectionTestBF16, PadReflectionFw)
 };
 
 INSTANTIATE_TEST_SUITE_P(PadReflectionTestSet,
-                         PadReflectionTestFloat,
+                         PadReflectionFwdTestFloat,
                          testing::ValuesIn(PadReflectionTestFloatConfigs()));
 
 INSTANTIATE_TEST_SUITE_P(PadReflectionTestSet,
-                         PadReflectionTestHalf,
+                         PadReflectionFwdTestHalf,
                          testing::ValuesIn(PadReflectionTestFloatConfigs()));
 
 INSTANTIATE_TEST_SUITE_P(PadReflectionTestSet,
-                         PadReflectionTestBF16,
+                         PadReflectionFwdTestBF16,
+                         testing::ValuesIn(PadReflectionTestFloatConfigs()));
+INSTANTIATE_TEST_SUITE_P(PadReflectionTestSet,
+                         PadReflectionBwdTestFloat,
+                         testing::ValuesIn(PadReflectionTestFloatConfigs()));
+
+INSTANTIATE_TEST_SUITE_P(PadReflectionTestSet,
+                         PadReflectionBwdTestHalf,
+                         testing::ValuesIn(PadReflectionTestFloatConfigs()));
+
+INSTANTIATE_TEST_SUITE_P(PadReflectionTestSet,
+                         PadReflectionBwdTestBF16,
                          testing::ValuesIn(PadReflectionTestFloatConfigs()));

@@ -24,13 +24,37 @@
  *
  *******************************************************************************/
 
+#include "miopen/miopen.h"
 #include <miopen/pad_reflection.hpp>
 #include <miopen/errors.hpp>
 #include <miopen/handle.hpp>
 #include <miopen/logger.hpp>
 #include <miopen/tensor_ops.hpp>
 
-extern "C" miopenStatus_t miopenPadReflection(miopenHandle_t handle,
+// extern "C" miopenStatus_t miopenPadReflection(miopenHandle_t handle,
+//                                               miopenPadReflectionContiguous_t contiguous,
+//                                               const miopenTensorDescriptor_t xDesc,
+//                                               const void* x,
+//                                               const miopenTensorDescriptor_t yDesc,
+//                                               void* y,
+//                                               const size_t* padding,
+//                                               const size_t num_padding)
+// {
+//     MIOPEN_LOG_FUNCTION(handle, xDesc, x, yDesc, y, padding);
+
+//     return miopen::try_([&] {
+//         miopen::PadReflection(miopen::deref(handle),
+//                               contiguous,
+//                               miopen::deref(xDesc),
+//                               DataCast(x),
+//                               miopen::deref(yDesc),
+//                               DataCast(y),
+//                               padding,
+//                               num_padding);
+//     });
+// }
+
+extern "C" miopenStatus_t miopenPadReflection1dFwdContiguous(miopenHandle_t handle,
                                               const miopenTensorDescriptor_t xDesc,
                                               const void* x,
                                               const miopenTensorDescriptor_t yDesc,
@@ -41,7 +65,70 @@ extern "C" miopenStatus_t miopenPadReflection(miopenHandle_t handle,
     MIOPEN_LOG_FUNCTION(handle, xDesc, x, yDesc, y, padding);
 
     return miopen::try_([&] {
-        miopen::PadReflection(miopen::deref(handle),
+        miopen::PadReflection1dFwdContiguous(miopen::deref(handle),
+                              miopen::deref(xDesc),
+                              DataCast(x),
+                              miopen::deref(yDesc),
+                              DataCast(y),
+                              padding,
+                              num_padding);
+    });
+}
+
+extern "C" miopenStatus_t miopenPadReflection1dFwd(miopenHandle_t handle,
+                                              const miopenTensorDescriptor_t xDesc,
+                                              const void* x,
+                                              const miopenTensorDescriptor_t yDesc,
+                                              void* y,
+                                              const size_t* padding,
+                                              const size_t num_padding)
+{
+    MIOPEN_LOG_FUNCTION(handle, xDesc, x, yDesc, y, padding);
+
+    return miopen::try_([&] {
+        miopen::PadReflection1dFwd(miopen::deref(handle),
+                              miopen::deref(xDesc),
+                              DataCast(x),
+                              miopen::deref(yDesc),
+                              DataCast(y),
+                              padding,
+                              num_padding);
+    });
+}
+
+extern "C" miopenStatus_t miopenPadReflection1dBwdContiguous(miopenHandle_t handle,
+                                              const miopenTensorDescriptor_t xDesc,
+                                              const void* x,
+                                              const miopenTensorDescriptor_t yDesc,
+                                              void* y,
+                                              const size_t* padding,
+                                              const size_t num_padding)
+{
+    MIOPEN_LOG_FUNCTION(handle, xDesc, x, yDesc, y, padding);
+
+    return miopen::try_([&] {
+        miopen::PadReflection1dBwdContiguous(miopen::deref(handle),
+                              miopen::deref(xDesc),
+                              DataCast(x),
+                              miopen::deref(yDesc),
+                              DataCast(y),
+                              padding,
+                              num_padding);
+    });
+}
+
+extern "C" miopenStatus_t miopenPadReflection1dBwd(miopenHandle_t handle,
+                                              const miopenTensorDescriptor_t xDesc,
+                                              const void* x,
+                                              const miopenTensorDescriptor_t yDesc,
+                                              void* y,
+                                              const size_t* padding,
+                                              const size_t num_padding)
+{
+    MIOPEN_LOG_FUNCTION(handle, xDesc, x, yDesc, y, padding);
+
+    return miopen::try_([&] {
+        miopen::PadReflection1dBwd(miopen::deref(handle),
                               miopen::deref(xDesc),
                               DataCast(x),
                               miopen::deref(yDesc),
