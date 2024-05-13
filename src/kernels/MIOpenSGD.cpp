@@ -76,8 +76,7 @@ extern "C" __global__ void SGDFwd(const FLOAT* __restrict__ param_in,
         if(momentum_initialized)
         {
             momentum_v = CVT_FLOAT2ACCUM(momentum_buffer_in[id]);
-            momentum_v =
-                momentum_v * FLOAT_ACCUM(momentum) + d_p * FLOAT_ACCUM((double)1 - dampening);
+            momentum_v = momentum_v * FLOAT_ACCUM(momentum) + d_p * FLOAT_ACCUM(1 - dampening);
         }
         else
         {
@@ -129,8 +128,7 @@ extern "C" __global__ void SGDFwdContiguous(const FLOAT* __restrict__ param_in,
         if(momentum_initialized)
         {
             momentum_v = CVT_FLOAT2ACCUM(momentum_buffer_in[gid]);
-            momentum_v =
-                momentum_v * FLOAT_ACCUM(momentum) + d_p * FLOAT_ACCUM((double)1 - dampening);
+            momentum_v = momentum_v * FLOAT_ACCUM(momentum) + d_p * FLOAT_ACCUM(1 - dampening);
         }
         else
         {

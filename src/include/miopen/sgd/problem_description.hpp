@@ -118,13 +118,23 @@ struct ProblemDescription : ProblemDescriptionBase
         return true;
     }
 
-    bool IsAllPacked() const
+    bool IsContiguous(const TensorDescriptor& tensor) const
     {
-        if(!(paramInDesc.IsPacked() && paramOutDesc.IsPacked() && gradDesc.IsPacked() &&
-             momentumBufferInDesc.IsPacked() && momentumBufferOutDesc.IsPacked()))
+        std::vector<size_t> lengths = tensor.GetLengths();
+        std::vector<size_t> strides = tensor.GetStrides();
+        size_t n_dims               = lengths.size();
+
+        size_t expected_stride = 1;
+
+        for(int i = n_dims - 1; i >= 0; --i)
         {
-            return false;
+            if(strides[i] != expected_stride)
+            {
+                return false;
+            }
+            expected_stride *= lengths[i];
         }
+
         return true;
     }
 

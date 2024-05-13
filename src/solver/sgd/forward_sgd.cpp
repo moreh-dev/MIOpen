@@ -59,9 +59,10 @@ ConvSolution SGDForward::GetSolution([[maybe_unused]] const ExecutionContext& co
     auto dtype = problem.GetParamInDesc().GetType();
     auto dims  = problem.GetParamInDesc().GetLengths();
 
-    bool is_contiguous = problem.IsAllPacked();
-    size_t param_size  = std::accumulate(dims.begin(), dims.end(), 1ULL, std::multiplies<size_t>());
-    size_t n_dims      = dims.size();
+    bool is_contiguous = problem.IsContiguous(problem.GetParamInDesc());
+
+    size_t param_size = std::accumulate(dims.begin(), dims.end(), 1ULL, std::multiplies<size_t>());
+    size_t n_dims     = dims.size();
 
     const auto build_params = KernelBuildParameters{
         {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},

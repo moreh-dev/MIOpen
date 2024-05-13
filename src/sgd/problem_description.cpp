@@ -34,14 +34,24 @@ namespace SGD {
 
 NetworkConfig ProblemDescription::MakeNetworkConfig() const
 {
-    auto dtype = paramInDesc.GetType();
-    auto dims  = paramInDesc.GetLengths();
-
-    size_t param_size = std::accumulate(dims.begin(), dims.end(), 1ULL, std::multiplies<size_t>());
+    auto dtype   = paramInDesc.GetType();
+    auto lengths = paramInDesc.GetLengths();
+    auto strides = paramInDesc.GetStrides();
 
     std::ostringstream ss;
     ss << "dtype" << dtype;
-    ss << "param_size" << param_size;
+    ss << "lr" << lr;
+    ss << "momentum" << momentum;
+    ss << "dampening" << dampening;
+    ss << "weight_decay" << weightDecay;
+    ss << "nesterov" << (int)nesterov;
+    ss << "momentum_initialized" << (int)momentumInitialized;
+    ss << "lengths";
+    for(auto length : lengths)
+        ss << length << ',';
+    ss << "strides";
+    for(auto stride : strides)
+        ss << stride << ',';
 
     return NetworkConfig{ss.str()};
 }
