@@ -35,21 +35,6 @@ namespace solver {
 
 namespace pad_reflection {
 
-// using PadReflectionSolver =
-//     NonTunableSolverBase<ExecutionContext, miopen::pad_reflection::ProblemDescription>;
-
-// struct PadReflection final : PadReflectionSolver
-// {
-//     const std::string& SolverDbId() const override { return GetSolverDbId<PadReflection>(); }
-
-//     bool IsApplicable(const ExecutionContext& context,
-//                       const miopen::pad_reflection::ProblemDescription& problem) const override;
-
-//     ConvSolution
-//     GetSolution(const ExecutionContext& context,
-//                 const miopen::pad_reflection::ProblemDescription& problem) const override;
-// };
-
 using PadReflection1dFwdContiguousSolver =
     NonTunableSolverBase<ExecutionContext,
                          miopen::pad_reflection::PadReflection1dFwdContiguousProblemDescription>;

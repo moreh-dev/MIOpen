@@ -5800,27 +5800,6 @@ MIOPEN_EXPORT miopenStatus_t miopenSumForward(miopenHandle_t handle,
  *
  *  @{
  */
-// /*! @brief Add padding by the reflection of the tensor
-//  *
-//  * @param handle                   MIOpen handle (input)
-//  * @param contiguous               Tensor contiguous (input)
-//  * @param xDesc                    Tensor descriptor for data input tensor x (input)
-//  * @param x                        Data tensor x (input)
-//  * @param yDesc                    Tensor descriptor for output data tensor y (input)
-//  * @param y                        Data tensor y (output)
-//  * @param padding                  Padding array contain 1 or 4 elements (input)
-//  * @param num_padding              Number of elements in padding, equals 1 or 4 (input)
-//  * @return                         miopenStatus_t
-//  */
-// MIOPEN_EXPORT miopenStatus_t miopenPadReflection(miopenHandle_t handle,
-//                                                  miopenPadReflectionContiguous_t contiguous,
-//                                                  const miopenTensorDescriptor_t xDesc,
-//                                                  const void* x,
-//                                                  const miopenTensorDescriptor_t yDesc,
-//                                                  void* y,
-//                                                  const size_t* padding,
-//                                                  const size_t num_padding);
-
 /*! @brief Add padding by the reflection of the tensor
  *
  * @param handle                   MIOpen handle (input)

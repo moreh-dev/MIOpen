@@ -94,15 +94,7 @@ struct PadReflectionCase
 
 std::vector<PadReflectionCase> PadReflectionTestFloatConfigs()
 { // n c d h w padding
-    // clang-format off
     return {
-        // {  1,   1,    0,    3,    3, {2}, 1},
-        // { 48,   8,    0,  512,  512, {1}, 1},
-        // { 48,   8,    0,  512,  512, {1, 1, 3, 3}, 1},
-        // { 48,   8,    0,  512,  512, {0, 0, 2, 2}, 1},
-        // { 16, 311,    0,   98,  512, {1}, 1},
-        // { 16, 311,    0,   98,  512, {1, 1, 3, 3}, 1},
-        // { 16, 311,    0,   98,  512, {0, 0, 2, 2}, 1},
         {  1,   1,    0,    0,    3, 2, 1},
         { 48,   8,    0,  0,  512, 1, 1},
         { 48,   8,    0,  0,  512, 3, 1},
@@ -114,7 +106,6 @@ std::vector<PadReflectionCase> PadReflectionTestFloatConfigs()
         { 16, 311,    0,   0,  512, 1, 0},
         { 16, 311,    0,   0,  512, 3, 0},
       };
-    // clang-format on
 }
 
 template <typename T>
