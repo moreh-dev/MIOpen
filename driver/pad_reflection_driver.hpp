@@ -94,7 +94,7 @@ void mloPadReflectionRunForwardHost(miopenTensorDescriptor_t inputDesc,
         long padding_l      = padding[0];
         auto input_strides  = miopen::deref(inputDesc).GetStrides();
         auto output_strides = miopen::deref(outputDesc).GetStrides();
-        size_t in_W = input_dims[2];
+        size_t in_W         = input_dims[2];
 
         long in_start_x  = max(0L, -padding_l);
         long out_start_x = max(0L, padding_l);
@@ -176,7 +176,7 @@ void mloPadReflectionRunBackwardHost(miopenTensorDescriptor_t inputDesc,
         long padding_l      = padding[0];
         auto input_strides  = miopen::deref(inputDesc).GetStrides();
         auto output_strides = miopen::deref(outputDesc).GetStrides();
-        size_t in_W = input_dims[2];
+        size_t in_W         = input_dims[2];
 
         long in_start_x  = max(0L, -padding_l);
         long out_start_x = max(0L, padding_l);
