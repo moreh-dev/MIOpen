@@ -99,21 +99,21 @@ miopenStatus_t PadReflection1dFwd(Handle& handle,
 }
 
 miopenStatus_t PadReflection1dBwdContiguous(Handle& handle,
-                                            const TensorDescriptor& xDesc,
+                                            const TensorDescriptor& dxDesc,
                                             ConstData_t x,
-                                            const TensorDescriptor& yDesc,
+                                            const TensorDescriptor& dyDesc,
                                             Data_t y,
                                             const size_t* padding,
                                             const size_t num_padding)
 {
     const auto problem =
-        pad_reflection::PadReflection1dBwdContiguousProblemDescription{xDesc, yDesc, num_padding};
+        pad_reflection::PadReflection1dBwdContiguousProblemDescription{dxDesc, dyDesc, num_padding};
 
     const auto invoke_params = [&]() {
         auto tmp        = pad_reflection::InvokeParams{};
         tmp.type        = InvokeType::Run;
-        tmp.xDesc       = &xDesc;
-        tmp.yDesc       = &yDesc;
+        tmp.xDesc       = &dxDesc;
+        tmp.yDesc       = &dyDesc;
         tmp.x           = x;
         tmp.y           = y;
         tmp.padding     = padding;
@@ -130,21 +130,21 @@ miopenStatus_t PadReflection1dBwdContiguous(Handle& handle,
 }
 
 miopenStatus_t PadReflection1dBwd(Handle& handle,
-                                  const TensorDescriptor& xDesc,
+                                  const TensorDescriptor& dxDesc,
                                   ConstData_t x,
-                                  const TensorDescriptor& yDesc,
+                                  const TensorDescriptor& dyDesc,
                                   Data_t y,
                                   const size_t* padding,
                                   const size_t num_padding)
 {
     const auto problem =
-        pad_reflection::PadReflection1dBwdProblemDescription{xDesc, yDesc, num_padding};
+        pad_reflection::PadReflection1dBwdProblemDescription{dxDesc, dyDesc, num_padding};
 
     const auto invoke_params = [&]() {
         auto tmp        = pad_reflection::InvokeParams{};
         tmp.type        = InvokeType::Run;
-        tmp.xDesc       = &xDesc;
-        tmp.yDesc       = &yDesc;
+        tmp.xDesc       = &dxDesc;
+        tmp.yDesc       = &dyDesc;
         tmp.x           = x;
         tmp.y           = y;
         tmp.padding     = padding;
