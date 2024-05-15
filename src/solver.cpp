@@ -28,6 +28,7 @@
 
 #include <miopen/activ/solvers.hpp>
 #include <miopen/batchnorm/solvers.hpp>
+#include <miopen/bcelogitsloss/solvers.hpp>
 #include <miopen/fusion/solvers.hpp>
 #include <miopen/groupnorm/solvers.hpp>
 #include <miopen/layernorm/solvers.hpp>
@@ -610,6 +611,8 @@ inline SolverRegistrar::SolverRegistrar(IdRegistryData& registry)
     Register(registry, ++id, Primitive::Batchnorm, batchnorm::BnCKFwdInference{}.SolverDbId());
     Register(registry, ++id, Primitive::Batchnorm, batchnorm::BnCKBwdBackward{}.SolverDbId());
     Register(registry, ++id, Primitive::Batchnorm, batchnorm::BnCKFwdTraining{}.SolverDbId());
+    Register(registry, ++id, Primitive::Loss, bcelogitsloss::ReducedForward5d{}.SolverDbId());
+    Register(registry, ++id, Primitive::Loss, bcelogitsloss::ReducedBackward5d{}.SolverDbId());
     Register(
         registry, ++id, Primitive::Normalization, layernorm::Layernorm2DCKForward{}.SolverDbId());
     Register(

@@ -6582,6 +6582,108 @@ MIOPEN_EXPORT miopenStatus_t miopenBackendInitialize(miopenBackendDescriptor_t d
 // CLOSEOUT BackendAPI DOXYGEN GROUP
 #endif // MIOPEN_BETA_API
 
+#ifdef MIOPEN_BETA_API
+
+/** @addtogroup LossFunction
+ *
+ *  @{
+ */
+
+/*! @brief Helper function to query the minimum workspace size required by the BCEWithLogitsLoss
+ * call
+ *
+ * @param handle                   MIOpen Handle (input)
+ * @param iDesc                    Tensor descriptor for input tensor (input)
+ * @param tDesc                    Tensor descriptor for target tensor (input)
+ * @param wDesc                    Tensor descriptor for weight tensor (input)
+ * @param pwDesc                   Tensor descriptor for pos_weight tensor (input)
+ * @param oDesc                    Tensor descriptor for output tensor (input)
+ * @param sizeInBytes              Pointer to data to return the minimum workspace size
+ * @return                         miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t
+miopenGetBCELogitsLossReducedForwardWorkspaceSize(miopenHandle_t handle,
+                                                  miopenTensorDescriptor_t iDesc,
+                                                  miopenTensorDescriptor_t tDesc,
+                                                  miopenTensorDescriptor_t wDesc,
+                                                  miopenTensorDescriptor_t pwDesc,
+                                                  miopenTensorDescriptor_t oDesc,
+                                                  size_t* sizeInBytes);
+
+/*! @brief Execute a BCEWithLogitsLoss forward layer
+ *
+ * @param handle                   MIOpen handle (input)
+ * @param workspace                Address of the allocated workspace data (input)
+ * @param workspaceSizeInBytes     Size in bytes of the allocated workspace data (input)
+ * @param iDesc                    Tensor descriptor for input tensor (input)
+ * @param i                        Data tensor input (input)
+ * @param tDesc                    Tensor descriptor for target tensor (input)
+ * @param t                        Data tensor target (input)
+ * @param wDesc                    Tensor descriptor for weight tensor (input)
+ * @param w                        Data tensor weight (input)
+ * @param pwDesc                   Tensor descriptor for pos_weight tensor (input)
+ * @param pw                       Data tensor pos_weight (input)
+ * @param oDesc                    Tensor descriptor for output tensor (input)
+ * @param o                        Data tensor output (output)
+ * @param divisor                  Divisor (input)
+ * @return                         miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t miopenBCELogitsLossReducedForward(miopenHandle_t handle,
+                                                               void* workspace,
+                                                               size_t workspaceSizeInBytes,
+                                                               miopenTensorDescriptor_t iDesc,
+                                                               const void* i,
+                                                               miopenTensorDescriptor_t tDesc,
+                                                               const void* t,
+                                                               miopenTensorDescriptor_t wDesc,
+                                                               const void* w,
+                                                               miopenTensorDescriptor_t pwDesc,
+                                                               const void* pw,
+                                                               miopenTensorDescriptor_t oDesc,
+                                                               void* o,
+                                                               float divisor);
+
+/*! @brief Execute the Backward BCEWithLogitsLoss
+ *
+ * @param handle                   MIOpen handle (input)
+ * @param iDesc                    Tensor descriptor for input tensor (input)
+ * @param i                        Data tensor input (input)
+ * @param tDesc                    Tensor descriptor for target tensor (input)
+ * @param t                        Data tensor target (input)
+ * @param wDesc                    Tensor descriptor for weight tensor (input)
+ * @param w                        Data tensor weight (input)
+ * @param pwDesc                   Tensor descriptor for pos_weight tensor (input)
+ * @param pw                       Data tensor pos_weight (input)
+ * @param doDesc                   Tensor descriptor for output gradient (input)
+ * @param dO                       Gradient of output (input)
+ * @param diDesc                   Tensor descriptor for input gradient (input)
+ * @param dI                       Gradient of input (output)
+ * @param dtDesc                   Tensor descriptor for target gradient (input)
+ * @param dT                       Gradient of target (output)
+ * @param divisor                  Divisor (input)
+ * @return                         miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t miopenBCELogitsLossReducedBackward(miopenHandle_t handle,
+                                                                miopenTensorDescriptor_t iDesc,
+                                                                const void* i,
+                                                                miopenTensorDescriptor_t tDesc,
+                                                                const void* t,
+                                                                miopenTensorDescriptor_t wDesc,
+                                                                const void* w,
+                                                                miopenTensorDescriptor_t pwDesc,
+                                                                const void* pw,
+                                                                miopenTensorDescriptor_t doDesc,
+                                                                const void* dO,
+                                                                miopenTensorDescriptor_t diDesc,
+                                                                void* dI,
+                                                                miopenTensorDescriptor_t dtDesc,
+                                                                void* dT,
+                                                                float divisor);
+
+/** @} */
+// CLOSEOUT LossFunction DOXYGEN GROUP
+#endif // MIOPEN_BETA_API
+
 #ifdef __cplusplus
 }
 #endif

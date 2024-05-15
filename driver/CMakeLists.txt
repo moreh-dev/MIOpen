@@ -31,6 +31,7 @@ add_executable(MIOpenDriver
     conv_common.cpp
     dm_activ.cpp
     dm_argmax.cpp
+    dm_bcelogitsloss.cpp
     dm_bnorm.cpp
     dm_cat.cpp
     dm_conv.cpp
