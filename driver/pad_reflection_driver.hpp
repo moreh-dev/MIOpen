@@ -462,12 +462,12 @@ int PadReflectionDriver<Tgpu, Tref>::RunForwardGPU()
     for(int i = 0; i < inflags.GetValueInt("iter"); i++)
     {
         miopenPadReflectionFwd(GetHandle(),
-                            inputDesc,
-                            in_dev->GetMem(),
-                            outputDesc,
-                            out_dev->GetMem(),
-                            padding.data(),
-                            padding.size());
+                               inputDesc,
+                               in_dev->GetMem(),
+                               outputDesc,
+                               out_dev->GetMem(),
+                               padding.data(),
+                               padding.size());
         float time = 0.0;
         miopenGetKernelTime(GetHandle(), &time);
         kernel_total_time += time;
@@ -516,12 +516,12 @@ int PadReflectionDriver<Tgpu, Tref>::RunBackwardGPU()
     for(int i = 0; i < inflags.GetValueInt("iter"); i++)
     {
         miopenPadReflectionBwd(GetHandle(),
-                            inputDesc,
-                            in_dev->GetMem(),
-                            outputDesc,
-                            out_dev->GetMem(),
-                            padding.data(),
-                            padding.size());
+                               inputDesc,
+                               in_dev->GetMem(),
+                               outputDesc,
+                               out_dev->GetMem(),
+                               padding.data(),
+                               padding.size());
         float time = 0.0;
         miopenGetKernelTime(GetHandle(), &time);
         kernel_total_time += time;

@@ -38,29 +38,30 @@ struct NetworkConfig;
 
 namespace pad_reflection {
 
-struct PadReflectionFwdProblemDescription: ProblemDescriptionBase
+struct PadReflectionFwdProblemDescription : ProblemDescriptionBase
 {
     PadReflectionFwdProblemDescription(const TensorDescriptor& xDesc_,
-                    const TensorDescriptor& yDesc_,
-                    const size_t* padding_,
-                    const size_t num_padding_)
-                    : xDesc(xDesc_), yDesc(yDesc_), padding(padding_), num_padding(num_padding_)
+                                       const TensorDescriptor& yDesc_,
+                                       const size_t* padding_,
+                                       const size_t num_padding_)
+        : xDesc(xDesc_), yDesc(yDesc_), padding(padding_), num_padding(num_padding_)
     {
-        if(!IsSameType()) 
+        if(!IsSameType())
         {
             MIOPEN_THROW(miopenStatusBadParm, "Pad Reflection: Tensor types do not match.");
         }
-        if (!IsRightNumPadding()) 
+        if(!IsRightNumPadding())
         {
             MIOPEN_THROW(miopenStatusBadParm, "Pad Reflection: Padding input accepts 1 value only");
         }
-        if (!IsRightDim()) 
+        if(!IsRightDim())
         {
             MIOPEN_THROW(miopenStatusBadParm, "Pad Reflection: Only accept 1d tensor with NCW");
         }
-        if (!IsRightOutputSize())
+        if(!IsRightOutputSize())
         {
-            MIOPEN_THROW(miopenStatusBadParm, "Pad Reflection: Doesn't allow Output_W < padding * 2 + Input_W");
+            MIOPEN_THROW(miopenStatusBadParm,
+                         "Pad Reflection: Doesn't allow Output_W < padding * 2 + Input_W");
         }
     }
 
@@ -99,54 +100,53 @@ struct PadReflectionFwdProblemDescription: ProblemDescriptionBase
 
     bool IsRightOutputSize() const
     {
-        auto input_lens = xDesc.GetLengths();
-        auto output_lens = yDesc.GetLengths();
-        auto input_last_len = input_lens.back();
+        auto input_lens      = xDesc.GetLengths();
+        auto output_lens     = yDesc.GetLengths();
+        auto input_last_len  = input_lens.back();
         auto output_last_len = output_lens.back();
-        auto min_output_size = padding[0] * 2 + input_last_len; 
+        auto min_output_size = padding[0] * 2 + input_last_len;
         if(min_output_size > output_last_len)
         {
             return false;
         }
         return true;
     }
-    
-    bool IsImprovementOverROCm() const {
-        return true;
-    }
+
+    bool IsImprovementOverROCm() const { return true; }
 
     NetworkConfig MakeNetworkConfig() const override;
 
-    private: 
-        const TensorDescriptor& xDesc;
-        const TensorDescriptor& yDesc;
-        const size_t* padding;
-        const size_t num_padding;
+private:
+    const TensorDescriptor& xDesc;
+    const TensorDescriptor& yDesc;
+    const size_t* padding;
+    const size_t num_padding;
 };
 
-struct PadReflectionBwdProblemDescription: ProblemDescriptionBase
+struct PadReflectionBwdProblemDescription : ProblemDescriptionBase
 {
     PadReflectionBwdProblemDescription(const TensorDescriptor& xDesc_,
-                    const TensorDescriptor& yDesc_,
-                    const size_t* padding_,
-                    const size_t num_padding_)
-                    : xDesc(xDesc_), yDesc(yDesc_), padding(padding_), num_padding(num_padding_)
+                                       const TensorDescriptor& yDesc_,
+                                       const size_t* padding_,
+                                       const size_t num_padding_)
+        : xDesc(xDesc_), yDesc(yDesc_), padding(padding_), num_padding(num_padding_)
     {
-        if(!IsSameType()) 
+        if(!IsSameType())
         {
             MIOPEN_THROW(miopenStatusBadParm, "Pad Reflection: Tensor types do not match.");
         }
-        if (!IsRightNumPadding()) 
+        if(!IsRightNumPadding())
         {
             MIOPEN_THROW(miopenStatusBadParm, "Pad Reflection: Padding input accepts 1 value only");
         }
-        if (!IsRightDim()) 
+        if(!IsRightDim())
         {
             MIOPEN_THROW(miopenStatusBadParm, "Pad Reflection: Only accept 1d tensor with NCW");
         }
-        if (!IsRightOutputSize())
+        if(!IsRightOutputSize())
         {
-            MIOPEN_THROW(miopenStatusBadParm, "Pad Reflection: Doesn't allow Output_W < padding * 2 + Input_W");
+            MIOPEN_THROW(miopenStatusBadParm,
+                         "Pad Reflection: Doesn't allow Output_W < padding * 2 + Input_W");
         }
     }
 
@@ -185,28 +185,26 @@ struct PadReflectionBwdProblemDescription: ProblemDescriptionBase
 
     bool IsRightOutputSize() const
     {
-        auto input_lens = xDesc.GetLengths();
-        auto output_lens = yDesc.GetLengths();
-        auto input_last_len = input_lens.back();
+        auto input_lens      = xDesc.GetLengths();
+        auto output_lens     = yDesc.GetLengths();
+        auto input_last_len  = input_lens.back();
         auto output_last_len = output_lens.back();
-        auto min_output_size = padding[0] * 2 + input_last_len; 
+        auto min_output_size = padding[0] * 2 + input_last_len;
         if(min_output_size > output_last_len)
         {
             return false;
         }
         return true;
     }
-    
-    bool IsImprovementOverROCm() const {
-        return true;
-    }
+
+    bool IsImprovementOverROCm() const { return true; }
     NetworkConfig MakeNetworkConfig() const override;
 
-    private: 
-        const TensorDescriptor& xDesc;
-        const TensorDescriptor& yDesc;
-        const size_t* padding;
-        const size_t num_padding;
+private:
+    const TensorDescriptor& xDesc;
+    const TensorDescriptor& yDesc;
+    const size_t* padding;
+    const size_t num_padding;
 };
 
 } // namespace pad_reflection

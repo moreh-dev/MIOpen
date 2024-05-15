@@ -32,43 +32,43 @@
 #include <miopen/tensor_ops.hpp>
 
 extern "C" miopenStatus_t miopenPadReflectionFwd(miopenHandle_t handle,
-                                                             const miopenTensorDescriptor_t xDesc,
-                                                             const void* x,
-                                                             const miopenTensorDescriptor_t yDesc,
-                                                             void* y,
-                                                             const size_t* padding,
-                                                             const size_t num_padding)
+                                                 const miopenTensorDescriptor_t xDesc,
+                                                 const void* x,
+                                                 const miopenTensorDescriptor_t yDesc,
+                                                 void* y,
+                                                 const size_t* padding,
+                                                 const size_t num_padding)
 {
     MIOPEN_LOG_FUNCTION(handle, xDesc, x, yDesc, y, padding);
 
     return miopen::try_([&] {
         miopen::PadReflectionFwd(miopen::deref(handle),
-                                             miopen::deref(xDesc),
-                                             DataCast(x),
-                                             miopen::deref(yDesc),
-                                             DataCast(y),
-                                             padding,
-                                             num_padding);
+                                 miopen::deref(xDesc),
+                                 DataCast(x),
+                                 miopen::deref(yDesc),
+                                 DataCast(y),
+                                 padding,
+                                 num_padding);
     });
 }
 
 extern "C" miopenStatus_t miopenPadReflectionBwd(miopenHandle_t handle,
-                                                             const miopenTensorDescriptor_t xDesc,
-                                                             const void* x,
-                                                             const miopenTensorDescriptor_t yDesc,
-                                                             void* y,
-                                                             const size_t* padding,
-                                                             const size_t num_padding)
+                                                 const miopenTensorDescriptor_t xDesc,
+                                                 const void* x,
+                                                 const miopenTensorDescriptor_t yDesc,
+                                                 void* y,
+                                                 const size_t* padding,
+                                                 const size_t num_padding)
 {
     MIOPEN_LOG_FUNCTION(handle, xDesc, x, yDesc, y, padding);
 
     return miopen::try_([&] {
         miopen::PadReflectionBwd(miopen::deref(handle),
-                                             miopen::deref(xDesc),
-                                             DataCast(x),
-                                             miopen::deref(yDesc),
-                                             DataCast(y),
-                                             padding,
-                                             num_padding);
+                                 miopen::deref(xDesc),
+                                 DataCast(x),
+                                 miopen::deref(yDesc),
+                                 DataCast(y),
+                                 padding,
+                                 num_padding);
     });
 }

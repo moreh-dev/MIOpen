@@ -68,7 +68,8 @@ ConvSolution PadReflectionFwd::GetSolution(
     {
         auto kernel        = KernelInfo{};
         kernel.kernel_file = "MIOpenPadReflection.cpp";
-        kernel.kernel_name = problem.IsContiguous() ? "PadReflection1dFwdContiguous" : "PadReflection1dFwd";
+        kernel.kernel_name =
+            problem.IsContiguous() ? "PadReflection1dFwdContiguous" : "PadReflection1dFwd";
         auto output_numel =
             std::accumulate(ydims.begin(), ydims.end(), 1ULL, std::multiplies<size_t>());
 
@@ -100,7 +101,7 @@ ConvSolution PadReflectionFwd::GetSolution(
         result.construction_params.push_back(kernel);
     }
 
-    if (problem.IsContiguous())
+    if(problem.IsContiguous())
     {
         result.invoker_factory = [](const std::vector<Kernel>& kernels) {
             return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
@@ -138,7 +139,7 @@ ConvSolution PadReflectionFwd::GetSolution(
             };
         };
     }
-    else 
+    else
     {
         result.invoker_factory = [](const std::vector<Kernel>& kernels) {
             return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
@@ -213,7 +214,8 @@ ConvSolution PadReflectionBwd::GetSolution(
     {
         auto kernel        = KernelInfo{};
         kernel.kernel_file = "MIOpenPadReflection.cpp";
-        kernel.kernel_name = problem.IsContiguous() ? "PadReflection1dBwdContiguous" : "PadReflection1dBwd";
+        kernel.kernel_name =
+            problem.IsContiguous() ? "PadReflection1dBwdContiguous" : "PadReflection1dBwd";
         auto output_numel =
             std::accumulate(ydims.begin(), ydims.end(), 1ULL, std::multiplies<size_t>());
 
@@ -245,7 +247,7 @@ ConvSolution PadReflectionBwd::GetSolution(
         result.construction_params.push_back(kernel);
     }
 
-    if (problem.IsContiguous())
+    if(problem.IsContiguous())
     {
         result.invoker_factory = [](const std::vector<Kernel>& kernels) {
             return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
@@ -283,7 +285,7 @@ ConvSolution PadReflectionBwd::GetSolution(
             };
         };
     }
-    else 
+    else
     {
         result.invoker_factory = [](const std::vector<Kernel>& kernels) {
             return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {

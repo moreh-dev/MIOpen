@@ -5812,12 +5812,12 @@ MIOPEN_EXPORT miopenStatus_t miopenSumForward(miopenHandle_t handle,
  * @return                         miopenStatus_t
  */
 MIOPEN_EXPORT miopenStatus_t miopenPadReflectionFwd(miopenHandle_t handle,
-                                                      const miopenTensorDescriptor_t xDesc,
-                                                      const void* x,
-                                                      const miopenTensorDescriptor_t yDesc,
-                                                      void* y,
-                                                      const size_t* padding,
-                                                      const size_t num_padding);
+                                                    const miopenTensorDescriptor_t xDesc,
+                                                    const void* x,
+                                                    const miopenTensorDescriptor_t yDesc,
+                                                    void* y,
+                                                    const size_t* padding,
+                                                    const size_t num_padding);
 
 /*! @brief Add padding by the reflection of the tensor
  *
@@ -5831,12 +5831,12 @@ MIOPEN_EXPORT miopenStatus_t miopenPadReflectionFwd(miopenHandle_t handle,
  * @return                         miopenStatus_t
  */
 MIOPEN_EXPORT miopenStatus_t miopenPadReflectionBwd(miopenHandle_t handle,
-                                                      const miopenTensorDescriptor_t dxDesc,
-                                                      const void* dx,
-                                                      const miopenTensorDescriptor_t dyDesc,
-                                                      void* dy,
-                                                      const size_t* padding,
-                                                      const size_t num_padding);
+                                                    const miopenTensorDescriptor_t dxDesc,
+                                                    const void* dx,
+                                                    const miopenTensorDescriptor_t dyDesc,
+                                                    void* dy,
+                                                    const size_t* padding,
+                                                    const size_t num_padding);
 /** @} */
 
 // CLOSEOUT pad DOXYGEN GROUP

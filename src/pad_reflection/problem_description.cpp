@@ -35,8 +35,8 @@ namespace pad_reflection {
 
 NetworkConfig PadReflectionFwdProblemDescription::MakeNetworkConfig() const
 {
-    auto xlength = xDesc.GetLengths();
-    auto ylength = yDesc.GetLengths();
+    auto xlength    = xDesc.GetLengths();
+    auto ylength    = yDesc.GetLengths();
     auto input_size = std::accumulate(
         xlength.begin(), xlength.end(), static_cast<size_t>(1), std::multiplies<size_t>());
     auto output_size = std::accumulate(
@@ -46,7 +46,8 @@ NetworkConfig PadReflectionFwdProblemDescription::MakeNetworkConfig() const
 
     std::ostringstream ss;
     ss << "fwd";
-    if (IsContiguous()) ss << "contiguous_";
+    if(IsContiguous())
+        ss << "contiguous_";
     ss << "dtype" << dtype;
     ss << "input_size" << input_size;
     ss << "output_size" << output_size;
@@ -55,8 +56,8 @@ NetworkConfig PadReflectionFwdProblemDescription::MakeNetworkConfig() const
 
 NetworkConfig PadReflectionBwdProblemDescription::MakeNetworkConfig() const
 {
-    auto xlength = xDesc.GetLengths();
-    auto ylength = yDesc.GetLengths();
+    auto xlength    = xDesc.GetLengths();
+    auto ylength    = yDesc.GetLengths();
     auto input_size = std::accumulate(
         xlength.begin(), xlength.end(), static_cast<size_t>(1), std::multiplies<size_t>());
     auto output_size = std::accumulate(
@@ -66,7 +67,8 @@ NetworkConfig PadReflectionBwdProblemDescription::MakeNetworkConfig() const
 
     std::ostringstream ss;
     ss << "bwd";
-    if (IsContiguous()) ss << "contiguous_";
+    if(IsContiguous())
+        ss << "contiguous_";
     ss << "dtype" << dtype;
     ss << "input_size" << input_size;
     ss << "output_size" << output_size;

@@ -38,12 +38,12 @@
 namespace miopen {
 
 miopenStatus_t PadReflectionFwd(Handle& handle,
-                                            const TensorDescriptor& xDesc,
-                                            ConstData_t x,
-                                            const TensorDescriptor& yDesc,
-                                            Data_t y,
-                                            const size_t* padding,
-                                            const size_t num_padding)
+                                const TensorDescriptor& xDesc,
+                                ConstData_t x,
+                                const TensorDescriptor& yDesc,
+                                Data_t y,
+                                const size_t* padding,
+                                const size_t num_padding)
 {
     const auto problem =
         pad_reflection::PadReflectionFwdProblemDescription{xDesc, yDesc, padding, num_padding};
@@ -60,21 +60,20 @@ miopenStatus_t PadReflectionFwd(Handle& handle,
         return tmp;
     }();
 
-    const auto algo = AlgorithmName{"PadReflectionFwd"};
-    const auto solvers =
-        solver::SolverContainer<solver::pad_reflection::PadReflectionFwd>{};
+    const auto algo    = AlgorithmName{"PadReflectionFwd"};
+    const auto solvers = solver::SolverContainer<solver::pad_reflection::PadReflectionFwd>{};
     solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
 
     return miopenStatusSuccess;
 }
 
 miopenStatus_t PadReflectionBwd(Handle& handle,
-                                            const TensorDescriptor& xDesc,
-                                            ConstData_t x,
-                                            const TensorDescriptor& yDesc,
-                                            Data_t y,
-                                            const size_t* padding,
-                                            const size_t num_padding)
+                                const TensorDescriptor& xDesc,
+                                ConstData_t x,
+                                const TensorDescriptor& yDesc,
+                                Data_t y,
+                                const size_t* padding,
+                                const size_t num_padding)
 {
     const auto problem =
         pad_reflection::PadReflectionBwdProblemDescription{xDesc, yDesc, padding, num_padding};
@@ -91,9 +90,8 @@ miopenStatus_t PadReflectionBwd(Handle& handle,
         return tmp;
     }();
 
-    const auto algo = AlgorithmName{"PadReflectionBwd"};
-    const auto solvers =
-        solver::SolverContainer<solver::pad_reflection::PadReflectionBwd>{};
+    const auto algo    = AlgorithmName{"PadReflectionBwd"};
+    const auto solvers = solver::SolverContainer<solver::pad_reflection::PadReflectionBwd>{};
     solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
 
     return miopenStatusSuccess;

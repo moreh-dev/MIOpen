@@ -166,12 +166,12 @@ protected:
         cpu_pad_reflection_fwd<T>(input, ref_output, contiguous, padding);
         miopenStatus_t status;
         status = miopen::PadReflectionFwd(handle,
-                                    input.desc,
-                                    input_dev.get(),
-                                    output.desc,
-                                    output_dev.get(),
-                                    padding.data(),
-                                    padding.size());
+                                          input.desc,
+                                          input_dev.get(),
+                                          output.desc,
+                                          output_dev.get(),
+                                          padding.data(),
+                                          padding.size());
         EXPECT_EQ(status, miopenStatusSuccess);
 
         output.data = handle.Read<T>(output_dev, output.data.size());
@@ -241,12 +241,12 @@ protected:
         cpu_pad_reflection_bwd<T>(ref_input, output, contiguous, padding);
         miopenStatus_t status;
         status = miopen::PadReflectionBwd(handle,
-                                    input.desc,
-                                    input_dev.get(),
-                                    output.desc,
-                                    output_dev.get(),
-                                    padding.data(),
-                                    padding.size());
+                                          input.desc,
+                                          input_dev.get(),
+                                          output.desc,
+                                          output_dev.get(),
+                                          padding.data(),
+                                          padding.size());
         EXPECT_EQ(status, miopenStatusSuccess);
         input.data = handle.Read<T>(input_dev, input.data.size());
     }
