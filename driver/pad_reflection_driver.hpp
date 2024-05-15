@@ -461,26 +461,13 @@ int PadReflectionDriver<Tgpu, Tref>::RunForwardGPU()
 
     for(int i = 0; i < inflags.GetValueInt("iter"); i++)
     {
-        if(contiguous == 1)
-        {
-            miopenPadReflection1dFwdContiguous(GetHandle(),
-                                               inputDesc,
-                                               in_dev->GetMem(),
-                                               outputDesc,
-                                               out_dev->GetMem(),
-                                               padding.data(),
-                                               padding.size());
-        }
-        else if(contiguous == 0)
-        {
-            miopenPadReflection1dFwd(GetHandle(),
-                                     inputDesc,
-                                     in_dev->GetMem(),
-                                     outputDesc,
-                                     out_dev->GetMem(),
-                                     padding.data(),
-                                     padding.size());
-        }
+        miopenPadReflectionFwd(GetHandle(),
+                            inputDesc,
+                            in_dev->GetMem(),
+                            outputDesc,
+                            out_dev->GetMem(),
+                            padding.data(),
+                            padding.size());
         float time = 0.0;
         miopenGetKernelTime(GetHandle(), &time);
         kernel_total_time += time;
@@ -528,26 +515,13 @@ int PadReflectionDriver<Tgpu, Tref>::RunBackwardGPU()
 
     for(int i = 0; i < inflags.GetValueInt("iter"); i++)
     {
-        if(contiguous == 1)
-        {
-            miopenPadReflection1dBwdContiguous(GetHandle(),
-                                               inputDesc,
-                                               in_dev->GetMem(),
-                                               outputDesc,
-                                               out_dev->GetMem(),
-                                               padding.data(),
-                                               padding.size());
-        }
-        else if(contiguous == 0)
-        {
-            miopenPadReflection1dBwd(GetHandle(),
-                                     inputDesc,
-                                     in_dev->GetMem(),
-                                     outputDesc,
-                                     out_dev->GetMem(),
-                                     padding.data(),
-                                     padding.size());
-        }
+        miopenPadReflectionBwd(GetHandle(),
+                            inputDesc,
+                            in_dev->GetMem(),
+                            outputDesc,
+                            out_dev->GetMem(),
+                            padding.data(),
+                            padding.size());
         float time = 0.0;
         miopenGetKernelTime(GetHandle(), &time);
         kernel_total_time += time;

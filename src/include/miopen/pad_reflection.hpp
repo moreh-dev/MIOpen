@@ -34,37 +34,21 @@ namespace miopen {
 struct Handle;
 struct TensorDescriptor;
 
-miopenStatus_t PadReflection1dFwdContiguous(Handle& handle,
-                                            const TensorDescriptor& xDesc,
-                                            ConstData_t x,
-                                            const TensorDescriptor& yDesc,
-                                            Data_t y,
-                                            const size_t* padding,
-                                            const size_t num_padding);
+miopenStatus_t PadReflectionFwd(Handle& handle,
+                                const TensorDescriptor& xDesc,
+                                ConstData_t x,
+                                const TensorDescriptor& yDesc,
+                                Data_t y,
+                                const size_t* padding,
+                                const size_t num_padding);
 
-miopenStatus_t PadReflection1dFwd(Handle& handle,
-                                  const TensorDescriptor& xDesc,
-                                  ConstData_t x,
-                                  const TensorDescriptor& yDesc,
-                                  Data_t y,
-                                  const size_t* padding,
-                                  const size_t num_padding);
-
-miopenStatus_t PadReflection1dBwdContiguous(Handle& handle,
-                                            const TensorDescriptor& xDesc,
-                                            ConstData_t x,
-                                            const TensorDescriptor& yDesc,
-                                            Data_t y,
-                                            const size_t* padding,
-                                            const size_t num_padding);
-
-miopenStatus_t PadReflection1dBwd(Handle& handle,
-                                  const TensorDescriptor& xDesc,
-                                  ConstData_t x,
-                                  const TensorDescriptor& yDesc,
-                                  Data_t y,
-                                  const size_t* padding,
-                                  const size_t num_padding);
+miopenStatus_t PadReflectionBwd(Handle& handle,
+                                const TensorDescriptor& xDesc,
+                                ConstData_t x,
+                                const TensorDescriptor& yDesc,
+                                Data_t y,
+                                const size_t* padding,
+                                const size_t num_padding);
 
 } // namespace miopen
 #endif // MIOPEN_PAD_REFLECTION_HPP_

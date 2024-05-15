@@ -41,22 +41,22 @@ namespace solver {
 
 namespace pad_reflection {
 
-bool PadReflection1dFwdContiguous::IsApplicable(
+bool PadReflectionFwd::IsApplicable(
     [[maybe_unused]] const ExecutionContext& context,
-    const miopen::pad_reflection::PadReflection1dFwdContiguousProblemDescription& problem) const
+    const miopen::pad_reflection::PadReflectionFwdProblemDescription& problem) const
 {
     if(!problem.IsSameType())
         return false;
-    if(!problem.IsAllPacked())
-        return false;
     if(!problem.IsRightNumPadding())
+        return false;
+    if(!problem.IsImprovementOverROCm())
         return false;
     return true;
 }
 
-ConvSolution PadReflection1dFwdContiguous::GetSolution(
+ConvSolution PadReflectionFwd::GetSolution(
     [[maybe_unused]] const ExecutionContext& context,
-    const miopen::pad_reflection::PadReflection1dFwdContiguousProblemDescription& problem) const
+    const miopen::pad_reflection::PadReflectionFwdProblemDescription& problem) const
 {
     auto result       = ConvSolution{miopenStatusSuccess};
     auto input_dtype  = miopen::GetDataType(problem.GetXDesc().GetType());
@@ -68,7 +68,7 @@ ConvSolution PadReflection1dFwdContiguous::GetSolution(
     {
         auto kernel        = KernelInfo{};
         kernel.kernel_file = "MIOpenPadReflection.cpp";
-        kernel.kernel_name = "PadReflection1dFwdContiguous";
+        kernel.kernel_name = problem.IsContiguous() ? "PadReflection1dFwdContiguous" : "PadReflection1dFwd";
         auto output_numel =
             std::accumulate(ydims.begin(), ydims.end(), 1ULL, std::multiplies<size_t>());
 
@@ -100,6 +100,7 @@ ConvSolution PadReflection1dFwdContiguous::GetSolution(
         result.construction_params.push_back(kernel);
     }
 
+    if (problem.IsContiguous())
     {
         result.invoker_factory = [](const std::vector<Kernel>& kernels) {
             return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
@@ -137,67 +138,7 @@ ConvSolution PadReflection1dFwdContiguous::GetSolution(
             };
         };
     }
-    return result;
-}
-
-bool PadReflection1dFwd::IsApplicable(
-    [[maybe_unused]] const ExecutionContext& context,
-    const miopen::pad_reflection::PadReflection1dFwdProblemDescription& problem) const
-{
-    if(!problem.IsSameType())
-        return false;
-    if(!problem.IsAllPacked())
-        return false;
-    if(!problem.IsRightNumPadding())
-        return false;
-    return true;
-}
-
-ConvSolution PadReflection1dFwd::GetSolution(
-    [[maybe_unused]] const ExecutionContext& context,
-    const miopen::pad_reflection::PadReflection1dFwdProblemDescription& problem) const
-{
-    auto result       = ConvSolution{miopenStatusSuccess};
-    auto input_dtype  = miopen::GetDataType(problem.GetXDesc().GetType());
-    auto output_dtype = miopen::GetDataType(problem.GetYDesc().GetType());
-    auto xdims        = problem.GetXDesc().GetLengths();
-    auto ydims        = problem.GetYDesc().GetLengths();
-    auto dtype        = problem.GetXDesc().GetType();
-    {
-        auto kernel        = KernelInfo{};
-        kernel.kernel_file = "MIOpenPadReflection.cpp";
-        kernel.kernel_name = "PadReflection1dFwd";
-        auto output_numel =
-            std::accumulate(ydims.begin(), ydims.end(), 1ULL, std::multiplies<size_t>());
-
-        const auto build_params = KernelBuildParameters{
-            {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
-            {"MIOPEN_USE_FP32", static_cast<int>(dtype == miopenFloat)},
-            {"MIOPEN_USE_FP64", static_cast<int>(dtype == miopenDouble)},
-            {"MIOPEN_USE_BFP16", static_cast<int>(dtype == miopenBFloat16)},
-            {"INPUT_TYPE", input_dtype == "bfloat16" ? "ushort" : input_dtype},
-            {"OUTPUT_TYPE", output_dtype == "bfloat16" ? "ushort" : output_dtype},
-        };
-
-        kernel.comp_options = build_params.GenerateFor(kbp::HIP{});
-
-        size_t xlocalsize = LOCAL_SIZE;
-        size_t xgridsize  = AlignUp(output_numel, xlocalsize);
-        size_t ylocalsize = 1;
-        size_t ygridsize  = 1;
-        size_t zlocalsize = 1;
-        size_t zgridsize  = 1;
-        kernel.l_wk.push_back(xlocalsize);
-        kernel.l_wk.push_back(ylocalsize);
-        kernel.l_wk.push_back(zlocalsize);
-
-        kernel.g_wk.push_back(xgridsize);
-        kernel.g_wk.push_back(ygridsize);
-        kernel.g_wk.push_back(zgridsize);
-
-        result.construction_params.push_back(kernel);
-    }
-
+    else 
     {
         result.invoker_factory = [](const std::vector<Kernel>& kernels) {
             return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
@@ -245,22 +186,22 @@ ConvSolution PadReflection1dFwd::GetSolution(
     return result;
 }
 
-bool PadReflection1dBwdContiguous::IsApplicable(
+bool PadReflectionBwd::IsApplicable(
     [[maybe_unused]] const ExecutionContext& context,
-    const miopen::pad_reflection::PadReflection1dBwdContiguousProblemDescription& problem) const
+    const miopen::pad_reflection::PadReflectionBwdProblemDescription& problem) const
 {
     if(!problem.IsSameType())
         return false;
-    if(!problem.IsAllPacked())
-        return false;
     if(!problem.IsRightNumPadding())
+        return false;
+    if(!problem.IsImprovementOverROCm())
         return false;
     return true;
 }
 
-ConvSolution PadReflection1dBwdContiguous::GetSolution(
+ConvSolution PadReflectionBwd::GetSolution(
     [[maybe_unused]] const ExecutionContext& context,
-    const miopen::pad_reflection::PadReflection1dBwdContiguousProblemDescription& problem) const
+    const miopen::pad_reflection::PadReflectionBwdProblemDescription& problem) const
 {
     auto result       = ConvSolution{miopenStatusSuccess};
     auto input_dtype  = miopen::GetDataType(problem.GetXDesc().GetType());
@@ -272,7 +213,7 @@ ConvSolution PadReflection1dBwdContiguous::GetSolution(
     {
         auto kernel        = KernelInfo{};
         kernel.kernel_file = "MIOpenPadReflection.cpp";
-        kernel.kernel_name = "PadReflection1dBwdContiguous";
+        kernel.kernel_name = problem.IsContiguous() ? "PadReflection1dBwdContiguous" : "PadReflection1dBwd";
         auto output_numel =
             std::accumulate(ydims.begin(), ydims.end(), 1ULL, std::multiplies<size_t>());
 
@@ -304,6 +245,7 @@ ConvSolution PadReflection1dBwdContiguous::GetSolution(
         result.construction_params.push_back(kernel);
     }
 
+    if (problem.IsContiguous())
     {
         result.invoker_factory = [](const std::vector<Kernel>& kernels) {
             return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
@@ -341,68 +283,7 @@ ConvSolution PadReflection1dBwdContiguous::GetSolution(
             };
         };
     }
-    return result;
-}
-
-bool PadReflection1dBwd::IsApplicable(
-    [[maybe_unused]] const ExecutionContext& context,
-    const miopen::pad_reflection::PadReflection1dBwdProblemDescription& problem) const
-{
-    if(!problem.IsSameType())
-        return false;
-    if(!problem.IsAllPacked())
-        return false;
-    if(!problem.IsRightNumPadding())
-        return false;
-    return true;
-}
-
-ConvSolution PadReflection1dBwd::GetSolution(
-    [[maybe_unused]] const ExecutionContext& context,
-    const miopen::pad_reflection::PadReflection1dBwdProblemDescription& problem) const
-{
-    auto result       = ConvSolution{miopenStatusSuccess};
-    auto input_dtype  = miopen::GetDataType(problem.GetXDesc().GetType());
-    auto output_dtype = miopen::GetDataType(problem.GetYDesc().GetType());
-    auto xdims        = problem.GetXDesc().GetLengths();
-    auto ydims        = problem.GetYDesc().GetLengths();
-    auto dtype        = problem.GetXDesc().GetType();
-
-    {
-        auto kernel        = KernelInfo{};
-        kernel.kernel_file = "MIOpenPadReflection.cpp";
-        kernel.kernel_name = "PadReflection1dBwd";
-        auto output_numel =
-            std::accumulate(ydims.begin(), ydims.end(), 1ULL, std::multiplies<size_t>());
-
-        const auto build_params = KernelBuildParameters{
-            {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
-            {"MIOPEN_USE_FP32", static_cast<int>(dtype == miopenFloat)},
-            {"MIOPEN_USE_FP64", static_cast<int>(dtype == miopenDouble)},
-            {"MIOPEN_USE_BFP16", static_cast<int>(dtype == miopenBFloat16)},
-            {"INPUT_TYPE", input_dtype == "bfloat16" ? "ushort" : input_dtype},
-            {"OUTPUT_TYPE", output_dtype == "bfloat16" ? "ushort" : output_dtype},
-        };
-
-        kernel.comp_options = build_params.GenerateFor(kbp::HIP{});
-
-        size_t xlocalsize = LOCAL_SIZE;
-        size_t xgridsize  = AlignUp(output_numel, xlocalsize);
-        size_t ylocalsize = 1;
-        size_t ygridsize  = 1;
-        size_t zlocalsize = 1;
-        size_t zgridsize  = 1;
-        kernel.l_wk.push_back(xlocalsize);
-        kernel.l_wk.push_back(ylocalsize);
-        kernel.l_wk.push_back(zlocalsize);
-
-        kernel.g_wk.push_back(xgridsize);
-        kernel.g_wk.push_back(ygridsize);
-        kernel.g_wk.push_back(zgridsize);
-
-        result.construction_params.push_back(kernel);
-    }
-
+    else 
     {
         result.invoker_factory = [](const std::vector<Kernel>& kernels) {
             return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {

@@ -33,82 +33,42 @@ namespace miopen {
 
 namespace pad_reflection {
 
-// NetworkConfig ProblemDescription::MakeNetworkConfig() const
-// {
-//     auto xlength = xDesc.GetLengths();
-//     auto ylength = yDesc.GetLengths();
-
-//     auto output_size = std::accumulate(
-//         ylength.begin(), ylength.end(), static_cast<size_t>(1), std::multiplies<size_t>());
-//     auto dtype = xDesc.GetType();
-
-//     std::ostringstream ss;
-
-//     ss << "dtype" << dtype;
-//     ss << "output_size" << output_size;
-//     return NetworkConfig{ss.str()};
-// }
-
-NetworkConfig PadReflection1dFwdContiguousProblemDescription::MakeNetworkConfig() const
+NetworkConfig PadReflectionFwdProblemDescription::MakeNetworkConfig() const
 {
     auto xlength = xDesc.GetLengths();
     auto ylength = yDesc.GetLengths();
-
+    auto input_size = std::accumulate(
+        xlength.begin(), xlength.end(), static_cast<size_t>(1), std::multiplies<size_t>());
     auto output_size = std::accumulate(
         ylength.begin(), ylength.end(), static_cast<size_t>(1), std::multiplies<size_t>());
+
     auto dtype = xDesc.GetType();
 
     std::ostringstream ss;
-    ss << "PadReflection1dFwdContiguous";
+    ss << "fwd";
+    if (IsContiguous()) ss << "contiguous_";
     ss << "dtype" << dtype;
+    ss << "input_size" << input_size;
     ss << "output_size" << output_size;
     return NetworkConfig{ss.str()};
 }
 
-NetworkConfig PadReflection1dFwdProblemDescription::MakeNetworkConfig() const
+NetworkConfig PadReflectionBwdProblemDescription::MakeNetworkConfig() const
 {
     auto xlength = xDesc.GetLengths();
     auto ylength = yDesc.GetLengths();
-
+    auto input_size = std::accumulate(
+        xlength.begin(), xlength.end(), static_cast<size_t>(1), std::multiplies<size_t>());
     auto output_size = std::accumulate(
         ylength.begin(), ylength.end(), static_cast<size_t>(1), std::multiplies<size_t>());
+
     auto dtype = xDesc.GetType();
 
     std::ostringstream ss;
-    ss << "PadReflection1dFwd";
+    ss << "bwd";
+    if (IsContiguous()) ss << "contiguous_";
     ss << "dtype" << dtype;
-    ss << "output_size" << output_size;
-    return NetworkConfig{ss.str()};
-}
-
-NetworkConfig PadReflection1dBwdContiguousProblemDescription::MakeNetworkConfig() const
-{
-    auto xlength = xDesc.GetLengths();
-    auto ylength = yDesc.GetLengths();
-
-    auto output_size = std::accumulate(
-        ylength.begin(), ylength.end(), static_cast<size_t>(1), std::multiplies<size_t>());
-    auto dtype = xDesc.GetType();
-
-    std::ostringstream ss;
-    ss << "PadReflection1dBwdContiguous";
-    ss << "dtype" << dtype;
-    ss << "output_size" << output_size;
-    return NetworkConfig{ss.str()};
-}
-
-NetworkConfig PadReflection1dBwdProblemDescription::MakeNetworkConfig() const
-{
-    auto xlength = xDesc.GetLengths();
-    auto ylength = yDesc.GetLengths();
-
-    auto output_size = std::accumulate(
-        ylength.begin(), ylength.end(), static_cast<size_t>(1), std::multiplies<size_t>());
-    auto dtype = xDesc.GetType();
-
-    std::ostringstream ss;
-    ss << "PadReflection1dBwd";
-    ss << "dtype" << dtype;
+    ss << "input_size" << input_size;
     ss << "output_size" << output_size;
     return NetworkConfig{ss.str()};
 }

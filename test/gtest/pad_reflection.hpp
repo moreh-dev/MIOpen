@@ -82,10 +82,6 @@ struct PadReflectionCase
     {
         std::vector<size_t> paddingVector;
         paddingVector.push_back(padding);
-        // for(int i = 0; i < 4; ++i)
-        // {
-        //     paddingVector.push_back(padding[i]);
-        // }
         return paddingVector;
     }
 
@@ -146,10 +142,6 @@ protected:
             {
                 out_dims.push_back(in_dims[i] + 2 * padding[0]);
             }
-            // else if(i == 3)
-            // {
-            //     out_dims.push_back(in_dims[i] + 2 * padding[0]);
-            // }
             else
             {
                 out_dims.push_back(in_dims[i]);
@@ -173,26 +165,13 @@ protected:
 
         cpu_pad_reflection_fwd<T>(input, ref_output, contiguous, padding);
         miopenStatus_t status;
-        if(contiguous == 1)
-        {
-            status = miopen::PadReflection1dFwdContiguous(handle,
-                                                          input.desc,
-                                                          input_dev.get(),
-                                                          output.desc,
-                                                          output_dev.get(),
-                                                          padding.data(),
-                                                          padding.size());
-        }
-        else if(contiguous == 0)
-        {
-            status = miopen::PadReflection1dFwd(handle,
-                                                input.desc,
-                                                input_dev.get(),
-                                                output.desc,
-                                                output_dev.get(),
-                                                padding.data(),
-                                                padding.size());
-        }
+        status = miopen::PadReflectionFwd(handle,
+                                    input.desc,
+                                    input_dev.get(),
+                                    output.desc,
+                                    output_dev.get(),
+                                    padding.data(),
+                                    padding.size());
         EXPECT_EQ(status, miopenStatusSuccess);
 
         output.data = handle.Read<T>(output_dev, output.data.size());
@@ -261,26 +240,13 @@ protected:
 
         cpu_pad_reflection_bwd<T>(ref_input, output, contiguous, padding);
         miopenStatus_t status;
-        if(contiguous == 1)
-        {
-            status = miopen::PadReflection1dBwdContiguous(handle,
-                                                          input.desc,
-                                                          input_dev.get(),
-                                                          output.desc,
-                                                          output_dev.get(),
-                                                          padding.data(),
-                                                          padding.size());
-        }
-        else if(contiguous == 0)
-        {
-            status = miopen::PadReflection1dBwd(handle,
-                                                input.desc,
-                                                input_dev.get(),
-                                                output.desc,
-                                                output_dev.get(),
-                                                padding.data(),
-                                                padding.size());
-        }
+        status = miopen::PadReflectionBwd(handle,
+                                    input.desc,
+                                    input_dev.get(),
+                                    output.desc,
+                                    output_dev.get(),
+                                    padding.data(),
+                                    padding.size());
         EXPECT_EQ(status, miopenStatusSuccess);
         input.data = handle.Read<T>(input_dev, input.data.size());
     }
