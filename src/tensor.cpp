@@ -430,6 +430,20 @@ std::size_t TensorDescriptor::GetNumBytes() const
 
 bool TensorDescriptor::IsPacked() const { return this->packed; }
 
+bool TensorDescriptor::IsContiguous() const
+{
+    size_t s = 1;
+    for(int i = this->GetSize() - 1; i >= 0; --i)
+    {
+        if(s != this->GetStrides()[i])
+        {
+            return false;
+        }
+        s *= this->GetLengths()[i];
+    }
+    return true;
+}
+
 bool TensorDescriptor::AllDimsFitIntoInt() const
 {
     if(std::any_of(lens.cbegin(), lens.cend(), [](std::size_t x) {
