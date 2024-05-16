@@ -131,6 +131,7 @@ set( MIOpen_Source
     groupnorm_api.cpp
     groupnorm/problem_description.cpp
     handle_api.cpp
+    hinge_embedding_loss_api.cpp
     invoker_cache.cpp
     kernel_build_params.cpp
     kernel_warnings.cpp
@@ -139,6 +140,7 @@ set( MIOpen_Source
     load_file.cpp
     lock_file.cpp
     logger.cpp
+    loss/problem_description.cpp
     lrn_api.cpp
     mha/mha_descriptor.cpp
     mha/problem_description.cpp
@@ -263,6 +265,7 @@ set( MIOpen_Source
     solver/layernorm/forward_layernorm.cpp
     solver/layernorm/forward_layernorm2d_ck.cpp
     solver/layernorm/forward_layernorm4d_ck.cpp
+    solver/loss/forward_hinge_embedding_loss.cpp
     solver/mha/mha_solver.cpp
     solver/pooling/forward2d.cpp
     solver/pooling/forwardNaive.cpp
@@ -421,6 +424,7 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         kernels/neuron.inc
         kernels/rocm_version.inc
         kernels/stride_array.hpp
+        kernels/tensor_view_5d.hpp
         kernels/utilities.inc
         kernels/workaround_issue_1431.hpp
         kernels/xform_bidirect_winograd_code.inc
@@ -441,6 +445,7 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         kernels/MIOpenArgmax.cpp
         kernels/MIOpenCat.cpp
         kernels/MIOpenCheckNumerics.cpp
+        kernels/MIOpenHingeEmbeddingLoss.cpp
         kernels/MIOpenBatchNormActivBwdPerAct.cl
         kernels/MIOpenBatchNormActivBwdSpatial.cl
         kernels/MIOpenBatchNormActivFwdTrainPerAct.cl
@@ -597,6 +602,7 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         ocl/dropoutocl.cpp
         ocl/gcn_asm_utils.cpp
         ocl/rnn_util_ocl.cpp
+        hinge_embedding_loss.cpp
         hip/hip_build_utils.cpp
         hip/batched_transpose_sol.cpp
         hip/general_tensor_reorder_sol.cpp

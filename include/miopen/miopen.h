@@ -512,7 +512,7 @@ typedef enum
     miopenActivationABS      = 5, /*!< Absolute value \f$abs(x)\f$ */
     miopenActivationPOWER = 6, /*!< Scaled and shifted power \f$(\alpha + \beta * x)^{gamma}\f$ */
     miopenActivationCLIPPEDRELU =
-        7, /*!< Clipped Rectified Linear Unit \f$ min(\alpha, max(0,x)) \f$ */
+        7,                     /*!< Clipped Rectified Linear Unit \f$ min(\alpha, max(0,x)) \f$ */
     miopenActivationLEAKYRELU =
         8, /*!< Leaky Rectified Linear Unit \f$ \alpha * x | x <= 0; x | x > 0 \f$ */
     miopenActivationELU =
@@ -6580,6 +6580,67 @@ MIOPEN_EXPORT miopenStatus_t miopenBackendInitialize(miopenBackendDescriptor_t d
 
 /** @} */
 // CLOSEOUT BackendAPI DOXYGEN GROUP
+#endif // MIOPEN_BETA_API
+
+#ifdef MIOPEN_BETA_API
+
+/** @addtogroup LossFunction
+ *
+ *  @{
+ */
+
+/*! @brief Execute a HingeEmbeddingLoss unreduced forward layer
+ *
+ * @param handle                   MIOpen handle (input)
+ * @param iDesc                    Tensor descriptor for input tensor (input)
+ * @param i                        Data tensor input (input)
+ * @param tDesc                    Tensor descriptor for target tensor (input)
+ * @param t                        Data tensor target (input)
+ * @param oDesc                    Tensor descriptor for output tensor (input)
+ * @param o                        Data tensor output (output)
+ * @param margin                   Margin (input)
+ * @return                         miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t
+miopenHingeEmbeddingLossUnreducedForward(miopenHandle_t handle,
+                                         miopenTensorDescriptor_t iDesc,
+                                         const void* i,
+                                         miopenTensorDescriptor_t tDesc,
+                                         const void* t,
+                                         miopenTensorDescriptor_t oDesc,
+                                         void* o,
+                                         float margin);
+
+/*! @brief Execute a HingeEmbeddingLoss unreduced backward layer
+ *
+ * @param handle                   MIOpen handle (input)
+ * @param iDesc                    Tensor descriptor for input tensor (input)
+ * @param i                        Data tensor input (input)
+ * @param tDesc                    Tensor descriptor for target tensor (input)
+ * @param t                        Data tensor target (input)
+ * @param doDesc                   Tensor descriptor for output gradient (input)
+ * @param dO                       Gradient of output (input)
+ * @param diDesc                   Tensor descriptor for input gradient (input)
+ * @param dI                       Gradient of input (output)
+ * @param dtDesc                   Tensor descriptor for target gradient (input)
+ * @param dT                       Gradient of target (output)
+ * @param margin                   Margin (input)
+ * @return                         miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t
+miopenHingeEmbeddingLossUnreducedBackward(miopenHandle_t handle,
+                                          miopenTensorDescriptor_t iDesc,
+                                          const void* i,
+                                          miopenTensorDescriptor_t tDesc,
+                                          const void* t,
+                                          miopenTensorDescriptor_t doDesc,
+                                          const void* dO,
+                                          miopenTensorDescriptor_t diDesc,
+                                          void* dI,
+                                          float margin);
+
+/** @} */
+// CLOSEOUT LossFunction DOXYGEN GROUP
 #endif // MIOPEN_BETA_API
 
 #ifdef __cplusplus
