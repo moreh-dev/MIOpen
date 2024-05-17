@@ -24,6 +24,7 @@
  *
  *******************************************************************************/
 
+#include "miopen/miopen.h"
 #include <miopen/loss/invoke_params.hpp>
 #include <miopen/loss/problem_description.hpp>
 #include <miopen/loss/solvers.hpp>
@@ -35,19 +36,20 @@
 
 namespace miopen {
 
-miopenStatus_t HingeEmbeddingLossReducedForward(Handle& handle,
-                                                const TensorDescriptor& iDesc,
-                                                ConstData_t i,
-                                                const TensorDescriptor& tDesc,
-                                                ConstData_t t,
-                                                const TensorDescriptor& oDesc,
-                                                Data_t o,
-                                                float margin)
+miopenStatus_t HingeEmbeddingLossUnreducedForward(Handle& handle,
+                                                  const TensorDescriptor& iDesc,
+                                                  ConstData_t i,
+                                                  const TensorDescriptor& tDesc,
+                                                  ConstData_t t,
+                                                  const TensorDescriptor& oDesc,
+                                                  Data_t o,
+                                                  float margin)
 {
-    const auto problem = loss::HingeEmbeddingLossFwdProblemDescription{iDesc, tDesc, oDesc};
+    const auto problem =
+        loss::HingeEmbeddingLossUnreducedFwdProblemDescription{iDesc, tDesc, oDesc};
 
     const auto invoke_params = [&]() {
-        auto tmp   = loss::InvokeParams{};
+        auto tmp   = loss::UnreducedFwdInvokeParams{};
         tmp.iDesc  = &iDesc;
         tmp.tDesc  = &tDesc;
         tmp.oDesc  = &oDesc;
@@ -58,9 +60,44 @@ miopenStatus_t HingeEmbeddingLossReducedForward(Handle& handle,
         return tmp;
     }();
 
-    const auto algo = AlgorithmName{"HingeEmbeddingLossUnreducedForward"};
-    const auto solvers =
-        solver::SolverContainer<solver::loss::HingeEmbeddingLossUnreducedForward>{};
+    const auto algo    = AlgorithmName{"HingeEmbeddingLossUnreducedFwd"};
+    const auto solvers = solver::SolverContainer<solver::loss::HingeEmbeddingLossUnreducedFwd>{};
+
+    solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
+
+    return miopenStatusSuccess;
+}
+
+miopenStatus_t HingeEmbeddingLossUnreducedBackward(Handle& handle,
+                                                   const TensorDescriptor& iDesc,
+                                                   ConstData_t i,
+                                                   const TensorDescriptor& tDesc,
+                                                   ConstData_t t,
+                                                   const TensorDescriptor& dODesc,
+                                                   ConstData_t dO,
+                                                   const TensorDescriptor& dIDesc,
+                                                   Data_t dI,
+                                                   float margin)
+{
+    const auto problem =
+        loss::HingeEmbeddingLossUnreducedBwdProblemDescription{iDesc, tDesc, dODesc, dIDesc};
+
+    const auto invoke_params = [&]() {
+        auto tmp   = loss::UnreducedBwdInvokeParams{};
+        tmp.iDesc  = &iDesc;
+        tmp.tDesc  = &tDesc;
+        tmp.dODesc = &dODesc;
+        tmp.dIDesc = &dIDesc;
+        tmp.i      = i;
+        tmp.t      = t;
+        tmp.dO     = dO;
+        tmp.dI     = dI;
+        tmp.margin = margin;
+        return tmp;
+    }();
+
+    const auto algo    = AlgorithmName{"HingeEmbeddingLossUnreducedBwd"};
+    const auto solvers = solver::SolverContainer<solver::loss::HingeEmbeddingLossUnreducedBwd>{};
 
     solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
 

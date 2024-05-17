@@ -34,9 +34,9 @@ namespace miopen {
 
 namespace loss {
 
-struct InvokeParams : public miopen::InvokeParams
+struct UnreducedFwdInvokeParams : public miopen::InvokeParams
 {
-    InvokeParams() = default;
+    UnreducedFwdInvokeParams() = default;
 
     const TensorDescriptor* iDesc = nullptr;
     const TensorDescriptor* tDesc = nullptr;
@@ -53,10 +53,27 @@ struct InvokeParams : public miopen::InvokeParams
     Data_t GetWorkspace() const { return workspace; }
 };
 
-// struct HingeEmbeddingLossInvokeParams : LossInvokeParams
-// {
-//     HingeEmbeddingLossInvokeParams() = default;
-// };
+struct UnreducedBwdInvokeParams : public miopen::InvokeParams
+{
+    UnreducedBwdInvokeParams() = default;
+
+    const TensorDescriptor* iDesc  = nullptr;
+    const TensorDescriptor* tDesc  = nullptr;
+    const TensorDescriptor* dODesc = nullptr;
+    const TensorDescriptor* dIDesc = nullptr;
+
+    ConstData_t i              = nullptr;
+    ConstData_t t              = nullptr;
+    ConstData_t dO             = nullptr;
+    ConstData_t dI             = nullptr;
+    Data_t o                   = nullptr;
+    Data_t workspace           = nullptr;
+    std::size_t workspace_size = 0;
+    float margin               = 1.0f;
+
+    std::size_t GetWorkspaceSize() const { return workspace_size; }
+    Data_t GetWorkspace() const { return workspace; }
+};
 
 } // namespace loss
 

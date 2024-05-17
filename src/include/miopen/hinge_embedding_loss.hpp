@@ -33,13 +33,25 @@ namespace miopen {
 struct Handle;
 struct TensorDescriptor;
 
-miopenStatus_t HingeEmbeddingLossReducedForward(Handle& handle,
-                                                const TensorDescriptor& iDesc,
-                                                ConstData_t i,
-                                                const TensorDescriptor& tDesc,
-                                                ConstData_t t,
-                                                const TensorDescriptor& oDesc,
-                                                Data_t o,
-                                                float margin);
+miopenStatus_t HingeEmbeddingLossUnreducedForward(Handle& handle,
+                                                  const TensorDescriptor& iDesc,
+                                                  ConstData_t i,
+                                                  const TensorDescriptor& tDesc,
+                                                  ConstData_t t,
+                                                  const TensorDescriptor& oDesc,
+                                                  Data_t o,
+                                                  float margin);
+
+miopenStatus_t HingeEmbeddingLossUnreducedBackward(Handle& handle,
+                                                   const TensorDescriptor& iDesc,
+                                                   ConstData_t i,
+                                                   const TensorDescriptor& tDesc,
+                                                   ConstData_t t,
+                                                   const TensorDescriptor& dODesc,
+                                                   ConstData_t dO,
+                                                   const TensorDescriptor& dIDesc,
+                                                   Data_t dI,
+                                                   float margin);
+
 } // namespace miopen
 #endif // MIOPEN_HINGE_EMBEDDING_LOSS_HPP_

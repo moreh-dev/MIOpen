@@ -66,23 +66,23 @@ inline tensor_view_5d_t get_inner_expanded_tv(const miopen::TensorDescriptor Des
     return tv_5d;
 }
 
-bool HingeEmbeddingLossUnreducedFwd::IsApplicable(
+bool HingeEmbeddingLossUnreducedBwd::IsApplicable(
     const ExecutionContext& /*context*/,
-    const miopen::loss::HingeEmbeddingLossUnreducedFwdProblemDescription& problem) const
+    const miopen::loss::HingeEmbeddingLossUnreducedBwdProblemDescription& /*problem*/) const
 {
     return true;
 }
 
-ConvSolution HingeEmbeddingLossUnreducedFwd::GetSolution(
+ConvSolution HingeEmbeddingLossUnreducedBwd::GetSolution(
     const ExecutionContext& context,
-    const miopen::loss::HingeEmbeddingLossUnreducedFwdProblemDescription& problem) const
+    const miopen::loss::HingeEmbeddingLossUnreducedBwdProblemDescription& problem) const
 {
     std::ignore = context;
 
     auto result = ConvSolution{miopenStatusSuccess};
 
     auto in_dtype     = miopen::GetDataType(problem.GetIDesc().GetType());
-    auto dtype        = problem.GetODesc().GetType();
+    auto dtype        = problem.GetdIDesc().GetType();
     auto target_dtype = miopen::GetDataType(problem.GetTDesc().GetType());
 
     size_t xlocalsize = LOCAL_SIZE;
@@ -95,7 +95,7 @@ ConvSolution HingeEmbeddingLossUnreducedFwd::GetSolution(
     auto kernel = KernelInfo{};
 
     kernel.kernel_file = "MIOpenHingeEmbeddingLoss.cpp";
-    kernel.kernel_name = "HingeEmbeddingLossUnreducedFwd";
+    kernel.kernel_name = "HingeEmbeddingLossUnreducedBwd";
 
     const auto build_params = KernelBuildParameters{
         {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
@@ -121,11 +121,14 @@ ConvSolution HingeEmbeddingLossUnreducedFwd::GetSolution(
     result.invoker_factory = [](const std::vector<Kernel>& kernels) {
         return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
             decltype(auto) kernel = handle_.Run(kernels.front());
-            decltype(auto) params = raw_params.CastTo<miopen::loss::UnreducedFwdInvokeParams>();
+            decltype(auto) params = raw_params.CastTo<miopen::loss::UnreducedBwdInvokeParams>();
             auto I_tv             = get_inner_expanded_tv(deref(params.iDesc));
             auto T_tv             = get_inner_expanded_tv(deref(params.tDesc));
+            auto dO_tv            = get_inner_expanded_tv(deref(params.dODesc));
+            auto dI_tv            = get_inner_expanded_tv(deref(params.dIDesc));
 
-            kernel(params.i, params.t, params.o, params.margin, I_tv, T_tv);
+            kernel(
+                params.i, params.t, params.dO, params.dI, params.margin, I_tv, T_tv, dO_tv, dI_tv);
         };
     };
 

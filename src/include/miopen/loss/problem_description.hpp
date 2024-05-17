@@ -25,6 +25,7 @@
  *******************************************************************************/
 #pragma once
 
+#include "miopen/errors.hpp"
 #include <miopen/activ.hpp>
 #include <miopen/problem_description_base.hpp>
 #include <miopen/tensor.hpp>
@@ -40,13 +41,15 @@ namespace loss {
 
 bool checkSameLength(const TensorDescriptor& x, const TensorDescriptor& y);
 
-struct HingeEmbeddingLossFwdProblemDescription : ProblemDescriptionBase
+struct HingeEmbeddingLossUnreducedFwdProblemDescription : ProblemDescriptionBase
 {
-    HingeEmbeddingLossFwdProblemDescription(const TensorDescriptor& iDesc_,
-                                            const TensorDescriptor& tDesc_,
-                                            const TensorDescriptor& oDesc_)
+    HingeEmbeddingLossUnreducedFwdProblemDescription(const TensorDescriptor& iDesc_,
+                                                     const TensorDescriptor& tDesc_,
+                                                     const TensorDescriptor& oDesc_)
         : iDesc(iDesc_), tDesc(tDesc_), oDesc(oDesc_)
     {
+        if(!checkSameLength(iDesc, tDesc))
+            MIOPEN_THROW(miopenStatusBadParm, "Loss: Input, target tensor sizes do not match.");
     }
 
     NetworkConfig MakeNetworkConfig() const override;
@@ -54,28 +57,36 @@ struct HingeEmbeddingLossFwdProblemDescription : ProblemDescriptionBase
     const TensorDescriptor& GetTDesc() const { return tDesc; }
     const TensorDescriptor& GetODesc() const { return oDesc; }
 
-    bool IsRightLength() const
-    {
-        if(!checkSameLength(iDesc, tDesc))
-        {
-#if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
-            MIOPEN_THROW(miopenStatusBadParm, "Loss: Tensor sizes do not match.");
-#else
-            return false;
-#endif
-        }
-        return true;
-    }
-
 public:
     TensorDescriptor iDesc;
     TensorDescriptor tDesc;
     TensorDescriptor oDesc;
 };
 
-// struct HingeEmbeddingLossFwdProblemDescription : LossFwdProblemDescription
-// {
-// };
+struct HingeEmbeddingLossUnreducedBwdProblemDescription : ProblemDescriptionBase
+{
+    HingeEmbeddingLossUnreducedBwdProblemDescription(const TensorDescriptor& iDesc_,
+                                                     const TensorDescriptor& tDesc_,
+                                                     const TensorDescriptor& dODesc_,
+                                                     const TensorDescriptor& dIDesc_)
+        : iDesc(iDesc_), tDesc(tDesc_), dODesc(dODesc_), dIDesc(dIDesc_)
+    {
+        if(!checkSameLength(iDesc, tDesc))
+            MIOPEN_THROW(miopenStatusBadParm, "Loss: Input, target tensor sizes do not match.");
+    }
+
+    NetworkConfig MakeNetworkConfig() const override;
+    const TensorDescriptor& GetIDesc() const { return iDesc; }
+    const TensorDescriptor& GetTDesc() const { return tDesc; }
+    const TensorDescriptor& GetdODesc() const { return dODesc; }
+    const TensorDescriptor& GetdIDesc() const { return dIDesc; }
+
+public:
+    TensorDescriptor iDesc;
+    TensorDescriptor tDesc;
+    TensorDescriptor dODesc;
+    TensorDescriptor dIDesc;
+};
 
 } // namespace loss
 

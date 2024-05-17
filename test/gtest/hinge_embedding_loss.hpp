@@ -92,7 +92,7 @@ std::vector<HingeEmbeddingLossTestCase> HingeEmbeddingLossTestConfigs()
 }
 
 template <typename TIO, typename TT>
-struct HingeEmbeddingLossUnreducedForwardTest
+struct HingeEmbeddingLossUnreducedFwdTest
     : public ::testing::TestWithParam<HingeEmbeddingLossTestCase>
 {
 protected:
@@ -127,14 +127,14 @@ protected:
 
         cpu_hinge_embedding_loss_unreduced_forward<TIO, TT>(
             input, target, ref_output, config.margin);
-        status = miopen::HingeEmbeddingLossReducedForward(handle,
-                                                          input.desc,
-                                                          input_dev.get(),
-                                                          target.desc,
-                                                          target_dev.get(),
-                                                          output.desc,
-                                                          output_dev.get(),
-                                                          config.margin);
+        status = miopen::HingeEmbeddingLossUnreducedForward(handle,
+                                                            input.desc,
+                                                            input_dev.get(),
+                                                            target.desc,
+                                                            target_dev.get(),
+                                                            output.desc,
+                                                            output_dev.get(),
+                                                            config.margin);
         EXPECT_EQ(status, miopenStatusSuccess);
 
         output.data = handle.Read<TIO>(output_dev, output.data.size());
@@ -167,6 +167,93 @@ protected:
     miopen::Allocator::ManageDataPtr input_dev;
     miopen::Allocator::ManageDataPtr target_dev;
     miopen::Allocator::ManageDataPtr output_dev;
+
+    float margin;
+};
+
+template <typename TIO, typename TT>
+struct HingeEmbeddingLossUnreducedBwdTest
+    : public ::testing::TestWithParam<HingeEmbeddingLossTestCase>
+{
+protected:
+    void SetUp() override
+    {
+        auto&& handle = get_handle();
+        config        = GetParam();
+
+        auto in_gen_value = [](auto...) { return prng::gen_descreet_uniform_sign<TIO>(0.1, 50); };
+        auto in_dims      = config.GetInput();
+        input             = tensor<TIO>{in_dims}.generate(in_gen_value);
+
+        auto tar_gen_value = [](auto...) { return prng::gen_descreet_unsigned<TT>(1, 2) * 2 - 1; };
+        target             = tensor<TT>{in_dims}.generate(tar_gen_value);
+
+        dOutput = tensor<TIO>{in_dims}.generate(in_gen_value);
+
+        dInput = tensor<TIO>{in_dims};
+        std::fill(dInput.begin(), dInput.end(), 0);
+
+        ref_dInput = tensor<TIO>{in_dims};
+        std::fill(ref_dInput.begin(), ref_dInput.end(), 0);
+
+        input_dev   = handle.Write(input.data);
+        target_dev  = handle.Write(target.data);
+        dOutput_dev = handle.Write(dOutput.data);
+        dInput_dev  = handle.Write(dInput.data);
+    }
+
+    void RunTest()
+    {
+        auto&& handle = get_handle();
+
+        miopenStatus_t status;
+
+        cpu_hinge_embedding_loss_unreduced_backward<TIO, TT>(
+            input, target, dOutput, ref_dInput, config.margin);
+        status = miopen::HingeEmbeddingLossUnreducedBackward(handle,
+                                                             input.desc,
+                                                             input_dev.get(),
+                                                             target.desc,
+                                                             target_dev.get(),
+                                                             dOutput.desc,
+                                                             dOutput_dev.get(),
+                                                             dInput.desc,
+                                                             dInput_dev.get(),
+                                                             config.margin);
+        EXPECT_EQ(status, miopenStatusSuccess);
+
+        dInput.data = handle.Read<TIO>(dInput_dev, dInput.data.size());
+    }
+
+    void Verify()
+    {
+        // Computation error of fp16 is ~2^13 (=8192) bigger than
+        // the one of fp32 because mantissa is shorter by 13 bits.
+        double tolerance = std::is_same<TIO, float>::value ? 1.5e-6 : 8.2e-3;
+
+        // bf16 mantissa has 7 bits, by 3 bits shorter than fp16.
+        if(std::is_same<TIO, bfloat16>::value)
+            tolerance *= 8.0;
+
+        auto error = miopen::rms_range(ref_dInput, dInput);
+
+        EXPECT_TRUE(miopen::range_distance(ref_dInput) == miopen::range_distance(dInput));
+        EXPECT_TRUE(error < tolerance)
+            << "Error output beyond tolerance Error: " << error << ",  Tolerance: " << tolerance;
+    }
+    HingeEmbeddingLossTestCase config;
+
+    tensor<TIO> input;
+    tensor<TT> target;
+    tensor<TIO> dOutput;
+    tensor<TIO> dInput;
+
+    tensor<TIO> ref_dInput;
+
+    miopen::Allocator::ManageDataPtr input_dev;
+    miopen::Allocator::ManageDataPtr target_dev;
+    miopen::Allocator::ManageDataPtr dOutput_dev;
+    miopen::Allocator::ManageDataPtr dInput_dev;
 
     float margin;
 };

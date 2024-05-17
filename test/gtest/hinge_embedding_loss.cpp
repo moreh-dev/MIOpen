@@ -33,17 +33,31 @@ MIOPEN_DECLARE_ENV_VAR_BOOL(MIOPEN_TEST_ALL)
 
 namespace loss {
 struct HingeEmbeddingLossUnreducedForwardTestFloat32
-    : HingeEmbeddingLossUnreducedForwardTest<float, int>
+    : HingeEmbeddingLossUnreducedFwdTest<float, int>
 {
 };
 
-struct HingeEmbeddingLossUnreducedForwardTestFloat16
-    : HingeEmbeddingLossUnreducedForwardTest<half, int>
+struct HingeEmbeddingLossUnreducedForwardTestFloat16 : HingeEmbeddingLossUnreducedFwdTest<half, int>
 {
 };
 
 struct HingeEmbeddingLossUnreducedForwardTestBFloat16
-    : HingeEmbeddingLossUnreducedForwardTest<bfloat16, int>
+    : HingeEmbeddingLossUnreducedFwdTest<bfloat16, int>
+{
+};
+
+struct HingeEmbeddingLossUnreducedBackwardTestFloat32
+    : HingeEmbeddingLossUnreducedBwdTest<float, int>
+{
+};
+
+struct HingeEmbeddingLossUnreducedBackwardTestFloat16
+    : HingeEmbeddingLossUnreducedBwdTest<half, int>
+{
+};
+
+struct HingeEmbeddingLossUnreducedBackwardTestBFloat16
+    : HingeEmbeddingLossUnreducedBwdTest<bfloat16, int>
 {
 };
 }; // namespace loss
@@ -98,4 +112,55 @@ TEST_P(HingeEmbeddingLossUnreducedForwardTestBFloat16, HingeEmbeddingLossUnreduc
 
 INSTANTIATE_TEST_SUITE_P(HingeEmbeddingLossUnreducedForwardTestSet,
                          HingeEmbeddingLossUnreducedForwardTestBFloat16,
+                         testing::ValuesIn(HingeEmbeddingLossTestConfigs()));
+
+TEST_P(HingeEmbeddingLossUnreducedBackwardTestFloat32, HingeEmbeddingLossUnreducedBackwardTest)
+{
+    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
+
+INSTANTIATE_TEST_SUITE_P(HingeEmbeddingLossUnreducedBackwardTestSet,
+                         HingeEmbeddingLossUnreducedBackwardTestFloat32,
+                         testing::ValuesIn(HingeEmbeddingLossTestConfigs()));
+
+TEST_P(HingeEmbeddingLossUnreducedBackwardTestFloat16, HingeEmbeddingLossUnreducedBackwardTest)
+{
+    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
+
+INSTANTIATE_TEST_SUITE_P(HingeEmbeddingLossUnreducedBackwardTestSet,
+                         HingeEmbeddingLossUnreducedBackwardTestFloat16,
+                         testing::ValuesIn(HingeEmbeddingLossTestConfigs()));
+
+TEST_P(HingeEmbeddingLossUnreducedBackwardTestBFloat16, HingeEmbeddingLossUnreducedBackwardTest)
+{
+    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
+
+INSTANTIATE_TEST_SUITE_P(HingeEmbeddingLossUnreducedBackwardTestSet,
+                         HingeEmbeddingLossUnreducedBackwardTestBFloat16,
                          testing::ValuesIn(HingeEmbeddingLossTestConfigs()));

@@ -36,22 +36,42 @@ namespace solver {
 
 namespace loss {
 
-using HingeEmbeddingLossUnreducedForwardSolverBase =
-    NonTunableSolverBase<ExecutionContext, miopen::loss::HingeEmbeddingLossFwdProblemDescription>;
+using HingeEmbeddingLossUnreducedFwdSolverBase =
+    NonTunableSolverBase<ExecutionContext,
+                         miopen::loss::HingeEmbeddingLossUnreducedFwdProblemDescription>;
 
-struct HingeEmbeddingLossUnreducedForward final : HingeEmbeddingLossUnreducedForwardSolverBase
+struct HingeEmbeddingLossUnreducedFwd final : HingeEmbeddingLossUnreducedFwdSolverBase
 {
     const std::string& SolverDbId() const override
     {
-        return GetSolverDbId<HingeEmbeddingLossUnreducedForward>();
+        return GetSolverDbId<HingeEmbeddingLossUnreducedFwd>();
     }
 
-    bool IsApplicable(
-        const ExecutionContext& context,
-        const miopen::loss::HingeEmbeddingLossFwdProblemDescription& problem) const override;
-    ConvSolution GetSolution(
-        const ExecutionContext& context,
-        const miopen::loss::HingeEmbeddingLossFwdProblemDescription& problem) const override;
+    bool IsApplicable(const ExecutionContext& context,
+                      const miopen::loss::HingeEmbeddingLossUnreducedFwdProblemDescription& problem)
+        const override;
+    ConvSolution GetSolution(const ExecutionContext& context,
+                             const miopen::loss::HingeEmbeddingLossUnreducedFwdProblemDescription&
+                                 problem) const override;
+};
+
+using HingeEmbeddingLossUnreducedBwdSolverBase =
+    NonTunableSolverBase<ExecutionContext,
+                         miopen::loss::HingeEmbeddingLossUnreducedBwdProblemDescription>;
+
+struct HingeEmbeddingLossUnreducedBwd final : HingeEmbeddingLossUnreducedBwdSolverBase
+{
+    const std::string& SolverDbId() const override
+    {
+        return GetSolverDbId<HingeEmbeddingLossUnreducedBwd>();
+    }
+
+    bool IsApplicable(const ExecutionContext& context,
+                      const miopen::loss::HingeEmbeddingLossUnreducedBwdProblemDescription& problem)
+        const override;
+    ConvSolution GetSolution(const ExecutionContext& context,
+                             const miopen::loss::HingeEmbeddingLossUnreducedBwdProblemDescription&
+                                 problem) const override;
 };
 
 } // namespace loss
