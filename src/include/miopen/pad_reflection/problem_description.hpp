@@ -112,7 +112,6 @@ struct PadReflectionFwdProblemDescription : ProblemDescriptionBase
         return true;
     }
 
-    bool IsImprovementOverROCm() const { return true; }
 
     NetworkConfig MakeNetworkConfig() const override;
 
@@ -197,7 +196,6 @@ struct PadReflectionBwdProblemDescription : ProblemDescriptionBase
         return true;
     }
 
-    bool IsImprovementOverROCm() const { return true; }
     NetworkConfig MakeNetworkConfig() const override;
 
 private:

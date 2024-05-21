@@ -49,8 +49,6 @@ bool PadReflectionFwd::IsApplicable(
         return false;
     if(!problem.IsRightNumPadding())
         return false;
-    if(!problem.IsImprovementOverROCm())
-        return false;
     return true;
 }
 
@@ -194,8 +192,6 @@ bool PadReflectionBwd::IsApplicable(
     if(!problem.IsSameType())
         return false;
     if(!problem.IsRightNumPadding())
-        return false;
-    if(!problem.IsImprovementOverROCm())
         return false;
     return true;
 }
