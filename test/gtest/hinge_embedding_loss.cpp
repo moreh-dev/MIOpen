@@ -32,6 +32,18 @@
 MIOPEN_DECLARE_ENV_VAR_BOOL(MIOPEN_TEST_ALL)
 
 namespace loss {
+struct HingeEmbeddingLossForwardTestFloat32 : HingeEmbeddingLossFwdTest<float, int>
+{
+};
+
+struct HingeEmbeddingLossForwardTestFloat16 : HingeEmbeddingLossFwdTest<half, int>
+{
+};
+
+struct HingeEmbeddingLossForwardTestBFloat16 : HingeEmbeddingLossFwdTest<bfloat16, int>
+{
+};
+
 struct HingeEmbeddingLossUnreducedForwardTestFloat32
     : HingeEmbeddingLossUnreducedFwdTest<float, int>
 {
@@ -62,7 +74,59 @@ struct HingeEmbeddingLossUnreducedBackwardTestBFloat16
 };
 }; // namespace loss
 using namespace loss;
+// =========================== Reduced Forward Test ===========================
+TEST_P(HingeEmbeddingLossForwardTestFloat32, HingeEmbeddingLossForwardTest)
+{
+    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
 
+INSTANTIATE_TEST_SUITE_P(HingeEmbeddingLossForwardTestSet,
+                         HingeEmbeddingLossForwardTestFloat32,
+                         testing::ValuesIn(HingeEmbeddingLossTestConfigs()));
+
+TEST_P(HingeEmbeddingLossForwardTestFloat16, HingeEmbeddingLossForwardTest)
+{
+    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
+
+INSTANTIATE_TEST_SUITE_P(HingeEmbeddingLossForwardTestSet,
+                         HingeEmbeddingLossForwardTestFloat16,
+                         testing::ValuesIn(HingeEmbeddingLossTestConfigs()));
+
+TEST_P(HingeEmbeddingLossForwardTestBFloat16, HingeEmbeddingLossForwardTest)
+{
+    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
+
+INSTANTIATE_TEST_SUITE_P(HingeEmbeddingLossForwardTestSet,
+                         HingeEmbeddingLossForwardTestBFloat16,
+                         testing::ValuesIn(HingeEmbeddingLossTestConfigs()));
+
+// =========================== Unreduced Forward Test ===========================
 TEST_P(HingeEmbeddingLossUnreducedForwardTestFloat32, HingeEmbeddingLossUnreducedForwardTest)
 {
     if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
@@ -114,6 +178,7 @@ INSTANTIATE_TEST_SUITE_P(HingeEmbeddingLossUnreducedForwardTestSet,
                          HingeEmbeddingLossUnreducedForwardTestBFloat16,
                          testing::ValuesIn(HingeEmbeddingLossTestConfigs()));
 
+// =========================== Unreduced Backward Test ===========================
 TEST_P(HingeEmbeddingLossUnreducedBackwardTestFloat32, HingeEmbeddingLossUnreducedBackwardTest)
 {
     if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))

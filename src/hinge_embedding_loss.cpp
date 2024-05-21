@@ -36,6 +36,59 @@
 
 namespace miopen {
 
+size_t GetHingeEmbeddingLossForwardWorkspaceSize(Handle& handle,
+                                                 const TensorDescriptor& iDesc,
+                                                 const TensorDescriptor& tDesc,
+                                                 const TensorDescriptor& oDesc)
+{
+    auto ctx           = ExecutionContext{&handle};
+    const auto problem = loss::HingeEmbeddingLossFwdProblemDescription{iDesc, tDesc, oDesc};
+
+    const auto algo    = AlgorithmName{"HingeEmbeddingLossFwd"};
+    const auto solvers = solver::SolverContainer<solver::loss::HingeEmbeddingLossFwd>{};
+
+    auto pair_size_vector = solvers.GetWorkspaceSizes(ctx, problem);
+
+    return pair_size_vector.empty() ? static_cast<size_t>(-1) : pair_size_vector.front().second;
+}
+
+miopenStatus_t HingeEmbeddingLossForward(Handle& handle,
+                                         Data_t workspace,
+                                         size_t workspaceSizeInBytes,
+                                         const TensorDescriptor& iDesc,
+                                         ConstData_t i,
+                                         const TensorDescriptor& tDesc,
+                                         ConstData_t t,
+                                         const TensorDescriptor& oDesc,
+                                         Data_t o,
+                                         float margin,
+                                         float divisor)
+{
+    const auto problem = loss::HingeEmbeddingLossFwdProblemDescription{iDesc, tDesc, oDesc};
+
+    const auto invoke_params = [&]() {
+        auto tmp           = loss::FwdInvokeParams{};
+        tmp.iDesc          = &iDesc;
+        tmp.tDesc          = &tDesc;
+        tmp.oDesc          = &oDesc;
+        tmp.i              = i;
+        tmp.t              = t;
+        tmp.o              = o;
+        tmp.workspace      = workspace;
+        tmp.workspace_size = workspaceSizeInBytes;
+        tmp.margin         = margin;
+        tmp.divisor        = divisor;
+        return tmp;
+    }();
+
+    const auto algo    = AlgorithmName{"HingeEmbeddingLossFwd"};
+    const auto solvers = solver::SolverContainer<solver::loss::HingeEmbeddingLossFwd>{};
+
+    solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
+
+    return miopenStatusSuccess;
+}
+
 miopenStatus_t HingeEmbeddingLossUnreducedForward(Handle& handle,
                                                   const TensorDescriptor& iDesc,
                                                   ConstData_t i,

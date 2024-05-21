@@ -75,6 +75,26 @@ struct UnreducedBwdInvokeParams : public miopen::InvokeParams
     Data_t GetWorkspace() const { return workspace; }
 };
 
+struct FwdInvokeParams : public miopen::InvokeParams
+{
+    FwdInvokeParams() = default;
+
+    const TensorDescriptor* iDesc = nullptr;
+    const TensorDescriptor* tDesc = nullptr;
+    const TensorDescriptor* oDesc = nullptr;
+
+    ConstData_t i              = nullptr;
+    ConstData_t t              = nullptr;
+    Data_t o                   = nullptr;
+    Data_t workspace           = nullptr;
+    std::size_t workspace_size = 0;
+    float margin               = 1.0f;
+    float divisor              = 1.0f;
+
+    std::size_t GetWorkspaceSize() const { return workspace_size; }
+    Data_t GetWorkspace() const { return workspace; }
+};
+
 } // namespace loss
 
 } // namespace miopen

@@ -512,7 +512,7 @@ typedef enum
     miopenActivationABS      = 5, /*!< Absolute value \f$abs(x)\f$ */
     miopenActivationPOWER = 6, /*!< Scaled and shifted power \f$(\alpha + \beta * x)^{gamma}\f$ */
     miopenActivationCLIPPEDRELU =
-        7, /*!< Clipped Rectified Linear Unit \f$ min(\alpha, max(0,x)) \f$ */
+        7,                     /*!< Clipped Rectified Linear Unit \f$ min(\alpha, max(0,x)) \f$ */
     miopenActivationLEAKYRELU =
         8, /*!< Leaky Rectified Linear Unit \f$ \alpha * x | x <= 0; x | x > 0 \f$ */
     miopenActivationELU =
@@ -6588,6 +6588,50 @@ MIOPEN_EXPORT miopenStatus_t miopenBackendInitialize(miopenBackendDescriptor_t d
  *
  *  @{
  */
+
+/*! @brief Helper function to query the minimum workspace size required by the hinge embedding loss
+ * call
+ *
+ * @param handle                   MIOpen Handle (input)
+ * @param iDesc                    Tensor descriptor for input tensor (input)
+ * @param tDesc                    Tensor descriptor for target tensor (input)
+ * @param oDesc                    Tensor descriptor for output tensor (input)
+ * @param sizeInBytes              Pointer to data to return the minimum workspace size
+ * @return                         miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t
+miopenGetHingeEmbeddingLossForwardWorkspaceSize(miopenHandle_t handle,
+                                                miopenTensorDescriptor_t iDesc,
+                                                miopenTensorDescriptor_t tDesc,
+                                                miopenTensorDescriptor_t oDesc,
+                                                size_t* sizeInBytes);
+
+/*! @brief Execute a HingeEmbeddingLoss reduced forward layer
+ *
+ * @param handle                   MIOpen handle (input)
+ * @param workspace                Address of the allocated workspace data (input)
+ * @param workspaceSizeInBytes     Size in bytes of the allocated workspace data (input)
+ * @param iDesc                    Tensor descriptor for input tensor (input)
+ * @param i                        Data tensor input (input)
+ * @param tDesc                    Tensor descriptor for target tensor (input)
+ * @param t                        Data tensor target (input)
+ * @param oDesc                    Tensor descriptor for output tensor (input)
+ * @param o                        Data tensor output (output)
+ * @param margin                   Margin (input)
+ * @param divisor                  Divisor (input)
+ * @return                         miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t miopenHingeEmbeddingLossForward(miopenHandle_t handle,
+                                                             void* workspace,
+                                                             size_t workspaceSizeInBytes,
+                                                             miopenTensorDescriptor_t iDesc,
+                                                             const void* i,
+                                                             miopenTensorDescriptor_t tDesc,
+                                                             const void* t,
+                                                             miopenTensorDescriptor_t oDesc,
+                                                             void* o,
+                                                             float margin,
+                                                             float divisor);
 
 /*! @brief Execute a HingeEmbeddingLoss unreduced forward layer
  *

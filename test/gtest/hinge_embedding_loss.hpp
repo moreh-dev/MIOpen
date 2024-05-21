@@ -27,6 +27,7 @@
 #include "../driver/tensor_driver.hpp"
 #include "cpu_hinge_embedding_loss.hpp"
 #include "get_handle.hpp"
+#include "miopen/allocator.hpp"
 #include "random.hpp"
 #include "tensor_holder.hpp"
 #include "verify.hpp"
@@ -43,6 +44,8 @@ struct HingeEmbeddingLossTestCase
     size_t H;
     size_t W;
     float margin;
+    float divisor;
+    std::string reduction;
     friend std::ostream& operator<<(std::ostream& os, const HingeEmbeddingLossTestCase& tc)
     {
         return os << " N:" << tc.N << " C:" << tc.C << " D:" << tc.D << " H:" << tc.H
@@ -82,12 +85,14 @@ struct HingeEmbeddingLossTestCase
 std::vector<HingeEmbeddingLossTestCase> HingeEmbeddingLossTestConfigs()
 { // n c d h w margin
     return {
-        {1, 1, 1, 1, 10, 1},
-        {2, 1, 1, 10, 10, 1},
-        {4, 1, 1, 100, 100, 1},
-        {8, 3, 1, 20, 100, 1},
-        {16, 3, 1, 100, 100, 1},
-        {1, 1, 1, 1, 5000, 2},
+        {1, 1, 1, 1, 10, 1, 1, "sum"},
+        {2, 1, 1, 10, 10, 1, 1, "mean"},
+        {4, 1, 1, 100, 100, 1, 1, "sum"},
+        {8, 3, 1, 20, 100, 1, 1, "mean"},
+        {8, 3, 1, 50, 50, 1, 1, "sum"},
+        {4, 3, 1, 60, 50, 1, 1, "mean"},
+        {1, 1, 1, 1, 5000, 2, 1, "sum"},
+        {3, 2, 4, 3, 100, 2, 1, "mean"},
     };
 }
 
@@ -181,14 +186,15 @@ protected:
         auto&& handle = get_handle();
         config        = GetParam();
 
-        auto in_gen_value = [](auto...) { return prng::gen_descreet_uniform_sign<TIO>(0.1, 50); };
         auto in_dims      = config.GetInput();
+        auto in_gen_value = [](auto...) { return prng::gen_descreet_uniform_sign<TIO>(0.1, 50); };
         input             = tensor<TIO>{in_dims}.generate(in_gen_value);
 
         auto tar_gen_value = [](auto...) { return prng::gen_descreet_unsigned<TT>(1, 2) * 2 - 1; };
         target             = tensor<TT>{in_dims}.generate(tar_gen_value);
 
-        dOutput = tensor<TIO>{in_dims}.generate(in_gen_value);
+        auto dOut_gen_value = [](auto...) { return prng::gen_descreet_uniform_sign<TIO>(0.1, 50); };
+        dOutput             = tensor<TIO>{in_dims}.generate(dOut_gen_value);
 
         dInput = tensor<TIO>{in_dims};
         std::fill(dInput.begin(), dInput.end(), 0);
@@ -256,4 +262,95 @@ protected:
     miopen::Allocator::ManageDataPtr dInput_dev;
 
     float margin;
+};
+
+template <typename TIO, typename TT>
+struct HingeEmbeddingLossFwdTest : public ::testing::TestWithParam<HingeEmbeddingLossTestCase>
+{
+protected:
+    void SetUp() override
+    {
+        auto&& handle = get_handle();
+        config        = GetParam();
+        if(config.reduction == "mean")
+        {
+            config.divisor *= input.desc.GetElementSize();
+        }
+
+        auto in_gen_value = [](auto...) { return prng::gen_descreet_uniform_sign<TIO>(0.1, 50); };
+        auto in_dims      = config.GetInput();
+        input             = tensor<TIO>{in_dims}.generate(in_gen_value);
+
+        auto tar_gen_value = [](auto...) { return prng::gen_descreet_unsigned<TT>(1, 2) * 2 - 1; };
+        target             = tensor<TT>{in_dims}.generate(tar_gen_value);
+
+        size_t workspaceSizeBytes = miopen::GetHingeEmbeddingLossForwardWorkspaceSize(
+            handle, input.desc, target.desc, output.desc);
+        size_t workspaceElements = workspaceSizeBytes / sizeof(TIO);
+
+        workspace = tensor<TIO>(workspaceElements);
+        std::fill(workspace.begin(), workspace.end(), 0);
+
+        output = tensor<TIO>(1);
+        std::fill(output.begin(), output.end(), 0);
+
+        ref_output = tensor<TIO>(1);
+        std::fill(ref_output.begin(), ref_output.end(), 0);
+
+        input_dev     = handle.Write(input.data);
+        target_dev    = handle.Write(target.data);
+        workspace_dev = handle.Write(workspace.data);
+        output_dev    = handle.Write(output.data);
+    }
+
+    void RunTest()
+    {
+        auto&& handle = get_handle();
+
+        miopenStatus_t status;
+
+        cpu_hinge_embedding_loss_forward<TIO, TT>(
+            input, target, workspace, ref_output, config.margin, config.divisor);
+        status = miopen::HingeEmbeddingLossForward(handle,
+                                                   workspace_dev.get(),
+                                                   workspace.GetDataByteSize(),
+                                                   input.desc,
+                                                   input_dev.get(),
+                                                   target.desc,
+                                                   target_dev.get(),
+                                                   output.desc,
+                                                   output_dev.get(),
+                                                   config.margin,
+                                                   config.divisor);
+        EXPECT_EQ(status, miopenStatusSuccess);
+
+        output.data = handle.Read<TIO>(output_dev, output.data.size());
+    }
+
+    void Verify()
+    {
+        double threshold = std::numeric_limits<TIO>::epsilon();
+
+        auto error = miopen::rms_range(ref_output, output);
+
+        EXPECT_TRUE(miopen::range_distance(ref_output) == miopen::range_distance(output));
+        EXPECT_TRUE(error < threshold * 10) << "Error output beyond tolerance Error: " << error
+                                            << ",  Thresholdx10: " << threshold * 10;
+    }
+    HingeEmbeddingLossTestCase config;
+
+    tensor<TIO> input;
+    tensor<TT> target;
+    tensor<TIO> workspace;
+    tensor<TIO> output;
+
+    tensor<TIO> ref_output;
+
+    miopen::Allocator::ManageDataPtr input_dev;
+    miopen::Allocator::ManageDataPtr target_dev;
+    miopen::Allocator::ManageDataPtr workspace_dev;
+    miopen::Allocator::ManageDataPtr output_dev;
+
+    float margin;
+    float divisor;
 };

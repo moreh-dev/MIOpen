@@ -33,6 +33,7 @@
 #include <miopen/target_properties.hpp>
 
 #define LOCAL_SIZE 256
+#define LOCAL_SIZE_REDUCE_FWD 256
 
 namespace miopen {
 
@@ -66,9 +67,24 @@ inline tensor_view_5d_t get_inner_expanded_tv(const miopen::TensorDescriptor Des
     return tv_5d;
 }
 
+const auto make_hip_kernel = [](std::vector<size_t> localsize,
+                                std::vector<size_t> gridsize,
+                                std::string kernel_file,
+                                std::string kernel_name,
+                                KernelBuildParameters build_params) {
+    while(localsize.size() < 3)
+        localsize.push_back(1);
+    while(gridsize.size() < 3)
+        gridsize.push_back(1);
+    for(int i = 0; i < localsize.size(); ++i)
+        gridsize[i] = AlignUp(gridsize[i], localsize[i]);
+    return KernelInfo{
+        build_params.GenerateFor(kbp::HIP{}), localsize, gridsize, kernel_file, kernel_name};
+};
+
 bool HingeEmbeddingLossUnreducedFwd::IsApplicable(
     const ExecutionContext& /*context*/,
-    const miopen::loss::HingeEmbeddingLossUnreducedFwdProblemDescription& problem) const
+    const miopen::loss::HingeEmbeddingLossUnreducedFwdProblemDescription& /*problem*/) const
 {
     return true;
 }
@@ -130,6 +146,107 @@ ConvSolution HingeEmbeddingLossUnreducedFwd::GetSolution(
     };
 
     return result;
+}
+
+bool HingeEmbeddingLossFwd::IsApplicable(
+    const ExecutionContext& /*context*/,
+    const miopen::loss::HingeEmbeddingLossFwdProblemDescription& /*problem*/) const
+{
+    return true;
+}
+
+ConvSolution HingeEmbeddingLossFwd::GetSolution(
+    const ExecutionContext& context,
+    const miopen::loss::HingeEmbeddingLossFwdProblemDescription& problem) const
+{
+    auto result = ConvSolution{miopenStatusSuccess};
+
+    auto dtype        = problem.GetODesc().GetType();
+    auto in_dtype     = miopen::GetDataType(problem.GetIDesc().GetType());
+    auto target_dtype = miopen::GetDataType(problem.GetTDesc().GetType());
+    auto size         = problem.GetIDesc().GetElementSize();
+
+    const auto build_params = KernelBuildParameters{
+        {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
+        {"MIOPEN_USE_FP32", static_cast<int>(dtype == miopenFloat)},
+        {"MIOPEN_USE_BFP16", static_cast<int>(dtype == miopenBFloat16)},
+        {"IN_OUT_TYPE", in_dtype == "bfloat16" ? "ushort" : in_dtype},
+        {"TARGET_TYPE", target_dtype},
+        {"LOCAL_SIZE", LOCAL_SIZE},
+    };
+
+    /* Phase 1: Add loss kernel */
+    result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE},
+                                                         {size},
+                                                         "MIOpenHingeEmbeddingLoss.cpp",
+                                                         "HingeEmbeddingLossFwd",
+                                                         build_params));
+
+    /* Phase 2: Add reduce kernels */
+    auto _size = size;
+    do
+    {
+        result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE_REDUCE_FWD},
+                                                             {_size},
+                                                             "MIOpenHingeEmbeddingLoss.cpp",
+                                                             "LossSum",
+                                                             build_params));
+        _size = AlignUp(_size, LOCAL_SIZE_REDUCE_FWD) / LOCAL_SIZE_REDUCE_FWD;
+    } while(_size > 1);
+
+    result.invoker_factory = [](const std::vector<Kernel>& kernels) {
+        return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
+            decltype(auto) params = raw_params.CastTo<miopen::loss::FwdInvokeParams>();
+
+            /* Phase 1: Calc loss for each element. */
+            {
+                decltype(auto) kernel = handle_.Run(kernels.front());
+                auto I_tv             = get_inner_expanded_tv(deref(params.iDesc));
+                auto T_tv             = get_inner_expanded_tv(deref(params.tDesc));
+                kernel(params.i,
+                       params.t,
+                       params.workspace,
+                       params.margin,
+                       params.divisor,
+                       I_tv,
+                       T_tv);
+            }
+
+            /* Phase 2: Reduce */
+            auto reduce_in  = params.workspace;
+            auto reduce_out = static_cast<Data_t>(static_cast<char*>(params.workspace) +
+                                                  deref(params.iDesc).GetElementSize() *
+                                                      get_data_size(deref(params.oDesc).GetType()));
+            auto size       = deref(params.iDesc).GetElementSize();
+            for(int i = 1; i < kernels.size(); ++i)
+            {
+                decltype(auto) kernel = handle_.Run(kernels[i]);
+                if(i + 1 != kernels.size())
+                {
+                    kernel(reduce_in, reduce_out, size);
+                    std::swap(reduce_in, reduce_out);
+                }
+                else
+                {
+                    kernel(reduce_in, params.o, size);
+                }
+                size = AlignUp(size, LOCAL_SIZE_REDUCE_FWD) / LOCAL_SIZE_REDUCE_FWD;
+            }
+        };
+    };
+
+    return result;
+}
+
+std::size_t HingeEmbeddingLossFwd::GetWorkspaceSize(
+    const ExecutionContext& /*context*/,
+    const miopen::loss::HingeEmbeddingLossFwdProblemDescription& problem) const
+{
+    size_t inputElements  = problem.GetIDesc().GetElementSize();
+    size_t reduceElements = (inputElements + LOCAL_SIZE_REDUCE_FWD - 1) / LOCAL_SIZE_REDUCE_FWD;
+    size_t res = (inputElements + reduceElements) * get_data_size(problem.GetODesc().GetType());
+
+    return res;
 }
 
 } // namespace loss

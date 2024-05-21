@@ -88,6 +88,28 @@ public:
     TensorDescriptor dIDesc;
 };
 
+struct HingeEmbeddingLossFwdProblemDescription : ProblemDescriptionBase
+{
+    HingeEmbeddingLossFwdProblemDescription(const TensorDescriptor& iDesc_,
+                                            const TensorDescriptor& tDesc_,
+                                            const TensorDescriptor& oDesc_)
+        : iDesc(iDesc_), tDesc(tDesc_), oDesc(oDesc_)
+    {
+        if(!checkSameLength(iDesc, tDesc))
+            MIOPEN_THROW(miopenStatusBadParm, "Loss: Input, target tensor sizes do not match.");
+    }
+
+    NetworkConfig MakeNetworkConfig() const override;
+    const TensorDescriptor& GetIDesc() const { return iDesc; }
+    const TensorDescriptor& GetTDesc() const { return tDesc; }
+    const TensorDescriptor& GetODesc() const { return oDesc; }
+
+public:
+    TensorDescriptor iDesc;
+    TensorDescriptor tDesc;
+    TensorDescriptor oDesc;
+};
+
 } // namespace loss
 
 } // namespace miopen
