@@ -363,7 +363,8 @@ int PadReflectionDriver<Tgpu, Tref>::GetandSetData()
 template <typename Tgpu, typename Tref>
 int PadReflectionDriver<Tgpu, Tref>::AddCmdLineArgs()
 {
-    inflags.AddInputFlag("forw", 'F', "1", "Run Forward (1) or Forward and Backward (0) (Default=1)", "int");
+    inflags.AddInputFlag(
+        "forw", 'F', "1", "Run Forward (1) or Forward and Backward (0) (Default=1)", "int");
     inflags.AddInputFlag("batchsize", 'n', "256", "Mini-batch size (Default=100)", "int");
     inflags.AddInputFlag("in_channels", 'c', "4", "Number of Input Channels (Default=3)", "int");
     inflags.AddInputFlag("in_d", 'D', "0", "Input Depth (Default=0)", "int");

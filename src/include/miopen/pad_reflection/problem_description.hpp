@@ -112,7 +112,6 @@ struct PadReflectionFwdProblemDescription : ProblemDescriptionBase
         return true;
     }
 
-
     NetworkConfig MakeNetworkConfig() const override;
 
 private:
