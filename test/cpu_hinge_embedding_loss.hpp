@@ -97,15 +97,14 @@ void cpu_hinge_embedding_loss_unreduced_backward(
 
         if(t == 1)
         {
-            TV_5D_AT(dI, n[0], n[1], n[2], n[3], n[4]) = TV_5D_AT(dO, n[0], n[1], n[2], n[3], n[4]);
+            dI[idx] = TV_5D_AT(dO, n[0], n[1], n[2], n[3], n[4]);
         }
         else
         {
             if(margin - i > 0)
-                TV_5D_AT(dI, n[0], n[1], n[2], n[3], n[4]) =
-                    -TV_5D_AT(dO, n[0], n[1], n[2], n[3], n[4]);
+                dI[idx] = -TV_5D_AT(dO, n[0], n[1], n[2], n[3], n[4]);
             else
-                TV_5D_AT(dI, n[0], n[1], n[2], n[3], n[4]) = 0.0f;
+                dI[idx] = 0.0f;
         }
     }
 }
@@ -120,11 +119,11 @@ void cpu_hinge_embedding_loss_forward(tensor<TIO> I,
 {
     tensor_view_5d_t I_tv = get_inner_expanded_tv(I.desc);
     tensor_view_5d_t T_tv = get_inner_expanded_tv(T.desc);
-    size_t inputSize      = I.desc.GetElementSize();
+    size_t size           = I.desc.GetElementSize();
     size_t n[5];
 
     // Compute loss in each elem
-    for(size_t idx = 0; idx < inputSize; ++idx)
+    for(size_t idx = 0; idx < size; ++idx)
     {
         GET_NCDHW(n[0], n[1], n[2], n[3], n[4], idx, I_tv);
 
@@ -140,7 +139,6 @@ void cpu_hinge_embedding_loss_forward(tensor<TIO> I,
     // Reduce loss
     const int local_size = 256;
     int offset_a         = 0;
-    size_t size          = I.desc.GetElementSize();
     int offset_b         = size;
     size_t _size         = size;
     do
