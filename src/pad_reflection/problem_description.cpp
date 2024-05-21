@@ -37,6 +37,8 @@ NetworkConfig PadReflectionFwdProblemDescription::MakeNetworkConfig() const
 {
     auto xlength    = xDesc.GetLengths();
     auto ylength    = yDesc.GetLengths();
+    auto xstrides = xDesc.GetStrides();
+    auto ystrides = yDesc.GetStrides();
     auto input_size = std::accumulate(
         xlength.begin(), xlength.end(), static_cast<size_t>(1), std::multiplies<size_t>());
     auto output_size = std::accumulate(
@@ -51,6 +53,14 @@ NetworkConfig PadReflectionFwdProblemDescription::MakeNetworkConfig() const
     ss << "dtype" << dtype;
     ss << "input_size" << input_size;
     ss << "output_size" << output_size;
+    ss << "xstrides";
+    for (size_t stride : xstrides) {
+        ss << "_" << stride;
+    }
+    ss << "ystride";
+    for (size_t stride : xstrides) {
+        ss << "_" << stride;
+    }
     return NetworkConfig{ss.str()};
 }
 
@@ -58,6 +68,8 @@ NetworkConfig PadReflectionBwdProblemDescription::MakeNetworkConfig() const
 {
     auto xlength    = xDesc.GetLengths();
     auto ylength    = yDesc.GetLengths();
+    auto xstrides = xDesc.GetStrides();
+    auto ystrides = yDesc.GetStrides();
     auto input_size = std::accumulate(
         xlength.begin(), xlength.end(), static_cast<size_t>(1), std::multiplies<size_t>());
     auto output_size = std::accumulate(
@@ -72,6 +84,14 @@ NetworkConfig PadReflectionBwdProblemDescription::MakeNetworkConfig() const
     ss << "dtype" << dtype;
     ss << "input_size" << input_size;
     ss << "output_size" << output_size;
+    ss << "xstrides";
+    for (size_t stride : xstrides) {
+        ss << "_" << stride;
+    }
+    ss << "ystride";
+    for (size_t stride : xstrides) {
+        ss << "_" << stride;
+    }
     return NetworkConfig{ss.str()};
 }
 
