@@ -66,6 +66,83 @@ inline tensor_view_5d_t get_inner_expanded_tv(const miopen::TensorDescriptor Des
     return tv_5d;
 }
 
+bool HingeEmbeddingLossBwd::IsApplicable(
+    const ExecutionContext& /*context*/,
+    const miopen::loss::HingeEmbeddingLossBwdProblemDescription& /*problem*/) const
+{
+    return true;
+}
+
+ConvSolution HingeEmbeddingLossBwd::GetSolution(
+    const ExecutionContext& context,
+    const miopen::loss::HingeEmbeddingLossBwdProblemDescription& problem) const
+{
+    std::ignore = context;
+
+    auto result = ConvSolution{miopenStatusSuccess};
+
+    auto in_dtype     = miopen::GetDataType(problem.GetIDesc().GetType());
+    auto dtype        = problem.GetdIDesc().GetType();
+    auto target_dtype = miopen::GetDataType(problem.GetTDesc().GetType());
+
+    size_t xlocalsize = LOCAL_SIZE;
+    size_t xgridsize  = AlignUp(problem.GetIDesc().GetElementSize(), xlocalsize);
+    size_t ylocalsize = 1;
+    size_t ygridsize  = 1;
+    size_t zlocalsize = 1;
+    size_t zgridsize  = 1;
+
+    auto kernel = KernelInfo{};
+
+    kernel.kernel_file = "MIOpenHingeEmbeddingLoss.cpp";
+    kernel.kernel_name = "HingeEmbeddingLossBwd";
+
+    const auto build_params = KernelBuildParameters{
+        {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
+        {"MIOPEN_USE_FP32", static_cast<int>(dtype == miopenFloat)},
+        {"MIOPEN_USE_BFP16", static_cast<int>(dtype == miopenBFloat16)},
+        {"IN_OUT_TYPE", in_dtype == "bfloat16" ? "ushort" : in_dtype},
+        {"TARGET_TYPE", target_dtype},
+        {"LOCAL_SIZE", LOCAL_SIZE},
+    };
+
+    kernel.comp_options = build_params.GenerateFor(kbp::HIP{});
+
+    kernel.l_wk.push_back(xlocalsize);
+    kernel.l_wk.push_back(ylocalsize);
+    kernel.l_wk.push_back(zlocalsize);
+
+    kernel.g_wk.push_back(xgridsize);
+    kernel.g_wk.push_back(ygridsize);
+    kernel.g_wk.push_back(zgridsize);
+
+    result.construction_params.push_back(kernel);
+
+    result.invoker_factory = [](const std::vector<Kernel>& kernels) {
+        return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
+            decltype(auto) kernel = handle_.Run(kernels.front());
+            decltype(auto) params = raw_params.CastTo<miopen::loss::BwdInvokeParams>();
+            auto I_tv             = get_inner_expanded_tv(deref(params.iDesc));
+            auto T_tv             = get_inner_expanded_tv(deref(params.tDesc));
+            auto dO_tv            = get_inner_expanded_tv(deref(params.dODesc));
+            auto dI_tv            = get_inner_expanded_tv(deref(params.dIDesc));
+
+            kernel(params.i,
+                   params.t,
+                   params.dO,
+                   params.dI,
+                   params.margin,
+                   params.divisor,
+                   I_tv,
+                   T_tv,
+                   dO_tv,
+                   dI_tv);
+        };
+    };
+
+    return result;
+}
+
 bool HingeEmbeddingLossUnreducedBwd::IsApplicable(
     const ExecutionContext& /*context*/,
     const miopen::loss::HingeEmbeddingLossUnreducedBwdProblemDescription& /*problem*/) const

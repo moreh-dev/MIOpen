@@ -162,4 +162,40 @@ void cpu_hinge_embedding_loss_forward(tensor<TIO> I,
         _size = (_size + local_size - 1) / local_size;
     } while(_size > 1);
 }
+
+template <class TIO, class TT>
+void cpu_hinge_embedding_loss_backward(tensor<TIO> I,
+                                       tensor<TT> T,
+                                       tensor<TIO> dO,
+                                       tensor<TIO>& dI,
+                                       float margin  = 1,
+                                       float divisor = 1)
+{
+    tensor_view_5d_t I_tv  = get_inner_expanded_tv(I.desc);
+    tensor_view_5d_t T_tv  = get_inner_expanded_tv(T.desc);
+    tensor_view_5d_t dO_tv = get_inner_expanded_tv(dO.desc);
+    size_t inputSize       = I.desc.GetElementSize();
+    size_t n[5];
+
+    for(size_t idx = 0; idx < inputSize; ++idx)
+    {
+        GET_NCDHW(n[0], n[1], n[2], n[3], n[4], idx, I_tv);
+
+        TIO i = TV_5D_AT(I, n[0], n[1], n[2], n[3], n[4]);
+        TT t  = TV_5D_AT(T, n[0], n[1], n[2], n[3], n[4]);
+        TIO o = TV_5D_AT(dO, 0, 0, 0, 0, 0);
+
+        if(t == 1)
+        {
+            dI[idx] = o / divisor;
+        }
+        else
+        {
+            if(margin - i > 0)
+                dI[idx] = -o / divisor;
+            else
+                dI[idx] = 0.0f;
+        }
+    }
+}
 #endif

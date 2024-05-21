@@ -36,6 +36,50 @@ namespace solver {
 
 namespace loss {
 
+using HingeEmbeddingLossFwdSolverBase =
+    NonTunableSolverBase<ExecutionContext, miopen::loss::HingeEmbeddingLossFwdProblemDescription>;
+
+struct HingeEmbeddingLossFwd final : HingeEmbeddingLossFwdSolverBase
+{
+    const std::string& SolverDbId() const override
+    {
+        return GetSolverDbId<HingeEmbeddingLossFwd>();
+    }
+
+    bool IsApplicable(
+        const ExecutionContext& context,
+        const miopen::loss::HingeEmbeddingLossFwdProblemDescription& problem) const override;
+
+    ConvSolution GetSolution(
+        const ExecutionContext& context,
+        const miopen::loss::HingeEmbeddingLossFwdProblemDescription& problem) const override;
+
+    std::size_t GetWorkspaceSize(
+        const ExecutionContext& context,
+        const miopen::loss::HingeEmbeddingLossFwdProblemDescription& problem) const override;
+
+    bool MayNeedWorkspace() const override { return true; }
+};
+
+using HingeEmbeddingLossBwdSolverBase =
+    NonTunableSolverBase<ExecutionContext, miopen::loss::HingeEmbeddingLossBwdProblemDescription>;
+
+struct HingeEmbeddingLossBwd final : HingeEmbeddingLossBwdSolverBase
+{
+    const std::string& SolverDbId() const override
+    {
+        return GetSolverDbId<HingeEmbeddingLossBwd>();
+    }
+
+    bool IsApplicable(
+        const ExecutionContext& context,
+        const miopen::loss::HingeEmbeddingLossBwdProblemDescription& problem) const override;
+
+    ConvSolution GetSolution(
+        const ExecutionContext& context,
+        const miopen::loss::HingeEmbeddingLossBwdProblemDescription& problem) const override;
+};
+
 using HingeEmbeddingLossUnreducedFwdSolverBase =
     NonTunableSolverBase<ExecutionContext,
                          miopen::loss::HingeEmbeddingLossUnreducedFwdProblemDescription>;
@@ -72,31 +116,6 @@ struct HingeEmbeddingLossUnreducedBwd final : HingeEmbeddingLossUnreducedBwdSolv
     ConvSolution GetSolution(const ExecutionContext& context,
                              const miopen::loss::HingeEmbeddingLossUnreducedBwdProblemDescription&
                                  problem) const override;
-};
-
-using HingeEmbeddingLossFwdSolverBase =
-    NonTunableSolverBase<ExecutionContext, miopen::loss::HingeEmbeddingLossFwdProblemDescription>;
-
-struct HingeEmbeddingLossFwd final : HingeEmbeddingLossFwdSolverBase
-{
-    const std::string& SolverDbId() const override
-    {
-        return GetSolverDbId<HingeEmbeddingLossFwd>();
-    }
-
-    bool IsApplicable(
-        const ExecutionContext& context,
-        const miopen::loss::HingeEmbeddingLossFwdProblemDescription& problem) const override;
-
-    ConvSolution GetSolution(
-        const ExecutionContext& context,
-        const miopen::loss::HingeEmbeddingLossFwdProblemDescription& problem) const override;
-
-    std::size_t GetWorkspaceSize(
-        const ExecutionContext& context,
-        const miopen::loss::HingeEmbeddingLossFwdProblemDescription& problem) const override;
-
-    bool MayNeedWorkspace() const override { return true; }
 };
 
 } // namespace loss

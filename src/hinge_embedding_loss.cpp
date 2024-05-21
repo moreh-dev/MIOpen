@@ -89,6 +89,44 @@ miopenStatus_t HingeEmbeddingLossForward(Handle& handle,
     return miopenStatusSuccess;
 }
 
+miopenStatus_t HingeEmbeddingLossBackward(Handle& handle,
+                                          const TensorDescriptor& iDesc,
+                                          ConstData_t i,
+                                          const TensorDescriptor& tDesc,
+                                          ConstData_t t,
+                                          const TensorDescriptor& dODesc,
+                                          ConstData_t dO,
+                                          const TensorDescriptor& dIDesc,
+                                          Data_t dI,
+                                          float margin,
+                                          float divisor)
+{
+    const auto problem =
+        loss::HingeEmbeddingLossBwdProblemDescription{iDesc, tDesc, dODesc, dIDesc};
+
+    const auto invoke_params = [&]() {
+        auto tmp    = loss::BwdInvokeParams{};
+        tmp.iDesc   = &iDesc;
+        tmp.tDesc   = &tDesc;
+        tmp.dODesc  = &dODesc;
+        tmp.dIDesc  = &dIDesc;
+        tmp.i       = i;
+        tmp.t       = t;
+        tmp.dO      = dO;
+        tmp.dI      = dI;
+        tmp.margin  = margin;
+        tmp.divisor = divisor;
+        return tmp;
+    }();
+
+    const auto algo    = AlgorithmName{"HingeEmbeddingLossBwd"};
+    const auto solvers = solver::SolverContainer<solver::loss::HingeEmbeddingLossBwd>{};
+
+    solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
+
+    return miopenStatusSuccess;
+}
+
 miopenStatus_t HingeEmbeddingLossUnreducedForward(Handle& handle,
                                                   const TensorDescriptor& iDesc,
                                                   ConstData_t i,

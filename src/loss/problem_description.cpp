@@ -45,6 +45,38 @@ bool checkSameLength(const TensorDescriptor& x, const TensorDescriptor& y)
     return true;
 }
 
+NetworkConfig HingeEmbeddingLossFwdProblemDescription::MakeNetworkConfig() const
+{
+    auto input_dtype  = iDesc.GetType();
+    auto target_dtype = tDesc.GetType();
+    auto size         = iDesc.GetElementSize();
+
+    std::ostringstream ss;
+
+    ss << "hel_fwd";
+    ss << "i_dtype" << input_dtype;
+    ss << "t_dtype" << target_dtype;
+    ss << "size" << size;
+
+    return NetworkConfig{ss.str()};
+}
+
+NetworkConfig HingeEmbeddingLossBwdProblemDescription::MakeNetworkConfig() const
+{
+    auto input_dtype  = iDesc.GetType();
+    auto target_dtype = tDesc.GetType();
+    auto size         = iDesc.GetElementSize();
+
+    std::ostringstream ss;
+
+    ss << "hel_bwd";
+    ss << "i_dtype" << input_dtype;
+    ss << "t_dtype" << target_dtype;
+    ss << "size" << size;
+
+    return NetworkConfig{ss.str()};
+}
+
 NetworkConfig HingeEmbeddingLossUnreducedFwdProblemDescription::MakeNetworkConfig() const
 {
     auto input_dtype  = iDesc.GetType();
@@ -70,22 +102,6 @@ NetworkConfig HingeEmbeddingLossUnreducedBwdProblemDescription::MakeNetworkConfi
     std::ostringstream ss;
 
     ss << "hel_unreduced_bwd";
-    ss << "i_dtype" << input_dtype;
-    ss << "t_dtype" << target_dtype;
-    ss << "size" << size;
-
-    return NetworkConfig{ss.str()};
-}
-
-NetworkConfig HingeEmbeddingLossFwdProblemDescription::MakeNetworkConfig() const
-{
-    auto input_dtype  = iDesc.GetType();
-    auto target_dtype = tDesc.GetType();
-    auto size         = iDesc.GetElementSize();
-
-    std::ostringstream ss;
-
-    ss << "hel_fwd";
     ss << "i_dtype" << input_dtype;
     ss << "t_dtype" << target_dtype;
     ss << "size" << size;

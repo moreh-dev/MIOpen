@@ -85,7 +85,7 @@ struct HingeEmbeddingLossTestCase
 std::vector<HingeEmbeddingLossTestCase> HingeEmbeddingLossTestConfigs()
 { // n c d h w margin
     return {
-        {1, 1, 1, 1, 10, 1, 1, "sum"},
+        {1, 1, 1, 1, 10, 1, 1, "mean"},
         {2, 1, 1, 10, 10, 1, 1, "mean"},
         {4, 1, 1, 100, 100, 1, 1, "sum"},
         {8, 3, 1, 20, 100, 1, 1, "mean"},
@@ -147,19 +147,13 @@ protected:
 
     void Verify()
     {
-        // Computation error of fp16 is ~2^13 (=8192) bigger than
-        // the one of fp32 because mantissa is shorter by 13 bits.
-        double tolerance = std::is_same<TIO, float>::value ? 1.5e-6 : 8.2e-3;
-
-        // bf16 mantissa has 7 bits, by 3 bits shorter than fp16.
-        if(std::is_same<TIO, bfloat16>::value)
-            tolerance *= 8.0;
+        double threshold = std::numeric_limits<TIO>::epsilon();
 
         auto error = miopen::rms_range(ref_output, output);
 
         EXPECT_TRUE(miopen::range_distance(ref_output) == miopen::range_distance(output));
-        EXPECT_TRUE(error < tolerance)
-            << "Error output beyond tolerance Error: " << error << ",  Tolerance: " << tolerance;
+        EXPECT_TRUE(error < threshold * 10) << "Error output beyond tolerance Error: " << error
+                                            << ",  Thresholdx10: " << threshold * 10;
     }
     HingeEmbeddingLossTestCase config;
 
@@ -174,6 +168,7 @@ protected:
     miopen::Allocator::ManageDataPtr output_dev;
 
     float margin;
+    float divisor;
 };
 
 template <typename TIO, typename TT>
@@ -233,19 +228,13 @@ protected:
 
     void Verify()
     {
-        // Computation error of fp16 is ~2^13 (=8192) bigger than
-        // the one of fp32 because mantissa is shorter by 13 bits.
-        double tolerance = std::is_same<TIO, float>::value ? 1.5e-6 : 8.2e-3;
-
-        // bf16 mantissa has 7 bits, by 3 bits shorter than fp16.
-        if(std::is_same<TIO, bfloat16>::value)
-            tolerance *= 8.0;
+        double threshold = std::numeric_limits<TIO>::epsilon();
 
         auto error = miopen::rms_range(ref_dInput, dInput);
 
         EXPECT_TRUE(miopen::range_distance(ref_dInput) == miopen::range_distance(dInput));
-        EXPECT_TRUE(error < tolerance)
-            << "Error output beyond tolerance Error: " << error << ",  Tolerance: " << tolerance;
+        EXPECT_TRUE(error < threshold * 10) << "Error output beyond tolerance Error: " << error
+                                            << ",  Thresholdx10: " << threshold * 10;
     }
     HingeEmbeddingLossTestCase config;
 
@@ -272,13 +261,9 @@ protected:
     {
         auto&& handle = get_handle();
         config        = GetParam();
-        if(config.reduction == "mean")
-        {
-            config.divisor *= input.desc.GetElementSize();
-        }
 
-        auto in_gen_value = [](auto...) { return prng::gen_descreet_uniform_sign<TIO>(0.1, 50); };
         auto in_dims      = config.GetInput();
+        auto in_gen_value = [](auto...) { return prng::gen_descreet_uniform_sign<TIO>(0.1, 50); };
         input             = tensor<TIO>{in_dims}.generate(in_gen_value);
 
         auto tar_gen_value = [](auto...) { return prng::gen_descreet_unsigned<TT>(1, 2) * 2 - 1; };
@@ -297,6 +282,10 @@ protected:
         ref_output = tensor<TIO>(1);
         std::fill(ref_output.begin(), ref_output.end(), 0);
 
+        if(config.reduction == "mean")
+        {
+            config.divisor *= input.desc.GetElementSize();
+        }
         input_dev     = handle.Write(input.data);
         target_dev    = handle.Write(target.data);
         workspace_dev = handle.Write(workspace.data);
@@ -350,6 +339,92 @@ protected:
     miopen::Allocator::ManageDataPtr target_dev;
     miopen::Allocator::ManageDataPtr workspace_dev;
     miopen::Allocator::ManageDataPtr output_dev;
+
+    float margin;
+};
+
+template <typename TIO, typename TT>
+struct HingeEmbeddingLossBwdTest : public ::testing::TestWithParam<HingeEmbeddingLossTestCase>
+{
+protected:
+    void SetUp() override
+    {
+        auto&& handle = get_handle();
+        config        = GetParam();
+        auto in_dims  = config.GetInput();
+
+        auto in_gen_value = [](auto...) { return prng::gen_descreet_uniform_sign<TIO>(0.1, 50); };
+        input             = tensor<TIO>{in_dims}.generate(in_gen_value);
+
+        auto tar_gen_value = [](auto...) { return prng::gen_descreet_unsigned<TT>(1, 2) * 2 - 1; };
+        target             = tensor<TT>{in_dims}.generate(tar_gen_value);
+
+        dOutput    = tensor<TIO>(1);
+        dOutput[0] = prng::gen_descreet_uniform_sign<TIO>(0.1, 50);
+
+        dInput = tensor<TIO>{in_dims};
+        std::fill(dInput.begin(), dInput.end(), 0);
+
+        ref_dInput = tensor<TIO>{in_dims};
+        std::fill(ref_dInput.begin(), ref_dInput.end(), 0);
+
+        if(config.reduction == "mean")
+        {
+            config.divisor *= input.desc.GetElementSize();
+        }
+        input_dev   = handle.Write(input.data);
+        target_dev  = handle.Write(target.data);
+        dOutput_dev = handle.Write(dOutput.data);
+        dInput_dev  = handle.Write(dInput.data);
+    }
+
+    void RunTest()
+    {
+        auto&& handle = get_handle();
+
+        miopenStatus_t status;
+
+        cpu_hinge_embedding_loss_backward<TIO, TT>(
+            input, target, dOutput, ref_dInput, config.margin, config.divisor);
+        status = miopen::HingeEmbeddingLossBackward(handle,
+                                                    input.desc,
+                                                    input_dev.get(),
+                                                    target.desc,
+                                                    target_dev.get(),
+                                                    dOutput.desc,
+                                                    dOutput_dev.get(),
+                                                    dInput.desc,
+                                                    dInput_dev.get(),
+                                                    config.margin,
+                                                    config.divisor);
+        EXPECT_EQ(status, miopenStatusSuccess);
+
+        dInput.data = handle.Read<TIO>(dInput_dev, dInput.data.size());
+    }
+
+    void Verify()
+    {
+        double threshold = std::numeric_limits<TIO>::epsilon();
+
+        auto error = miopen::rms_range(ref_dInput, dInput);
+
+        EXPECT_TRUE(miopen::range_distance(ref_dInput) == miopen::range_distance(dInput));
+        EXPECT_TRUE(error < threshold * 10) << "Error output beyond tolerance Error: " << error
+                                            << ",  Thresholdx10: " << threshold * 10;
+    }
+    HingeEmbeddingLossTestCase config;
+
+    tensor<TIO> input;
+    tensor<TT> target;
+    tensor<TIO> dOutput;
+    tensor<TIO> dInput;
+
+    tensor<TIO> ref_dInput;
+
+    miopen::Allocator::ManageDataPtr input_dev;
+    miopen::Allocator::ManageDataPtr target_dev;
+    miopen::Allocator::ManageDataPtr dOutput_dev;
+    miopen::Allocator::ManageDataPtr dInput_dev;
 
     float margin;
     float divisor;

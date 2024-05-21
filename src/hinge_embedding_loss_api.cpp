@@ -125,6 +125,36 @@ extern "C" miopenStatus_t miopenHingeEmbeddingLossForward(miopenHandle_t handle,
     });
 }
 
+extern "C" miopenStatus_t miopenHingeEmbeddingLossBackward(miopenHandle_t handle,
+                                                           miopenTensorDescriptor_t iDesc,
+                                                           const void* i,
+                                                           miopenTensorDescriptor_t tDesc,
+                                                           const void* t,
+                                                           miopenTensorDescriptor_t dODesc,
+                                                           const void* dO,
+                                                           miopenTensorDescriptor_t dIDesc,
+                                                           void* dI,
+                                                           float margin,
+                                                           float divisor)
+{
+    MIOPEN_LOG_FUNCTION(handle, iDesc, i, tDesc, t, dODesc, dO, dIDesc, dI, margin, divisor);
+
+    LogCmdHingeEmbeddingLoss(iDesc, tDesc, false);
+    return miopen::try_([&] {
+        miopen::HingeEmbeddingLossBackward(miopen::deref(handle),
+                                           miopen::deref(iDesc),
+                                           DataCast(i),
+                                           miopen::deref(tDesc),
+                                           DataCast(t),
+                                           miopen::deref(dODesc),
+                                           DataCast(dO),
+                                           miopen::deref(dIDesc),
+                                           DataCast(dI),
+                                           margin,
+                                           divisor);
+    });
+}
+
 extern "C" miopenStatus_t
 miopenHingeEmbeddingLossUnreducedForward(miopenHandle_t handle,
                                          const miopenTensorDescriptor_t iDesc,

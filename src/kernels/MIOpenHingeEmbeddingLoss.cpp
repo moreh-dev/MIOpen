@@ -140,6 +140,56 @@ extern "C" __global__ void HingeEmbeddingLossFwd(const IN_OUT_TYPE* I,
 }
 
 template <typename TIO, typename TT>
+__device__ void hingeEmbeddingLossBwd(const TIO* I,
+                                      const TT* T,
+                                      const TIO* dO,
+                                      TIO* dI,
+                                      float margin,
+                                      float divisor,
+                                      tensor_view_5d_t I_tv,
+                                      tensor_view_5d_t T_tv,
+                                      tensor_view_5d_t dO_tv,
+                                      tensor_view_5d_t dI_tv)
+{
+    size_t gid = threadIdx.x + blockIdx.x * blockDim.x;
+    size_t n[5];
+    GET_NCDHW(n[0], n[1], n[2], n[3], n[4], gid, I_tv);
+
+    if(n[0] >= I_tv.size[0])
+        return;
+
+    TIO i = TV_5D_AT(I, n[0], n[1], n[2], n[3], n[4]);
+    TT t  = TV_5D_AT(T, n[0], n[1], n[2], n[3], n[4]);
+
+    if(t == 1)
+    {
+        dI[gid] = CVT_ACCUM2FLOAT(CVT_FLOAT2ACCUM(TV_5D_AT(dO, 0, 0, 0, 0, 0)) / divisor);
+    }
+    else
+    {
+        if(margin - CVT_FLOAT2ACCUM(i) > 0)
+            dI[gid] = CVT_ACCUM2FLOAT(-CVT_FLOAT2ACCUM(TV_5D_AT(dO, 0, 0, 0, 0, 0)) / divisor);
+        else
+            dI[gid] = TIO(0);
+    }
+}
+
+extern "C" __global__ void HingeEmbeddingLossBwd(const IN_OUT_TYPE* I,
+                                                 TARGET_TYPE* T,
+                                                 IN_OUT_TYPE* dO,
+                                                 IN_OUT_TYPE* dI,
+                                                 float margin,
+                                                 float divisor,
+                                                 tensor_view_5d_t I_tv,
+                                                 tensor_view_5d_t T_tv,
+                                                 tensor_view_5d_t dO_tv,
+                                                 tensor_view_5d_t dI_tv)
+{
+    hingeEmbeddingLossBwd<IN_OUT_TYPE, TARGET_TYPE>(
+        I, T, dO, dI, margin, divisor, I_tv, T_tv, dO_tv, dI_tv);
+}
+
+template <typename TIO, typename TT>
 __device__ void hingeEmbeddingLossUnreducedFwd(
     const TIO* I, TT* T, TIO* O, float margin, tensor_view_5d_t I_tv, tensor_view_5d_t T_tv)
 {

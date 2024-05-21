@@ -6633,6 +6633,35 @@ MIOPEN_EXPORT miopenStatus_t miopenHingeEmbeddingLossForward(miopenHandle_t hand
                                                              float margin,
                                                              float divisor);
 
+/*! @brief Execute a HingeEmbeddingLoss backward layer
+ *
+ * @param handle                   MIOpen handle (input)
+ * @param iDesc                    Tensor descriptor for input tensor (input)
+ * @param i                        Data tensor input (input)
+ * @param tDesc                    Tensor descriptor for target tensor (input)
+ * @param t                        Data tensor target (input)
+ * @param doDesc                   Tensor descriptor for output gradient (input)
+ * @param dO                       Gradient of output (input)
+ * @param diDesc                   Tensor descriptor for input gradient (input)
+ * @param dI                       Gradient of input (output)
+ * @param dtDesc                   Tensor descriptor for target gradient (input)
+ * @param dT                       Gradient of target (output)
+ * @param margin                   Margin (input)
+ * @param divisor                  Divisor (input)
+ * @return                         miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t miopenHingeEmbeddingLossBackward(miopenHandle_t handle,
+                                                              miopenTensorDescriptor_t iDesc,
+                                                              const void* i,
+                                                              miopenTensorDescriptor_t tDesc,
+                                                              const void* t,
+                                                              miopenTensorDescriptor_t doDesc,
+                                                              const void* dO,
+                                                              miopenTensorDescriptor_t diDesc,
+                                                              void* dI,
+                                                              float margin,
+                                                              float divisor);
+
 /*! @brief Execute a HingeEmbeddingLoss unreduced forward layer
  *
  * @param handle                   MIOpen handle (input)

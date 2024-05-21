@@ -34,6 +34,49 @@ namespace miopen {
 
 namespace loss {
 
+struct FwdInvokeParams : public miopen::InvokeParams
+{
+    FwdInvokeParams() = default;
+
+    const TensorDescriptor* iDesc = nullptr;
+    const TensorDescriptor* tDesc = nullptr;
+    const TensorDescriptor* oDesc = nullptr;
+
+    ConstData_t i              = nullptr;
+    ConstData_t t              = nullptr;
+    Data_t o                   = nullptr;
+    Data_t workspace           = nullptr;
+    std::size_t workspace_size = 0;
+    float margin               = 1.0f;
+    float divisor              = 1.0f;
+
+    std::size_t GetWorkspaceSize() const { return workspace_size; }
+    Data_t GetWorkspace() const { return workspace; }
+};
+
+struct BwdInvokeParams : public miopen::InvokeParams
+{
+    BwdInvokeParams() = default;
+
+    const TensorDescriptor* iDesc  = nullptr;
+    const TensorDescriptor* tDesc  = nullptr;
+    const TensorDescriptor* dODesc = nullptr;
+    const TensorDescriptor* dIDesc = nullptr;
+
+    ConstData_t i              = nullptr;
+    ConstData_t t              = nullptr;
+    ConstData_t dO             = nullptr;
+    ConstData_t dI             = nullptr;
+    Data_t o                   = nullptr;
+    Data_t workspace           = nullptr;
+    std::size_t workspace_size = 0;
+    float margin               = 1.0f;
+    float divisor              = 1.0f;
+
+    std::size_t GetWorkspaceSize() const { return workspace_size; }
+    Data_t GetWorkspace() const { return workspace; }
+};
+
 struct UnreducedFwdInvokeParams : public miopen::InvokeParams
 {
     UnreducedFwdInvokeParams() = default;
@@ -70,26 +113,6 @@ struct UnreducedBwdInvokeParams : public miopen::InvokeParams
     Data_t workspace           = nullptr;
     std::size_t workspace_size = 0;
     float margin               = 1.0f;
-
-    std::size_t GetWorkspaceSize() const { return workspace_size; }
-    Data_t GetWorkspace() const { return workspace; }
-};
-
-struct FwdInvokeParams : public miopen::InvokeParams
-{
-    FwdInvokeParams() = default;
-
-    const TensorDescriptor* iDesc = nullptr;
-    const TensorDescriptor* tDesc = nullptr;
-    const TensorDescriptor* oDesc = nullptr;
-
-    ConstData_t i              = nullptr;
-    ConstData_t t              = nullptr;
-    Data_t o                   = nullptr;
-    Data_t workspace           = nullptr;
-    std::size_t workspace_size = 0;
-    float margin               = 1.0f;
-    float divisor              = 1.0f;
 
     std::size_t GetWorkspaceSize() const { return workspace_size; }
     Data_t GetWorkspace() const { return workspace; }

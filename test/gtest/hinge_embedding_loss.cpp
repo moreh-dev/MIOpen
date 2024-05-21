@@ -44,6 +44,18 @@ struct HingeEmbeddingLossForwardTestBFloat16 : HingeEmbeddingLossFwdTest<bfloat1
 {
 };
 
+struct HingeEmbeddingLossBackwardTestFloat32 : HingeEmbeddingLossBwdTest<float, int>
+{
+};
+
+struct HingeEmbeddingLossBackwardTestFloat16 : HingeEmbeddingLossBwdTest<half, int>
+{
+};
+
+struct HingeEmbeddingLossBackwardTestBFloat16 : HingeEmbeddingLossBwdTest<bfloat16, int>
+{
+};
+
 struct HingeEmbeddingLossUnreducedForwardTestFloat32
     : HingeEmbeddingLossUnreducedFwdTest<float, int>
 {
@@ -124,6 +136,58 @@ TEST_P(HingeEmbeddingLossForwardTestBFloat16, HingeEmbeddingLossForwardTest)
 
 INSTANTIATE_TEST_SUITE_P(HingeEmbeddingLossForwardTestSet,
                          HingeEmbeddingLossForwardTestBFloat16,
+                         testing::ValuesIn(HingeEmbeddingLossTestConfigs()));
+
+// =========================== Reduced Backward Test ===========================
+TEST_P(HingeEmbeddingLossBackwardTestFloat32, HingeEmbeddingLossBackwardTest)
+{
+    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
+
+INSTANTIATE_TEST_SUITE_P(HingeEmbeddingLossBackwardTestSet,
+                         HingeEmbeddingLossBackwardTestFloat32,
+                         testing::ValuesIn(HingeEmbeddingLossTestConfigs()));
+
+TEST_P(HingeEmbeddingLossBackwardTestFloat16, HingeEmbeddingLossBackwardTest)
+{
+    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
+
+INSTANTIATE_TEST_SUITE_P(HingeEmbeddingLossBackwardTestSet,
+                         HingeEmbeddingLossBackwardTestFloat16,
+                         testing::ValuesIn(HingeEmbeddingLossTestConfigs()));
+
+TEST_P(HingeEmbeddingLossBackwardTestBFloat16, HingeEmbeddingLossBackwardTest)
+{
+    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
+
+INSTANTIATE_TEST_SUITE_P(HingeEmbeddingLossBackwardTestSet,
+                         HingeEmbeddingLossBackwardTestBFloat16,
                          testing::ValuesIn(HingeEmbeddingLossTestConfigs()));
 
 // =========================== Unreduced Forward Test ===========================
