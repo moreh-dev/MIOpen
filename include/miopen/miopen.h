@@ -68,6 +68,7 @@
  * @defgroup argmax
  * @defgroup groupnorm
  * @defgroup cat
+ * @defgroup cosineembeddingloss
  *
  */
 
@@ -512,7 +513,7 @@ typedef enum
     miopenActivationABS      = 5, /*!< Absolute value \f$abs(x)\f$ */
     miopenActivationPOWER = 6, /*!< Scaled and shifted power \f$(\alpha + \beta * x)^{gamma}\f$ */
     miopenActivationCLIPPEDRELU =
-        7, /*!< Clipped Rectified Linear Unit \f$ min(\alpha, max(0,x)) \f$ */
+        7,                     /*!< Clipped Rectified Linear Unit \f$ min(\alpha, max(0,x)) \f$ */
     miopenActivationLEAKYRELU =
         8, /*!< Leaky Rectified Linear Unit \f$ \alpha * x | x <= 0; x | x > 0 \f$ */
     miopenActivationELU =
@@ -6580,6 +6581,43 @@ MIOPEN_EXPORT miopenStatus_t miopenBackendInitialize(miopenBackendDescriptor_t d
 
 /** @} */
 // CLOSEOUT BackendAPI DOXYGEN GROUP
+#endif // MIOPEN_BETA_API
+
+#ifdef MIOPEN_BETA_API
+// CosineEmbeddingLoss APIs
+/** @addtogroup cosineembeddingloss
+ *
+ *  @{
+ */
+
+/*! @brief Execute a cosineembeddingloss unreduced forward layer
+ *
+ * @param handle          MIOpen handle (input)
+ * @param input1Desc      Tensor descriptor for input 1 tensor (input)
+ * @param input1          Data tensor input 1 (input)
+ * @param input2Desc      Tensor descriptor for input 2 tensor (input)
+ * @param input2          Data tensor input 2 (input)
+ * @param targetDesc      Tensor descriptor for target tensor (input)
+ * @param target          Data tensor target (input)
+ * @param outputDesc      Tensor descriptor for output grad tensor (input)
+ * @param output          Data tensor output (output)
+ * @param margin          If margin is missing, the default value is 0 (input)
+ * @return                miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t
+miopenCosineEmbeddingLossUnreducedForward(miopenHandle_t handle,
+                                          const miopenTensorDescriptor_t input1Desc,
+                                          const void* input1,
+                                          const miopenTensorDescriptor_t input2Desc,
+                                          const void* input2,
+                                          const miopenTensorDescriptor_t targetDesc,
+                                          const void* target,
+                                          const miopenTensorDescriptor_t outputDesc,
+                                          void* output,
+                                          const float margin);
+
+/** @} */
+// CLOSEOUT CosineEmbeddingLoss DOXYGEN GROUP
 #endif // MIOPEN_BETA_API
 
 #ifdef __cplusplus
