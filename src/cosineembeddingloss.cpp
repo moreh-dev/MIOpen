@@ -23,96 +23,49 @@
  * SOFTWARE.
  *
  *******************************************************************************/
-#include <miopen/kldivloss.hpp>
+#include <miopen/cosineembeddingloss.hpp>
 #include <miopen/kernel_cache.hpp>
 #include <miopen/float_equal.hpp>
 #include <miopen/tensor.hpp>
-#include <miopen/kldivloss/invoke_params.hpp>
-#include <miopen/kldivloss/solvers.hpp>
+#include <miopen/cosineembeddingloss/invoke_params.hpp>
+#include <miopen/cosineembeddingloss/solvers.hpp>
 #include <miopen/find_solution.hpp>
 
 namespace miopen {
 
-miopenStatus_t KLDivLossUnreducedBackward(Handle& handle,
-                                          const TensorDescriptor& inputDesc,
-                                          ConstData_t input,
-                                          const TensorDescriptor& targetDesc,
-                                          ConstData_t target,
-                                          const TensorDescriptor& outputGradDesc,
-                                          ConstData_t output_grad,
-                                          const TensorDescriptor& inputGradDesc,
-                                          Data_t input_grad,
-                                          const TensorDescriptor& targetGradDesc,
-                                          Data_t target_grad,
-                                          bool log_target)
+miopenStatus_t CosineEmbeddingLossUnreducedForward(Handle& handle,
+                                                   const TensorDescriptor& input1Desc,
+                                                   ConstData_t input1,
+                                                   const TensorDescriptor& input2Desc,
+                                                   ConstData_t input2,
+                                                   const TensorDescriptor& targetDesc,
+                                                   ConstData_t target,
+                                                   const TensorDescriptor& outputDesc,
+                                                   Data_t output,
+                                                   const float margin)
 {
-    const auto problem = kldivloss::UnreducedProblemDescription{
-        inputDesc, targetDesc, outputGradDesc, log_target, false};
+    const auto problem = cosineembeddingloss::FwdUnreducedProblemDescription{
+        input1Desc, input2Desc, targetDesc, outputDesc, margin};
 
     const auto invoke_params = [&]() {
-        auto tmp           = kldivloss::BwdInvokeParams{};
-        tmp.inputDesc      = &inputDesc;
-        tmp.targetDesc     = &targetDesc;
-        tmp.outputGradDesc = &outputGradDesc;
-        tmp.inputGradDesc  = &inputGradDesc;
-        tmp.targetGradDesc = &targetGradDesc;
+        auto tmp       = cosineembeddingloss::FwdInvokeParams{};
+        tmp.input1Desc = &input1Desc;
+        tmp.input2Desc = &input2Desc;
+        tmp.targetDesc = &targetDesc;
+        tmp.outputDesc = &outputDesc;
 
-        tmp.input       = input;
-        tmp.target      = target;
-        tmp.output_grad = output_grad;
-        tmp.input_grad  = input_grad;
-        tmp.target_grad = target_grad;
+        tmp.input1 = input1;
+        tmp.input2 = input2;
+        tmp.target = target;
+        tmp.output = output;
 
-        tmp.log_target = log_target;
+        tmp.margin = margin;
 
         return tmp;
     }();
-    const auto algo    = AlgorithmName{"KLDivLossUnreducedBackward"};
-    const auto solvers = solver::SolverContainer<solver::kldivloss::KLDivLossUnreducedBackward5d>{};
-
-    solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
-
-    return miopenStatusSuccess;
-}
-
-miopenStatus_t KLDivLossReducedBackward(Handle& handle,
-                                        const TensorDescriptor& inputDesc,
-                                        ConstData_t input,
-                                        const TensorDescriptor& targetDesc,
-                                        ConstData_t target,
-                                        const TensorDescriptor& outputGradDesc,
-                                        ConstData_t output_grad,
-                                        const TensorDescriptor& inputGradDesc,
-                                        Data_t input_grad,
-                                        const TensorDescriptor& targetGradDesc,
-                                        Data_t target_grad,
-                                        float divisor,
-                                        bool log_target)
-{
-    const auto problem = kldivloss::ReducedProblemDescription{
-        inputDesc, targetDesc, outputGradDesc, divisor, log_target, false};
-
-    const auto invoke_params = [&]() {
-        auto tmp           = kldivloss::BwdInvokeParams{};
-        tmp.inputDesc      = &inputDesc;
-        tmp.targetDesc     = &targetDesc;
-        tmp.outputGradDesc = &outputGradDesc;
-        tmp.inputGradDesc  = &inputGradDesc;
-        tmp.targetGradDesc = &targetGradDesc;
-
-        tmp.input       = input;
-        tmp.target      = target;
-        tmp.output_grad = output_grad;
-        tmp.input_grad  = input_grad;
-        tmp.target_grad = target_grad;
-
-        tmp.divisor    = divisor;
-        tmp.log_target = log_target;
-
-        return tmp;
-    }();
-    const auto algo    = AlgorithmName{"KLDivLossReducedBackward"};
-    const auto solvers = solver::SolverContainer<solver::kldivloss::KLDivLossReducedBackward5d>{};
+    const auto algo    = AlgorithmName{"CosineEmbeddingLossUnreducedForward"};
+    const auto solvers = solver::SolverContainer<
+        solver::cosineembeddingloss::CosineEmbeddingLossUnreducedForward2d>{};
 
     solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
 
