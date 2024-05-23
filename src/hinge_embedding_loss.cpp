@@ -37,12 +37,13 @@
 namespace miopen {
 
 size_t GetHingeEmbeddingLossForwardWorkspaceSize(Handle& handle,
-                                                 const TensorDescriptor& iDesc,
-                                                 const TensorDescriptor& tDesc,
-                                                 const TensorDescriptor& oDesc)
+                                                 const TensorDescriptor& inputDesc,
+                                                 const TensorDescriptor& targetDesc,
+                                                 const TensorDescriptor& outputDesc)
 {
-    auto ctx           = ExecutionContext{&handle};
-    const auto problem = loss::HingeEmbeddingLossFwdProblemDescription{iDesc, tDesc, oDesc};
+    auto ctx = ExecutionContext{&handle};
+    const auto problem =
+        loss::HingeEmbeddingLossFwdProblemDescription{inputDesc, targetDesc, outputDesc};
 
     const auto algo    = AlgorithmName{"HingeEmbeddingLossFwd"};
     const auto solvers = solver::SolverContainer<solver::loss::HingeEmbeddingLossFwd>{};
@@ -55,25 +56,26 @@ size_t GetHingeEmbeddingLossForwardWorkspaceSize(Handle& handle,
 miopenStatus_t HingeEmbeddingLossForward(Handle& handle,
                                          Data_t workspace,
                                          size_t workspaceSizeInBytes,
-                                         const TensorDescriptor& iDesc,
-                                         ConstData_t i,
-                                         const TensorDescriptor& tDesc,
-                                         ConstData_t t,
-                                         const TensorDescriptor& oDesc,
-                                         Data_t o,
+                                         const TensorDescriptor& inputDesc,
+                                         ConstData_t input,
+                                         const TensorDescriptor& targetDesc,
+                                         ConstData_t target,
+                                         const TensorDescriptor& outputDesc,
+                                         Data_t output,
                                          float margin,
                                          float divisor)
 {
-    const auto problem = loss::HingeEmbeddingLossFwdProblemDescription{iDesc, tDesc, oDesc};
+    const auto problem =
+        loss::HingeEmbeddingLossFwdProblemDescription{inputDesc, targetDesc, outputDesc};
 
     const auto invoke_params = [&]() {
         auto tmp           = loss::FwdInvokeParams{};
-        tmp.iDesc          = &iDesc;
-        tmp.tDesc          = &tDesc;
-        tmp.oDesc          = &oDesc;
-        tmp.i              = i;
-        tmp.t              = t;
-        tmp.o              = o;
+        tmp.inputDesc      = &inputDesc;
+        tmp.targetDesc     = &targetDesc;
+        tmp.outputDesc     = &outputDesc;
+        tmp.input          = input;
+        tmp.target         = target;
+        tmp.output         = output;
         tmp.workspace      = workspace;
         tmp.workspace_size = workspaceSizeInBytes;
         tmp.margin         = margin;
@@ -90,32 +92,32 @@ miopenStatus_t HingeEmbeddingLossForward(Handle& handle,
 }
 
 miopenStatus_t HingeEmbeddingLossBackward(Handle& handle,
-                                          const TensorDescriptor& iDesc,
-                                          ConstData_t i,
-                                          const TensorDescriptor& tDesc,
-                                          ConstData_t t,
-                                          const TensorDescriptor& dODesc,
-                                          ConstData_t dO,
-                                          const TensorDescriptor& dIDesc,
-                                          Data_t dI,
+                                          const TensorDescriptor& inputDesc,
+                                          ConstData_t input,
+                                          const TensorDescriptor& targetDesc,
+                                          ConstData_t target,
+                                          const TensorDescriptor& doutputDesc,
+                                          ConstData_t doutput,
+                                          const TensorDescriptor& dinputDesc,
+                                          Data_t dinput,
                                           float margin,
                                           float divisor)
 {
-    const auto problem =
-        loss::HingeEmbeddingLossBwdProblemDescription{iDesc, tDesc, dODesc, dIDesc};
+    const auto problem = loss::HingeEmbeddingLossBwdProblemDescription{
+        inputDesc, targetDesc, doutputDesc, dinputDesc};
 
     const auto invoke_params = [&]() {
-        auto tmp    = loss::BwdInvokeParams{};
-        tmp.iDesc   = &iDesc;
-        tmp.tDesc   = &tDesc;
-        tmp.dODesc  = &dODesc;
-        tmp.dIDesc  = &dIDesc;
-        tmp.i       = i;
-        tmp.t       = t;
-        tmp.dO      = dO;
-        tmp.dI      = dI;
-        tmp.margin  = margin;
-        tmp.divisor = divisor;
+        auto tmp        = loss::BwdInvokeParams{};
+        tmp.inputDesc   = &inputDesc;
+        tmp.targetDesc  = &targetDesc;
+        tmp.doutputDesc = &doutputDesc;
+        tmp.dinputDesc  = &dinputDesc;
+        tmp.input       = input;
+        tmp.target      = target;
+        tmp.doutput     = doutput;
+        tmp.dinput      = dinput;
+        tmp.margin      = margin;
+        tmp.divisor     = divisor;
         return tmp;
     }();
 
@@ -128,26 +130,26 @@ miopenStatus_t HingeEmbeddingLossBackward(Handle& handle,
 }
 
 miopenStatus_t HingeEmbeddingLossUnreducedForward(Handle& handle,
-                                                  const TensorDescriptor& iDesc,
-                                                  ConstData_t i,
-                                                  const TensorDescriptor& tDesc,
-                                                  ConstData_t t,
-                                                  const TensorDescriptor& oDesc,
-                                                  Data_t o,
+                                                  const TensorDescriptor& inputDesc,
+                                                  ConstData_t input,
+                                                  const TensorDescriptor& targetDesc,
+                                                  ConstData_t target,
+                                                  const TensorDescriptor& outputDesc,
+                                                  Data_t output,
                                                   float margin)
 {
     const auto problem =
-        loss::HingeEmbeddingLossUnreducedFwdProblemDescription{iDesc, tDesc, oDesc};
+        loss::HingeEmbeddingLossUnreducedFwdProblemDescription{inputDesc, targetDesc, outputDesc};
 
     const auto invoke_params = [&]() {
-        auto tmp   = loss::UnreducedFwdInvokeParams{};
-        tmp.iDesc  = &iDesc;
-        tmp.tDesc  = &tDesc;
-        tmp.oDesc  = &oDesc;
-        tmp.i      = i;
-        tmp.t      = t;
-        tmp.o      = o;
-        tmp.margin = margin;
+        auto tmp       = loss::UnreducedFwdInvokeParams{};
+        tmp.inputDesc  = &inputDesc;
+        tmp.targetDesc = &targetDesc;
+        tmp.outputDesc = &outputDesc;
+        tmp.input      = input;
+        tmp.target     = target;
+        tmp.output     = output;
+        tmp.margin     = margin;
         return tmp;
     }();
 
@@ -160,30 +162,30 @@ miopenStatus_t HingeEmbeddingLossUnreducedForward(Handle& handle,
 }
 
 miopenStatus_t HingeEmbeddingLossUnreducedBackward(Handle& handle,
-                                                   const TensorDescriptor& iDesc,
-                                                   ConstData_t i,
-                                                   const TensorDescriptor& tDesc,
-                                                   ConstData_t t,
-                                                   const TensorDescriptor& dODesc,
-                                                   ConstData_t dO,
-                                                   const TensorDescriptor& dIDesc,
-                                                   Data_t dI,
+                                                   const TensorDescriptor& inputDesc,
+                                                   ConstData_t input,
+                                                   const TensorDescriptor& targetDesc,
+                                                   ConstData_t target,
+                                                   const TensorDescriptor& doutputDesc,
+                                                   ConstData_t doutput,
+                                                   const TensorDescriptor& dinputDesc,
+                                                   Data_t dinput,
                                                    float margin)
 {
-    const auto problem =
-        loss::HingeEmbeddingLossUnreducedBwdProblemDescription{iDesc, tDesc, dODesc, dIDesc};
+    const auto problem = loss::HingeEmbeddingLossUnreducedBwdProblemDescription{
+        inputDesc, targetDesc, doutputDesc, dinputDesc};
 
     const auto invoke_params = [&]() {
-        auto tmp   = loss::UnreducedBwdInvokeParams{};
-        tmp.iDesc  = &iDesc;
-        tmp.tDesc  = &tDesc;
-        tmp.dODesc = &dODesc;
-        tmp.dIDesc = &dIDesc;
-        tmp.i      = i;
-        tmp.t      = t;
-        tmp.dO     = dO;
-        tmp.dI     = dI;
-        tmp.margin = margin;
+        auto tmp        = loss::UnreducedBwdInvokeParams{};
+        tmp.inputDesc   = &inputDesc;
+        tmp.targetDesc  = &targetDesc;
+        tmp.doutputDesc = &doutputDesc;
+        tmp.dinputDesc  = &dinputDesc;
+        tmp.input       = input;
+        tmp.target      = target;
+        tmp.doutput     = doutput;
+        tmp.dinput      = dinput;
+        tmp.margin      = margin;
         return tmp;
     }();
 

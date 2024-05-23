@@ -47,10 +47,10 @@ bool checkSameLength(const TensorDescriptor& x, const TensorDescriptor& y)
 
 NetworkConfig HingeEmbeddingLossFwdProblemDescription::MakeNetworkConfig() const
 {
-    auto input_dtype  = iDesc.GetType();
-    auto target_dtype = tDesc.GetType();
-    auto size         = iDesc.GetElementSize();
-    auto dim_num      = iDesc.GetSize();
+    auto input_dtype  = inputDesc.GetType();
+    auto target_dtype = targetDesc.GetType();
+    auto size         = inputDesc.GetElementSize();
+    auto dim_num      = inputDesc.GetSize();
 
     std::ostringstream ss;
 
@@ -65,10 +65,10 @@ NetworkConfig HingeEmbeddingLossFwdProblemDescription::MakeNetworkConfig() const
 
 NetworkConfig HingeEmbeddingLossBwdProblemDescription::MakeNetworkConfig() const
 {
-    auto input_dtype  = iDesc.GetType();
-    auto target_dtype = tDesc.GetType();
-    auto size         = iDesc.GetElementSize();
-    auto dim_num      = iDesc.GetSize();
+    auto input_dtype  = inputDesc.GetType();
+    auto target_dtype = targetDesc.GetType();
+    auto size         = inputDesc.GetElementSize();
+    auto dim_num      = inputDesc.GetSize();
 
     std::ostringstream ss;
 
@@ -83,10 +83,10 @@ NetworkConfig HingeEmbeddingLossBwdProblemDescription::MakeNetworkConfig() const
 
 NetworkConfig HingeEmbeddingLossUnreducedFwdProblemDescription::MakeNetworkConfig() const
 {
-    auto input_dtype  = iDesc.GetType();
-    auto target_dtype = tDesc.GetType();
-    auto size         = iDesc.GetElementSize();
-    auto dim_num      = iDesc.GetSize();
+    auto input_dtype  = inputDesc.GetType();
+    auto target_dtype = targetDesc.GetType();
+    auto size         = inputDesc.GetElementSize();
+    auto dim_num      = inputDesc.GetSize();
 
     std::ostringstream ss;
 
@@ -101,10 +101,10 @@ NetworkConfig HingeEmbeddingLossUnreducedFwdProblemDescription::MakeNetworkConfi
 
 NetworkConfig HingeEmbeddingLossUnreducedBwdProblemDescription::MakeNetworkConfig() const
 {
-    auto input_dtype  = iDesc.GetType();
-    auto target_dtype = tDesc.GetType();
-    auto size         = iDesc.GetElementSize();
-    auto dim_num      = iDesc.GetSize();
+    auto input_dtype  = inputDesc.GetType();
+    auto target_dtype = targetDesc.GetType();
+    auto size         = inputDesc.GetElementSize();
+    auto dim_num      = inputDesc.GetSize();
 
     std::ostringstream ss;
 

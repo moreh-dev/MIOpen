@@ -38,11 +38,11 @@ struct HingeEmbeddingLossInvokeParams : public miopen::InvokeParams
 {
     HingeEmbeddingLossInvokeParams() = default;
 
-    const TensorDescriptor* iDesc = nullptr;
-    const TensorDescriptor* tDesc = nullptr;
+    const TensorDescriptor* inputDesc  = nullptr;
+    const TensorDescriptor* targetDesc = nullptr;
 
-    ConstData_t i              = nullptr;
-    ConstData_t t              = nullptr;
+    ConstData_t input          = nullptr;
+    ConstData_t target         = nullptr;
     Data_t workspace           = nullptr;
     std::size_t workspace_size = 0;
     float margin               = 1.0f;
@@ -55,20 +55,20 @@ struct FwdInvokeParams : HingeEmbeddingLossInvokeParams
 {
     FwdInvokeParams() = default;
 
-    const TensorDescriptor* oDesc = nullptr;
-    Data_t o                      = nullptr;
-    float divisor                 = 1.0f;
+    const TensorDescriptor* outputDesc = nullptr;
+    Data_t output                      = nullptr;
+    float divisor                      = 1.0f;
 };
 
 struct BwdInvokeParams : HingeEmbeddingLossInvokeParams
 {
     BwdInvokeParams() = default;
 
-    const TensorDescriptor* dODesc = nullptr;
-    const TensorDescriptor* dIDesc = nullptr;
+    const TensorDescriptor* doutputDesc = nullptr;
+    const TensorDescriptor* dinputDesc  = nullptr;
 
-    ConstData_t dO = nullptr;
-    ConstData_t dI = nullptr;
+    ConstData_t doutput = nullptr;
+    ConstData_t dinput  = nullptr;
 
     float divisor = 1.0f;
 };
@@ -77,20 +77,20 @@ struct UnreducedFwdInvokeParams : HingeEmbeddingLossInvokeParams
 {
     UnreducedFwdInvokeParams() = default;
 
-    const TensorDescriptor* oDesc = nullptr;
-    Data_t o                      = nullptr;
+    const TensorDescriptor* outputDesc = nullptr;
+    Data_t output                      = nullptr;
 };
 
 struct UnreducedBwdInvokeParams : HingeEmbeddingLossInvokeParams
 {
     UnreducedBwdInvokeParams() = default;
 
-    const TensorDescriptor* dODesc = nullptr;
-    const TensorDescriptor* dIDesc = nullptr;
+    const TensorDescriptor* doutputDesc = nullptr;
+    const TensorDescriptor* dinputDesc  = nullptr;
 
-    ConstData_t dO = nullptr;
-    ConstData_t dI = nullptr;
-    Data_t o       = nullptr;
+    ConstData_t doutput = nullptr;
+    ConstData_t dinput  = nullptr;
+    Data_t output       = nullptr;
 };
 
 } // namespace loss

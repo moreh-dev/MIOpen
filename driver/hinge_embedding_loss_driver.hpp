@@ -67,27 +67,27 @@ inline tensor_view_5d_t get_inner_expanded_tv(const miopen::TensorDescriptor Des
 }
 
 template <class TIO, class TT>
-void mloHingeEmbeddingLossFwdRunHost(TIO* I,
+void mloHingeEmbeddingLossFwdRunHost(TIO* input,
                                      miopenTensorDescriptor_t inputDesc,
-                                     TT* T,
+                                     TT* target,
                                      miopenTensorDescriptor_t targetDesc,
                                      TIO* workspace,
                                      TIO* ref_output,
                                      float margin  = 1,
                                      float divisor = 1)
 {
-    tensor_view_5d_t I_tv = get_inner_expanded_tv(miopen::deref(inputDesc));
-    tensor_view_5d_t T_tv = get_inner_expanded_tv(miopen::deref(targetDesc));
-    size_t size           = miopen::deref(inputDesc).GetElementSize();
+    tensor_view_5d_t input_tv  = get_inner_expanded_tv(miopen::deref(inputDesc));
+    tensor_view_5d_t target_tv = get_inner_expanded_tv(miopen::deref(targetDesc));
+    size_t size                = miopen::deref(inputDesc).GetElementSize();
     size_t n[5];
 
     // Compute loss in each elem
     for(size_t idx = 0; idx < size; ++idx)
     {
-        GET_NCDHW(n[0], n[1], n[2], n[3], n[4], idx, I_tv);
+        GET_NCDHW(n[0], n[1], n[2], n[3], n[4], idx, input_tv);
 
-        TIO i = TV_5D_AT(I, n[0], n[1], n[2], n[3], n[4]);
-        TT t  = TV_5D_AT(T, n[0], n[1], n[2], n[3], n[4]);
+        TIO i = TV_5D_AT(input, n[0], n[1], n[2], n[3], n[4]);
+        TT t  = TV_5D_AT(target, n[0], n[1], n[2], n[3], n[4]);
 
         if(t == 1)
             workspace[idx] = i / divisor;
@@ -121,64 +121,63 @@ void mloHingeEmbeddingLossFwdRunHost(TIO* I,
 }
 
 template <class TIO, class TT>
-void mloHingeEmbeddingLossBwdRunHost(TIO* I,
+void mloHingeEmbeddingLossBwdRunHost(TIO* input,
                                      miopenTensorDescriptor_t inputDesc,
-                                     TT* T,
+                                     TT* target,
                                      miopenTensorDescriptor_t targetDesc,
-                                     TIO* dO,
-                                     miopenTensorDescriptor_t dODesc,
-                                     TIO* dI,
-                                     miopenTensorDescriptor_t dIDesc,
+                                     TIO* doutput,
+                                     miopenTensorDescriptor_t doutputDesc,
+                                     TIO* dinput,
                                      float margin  = 1,
                                      float divisor = 1)
 {
-    tensor_view_5d_t I_tv  = get_inner_expanded_tv(miopen::deref(inputDesc));
-    tensor_view_5d_t T_tv  = get_inner_expanded_tv(miopen::deref(targetDesc));
-    tensor_view_5d_t dO_tv = get_inner_expanded_tv(miopen::deref(dODesc));
-    size_t inputSize       = miopen::deref(inputDesc).GetElementSize();
+    tensor_view_5d_t input_tv   = get_inner_expanded_tv(miopen::deref(inputDesc));
+    tensor_view_5d_t target_tv  = get_inner_expanded_tv(miopen::deref(targetDesc));
+    tensor_view_5d_t doutput_tv = get_inner_expanded_tv(miopen::deref(doutputDesc));
+    size_t inputSize            = miopen::deref(inputDesc).GetElementSize();
     size_t n[5];
 
     for(size_t idx = 0; idx < inputSize; ++idx)
     {
-        GET_NCDHW(n[0], n[1], n[2], n[3], n[4], idx, I_tv);
+        GET_NCDHW(n[0], n[1], n[2], n[3], n[4], idx, input_tv);
 
-        TIO i = TV_5D_AT(I, n[0], n[1], n[2], n[3], n[4]);
-        TT t  = TV_5D_AT(T, n[0], n[1], n[2], n[3], n[4]);
-        TIO o = TV_5D_AT(dO, 0, 0, 0, 0, 0);
+        TIO i = TV_5D_AT(input, n[0], n[1], n[2], n[3], n[4]);
+        TT t  = TV_5D_AT(target, n[0], n[1], n[2], n[3], n[4]);
+        TIO o = TV_5D_AT(doutput, 0, 0, 0, 0, 0);
 
         if(t == 1)
         {
-            dI[idx] = o / divisor;
+            dinput[idx] = o / divisor;
         }
         else
         {
             if(margin - i > 0)
-                dI[idx] = -o / divisor;
+                dinput[idx] = -o / divisor;
             else
-                dI[idx] = 0.0f;
+                dinput[idx] = 0.0f;
         }
     }
 }
 
 template <typename TIO, typename TT>
-void mloHingeEmbeddingLossUnreducedFwdRunHost(TIO* I,
+void mloHingeEmbeddingLossUnreducedFwdRunHost(TIO* input,
                                               miopenTensorDescriptor_t inputDesc,
-                                              TT* T,
+                                              TT* target,
                                               miopenTensorDescriptor_t targetDesc,
                                               TIO* outputhost,
                                               float margin = 1)
 {
-    tensor_view_5d_t I_tv = get_inner_expanded_tv(miopen::deref(inputDesc));
-    tensor_view_5d_t T_tv = get_inner_expanded_tv(miopen::deref(targetDesc));
-    size_t inputSize      = miopen::deref(inputDesc).GetElementSize();
+    tensor_view_5d_t input_tv  = get_inner_expanded_tv(miopen::deref(inputDesc));
+    tensor_view_5d_t target_tv = get_inner_expanded_tv(miopen::deref(targetDesc));
+    size_t inputSize           = miopen::deref(inputDesc).GetElementSize();
     size_t n[5];
 
     for(size_t idx = 0; idx < inputSize; ++idx)
     {
-        GET_NCDHW(n[0], n[1], n[2], n[3], n[4], idx, I_tv);
+        GET_NCDHW(n[0], n[1], n[2], n[3], n[4], idx, input_tv);
 
-        TIO i = TV_5D_AT(I, n[0], n[1], n[2], n[3], n[4]);
-        TT t  = TV_5D_AT(T, n[0], n[1], n[2], n[3], n[4]);
+        TIO i = TV_5D_AT(input, n[0], n[1], n[2], n[3], n[4]);
+        TT t  = TV_5D_AT(target, n[0], n[1], n[2], n[3], n[4]);
 
         if(t == 1)
             outputhost[idx] = i;
@@ -188,39 +187,38 @@ void mloHingeEmbeddingLossUnreducedFwdRunHost(TIO* I,
 }
 
 template <class TIO, class TT>
-void mloHingeEmbeddingLossUnreducedBwdRunHost(TIO* I,
+void mloHingeEmbeddingLossUnreducedBwdRunHost(TIO* input,
                                               miopenTensorDescriptor_t inputDesc,
-                                              TT* T,
+                                              TT* target,
                                               miopenTensorDescriptor_t targetDesc,
-                                              TIO* dO,
-                                              miopenTensorDescriptor_t dODesc,
-                                              TIO* dI,
-                                              miopenTensorDescriptor_t dIDesc,
+                                              TIO* doutput,
+                                              miopenTensorDescriptor_t doutputDesc,
+                                              TIO* dinput,
                                               float margin = 1)
 {
-    tensor_view_5d_t I_tv  = get_inner_expanded_tv(miopen::deref(inputDesc));
-    tensor_view_5d_t T_tv  = get_inner_expanded_tv(miopen::deref(targetDesc));
-    tensor_view_5d_t dO_tv = get_inner_expanded_tv(miopen::deref(dODesc));
-    size_t inputSize       = miopen::deref(inputDesc).GetElementSize();
+    tensor_view_5d_t input_tv   = get_inner_expanded_tv(miopen::deref(inputDesc));
+    tensor_view_5d_t target_tv  = get_inner_expanded_tv(miopen::deref(targetDesc));
+    tensor_view_5d_t doutput_tv = get_inner_expanded_tv(miopen::deref(doutputDesc));
+    size_t inputSize            = miopen::deref(inputDesc).GetElementSize();
     size_t n[5];
 
     for(size_t idx = 0; idx < inputSize; ++idx)
     {
-        GET_NCDHW(n[0], n[1], n[2], n[3], n[4], idx, I_tv);
+        GET_NCDHW(n[0], n[1], n[2], n[3], n[4], idx, input_tv);
 
-        TIO i = TV_5D_AT(I, n[0], n[1], n[2], n[3], n[4]);
-        TT t  = TV_5D_AT(T, n[0], n[1], n[2], n[3], n[4]);
+        TIO i = TV_5D_AT(input, n[0], n[1], n[2], n[3], n[4]);
+        TT t  = TV_5D_AT(target, n[0], n[1], n[2], n[3], n[4]);
 
         if(t == 1)
         {
-            dI[idx] = TV_5D_AT(dO, n[0], n[1], n[2], n[3], n[4]);
+            dinput[idx] = TV_5D_AT(doutput, n[0], n[1], n[2], n[3], n[4]);
         }
         else
         {
             if(margin - i > 0)
-                dI[idx] = -TV_5D_AT(dO, n[0], n[1], n[2], n[3], n[4]);
+                dinput[idx] = -TV_5D_AT(doutput, n[0], n[1], n[2], n[3], n[4]);
             else
-                dI[idx] = 0.0f;
+                dinput[idx] = 0.0f;
         }
     }
 }
@@ -235,8 +233,8 @@ public:
         miopenCreateTensorDescriptor(&inputDesc);
         miopenCreateTensorDescriptor(&targetDesc);
         miopenCreateTensorDescriptor(&outputDesc);
-        miopenCreateTensorDescriptor(&dODesc);
-        miopenCreateTensorDescriptor(&dIDesc);
+        miopenCreateTensorDescriptor(&doutputDesc);
+        miopenCreateTensorDescriptor(&dinputDesc);
 
         data_type = miopen_type<TIO>{};
     }
@@ -265,8 +263,8 @@ public:
         miopenDestroyTensorDescriptor(inputDesc);
         miopenDestroyTensorDescriptor(targetDesc);
         miopenDestroyTensorDescriptor(outputDesc);
-        miopenDestroyTensorDescriptor(dODesc);
-        miopenDestroyTensorDescriptor(dIDesc);
+        miopenDestroyTensorDescriptor(doutputDesc);
+        miopenDestroyTensorDescriptor(dinputDesc);
     }
 
 private:
@@ -275,23 +273,23 @@ private:
     miopenTensorDescriptor_t inputDesc;
     miopenTensorDescriptor_t targetDesc;
     miopenTensorDescriptor_t outputDesc;
-    miopenTensorDescriptor_t dODesc;
-    miopenTensorDescriptor_t dIDesc;
+    miopenTensorDescriptor_t doutputDesc;
+    miopenTensorDescriptor_t dinputDesc;
 
-    std::unique_ptr<GPUMem> in_dev;
-    std::unique_ptr<GPUMem> tar_dev;
-    std::unique_ptr<GPUMem> out_dev;
-    std::unique_ptr<GPUMem> dO_dev;
-    std::unique_ptr<GPUMem> dI_dev;
+    std::unique_ptr<GPUMem> input_dev;
+    std::unique_ptr<GPUMem> target_dev;
+    std::unique_ptr<GPUMem> output_dev;
+    std::unique_ptr<GPUMem> doutput_dev;
+    std::unique_ptr<GPUMem> dinput_dev;
     std::unique_ptr<GPUMem> workspace_dev;
 
-    std::vector<TIO> in;
-    std::vector<TT> tar;
-    std::vector<TIO> out;
-    std::vector<TIO> outHost;
-    std::vector<TIO> dO;
-    std::vector<TIO> dI;
-    std::vector<TIO> dIHost;
+    std::vector<TIO> input;
+    std::vector<TT> target;
+    std::vector<TIO> output;
+    std::vector<TIO> outputHost;
+    std::vector<TIO> doutput;
+    std::vector<TIO> dinput;
+    std::vector<TIO> dinputHost;
     std::vector<TIO> workspace;
 
     float margin;
@@ -330,8 +328,8 @@ int HingeEmbeddingLossDriver<TIO, TT>::GetandSetData()
 
     SetTensorNd(inputDesc, inDim, inStride, data_type);
     SetTensorNd(targetDesc, inDim, inStride, miopen_type<TT>{});
-    SetTensorNd(dODesc, inDim, data_type);
-    SetTensorNd(dIDesc, inDim, data_type);
+    SetTensorNd(doutputDesc, inDim, data_type);
+    SetTensorNd(dinputDesc, inDim, data_type);
 
     if(reduction == "none")
     {
@@ -426,60 +424,60 @@ int HingeEmbeddingLossDriver<TIO, TT>::AllocateBuffersAndCopy()
     size_t in_sz     = miopen::deref(inputDesc).GetElementSize();
     size_t target_sz = miopen::deref(targetDesc).GetElementSize();
     size_t out_sz    = miopen::deref(outputDesc).GetElementSize();
-    size_t dO_sz     = miopen::deref(dODesc).GetElementSize();
-    size_t dI_sz     = miopen::deref(dIDesc).GetElementSize();
+    size_t dO_sz     = miopen::deref(doutputDesc).GetElementSize();
+    size_t dI_sz     = miopen::deref(dinputDesc).GetElementSize();
 
     uint32_t ctx = 0;
 
-    in_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, in_sz, sizeof(TIO)));
-    tar_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, target_sz, sizeof(TT)));
-    out_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, out_sz, sizeof(TIO)));
-    dO_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, dO_sz, sizeof(TIO)));
-    dI_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, dI_sz, sizeof(TIO)));
+    input_dev   = std::unique_ptr<GPUMem>(new GPUMem(ctx, in_sz, sizeof(TIO)));
+    target_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, target_sz, sizeof(TT)));
+    output_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, out_sz, sizeof(TIO)));
+    doutput_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, dO_sz, sizeof(TIO)));
+    dinput_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, dI_sz, sizeof(TIO)));
 
     miopenGetHingeEmbeddingLossForwardWorkspaceSize(
         handle, inputDesc, targetDesc, outputDesc, &workSpaceSizeInBytes);
     workspace_dev =
         std::unique_ptr<GPUMem>(new GPUMem(ctx, workSpaceSizeInBytes / sizeof(TIO), sizeof(TIO)));
 
-    in        = std::vector<TIO>(in_sz, static_cast<TIO>(0));
-    tar       = std::vector<TT>(target_sz, static_cast<TT>(0));
-    out       = std::vector<TIO>(out_sz, static_cast<TIO>(0));
-    outHost   = std::vector<TIO>(out_sz, static_cast<TIO>(0));
-    dO        = std::vector<TIO>(dO_sz, static_cast<TIO>(0));
-    dI        = std::vector<TIO>(dI_sz, static_cast<TIO>(0));
-    dIHost    = std::vector<TIO>(dI_sz, static_cast<TIO>(0));
-    workspace = std::vector<TIO>(workSpaceSizeInBytes / sizeof(TIO), static_cast<TIO>(0));
+    input      = std::vector<TIO>(in_sz, static_cast<TIO>(0));
+    target     = std::vector<TT>(target_sz, static_cast<TT>(0));
+    output     = std::vector<TIO>(out_sz, static_cast<TIO>(0));
+    outputHost = std::vector<TIO>(out_sz, static_cast<TIO>(0));
+    doutput    = std::vector<TIO>(dO_sz, static_cast<TIO>(0));
+    dinput     = std::vector<TIO>(dI_sz, static_cast<TIO>(0));
+    dinputHost = std::vector<TIO>(dI_sz, static_cast<TIO>(0));
+    workspace  = std::vector<TIO>(workSpaceSizeInBytes / sizeof(TIO), static_cast<TIO>(0));
 
     for(int i = 0; i < in_sz; i++)
     {
-        in[i] = prng::gen_A_to_B<TIO>(static_cast<TIO>(-2), static_cast<TIO>(2));
+        input[i] = prng::gen_A_to_B<TIO>(static_cast<TIO>(-2), static_cast<TIO>(2));
         // tar is 1 or -1
-        tar[i] = prng::gen_A_to_B<TT>(static_cast<TT>(0), static_cast<TT>(2)) * 2 - 1;
+        target[i] = prng::gen_A_to_B<TT>(static_cast<TT>(0), static_cast<TT>(2)) * 2 - 1;
     }
 
     for(int i = 0; i < dO_sz; ++i)
     {
-        dO[i] = prng::gen_A_to_B<TIO>(static_cast<TIO>(-2), static_cast<TIO>(2));
+        doutput[i] = prng::gen_A_to_B<TIO>(static_cast<TIO>(-2), static_cast<TIO>(2));
     }
 
-    fill(out.begin(), out.end(), static_cast<TIO>(0));
-    fill(dI.begin(), dI.end(), static_cast<TIO>(0));
+    fill(output.begin(), output.end(), static_cast<TIO>(0));
+    fill(dinput.begin(), dinput.end(), static_cast<TIO>(0));
 
-    if(in_dev->ToGPU(GetStream(), in.data()) != 0)
-        std::cerr << "Error copying (in) to GPU, size: " << in_dev->GetSize() << std::endl;
+    if(input_dev->ToGPU(GetStream(), input.data()) != 0)
+        std::cerr << "Error copying (in) to GPU, size: " << input_dev->GetSize() << std::endl;
 
-    if(tar_dev->ToGPU(GetStream(), tar.data()) != 0)
-        std::cerr << "Error copying (in) to GPU, size: " << tar_dev->GetSize() << std::endl;
+    if(target_dev->ToGPU(GetStream(), target.data()) != 0)
+        std::cerr << "Error copying (in) to GPU, size: " << target_dev->GetSize() << std::endl;
 
-    if(out_dev->ToGPU(GetStream(), out.data()) != 0)
-        std::cerr << "Error copying (out) to GPU, size: " << out_dev->GetSize() << std::endl;
+    if(output_dev->ToGPU(GetStream(), output.data()) != 0)
+        std::cerr << "Error copying (out) to GPU, size: " << output_dev->GetSize() << std::endl;
 
-    if(dO_dev->ToGPU(GetStream(), dO.data()) != 0)
-        std::cerr << "Error copying (dO) to GPU, size: " << dO_dev->GetSize() << std::endl;
+    if(doutput_dev->ToGPU(GetStream(), doutput.data()) != 0)
+        std::cerr << "Error copying (dO) to GPU, size: " << doutput_dev->GetSize() << std::endl;
 
-    if(dI_dev->ToGPU(GetStream(), dI.data()) != 0)
-        std::cerr << "Error copying (dI) to GPU, size: " << dI_dev->GetSize() << std::endl;
+    if(dinput_dev->ToGPU(GetStream(), dinput.data()) != 0)
+        std::cerr << "Error copying (dI) to GPU, size: " << dinput_dev->GetSize() << std::endl;
 
     if(workspace_dev->ToGPU(GetStream(), workspace.data()) != 0)
         std::cerr << "Error copying (dI) to GPU, size: " << workspace_dev->GetSize() << std::endl;
@@ -502,11 +500,11 @@ int HingeEmbeddingLossDriver<TIO, TT>::RunForwardGPU()
         {
             miopenHingeEmbeddingLossUnreducedForward(GetHandle(),
                                                      inputDesc,
-                                                     in_dev->GetMem(),
+                                                     input_dev->GetMem(),
                                                      targetDesc,
-                                                     tar_dev->GetMem(),
+                                                     target_dev->GetMem(),
                                                      outputDesc,
-                                                     out_dev->GetMem(),
+                                                     output_dev->GetMem(),
                                                      margin);
         }
         else
@@ -515,11 +513,11 @@ int HingeEmbeddingLossDriver<TIO, TT>::RunForwardGPU()
                                             workspace_dev->GetMem(),
                                             workSpaceSizeInBytes,
                                             inputDesc,
-                                            in_dev->GetMem(),
+                                            input_dev->GetMem(),
                                             targetDesc,
-                                            tar_dev->GetMem(),
+                                            target_dev->GetMem(),
                                             outputDesc,
-                                            out_dev->GetMem(),
+                                            output_dev->GetMem(),
                                             margin,
                                             divisor);
         }
@@ -544,8 +542,9 @@ int HingeEmbeddingLossDriver<TIO, TT>::RunForwardGPU()
                   << kernel_average_time << " ms\n";
     }
 
-    if(out_dev->FromGPU(GetStream(), out.data()) != 0)
-        std::cerr << "Error copying (out_dev) from GPU, size: " << out_dev->GetSize() << std::endl;
+    if(output_dev->FromGPU(GetStream(), output.data()) != 0)
+        std::cerr << "Error copying (out_dev) from GPU, size: " << output_dev->GetSize()
+                  << std::endl;
 
     return miopenStatusSuccess;
 }
@@ -556,16 +555,16 @@ int HingeEmbeddingLossDriver<TIO, TT>::RunForwardCPU()
     if(reduction == "none")
     {
         mloHingeEmbeddingLossUnreducedFwdRunHost<TIO, TT>(
-            in.data(), inputDesc, tar.data(), targetDesc, outHost.data(), margin);
+            input.data(), inputDesc, target.data(), targetDesc, outputHost.data(), margin);
     }
     else
     {
-        mloHingeEmbeddingLossFwdRunHost<TIO, TT>(in.data(),
+        mloHingeEmbeddingLossFwdRunHost<TIO, TT>(input.data(),
                                                  inputDesc,
-                                                 tar.data(),
+                                                 target.data(),
                                                  targetDesc,
                                                  workspace.data(),
-                                                 outHost.data(),
+                                                 outputHost.data(),
                                                  margin,
                                                  divisor);
     }
@@ -589,26 +588,26 @@ int HingeEmbeddingLossDriver<TIO, TT>::RunBackwardGPU()
         {
             miopenHingeEmbeddingLossUnreducedBackward(GetHandle(),
                                                       inputDesc,
-                                                      in_dev->GetMem(),
+                                                      input_dev->GetMem(),
                                                       targetDesc,
-                                                      tar_dev->GetMem(),
-                                                      dODesc,
-                                                      dO_dev->GetMem(),
-                                                      dIDesc,
-                                                      dI_dev->GetMem(),
+                                                      target_dev->GetMem(),
+                                                      doutputDesc,
+                                                      doutput_dev->GetMem(),
+                                                      dinputDesc,
+                                                      dinput_dev->GetMem(),
                                                       margin);
         }
         else
         {
             miopenHingeEmbeddingLossBackward(GetHandle(),
                                              inputDesc,
-                                             in_dev->GetMem(),
+                                             input_dev->GetMem(),
                                              targetDesc,
-                                             tar_dev->GetMem(),
-                                             dODesc,
-                                             dO_dev->GetMem(),
-                                             dIDesc,
-                                             dI_dev->GetMem(),
+                                             target_dev->GetMem(),
+                                             doutputDesc,
+                                             doutput_dev->GetMem(),
+                                             dinputDesc,
+                                             dinput_dev->GetMem(),
                                              margin,
                                              divisor);
         }
@@ -634,8 +633,9 @@ int HingeEmbeddingLossDriver<TIO, TT>::RunBackwardGPU()
                   << kernel_average_time << " ms\n";
     }
 
-    if(dI_dev->FromGPU(GetStream(), dI.data()) != 0)
-        std::cerr << "Error copying (dI_dev) from GPU, size: " << dI_dev->GetSize() << std::endl;
+    if(dinput_dev->FromGPU(GetStream(), dinput.data()) != 0)
+        std::cerr << "Error copying (dI_dev) from GPU, size: " << dinput_dev->GetSize()
+                  << std::endl;
 
     return miopenStatusSuccess;
 }
@@ -646,26 +646,24 @@ int HingeEmbeddingLossDriver<TIO, TT>::RunBackwardCPU()
     if(reduction == "none")
     {
 
-        mloHingeEmbeddingLossUnreducedBwdRunHost<TIO, TT>(in.data(),
+        mloHingeEmbeddingLossUnreducedBwdRunHost<TIO, TT>(input.data(),
                                                           inputDesc,
-                                                          tar.data(),
+                                                          target.data(),
                                                           targetDesc,
-                                                          dO.data(),
-                                                          dODesc,
-                                                          dIHost.data(),
-                                                          dIDesc,
+                                                          doutput.data(),
+                                                          doutputDesc,
+                                                          dinputHost.data(),
                                                           margin);
     }
     else
     {
-        mloHingeEmbeddingLossBwdRunHost<TIO, TT>(in.data(),
+        mloHingeEmbeddingLossBwdRunHost<TIO, TT>(input.data(),
                                                  inputDesc,
-                                                 tar.data(),
+                                                 target.data(),
                                                  targetDesc,
-                                                 dO.data(),
-                                                 dODesc,
-                                                 dIHost.data(),
-                                                 dIDesc,
+                                                 doutput.data(),
+                                                 doutputDesc,
+                                                 dinputHost.data(),
                                                  margin,
                                                  divisor);
     }
@@ -678,7 +676,7 @@ int HingeEmbeddingLossDriver<TIO, TT>::VerifyForward()
 {
     RunForwardCPU();
     double tolerance = std::numeric_limits<TIO>::epsilon() * 10;
-    auto error       = miopen::rms_range(outHost, out);
+    auto error       = miopen::rms_range(outputHost, output);
 
     if(!std::isfinite(error) || error > tolerance)
     {
@@ -701,7 +699,7 @@ int HingeEmbeddingLossDriver<TIO, TT>::VerifyBackward()
 {
     RunBackwardCPU();
     double tolerance = std::numeric_limits<TIO>::epsilon() * 10;
-    auto error       = miopen::rms_range(dIHost, dI);
+    auto error       = miopen::rms_range(dinputHost, dinput);
 
     if(!std::isfinite(error) || error > tolerance)
     {

@@ -512,7 +512,7 @@ typedef enum
     miopenActivationABS      = 5, /*!< Absolute value \f$abs(x)\f$ */
     miopenActivationPOWER = 6, /*!< Scaled and shifted power \f$(\alpha + \beta * x)^{gamma}\f$ */
     miopenActivationCLIPPEDRELU =
-        7, /*!< Clipped Rectified Linear Unit \f$ min(\alpha, max(0,x)) \f$ */
+        7,                     /*!< Clipped Rectified Linear Unit \f$ min(\alpha, max(0,x)) \f$ */
     miopenActivationLEAKYRELU =
         8, /*!< Leaky Rectified Linear Unit \f$ \alpha * x | x <= 0; x | x > 0 \f$ */
     miopenActivationELU =
@@ -4954,17 +4954,17 @@ MIOPEN_EXPORT miopenStatus_t miopenCTCLoss(miopenHandle_t handle,
  * call
  *
  * @param handle                   MIOpen Handle (input)
- * @param iDesc                    Tensor descriptor for input tensor (input)
- * @param tDesc                    Tensor descriptor for target tensor (input)
- * @param oDesc                    Tensor descriptor for output tensor (input)
+ * @param inputDesc                Tensor descriptor for input tensor (input)
+ * @param targetDesc               Tensor descriptor for target tensor (input)
+ * @param outputDesc               Tensor descriptor for output tensor (input)
  * @param sizeInBytes              Pointer to data to return the minimum workspace size
  * @return                         miopenStatus_t
  */
 MIOPEN_EXPORT miopenStatus_t
 miopenGetHingeEmbeddingLossForwardWorkspaceSize(miopenHandle_t handle,
-                                                miopenTensorDescriptor_t iDesc,
-                                                miopenTensorDescriptor_t tDesc,
-                                                miopenTensorDescriptor_t oDesc,
+                                                miopenTensorDescriptor_t inputDesc,
+                                                miopenTensorDescriptor_t targetDesc,
+                                                miopenTensorDescriptor_t outputDesc,
                                                 size_t* sizeInBytes);
 
 /*! @brief Execute a HingeEmbeddingLoss reduced forward layer
@@ -4972,12 +4972,12 @@ miopenGetHingeEmbeddingLossForwardWorkspaceSize(miopenHandle_t handle,
  * @param handle                   MIOpen handle (input)
  * @param workspace                Address of the allocated workspace data (input)
  * @param workspaceSizeInBytes     Size in bytes of the allocated workspace data (input)
- * @param iDesc                    Tensor descriptor for input tensor (input)
- * @param i                        Data tensor input (input)
- * @param tDesc                    Tensor descriptor for target tensor (input)
- * @param t                        Data tensor target (input)
- * @param oDesc                    Tensor descriptor for output tensor (input)
- * @param o                        Data tensor output (output)
+ * @param inputDesc                Tensor descriptor for input tensor (input)
+ * @param input                    Data tensor input (input)
+ * @param targetDesc               Tensor descriptor for target tensor (input)
+ * @param target                   Data tensor target (input)
+ * @param outputDesc               Tensor descriptor for output tensor (input)
+ * @param output                   Data tensor output (output)
  * @param margin                   Margin (input)
  * @param divisor                  Divisor (input)
  * @return                         miopenStatus_t
@@ -4985,92 +4985,92 @@ miopenGetHingeEmbeddingLossForwardWorkspaceSize(miopenHandle_t handle,
 MIOPEN_EXPORT miopenStatus_t miopenHingeEmbeddingLossForward(miopenHandle_t handle,
                                                              void* workspace,
                                                              size_t workspaceSizeInBytes,
-                                                             miopenTensorDescriptor_t iDesc,
-                                                             const void* i,
-                                                             miopenTensorDescriptor_t tDesc,
-                                                             const void* t,
-                                                             miopenTensorDescriptor_t oDesc,
-                                                             void* o,
+                                                             miopenTensorDescriptor_t inputDesc,
+                                                             const void* input,
+                                                             miopenTensorDescriptor_t targetDesc,
+                                                             const void* target,
+                                                             miopenTensorDescriptor_t outputDesc,
+                                                             void* output,
                                                              float margin,
                                                              float divisor);
 
 /*! @brief Execute a HingeEmbeddingLoss backward layer
  *
  * @param handle                   MIOpen handle (input)
- * @param iDesc                    Tensor descriptor for input tensor (input)
- * @param i                        Data tensor input (input)
- * @param tDesc                    Tensor descriptor for target tensor (input)
- * @param t                        Data tensor target (input)
- * @param doDesc                   Tensor descriptor for output gradient (input)
- * @param dO                       Gradient of output (input)
- * @param diDesc                   Tensor descriptor for input gradient (input)
- * @param dI                       Gradient of input (output)
- * @param dtDesc                   Tensor descriptor for target gradient (input)
- * @param dT                       Gradient of target (output)
+ * @param inputDesc                Tensor descriptor for input tensor (input)
+ * @param input                    Data tensor input (input)
+ * @param targetDesc               Tensor descriptor for target tensor (input)
+ * @param target                   Data tensor target (input)
+ * @param doutputDesc              Tensor descriptor for output gradient (input)
+ * @param doutput                  Gradient of output (input)
+ * @param dinputDesc               Tensor descriptor for input gradient (input)
+ * @param dinput                   Gradient of input (output)
+ * @param dtargetDesc              Tensor descriptor for target gradient (input)
+ * @param dtarget                  Gradient of target (output)
  * @param margin                   Margin (input)
  * @param divisor                  Divisor (input)
  * @return                         miopenStatus_t
  */
 MIOPEN_EXPORT miopenStatus_t miopenHingeEmbeddingLossBackward(miopenHandle_t handle,
-                                                              miopenTensorDescriptor_t iDesc,
-                                                              const void* i,
-                                                              miopenTensorDescriptor_t tDesc,
-                                                              const void* t,
-                                                              miopenTensorDescriptor_t doDesc,
-                                                              const void* dO,
-                                                              miopenTensorDescriptor_t diDesc,
-                                                              void* dI,
+                                                              miopenTensorDescriptor_t inputDesc,
+                                                              const void* input,
+                                                              miopenTensorDescriptor_t targetDesc,
+                                                              const void* target,
+                                                              miopenTensorDescriptor_t doutputDesc,
+                                                              const void* doutput,
+                                                              miopenTensorDescriptor_t dinputDesc,
+                                                              void* dinput,
                                                               float margin,
                                                               float divisor);
 
 /*! @brief Execute a HingeEmbeddingLoss unreduced forward layer
  *
  * @param handle                   MIOpen handle (input)
- * @param iDesc                    Tensor descriptor for input tensor (input)
- * @param i                        Data tensor input (input)
- * @param tDesc                    Tensor descriptor for target tensor (input)
- * @param t                        Data tensor target (input)
- * @param oDesc                    Tensor descriptor for output tensor (input)
- * @param o                        Data tensor output (output)
+ * @param inputDesc                Tensor descriptor for input tensor (input)
+ * @param input                    Data tensor input (input)
+ * @param targetDesc               Tensor descriptor for target tensor (input)
+ * @param target                   Data tensor target (input)
+ * @param outputDesc               Tensor descriptor for output tensor (input)
+ * @param output                   Data tensor output (output)
  * @param margin                   Margin (input)
  * @return                         miopenStatus_t
  */
 MIOPEN_EXPORT miopenStatus_t
 miopenHingeEmbeddingLossUnreducedForward(miopenHandle_t handle,
-                                         miopenTensorDescriptor_t iDesc,
-                                         const void* i,
-                                         miopenTensorDescriptor_t tDesc,
-                                         const void* t,
-                                         miopenTensorDescriptor_t oDesc,
-                                         void* o,
+                                         miopenTensorDescriptor_t inputDesc,
+                                         const void* input,
+                                         miopenTensorDescriptor_t targetDesc,
+                                         const void* target,
+                                         miopenTensorDescriptor_t outputDesc,
+                                         void* output,
                                          float margin);
 
 /*! @brief Execute a HingeEmbeddingLoss unreduced backward layer
  *
  * @param handle                   MIOpen handle (input)
- * @param iDesc                    Tensor descriptor for input tensor (input)
- * @param i                        Data tensor input (input)
- * @param tDesc                    Tensor descriptor for target tensor (input)
- * @param t                        Data tensor target (input)
- * @param doDesc                   Tensor descriptor for output gradient (input)
- * @param dO                       Gradient of output (input)
- * @param diDesc                   Tensor descriptor for input gradient (input)
- * @param dI                       Gradient of input (output)
- * @param dtDesc                   Tensor descriptor for target gradient (input)
- * @param dT                       Gradient of target (output)
+ * @param inputDesc                Tensor descriptor for input tensor (input)
+ * @param input                    Data tensor input (input)
+ * @param targetDesc               Tensor descriptor for target tensor (input)
+ * @param target                   Data tensor target (input)
+ * @param doutputDesc              Tensor descriptor for output gradient (input)
+ * @param doutput                  Gradient of output (input)
+ * @param dinputDesc               Tensor descriptor for input gradient (input)
+ * @param dinput                   Gradient of input (output)
+ * @param dtargetDesc              Tensor descriptor for target gradient (input)
+ * @param dtarget                  Gradient of target (output)
  * @param margin                   Margin (input)
  * @return                         miopenStatus_t
  */
 MIOPEN_EXPORT miopenStatus_t
 miopenHingeEmbeddingLossUnreducedBackward(miopenHandle_t handle,
-                                          miopenTensorDescriptor_t iDesc,
-                                          const void* i,
-                                          miopenTensorDescriptor_t tDesc,
-                                          const void* t,
-                                          miopenTensorDescriptor_t doDesc,
-                                          const void* dO,
-                                          miopenTensorDescriptor_t diDesc,
-                                          void* dI,
+                                          miopenTensorDescriptor_t inputDesc,
+                                          const void* input,
+                                          miopenTensorDescriptor_t targetDesc,
+                                          const void* target,
+                                          miopenTensorDescriptor_t doutputDesc,
+                                          const void* doutput,
+                                          miopenTensorDescriptor_t dinputDesc,
+                                          void* dinput,
                                           float margin);
 
 /** @} */

@@ -43,90 +43,94 @@ bool checkSameLength(const TensorDescriptor& x, const TensorDescriptor& y);
 
 struct HingeEmbeddingLossProblemDescription : ProblemDescriptionBase
 {
-    HingeEmbeddingLossProblemDescription(const TensorDescriptor& iDesc_,
-                                         const TensorDescriptor& tDesc_)
-        : iDesc(iDesc_), tDesc(tDesc_)
+    HingeEmbeddingLossProblemDescription(const TensorDescriptor& inputDesc_,
+                                         const TensorDescriptor& targetDesc_)
+        : inputDesc(inputDesc_), targetDesc(targetDesc_)
     {
-        if(!checkSameLength(iDesc, tDesc))
+        if(!checkSameLength(inputDesc, targetDesc))
             MIOPEN_THROW(miopenStatusBadParm, "Loss: Input, target tensor sizes do not match.");
     }
 
-    const TensorDescriptor& GetIDesc() const { return iDesc; }
-    const TensorDescriptor& GetTDesc() const { return tDesc; }
+    const TensorDescriptor& GetInputDesc() const { return inputDesc; }
+    const TensorDescriptor& GetTargetDesc() const { return targetDesc; }
 
 public:
-    TensorDescriptor iDesc;
-    TensorDescriptor tDesc;
+    TensorDescriptor inputDesc;
+    TensorDescriptor targetDesc;
 };
 
 struct HingeEmbeddingLossFwdProblemDescription : HingeEmbeddingLossProblemDescription
 {
-    HingeEmbeddingLossFwdProblemDescription(const TensorDescriptor& iDesc_,
-                                            const TensorDescriptor& tDesc_,
-                                            const TensorDescriptor& oDesc_)
-        : HingeEmbeddingLossProblemDescription(iDesc_, tDesc_), oDesc(oDesc_)
+    HingeEmbeddingLossFwdProblemDescription(const TensorDescriptor& inputDesc_,
+                                            const TensorDescriptor& targetDesc_,
+                                            const TensorDescriptor& outputDesc_)
+        : HingeEmbeddingLossProblemDescription(inputDesc_, targetDesc_), outputDesc(outputDesc_)
     {
     }
 
     NetworkConfig MakeNetworkConfig() const override;
-    const TensorDescriptor& GetODesc() const { return oDesc; }
+    const TensorDescriptor& GetOutputDesc() const { return outputDesc; }
 
 public:
-    TensorDescriptor oDesc;
+    TensorDescriptor outputDesc;
 };
 
 struct HingeEmbeddingLossBwdProblemDescription : HingeEmbeddingLossProblemDescription
 {
-    HingeEmbeddingLossBwdProblemDescription(const TensorDescriptor& iDesc_,
-                                            const TensorDescriptor& tDesc_,
-                                            const TensorDescriptor& dODesc_,
-                                            const TensorDescriptor& dIDesc_)
-        : HingeEmbeddingLossProblemDescription(iDesc_, tDesc_), dODesc(dODesc_), dIDesc(dIDesc_)
+    HingeEmbeddingLossBwdProblemDescription(const TensorDescriptor& inputDesc_,
+                                            const TensorDescriptor& targetDesc_,
+                                            const TensorDescriptor& doutputDesc_,
+                                            const TensorDescriptor& dinputDesc_)
+        : HingeEmbeddingLossProblemDescription(inputDesc_, targetDesc_),
+          doutputDesc(doutputDesc_),
+          dinputDesc(dinputDesc_)
     {
     }
 
     NetworkConfig MakeNetworkConfig() const override;
-    const TensorDescriptor& GetdODesc() const { return dODesc; }
-    const TensorDescriptor& GetdIDesc() const { return dIDesc; }
+    const TensorDescriptor& GetDoutputDesc() const { return doutputDesc; }
+    const TensorDescriptor& GetDinputDesc() const { return dinputDesc; }
 
 public:
-    TensorDescriptor dODesc;
-    TensorDescriptor dIDesc;
+    TensorDescriptor doutputDesc;
+    TensorDescriptor dinputDesc;
 };
 
 struct HingeEmbeddingLossUnreducedFwdProblemDescription : HingeEmbeddingLossProblemDescription
 {
-    HingeEmbeddingLossUnreducedFwdProblemDescription(const TensorDescriptor& iDesc_,
-                                                     const TensorDescriptor& tDesc_,
-                                                     const TensorDescriptor& oDesc_)
-        : HingeEmbeddingLossProblemDescription(iDesc_, tDesc_), oDesc(oDesc_)
+    HingeEmbeddingLossUnreducedFwdProblemDescription(const TensorDescriptor& inputDesc_,
+                                                     const TensorDescriptor& targetDesc_,
+                                                     const TensorDescriptor& outputDesc_)
+        : HingeEmbeddingLossProblemDescription(inputDesc_, targetDesc_), outputDesc(outputDesc_)
     {
     }
 
     NetworkConfig MakeNetworkConfig() const override;
-    const TensorDescriptor& GetODesc() const { return oDesc; }
+    const TensorDescriptor& GetOutputDesc() const { return outputDesc; }
 
 public:
-    TensorDescriptor oDesc;
+    TensorDescriptor outputDesc;
 };
 
 struct HingeEmbeddingLossUnreducedBwdProblemDescription : HingeEmbeddingLossProblemDescription
 {
-    HingeEmbeddingLossUnreducedBwdProblemDescription(const TensorDescriptor& iDesc_,
-                                                     const TensorDescriptor& tDesc_,
-                                                     const TensorDescriptor& dODesc_,
-                                                     const TensorDescriptor& dIDesc_)
-        : HingeEmbeddingLossProblemDescription(iDesc_, tDesc_), dODesc(dODesc_), dIDesc(dIDesc_)
+    HingeEmbeddingLossUnreducedBwdProblemDescription(const TensorDescriptor& inputDesc_,
+                                                     const TensorDescriptor& targetDesc_,
+                                                     const TensorDescriptor& doutputDesc_,
+                                                     const TensorDescriptor& dinputDesc_)
+        : HingeEmbeddingLossProblemDescription(inputDesc_, targetDesc_),
+          doutputDesc(doutputDesc_),
+          dinputDesc(dinputDesc_)
     {
     }
 
     NetworkConfig MakeNetworkConfig() const override;
-    const TensorDescriptor& GetdODesc() const { return dODesc; }
-    const TensorDescriptor& GetdIDesc() const { return dIDesc; }
+    const TensorDescriptor& GetDoutputDesc() const { return doutputDesc; }
+    const TensorDescriptor& GetDinputDesc() const { return dinputDesc; }
 
 public:
-    TensorDescriptor dODesc;
-    TensorDescriptor dIDesc;
+    TensorDescriptor doutputDesc;
+    TensorDescriptor dinputDesc;
 };
 
 } // namespace loss

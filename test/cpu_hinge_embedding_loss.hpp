@@ -53,22 +53,22 @@ inline tensor_view_5d_t get_inner_expanded_tv(const miopen::TensorDescriptor Des
 }
 
 template <class TIO, class TT>
-void cpu_hinge_embedding_loss_unreduced_forward(tensor<TIO> I,
-                                                tensor<TT> T,
+void cpu_hinge_embedding_loss_unreduced_forward(tensor<TIO> input,
+                                                tensor<TT> target,
                                                 tensor<TIO>& ref_output,
                                                 float margin = 1)
 {
-    tensor_view_5d_t I_tv = get_inner_expanded_tv(I.desc);
-    tensor_view_5d_t T_tv = get_inner_expanded_tv(T.desc);
-    size_t inputSize      = I.desc.GetElementSize();
+    tensor_view_5d_t input_tv  = get_inner_expanded_tv(input.desc);
+    tensor_view_5d_t target_tv = get_inner_expanded_tv(target.desc);
+    size_t inputSize           = input.desc.GetElementSize();
     size_t n[5];
 
     for(size_t idx = 0; idx < inputSize; ++idx)
     {
-        GET_NCDHW(n[0], n[1], n[2], n[3], n[4], idx, I_tv);
+        GET_NCDHW(n[0], n[1], n[2], n[3], n[4], idx, input_tv);
 
-        TIO i = TV_5D_AT(I, n[0], n[1], n[2], n[3], n[4]);
-        TT t  = TV_5D_AT(T, n[0], n[1], n[2], n[3], n[4]);
+        TIO i = TV_5D_AT(input, n[0], n[1], n[2], n[3], n[4]);
+        TT t  = TV_5D_AT(target, n[0], n[1], n[2], n[3], n[4]);
 
         if(t == 1)
             ref_output[idx] = i;
@@ -78,56 +78,59 @@ void cpu_hinge_embedding_loss_unreduced_forward(tensor<TIO> I,
 }
 
 template <class TIO, class TT>
-void cpu_hinge_embedding_loss_unreduced_backward(
-    tensor<TIO> I, tensor<TT> T, tensor<TIO> dO, tensor<TIO>& dI, float margin = 1)
+void cpu_hinge_embedding_loss_unreduced_backward(tensor<TIO> input,
+                                                 tensor<TT> target,
+                                                 tensor<TIO> doutput,
+                                                 tensor<TIO>& dinput,
+                                                 float margin = 1)
 {
-    tensor_view_5d_t I_tv  = get_inner_expanded_tv(I.desc);
-    tensor_view_5d_t T_tv  = get_inner_expanded_tv(T.desc);
-    tensor_view_5d_t dO_tv = get_inner_expanded_tv(dO.desc);
-    size_t inputSize       = I.desc.GetElementSize();
+    tensor_view_5d_t input_tv   = get_inner_expanded_tv(input.desc);
+    tensor_view_5d_t target_tv  = get_inner_expanded_tv(target.desc);
+    tensor_view_5d_t doutput_tv = get_inner_expanded_tv(doutput.desc);
+    size_t inputSize            = input.desc.GetElementSize();
     size_t n[5];
 
     for(size_t idx = 0; idx < inputSize; ++idx)
     {
-        GET_NCDHW(n[0], n[1], n[2], n[3], n[4], idx, I_tv);
+        GET_NCDHW(n[0], n[1], n[2], n[3], n[4], idx, input_tv);
 
-        TIO i = TV_5D_AT(I, n[0], n[1], n[2], n[3], n[4]);
-        TT t  = TV_5D_AT(T, n[0], n[1], n[2], n[3], n[4]);
+        TIO i = TV_5D_AT(input, n[0], n[1], n[2], n[3], n[4]);
+        TT t  = TV_5D_AT(target, n[0], n[1], n[2], n[3], n[4]);
 
         if(t == 1)
         {
-            dI[idx] = TV_5D_AT(dO, n[0], n[1], n[2], n[3], n[4]);
+            dinput[idx] = TV_5D_AT(doutput, n[0], n[1], n[2], n[3], n[4]);
         }
         else
         {
             if(margin - i > 0)
-                dI[idx] = -TV_5D_AT(dO, n[0], n[1], n[2], n[3], n[4]);
+                dinput[idx] = -TV_5D_AT(doutput, n[0], n[1], n[2], n[3], n[4]);
             else
-                dI[idx] = 0.0f;
+                dinput[idx] = 0.0f;
         }
     }
 }
 
 template <class TIO, class TT>
-void cpu_hinge_embedding_loss_forward(tensor<TIO> I,
-                                      tensor<TT> T,
+void cpu_hinge_embedding_loss_forward(tensor<TIO> input,
+                                      tensor<TT> target,
                                       tensor<TIO>& workspace,
                                       tensor<TIO>& ref_output,
                                       float margin  = 1,
                                       float divisor = 1)
 {
-    tensor_view_5d_t I_tv = get_inner_expanded_tv(I.desc);
-    tensor_view_5d_t T_tv = get_inner_expanded_tv(T.desc);
-    size_t size           = I.desc.GetElementSize();
+    tensor_view_5d_t input_tv  = get_inner_expanded_tv(input.desc);
+    tensor_view_5d_t target_tv = get_inner_expanded_tv(target.desc);
+    size_t size                = input.desc.GetElementSize();
     size_t n[5];
 
     // Compute loss in each elem
     for(size_t idx = 0; idx < size; ++idx)
     {
-        GET_NCDHW(n[0], n[1], n[2], n[3], n[4], idx, I_tv);
+        GET_NCDHW(n[0], n[1], n[2], n[3], n[4], idx, input_tv);
 
-        TIO i = TV_5D_AT(I, n[0], n[1], n[2], n[3], n[4]);
-        TT t  = TV_5D_AT(T, n[0], n[1], n[2], n[3], n[4]);
+        TIO i = TV_5D_AT(input, n[0], n[1], n[2], n[3], n[4]);
+        TT t  = TV_5D_AT(target, n[0], n[1], n[2], n[3], n[4]);
 
         if(t == 1)
             workspace[idx] = i / divisor;
@@ -161,37 +164,37 @@ void cpu_hinge_embedding_loss_forward(tensor<TIO> I,
 }
 
 template <class TIO, class TT>
-void cpu_hinge_embedding_loss_backward(tensor<TIO> I,
-                                       tensor<TT> T,
-                                       tensor<TIO> dO,
-                                       tensor<TIO>& dI,
+void cpu_hinge_embedding_loss_backward(tensor<TIO> input,
+                                       tensor<TT> target,
+                                       tensor<TIO> doutput,
+                                       tensor<TIO>& dinput,
                                        float margin  = 1,
                                        float divisor = 1)
 {
-    tensor_view_5d_t I_tv  = get_inner_expanded_tv(I.desc);
-    tensor_view_5d_t T_tv  = get_inner_expanded_tv(T.desc);
-    tensor_view_5d_t dO_tv = get_inner_expanded_tv(dO.desc);
-    size_t inputSize       = I.desc.GetElementSize();
+    tensor_view_5d_t input_tv   = get_inner_expanded_tv(input.desc);
+    tensor_view_5d_t target_tv  = get_inner_expanded_tv(target.desc);
+    tensor_view_5d_t doutput_tv = get_inner_expanded_tv(doutput.desc);
+    size_t inputSize            = input.desc.GetElementSize();
     size_t n[5];
 
     for(size_t idx = 0; idx < inputSize; ++idx)
     {
-        GET_NCDHW(n[0], n[1], n[2], n[3], n[4], idx, I_tv);
+        GET_NCDHW(n[0], n[1], n[2], n[3], n[4], idx, input_tv);
 
-        TIO i = TV_5D_AT(I, n[0], n[1], n[2], n[3], n[4]);
-        TT t  = TV_5D_AT(T, n[0], n[1], n[2], n[3], n[4]);
-        TIO o = TV_5D_AT(dO, 0, 0, 0, 0, 0);
+        TIO i = TV_5D_AT(input, n[0], n[1], n[2], n[3], n[4]);
+        TT t  = TV_5D_AT(target, n[0], n[1], n[2], n[3], n[4]);
+        TIO o = TV_5D_AT(doutput, 0, 0, 0, 0, 0);
 
         if(t == 1)
         {
-            dI[idx] = o / divisor;
+            dinput[idx] = o / divisor;
         }
         else
         {
             if(margin - i > 0)
-                dI[idx] = -o / divisor;
+                dinput[idx] = -o / divisor;
             else
-                dI[idx] = 0.0f;
+                dinput[idx] = 0.0f;
         }
     }
 }

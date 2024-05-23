@@ -100,23 +100,23 @@ LossSum(const IN_OUT_TYPE* __restrict__ input, IN_OUT_TYPE* __restrict__ output,
 }
 
 template <typename TIO, typename TT>
-__device__ void hingeEmbeddingLossFwd(const TIO* I,
-                                      TT* T,
-                                      TIO* O,
+__device__ void hingeEmbeddingLossFwd(const TIO* input,
+                                      TT* target,
+                                      TIO* output,
                                       float margin,
                                       float divisor,
-                                      tensor_view_5d_t I_tv,
-                                      tensor_view_5d_t T_tv)
+                                      tensor_view_5d_t input_tv,
+                                      tensor_view_5d_t target_tv)
 {
     size_t gid = threadIdx.x + blockIdx.x * blockDim.x;
     size_t n[5];
-    GET_NCDHW(n[0], n[1], n[2], n[3], n[4], gid, I_tv);
+    GET_NCDHW(n[0], n[1], n[2], n[3], n[4], gid, input_tv);
 
-    if(n[0] >= I_tv.size[0])
+    if(n[0] >= input_tv.size[0])
         return;
 
-    TIO i = TV_5D_AT(I, n[0], n[1], n[2], n[3], n[4]);
-    TT t  = TV_5D_AT(T, n[0], n[1], n[2], n[3], n[4]);
+    TIO i = TV_5D_AT(input, n[0], n[1], n[2], n[3], n[4]);
+    TT t  = TV_5D_AT(target, n[0], n[1], n[2], n[3], n[4]);
 
     FLOAT_ACCUM loss;
 
@@ -125,81 +125,87 @@ __device__ void hingeEmbeddingLossFwd(const TIO* I,
     else
         loss = fmaxf(0.0f, margin - CVT_FLOAT2ACCUM(i));
 
-    O[gid] = CVT_ACCUM2FLOAT(loss / divisor);
+    output[gid] = CVT_ACCUM2FLOAT(loss / divisor);
 }
 
-extern "C" __global__ void HingeEmbeddingLossFwd(const IN_OUT_TYPE* I,
-                                                 TARGET_TYPE* T,
-                                                 IN_OUT_TYPE* O,
+extern "C" __global__ void HingeEmbeddingLossFwd(const IN_OUT_TYPE* input,
+                                                 TARGET_TYPE* target,
+                                                 IN_OUT_TYPE* output,
                                                  float margin,
                                                  float divisor,
-                                                 tensor_view_5d_t I_tv,
-                                                 tensor_view_5d_t T_tv)
+                                                 tensor_view_5d_t input_tv,
+                                                 tensor_view_5d_t target_tv)
 {
-    hingeEmbeddingLossFwd<IN_OUT_TYPE, TARGET_TYPE>(I, T, O, margin, divisor, I_tv, T_tv);
+    hingeEmbeddingLossFwd<IN_OUT_TYPE, TARGET_TYPE>(
+        input, target, output, margin, divisor, input_tv, target_tv);
 }
 
 template <typename TIO, typename TT>
-__device__ void hingeEmbeddingLossBwd(const TIO* I,
-                                      const TT* T,
-                                      const TIO* dO,
-                                      TIO* dI,
+__device__ void hingeEmbeddingLossBwd(const TIO* input,
+                                      const TT* target,
+                                      const TIO* doutput,
+                                      TIO* dinput,
                                       float margin,
                                       float divisor,
-                                      tensor_view_5d_t I_tv,
-                                      tensor_view_5d_t T_tv,
-                                      tensor_view_5d_t dO_tv)
+                                      tensor_view_5d_t input_tv,
+                                      tensor_view_5d_t target_tv,
+                                      tensor_view_5d_t doutput_tv)
 {
     size_t gid = threadIdx.x + blockIdx.x * blockDim.x;
     size_t n[5];
-    GET_NCDHW(n[0], n[1], n[2], n[3], n[4], gid, I_tv);
+    GET_NCDHW(n[0], n[1], n[2], n[3], n[4], gid, input_tv);
 
-    if(n[0] >= I_tv.size[0])
+    if(n[0] >= input_tv.size[0])
         return;
 
-    TIO i = TV_5D_AT(I, n[0], n[1], n[2], n[3], n[4]);
-    TT t  = TV_5D_AT(T, n[0], n[1], n[2], n[3], n[4]);
+    TIO i = TV_5D_AT(input, n[0], n[1], n[2], n[3], n[4]);
+    TT t  = TV_5D_AT(target, n[0], n[1], n[2], n[3], n[4]);
 
     if(t == 1)
     {
-        dI[gid] = CVT_ACCUM2FLOAT(CVT_FLOAT2ACCUM(TV_5D_AT(dO, 0, 0, 0, 0, 0)) / divisor);
+        dinput[gid] = CVT_ACCUM2FLOAT(CVT_FLOAT2ACCUM(TV_5D_AT(doutput, 0, 0, 0, 0, 0)) / divisor);
     }
     else
     {
         if(margin - CVT_FLOAT2ACCUM(i) > 0)
-            dI[gid] = CVT_ACCUM2FLOAT(-CVT_FLOAT2ACCUM(TV_5D_AT(dO, 0, 0, 0, 0, 0)) / divisor);
+            dinput[gid] =
+                CVT_ACCUM2FLOAT(-CVT_FLOAT2ACCUM(TV_5D_AT(doutput, 0, 0, 0, 0, 0)) / divisor);
         else
-            dI[gid] = TIO(0);
+            dinput[gid] = TIO(0);
     }
 }
 
-extern "C" __global__ void HingeEmbeddingLossBwd(const IN_OUT_TYPE* I,
-                                                 TARGET_TYPE* T,
-                                                 IN_OUT_TYPE* dO,
-                                                 IN_OUT_TYPE* dI,
+extern "C" __global__ void HingeEmbeddingLossBwd(const IN_OUT_TYPE* input,
+                                                 TARGET_TYPE* target,
+                                                 IN_OUT_TYPE* doutput,
+                                                 IN_OUT_TYPE* dinput,
                                                  float margin,
                                                  float divisor,
-                                                 tensor_view_5d_t I_tv,
-                                                 tensor_view_5d_t T_tv,
-                                                 tensor_view_5d_t dO_tv)
+                                                 tensor_view_5d_t input_tv,
+                                                 tensor_view_5d_t target_tv,
+                                                 tensor_view_5d_t doutput_tv)
 {
     hingeEmbeddingLossBwd<IN_OUT_TYPE, TARGET_TYPE>(
-        I, T, dO, dI, margin, divisor, I_tv, T_tv, dO_tv);
+        input, target, doutput, dinput, margin, divisor, input_tv, target_tv, doutput_tv);
 }
 
 template <typename TIO, typename TT>
-__device__ void hingeEmbeddingLossUnreducedFwd(
-    const TIO* I, TT* T, TIO* O, float margin, tensor_view_5d_t I_tv, tensor_view_5d_t T_tv)
+__device__ void hingeEmbeddingLossUnreducedFwd(const TIO* input,
+                                               TT* target,
+                                               TIO* output,
+                                               float margin,
+                                               tensor_view_5d_t input_tv,
+                                               tensor_view_5d_t target_tv)
 {
     size_t gid = threadIdx.x + blockIdx.x * blockDim.x;
     size_t n[5];
-    GET_NCDHW(n[0], n[1], n[2], n[3], n[4], gid, I_tv);
+    GET_NCDHW(n[0], n[1], n[2], n[3], n[4], gid, input_tv);
 
-    if(n[0] >= I_tv.size[0])
+    if(n[0] >= input_tv.size[0])
         return;
 
-    TIO i = TV_5D_AT(I, n[0], n[1], n[2], n[3], n[4]);
-    TT t  = TV_5D_AT(T, n[0], n[1], n[2], n[3], n[4]);
+    TIO i = TV_5D_AT(input, n[0], n[1], n[2], n[3], n[4]);
+    TT t  = TV_5D_AT(target, n[0], n[1], n[2], n[3], n[4]);
 
     FLOAT_ACCUM loss;
 
@@ -208,61 +214,63 @@ __device__ void hingeEmbeddingLossUnreducedFwd(
     else
         loss = fmaxf(0.0f, margin - CVT_FLOAT2ACCUM(i));
 
-    O[gid] = CVT_ACCUM2FLOAT(loss);
+    output[gid] = CVT_ACCUM2FLOAT(loss);
 }
 
-extern "C" __global__ void HingeEmbeddingLossUnreducedFwd(const IN_OUT_TYPE* I,
-                                                          TARGET_TYPE* T,
-                                                          IN_OUT_TYPE* O,
+extern "C" __global__ void HingeEmbeddingLossUnreducedFwd(const IN_OUT_TYPE* input,
+                                                          TARGET_TYPE* target,
+                                                          IN_OUT_TYPE* output,
                                                           float margin,
-                                                          tensor_view_5d_t I_tv,
-                                                          tensor_view_5d_t T_tv)
+                                                          tensor_view_5d_t input_tv,
+                                                          tensor_view_5d_t target_tv)
 {
-    hingeEmbeddingLossUnreducedFwd<IN_OUT_TYPE, TARGET_TYPE>(I, T, O, margin, I_tv, T_tv);
+    hingeEmbeddingLossUnreducedFwd<IN_OUT_TYPE, TARGET_TYPE>(
+        input, target, output, margin, input_tv, target_tv);
 }
 
 template <typename TIO, typename TT>
-__device__ void hingeEmbeddingLossUnreducedBwd(const TIO* I,
-                                               const TT* T,
-                                               const TIO* dO,
-                                               TIO* dI,
+__device__ void hingeEmbeddingLossUnreducedBwd(const TIO* input,
+                                               const TT* target,
+                                               const TIO* doutput,
+                                               TIO* dinput,
                                                float margin,
-                                               tensor_view_5d_t I_tv,
-                                               tensor_view_5d_t T_tv,
-                                               tensor_view_5d_t dO_tv)
+                                               tensor_view_5d_t input_tv,
+                                               tensor_view_5d_t target_tv,
+                                               tensor_view_5d_t doutput_tv)
 {
     size_t gid = threadIdx.x + blockIdx.x * blockDim.x;
     size_t n[5];
-    GET_NCDHW(n[0], n[1], n[2], n[3], n[4], gid, I_tv);
+    GET_NCDHW(n[0], n[1], n[2], n[3], n[4], gid, input_tv);
 
-    if(n[0] >= I_tv.size[0])
+    if(n[0] >= input_tv.size[0])
         return;
 
-    TIO i = TV_5D_AT(I, n[0], n[1], n[2], n[3], n[4]);
-    TT t  = TV_5D_AT(T, n[0], n[1], n[2], n[3], n[4]);
+    TIO i = TV_5D_AT(input, n[0], n[1], n[2], n[3], n[4]);
+    TT t  = TV_5D_AT(target, n[0], n[1], n[2], n[3], n[4]);
 
     if(t == 1)
     {
-        dI[gid] = TV_5D_AT(dO, n[0], n[1], n[2], n[3], n[4]);
+        dinput[gid] = TV_5D_AT(doutput, n[0], n[1], n[2], n[3], n[4]);
     }
     else
     {
         if(margin - CVT_FLOAT2ACCUM(i) > 0)
-            dI[gid] = CVT_ACCUM2FLOAT(-CVT_FLOAT2ACCUM(TV_5D_AT(dO, n[0], n[1], n[2], n[3], n[4])));
+            dinput[gid] =
+                CVT_ACCUM2FLOAT(-CVT_FLOAT2ACCUM(TV_5D_AT(doutput, n[0], n[1], n[2], n[3], n[4])));
         else
-            dI[gid] = TIO(0);
+            dinput[gid] = TIO(0);
     }
 }
 
-extern "C" __global__ void HingeEmbeddingLossUnreducedBwd(const IN_OUT_TYPE* I,
-                                                          TARGET_TYPE* T,
-                                                          IN_OUT_TYPE* dO,
-                                                          IN_OUT_TYPE* dI,
+extern "C" __global__ void HingeEmbeddingLossUnreducedBwd(const IN_OUT_TYPE* input,
+                                                          TARGET_TYPE* target,
+                                                          IN_OUT_TYPE* doutput,
+                                                          IN_OUT_TYPE* dinput,
                                                           float margin,
-                                                          tensor_view_5d_t I_tv,
-                                                          tensor_view_5d_t T_tv,
-                                                          tensor_view_5d_t dO_tv)
+                                                          tensor_view_5d_t input_tv,
+                                                          tensor_view_5d_t target_tv,
+                                                          tensor_view_5d_t doutput_tv)
 {
     hingeEmbeddingLossUnreducedBwd<IN_OUT_TYPE, TARGET_TYPE>(
-        I, T, dO, dI, margin, I_tv, T_tv, dO_tv);
+        input, target, doutput, dinput, margin, input_tv, target_tv, doutput_tv);
 }

@@ -86,7 +86,7 @@ bool HingeEmbeddingLossFwd::IsApplicable(
     const ExecutionContext& /*context*/,
     const miopen::loss::HingeEmbeddingLossFwdProblemDescription& problem) const
 {
-    if(problem.GetIDesc().GetSize() > 5)
+    if(problem.GetInputDesc().GetSize() > 5)
         return false;
     return true;
 }
@@ -98,10 +98,10 @@ ConvSolution HingeEmbeddingLossFwd::GetSolution(
     std::ignore = context;
     auto result = ConvSolution{miopenStatusSuccess};
 
-    auto dtype        = problem.GetODesc().GetType();
-    auto in_dtype     = miopen::GetDataType(problem.GetIDesc().GetType());
-    auto target_dtype = miopen::GetDataType(problem.GetTDesc().GetType());
-    auto size         = problem.GetIDesc().GetElementSize();
+    auto dtype        = problem.GetOutputDesc().GetType();
+    auto in_dtype     = miopen::GetDataType(problem.GetInputDesc().GetType());
+    auto target_dtype = miopen::GetDataType(problem.GetTargetDesc().GetType());
+    auto size         = problem.GetInputDesc().GetElementSize();
 
     const auto build_params = KernelBuildParameters{
         {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
@@ -139,15 +139,15 @@ ConvSolution HingeEmbeddingLossFwd::GetSolution(
             /* Phase 1: Calc loss for each element. */
             {
                 decltype(auto) kernel = handle_.Run(kernels.front());
-                auto I_tv             = get_inner_expanded_tv(deref(params.iDesc));
-                auto T_tv             = get_inner_expanded_tv(deref(params.tDesc));
-                kernel(params.i,
-                       params.t,
+                auto input_tv         = get_inner_expanded_tv(deref(params.inputDesc));
+                auto target_tv        = get_inner_expanded_tv(deref(params.targetDesc));
+                kernel(params.input,
+                       params.target,
                        params.workspace,
                        params.margin,
                        params.divisor,
-                       I_tv,
-                       T_tv);
+                       input_tv,
+                       target_tv);
             }
             if(handle_.IsProfilingEnabled())
             {
@@ -155,11 +155,12 @@ ConvSolution HingeEmbeddingLossFwd::GetSolution(
             }
 
             /* Phase 2: Reduce */
-            auto reduce_in  = params.workspace;
-            auto reduce_out = static_cast<Data_t>(static_cast<char*>(params.workspace) +
-                                                  deref(params.iDesc).GetElementSize() *
-                                                      get_data_size(deref(params.oDesc).GetType()));
-            auto size       = deref(params.iDesc).GetElementSize();
+            auto reduce_in = params.workspace;
+            auto reduce_out =
+                static_cast<Data_t>(static_cast<char*>(params.workspace) +
+                                    deref(params.inputDesc).GetElementSize() *
+                                        get_data_size(deref(params.outputDesc).GetType()));
+            auto size = deref(params.inputDesc).GetElementSize();
             for(int i = 1; i < kernels.size(); ++i)
             {
                 decltype(auto) kernel = handle_.Run(kernels[i]);
@@ -170,7 +171,7 @@ ConvSolution HingeEmbeddingLossFwd::GetSolution(
                 }
                 else
                 {
-                    kernel(reduce_in, params.o, size);
+                    kernel(reduce_in, params.output, size);
                 }
                 size = AlignUp(size, LOCAL_SIZE_REDUCE_FWD) / LOCAL_SIZE_REDUCE_FWD;
             }
@@ -190,9 +191,10 @@ std::size_t HingeEmbeddingLossFwd::GetWorkspaceSize(
     const ExecutionContext& /*context*/,
     const miopen::loss::HingeEmbeddingLossFwdProblemDescription& problem) const
 {
-    size_t inputElements  = problem.GetIDesc().GetElementSize();
+    size_t inputElements  = problem.GetInputDesc().GetElementSize();
     size_t reduceElements = (inputElements + LOCAL_SIZE_REDUCE_FWD - 1) / LOCAL_SIZE_REDUCE_FWD;
-    size_t res = (inputElements + reduceElements) * get_data_size(problem.GetODesc().GetType());
+    size_t res =
+        (inputElements + reduceElements) * get_data_size(problem.GetOutputDesc().GetType());
 
     return res;
 }
@@ -201,7 +203,7 @@ bool HingeEmbeddingLossUnreducedFwd::IsApplicable(
     const ExecutionContext& /*context*/,
     const miopen::loss::HingeEmbeddingLossUnreducedFwdProblemDescription& problem) const
 {
-    if(problem.GetIDesc().GetSize() > 5)
+    if(problem.GetInputDesc().GetSize() > 5)
         return false;
     return true;
 }
@@ -214,9 +216,9 @@ ConvSolution HingeEmbeddingLossUnreducedFwd::GetSolution(
 
     auto result = ConvSolution{miopenStatusSuccess};
 
-    auto in_dtype     = miopen::GetDataType(problem.GetIDesc().GetType());
-    auto dtype        = problem.GetODesc().GetType();
-    auto target_dtype = miopen::GetDataType(problem.GetTDesc().GetType());
+    auto in_dtype     = miopen::GetDataType(problem.GetInputDesc().GetType());
+    auto dtype        = problem.GetOutputDesc().GetType();
+    auto target_dtype = miopen::GetDataType(problem.GetTargetDesc().GetType());
 
     const auto build_params = KernelBuildParameters{
         {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
@@ -228,7 +230,7 @@ ConvSolution HingeEmbeddingLossUnreducedFwd::GetSolution(
     };
 
     result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE},
-                                                         {problem.GetIDesc().GetElementSize()},
+                                                         {problem.GetInputDesc().GetElementSize()},
                                                          "MIOpenHingeEmbeddingLoss.cpp",
                                                          "HingeEmbeddingLossUnreducedFwd",
                                                          build_params));
@@ -237,10 +239,10 @@ ConvSolution HingeEmbeddingLossUnreducedFwd::GetSolution(
         return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
             decltype(auto) kernel = handle_.Run(kernels.front());
             decltype(auto) params = raw_params.CastTo<miopen::loss::UnreducedFwdInvokeParams>();
-            auto I_tv             = get_inner_expanded_tv(deref(params.iDesc));
-            auto T_tv             = get_inner_expanded_tv(deref(params.tDesc));
+            auto input_tv         = get_inner_expanded_tv(deref(params.inputDesc));
+            auto target_tv        = get_inner_expanded_tv(deref(params.targetDesc));
 
-            kernel(params.i, params.t, params.o, params.margin, I_tv, T_tv);
+            kernel(params.input, params.target, params.output, params.margin, input_tv, target_tv);
         };
     };
 
