@@ -87,6 +87,7 @@ std::vector<HingeEmbeddingLossTestCase> HingeEmbeddingLossTestConfigs()
     return {
         {1, 1, 1, 1, 10, 1, 1, "mean"},
         {2, 1, 1, 10, 10, 1, 1, "mean"},
+        {1, 1, 1, 20, 30, 1, 1, "sum"},
         {4, 1, 1, 100, 100, 1, 1, "sum"},
         {8, 3, 1, 20, 100, 1, 1, "mean"},
         {8, 3, 1, 50, 50, 1, 1, "sum"},
@@ -282,6 +283,7 @@ protected:
         ref_output = tensor<TIO>(1);
         std::fill(ref_output.begin(), ref_output.end(), 0);
 
+        config.divisor = 1;
         if(config.reduction == "mean")
         {
             config.divisor *= input.desc.GetElementSize();
@@ -368,6 +370,7 @@ protected:
         ref_dInput = tensor<TIO>{in_dims};
         std::fill(ref_dInput.begin(), ref_dInput.end(), 0);
 
+        config.divisor = 1;
         if(config.reduction == "mean")
         {
             config.divisor *= input.desc.GetElementSize();

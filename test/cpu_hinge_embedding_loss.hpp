@@ -84,7 +84,6 @@ void cpu_hinge_embedding_loss_unreduced_backward(
     tensor_view_5d_t I_tv  = get_inner_expanded_tv(I.desc);
     tensor_view_5d_t T_tv  = get_inner_expanded_tv(T.desc);
     tensor_view_5d_t dO_tv = get_inner_expanded_tv(dO.desc);
-    tensor_view_5d_t dI_tv = get_inner_expanded_tv(dI.desc);
     size_t inputSize       = I.desc.GetElementSize();
     size_t n[5];
 

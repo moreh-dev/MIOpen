@@ -66,10 +66,27 @@ inline tensor_view_5d_t get_inner_expanded_tv(const miopen::TensorDescriptor Des
     return tv_5d;
 }
 
+const auto make_hip_kernel = [](std::vector<size_t> localsize,
+                                std::vector<size_t> gridsize,
+                                std::string kernel_file,
+                                std::string kernel_name,
+                                KernelBuildParameters build_params) {
+    while(localsize.size() < 3)
+        localsize.push_back(1);
+    while(gridsize.size() < 3)
+        gridsize.push_back(1);
+    for(int i = 0; i < localsize.size(); ++i)
+        gridsize[i] = AlignUp(gridsize[i], localsize[i]);
+    return KernelInfo{
+        build_params.GenerateFor(kbp::HIP{}), localsize, gridsize, kernel_file, kernel_name};
+};
+
 bool HingeEmbeddingLossBwd::IsApplicable(
     const ExecutionContext& /*context*/,
-    const miopen::loss::HingeEmbeddingLossBwdProblemDescription& /*problem*/) const
+    const miopen::loss::HingeEmbeddingLossBwdProblemDescription& problem) const
 {
+    if(problem.GetIDesc().GetSize() > 5)
+        return false;
     return true;
 }
 
@@ -85,18 +102,6 @@ ConvSolution HingeEmbeddingLossBwd::GetSolution(
     auto dtype        = problem.GetdIDesc().GetType();
     auto target_dtype = miopen::GetDataType(problem.GetTDesc().GetType());
 
-    size_t xlocalsize = LOCAL_SIZE;
-    size_t xgridsize  = AlignUp(problem.GetIDesc().GetElementSize(), xlocalsize);
-    size_t ylocalsize = 1;
-    size_t ygridsize  = 1;
-    size_t zlocalsize = 1;
-    size_t zgridsize  = 1;
-
-    auto kernel = KernelInfo{};
-
-    kernel.kernel_file = "MIOpenHingeEmbeddingLoss.cpp";
-    kernel.kernel_name = "HingeEmbeddingLossBwd";
-
     const auto build_params = KernelBuildParameters{
         {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
         {"MIOPEN_USE_FP32", static_cast<int>(dtype == miopenFloat)},
@@ -106,17 +111,11 @@ ConvSolution HingeEmbeddingLossBwd::GetSolution(
         {"LOCAL_SIZE", LOCAL_SIZE},
     };
 
-    kernel.comp_options = build_params.GenerateFor(kbp::HIP{});
-
-    kernel.l_wk.push_back(xlocalsize);
-    kernel.l_wk.push_back(ylocalsize);
-    kernel.l_wk.push_back(zlocalsize);
-
-    kernel.g_wk.push_back(xgridsize);
-    kernel.g_wk.push_back(ygridsize);
-    kernel.g_wk.push_back(zgridsize);
-
-    result.construction_params.push_back(kernel);
+    result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE},
+                                                         {problem.GetIDesc().GetElementSize()},
+                                                         "MIOpenHingeEmbeddingLoss.cpp",
+                                                         "HingeEmbeddingLossBwd",
+                                                         build_params));
 
     result.invoker_factory = [](const std::vector<Kernel>& kernels) {
         return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
@@ -125,7 +124,6 @@ ConvSolution HingeEmbeddingLossBwd::GetSolution(
             auto I_tv             = get_inner_expanded_tv(deref(params.iDesc));
             auto T_tv             = get_inner_expanded_tv(deref(params.tDesc));
             auto dO_tv            = get_inner_expanded_tv(deref(params.dODesc));
-            auto dI_tv            = get_inner_expanded_tv(deref(params.dIDesc));
 
             kernel(params.i,
                    params.t,
@@ -135,8 +133,7 @@ ConvSolution HingeEmbeddingLossBwd::GetSolution(
                    params.divisor,
                    I_tv,
                    T_tv,
-                   dO_tv,
-                   dI_tv);
+                   dO_tv);
         };
     };
 
@@ -145,8 +142,10 @@ ConvSolution HingeEmbeddingLossBwd::GetSolution(
 
 bool HingeEmbeddingLossUnreducedBwd::IsApplicable(
     const ExecutionContext& /*context*/,
-    const miopen::loss::HingeEmbeddingLossUnreducedBwdProblemDescription& /*problem*/) const
+    const miopen::loss::HingeEmbeddingLossUnreducedBwdProblemDescription& problem) const
 {
+    if(problem.GetIDesc().GetSize() > 5)
+        return false;
     return true;
 }
 
@@ -162,18 +161,6 @@ ConvSolution HingeEmbeddingLossUnreducedBwd::GetSolution(
     auto dtype        = problem.GetdIDesc().GetType();
     auto target_dtype = miopen::GetDataType(problem.GetTDesc().GetType());
 
-    size_t xlocalsize = LOCAL_SIZE;
-    size_t xgridsize  = AlignUp(problem.GetIDesc().GetElementSize(), xlocalsize);
-    size_t ylocalsize = 1;
-    size_t ygridsize  = 1;
-    size_t zlocalsize = 1;
-    size_t zgridsize  = 1;
-
-    auto kernel = KernelInfo{};
-
-    kernel.kernel_file = "MIOpenHingeEmbeddingLoss.cpp";
-    kernel.kernel_name = "HingeEmbeddingLossUnreducedBwd";
-
     const auto build_params = KernelBuildParameters{
         {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
         {"MIOPEN_USE_FP32", static_cast<int>(dtype == miopenFloat)},
@@ -183,17 +170,11 @@ ConvSolution HingeEmbeddingLossUnreducedBwd::GetSolution(
         {"LOCAL_SIZE", LOCAL_SIZE},
     };
 
-    kernel.comp_options = build_params.GenerateFor(kbp::HIP{});
-
-    kernel.l_wk.push_back(xlocalsize);
-    kernel.l_wk.push_back(ylocalsize);
-    kernel.l_wk.push_back(zlocalsize);
-
-    kernel.g_wk.push_back(xgridsize);
-    kernel.g_wk.push_back(ygridsize);
-    kernel.g_wk.push_back(zgridsize);
-
-    result.construction_params.push_back(kernel);
+    result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE},
+                                                         {problem.GetIDesc().GetElementSize()},
+                                                         "MIOpenHingeEmbeddingLoss.cpp",
+                                                         "HingeEmbeddingLossUnreducedBwd",
+                                                         build_params));
 
     result.invoker_factory = [](const std::vector<Kernel>& kernels) {
         return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
@@ -202,10 +183,8 @@ ConvSolution HingeEmbeddingLossUnreducedBwd::GetSolution(
             auto I_tv             = get_inner_expanded_tv(deref(params.iDesc));
             auto T_tv             = get_inner_expanded_tv(deref(params.tDesc));
             auto dO_tv            = get_inner_expanded_tv(deref(params.dODesc));
-            auto dI_tv            = get_inner_expanded_tv(deref(params.dIDesc));
 
-            kernel(
-                params.i, params.t, params.dO, params.dI, params.margin, I_tv, T_tv, dO_tv, dI_tv);
+            kernel(params.i, params.t, params.dO, params.dI, params.margin, I_tv, T_tv, dO_tv);
         };
     };
 

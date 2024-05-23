@@ -148,8 +148,7 @@ __device__ void hingeEmbeddingLossBwd(const TIO* I,
                                       float divisor,
                                       tensor_view_5d_t I_tv,
                                       tensor_view_5d_t T_tv,
-                                      tensor_view_5d_t dO_tv,
-                                      tensor_view_5d_t dI_tv)
+                                      tensor_view_5d_t dO_tv)
 {
     size_t gid = threadIdx.x + blockIdx.x * blockDim.x;
     size_t n[5];
@@ -182,11 +181,10 @@ extern "C" __global__ void HingeEmbeddingLossBwd(const IN_OUT_TYPE* I,
                                                  float divisor,
                                                  tensor_view_5d_t I_tv,
                                                  tensor_view_5d_t T_tv,
-                                                 tensor_view_5d_t dO_tv,
-                                                 tensor_view_5d_t dI_tv)
+                                                 tensor_view_5d_t dO_tv)
 {
     hingeEmbeddingLossBwd<IN_OUT_TYPE, TARGET_TYPE>(
-        I, T, dO, dI, margin, divisor, I_tv, T_tv, dO_tv, dI_tv);
+        I, T, dO, dI, margin, divisor, I_tv, T_tv, dO_tv);
 }
 
 template <typename TIO, typename TT>
@@ -231,8 +229,7 @@ __device__ void hingeEmbeddingLossUnreducedBwd(const TIO* I,
                                                float margin,
                                                tensor_view_5d_t I_tv,
                                                tensor_view_5d_t T_tv,
-                                               tensor_view_5d_t dO_tv,
-                                               tensor_view_5d_t dI_tv)
+                                               tensor_view_5d_t dO_tv)
 {
     size_t gid = threadIdx.x + blockIdx.x * blockDim.x;
     size_t n[5];
@@ -264,9 +261,8 @@ extern "C" __global__ void HingeEmbeddingLossUnreducedBwd(const IN_OUT_TYPE* I,
                                                           float margin,
                                                           tensor_view_5d_t I_tv,
                                                           tensor_view_5d_t T_tv,
-                                                          tensor_view_5d_t dO_tv,
-                                                          tensor_view_5d_t dI_tv)
+                                                          tensor_view_5d_t dO_tv)
 {
     hingeEmbeddingLossUnreducedBwd<IN_OUT_TYPE, TARGET_TYPE>(
-        I, T, dO, dI, margin, I_tv, T_tv, dO_tv, dI_tv);
+        I, T, dO, dI, margin, I_tv, T_tv, dO_tv);
 }

@@ -50,12 +50,14 @@ NetworkConfig HingeEmbeddingLossFwdProblemDescription::MakeNetworkConfig() const
     auto input_dtype  = iDesc.GetType();
     auto target_dtype = tDesc.GetType();
     auto size         = iDesc.GetElementSize();
+    auto dim_num      = iDesc.GetSize();
 
     std::ostringstream ss;
 
     ss << "hel_fwd";
     ss << "i_dtype" << input_dtype;
     ss << "t_dtype" << target_dtype;
+    ss << "dim_num" << dim_num;
     ss << "size" << size;
 
     return NetworkConfig{ss.str()};
@@ -66,12 +68,14 @@ NetworkConfig HingeEmbeddingLossBwdProblemDescription::MakeNetworkConfig() const
     auto input_dtype  = iDesc.GetType();
     auto target_dtype = tDesc.GetType();
     auto size         = iDesc.GetElementSize();
+    auto dim_num      = iDesc.GetSize();
 
     std::ostringstream ss;
 
     ss << "hel_bwd";
     ss << "i_dtype" << input_dtype;
     ss << "t_dtype" << target_dtype;
+    ss << "dim_num" << dim_num;
     ss << "size" << size;
 
     return NetworkConfig{ss.str()};
@@ -82,12 +86,14 @@ NetworkConfig HingeEmbeddingLossUnreducedFwdProblemDescription::MakeNetworkConfi
     auto input_dtype  = iDesc.GetType();
     auto target_dtype = tDesc.GetType();
     auto size         = iDesc.GetElementSize();
+    auto dim_num      = iDesc.GetSize();
 
     std::ostringstream ss;
 
     ss << "hel_unreduced_fwd";
     ss << "i_dtype" << input_dtype;
     ss << "t_dtype" << target_dtype;
+    ss << "dim_num" << dim_num;
     ss << "size" << size;
 
     return NetworkConfig{ss.str()};
@@ -98,12 +104,14 @@ NetworkConfig HingeEmbeddingLossUnreducedBwdProblemDescription::MakeNetworkConfi
     auto input_dtype  = iDesc.GetType();
     auto target_dtype = tDesc.GetType();
     auto size         = iDesc.GetElementSize();
+    auto dim_num      = iDesc.GetSize();
 
     std::ostringstream ss;
 
     ss << "hel_unreduced_bwd";
     ss << "i_dtype" << input_dtype;
     ss << "t_dtype" << target_dtype;
+    ss << "dim_num" << dim_num;
     ss << "size" << size;
 
     return NetworkConfig{ss.str()};

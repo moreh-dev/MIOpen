@@ -340,6 +340,7 @@ int HingeEmbeddingLossDriver<TIO, TT>::GetandSetData()
     else
     {
         std::vector<int> outDim(1);
+        outDim[0] = 1;
         SetTensorNd(outputDesc, outDim, data_type);
         divisor = 1;
         if(reduction == "mean")
@@ -676,12 +677,8 @@ template <typename TIO, typename TT>
 int HingeEmbeddingLossDriver<TIO, TT>::VerifyForward()
 {
     RunForwardCPU();
-    double tolerance = std::is_same<TIO, float>::value ? 1.5e-6 : 8.2e-3;
-
-    // bf16 mantissa has 7 bits, by 3 bits shorter than fp16.
-    if(std::is_same<TIO, bfloat16>::value)
-        tolerance *= 8.0;
-    auto error = miopen::rms_range(outHost, out);
+    double tolerance = std::numeric_limits<TIO>::epsilon() * 10;
+    auto error       = miopen::rms_range(outHost, out);
 
     if(!std::isfinite(error) || error > tolerance)
     {
@@ -703,12 +700,8 @@ template <typename TIO, typename TT>
 int HingeEmbeddingLossDriver<TIO, TT>::VerifyBackward()
 {
     RunBackwardCPU();
-    double tolerance = std::is_same<TIO, float>::value ? 1.5e-6 : 8.2e-3;
-
-    // bf16 mantissa has 7 bits, by 3 bits shorter than fp16.
-    if(std::is_same<TIO, bfloat16>::value)
-        tolerance *= 8.0;
-    auto error = miopen::rms_range(dIHost, dI);
+    double tolerance = std::numeric_limits<TIO>::epsilon() * 10;
+    auto error       = miopen::rms_range(dIHost, dI);
 
     if(!std::isfinite(error) || error > tolerance)
     {
