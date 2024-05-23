@@ -60,17 +60,17 @@ using CosineEmbeddingLossFwdUnreducedSolver =
     NonTunableSolverBase<ExecutionContext,
                          miopen::cosineembeddingloss::FwdUnreducedProblemDescription>;
 
-// using CosineEmbeddingLossFwdReducedSolver =
-//     NonTunableSolverBase<ExecutionContext,
-//                          miopen::cosineembeddingloss::FwdReducedProblemDescription>;
+using CosineEmbeddingLossFwdReducedSolver =
+    NonTunableSolverBase<ExecutionContext,
+                         miopen::cosineembeddingloss::FwdReducedProblemDescription>;
 
-// using CosineEmbeddingLossBwdUnreducedSolver =
-//     NonTunableSolverBase<ExecutionContext,
-//                          miopen::cosineembeddingloss::BwdUnreducedProblemDescription>;
+using CosineEmbeddingLossBwdUnreducedSolver =
+    NonTunableSolverBase<ExecutionContext,
+                         miopen::cosineembeddingloss::BwdUnreducedProblemDescription>;
 
-// using CosineEmbeddingLossBwdReducedSolver =
-//     NonTunableSolverBase<ExecutionContext,
-//                          miopen::cosineembeddingloss::BwdReducedProblemDescription>;
+using CosineEmbeddingLossBwdReducedSolver =
+    NonTunableSolverBase<ExecutionContext,
+                         miopen::cosineembeddingloss::BwdReducedProblemDescription>;
 
 // FORWARD UNREDUCE
 struct CosineEmbeddingLossUnreducedForward2d final : CosineEmbeddingLossFwdUnreducedSolver
@@ -89,58 +89,56 @@ struct CosineEmbeddingLossUnreducedForward2d final : CosineEmbeddingLossFwdUnred
         const miopen::cosineembeddingloss::FwdUnreducedProblemDescription& problem) const override;
 };
 
-// // FORWARD REDUCE
-// struct CosineEmbeddingLossReducedForward2d final : CosineEmbeddingLossFwdReducedSolver
-// {
-//     const std::string& SolverDbId() const override
-//     {
-//         return GetSolverDbId<CosineEmbeddingLossReducedForward2d>();
-//     }
+// FORWARD REDUCE
+struct CosineEmbeddingLossReducedForward2d final : CosineEmbeddingLossFwdReducedSolver
+{
+    const std::string& SolverDbId() const override
+    {
+        return GetSolverDbId<CosineEmbeddingLossReducedForward2d>();
+    }
 
-//     bool IsApplicable(
-//         const ExecutionContext& context,
-//         const miopen::cosineembeddingloss::FwdReducedProblemDescription& problem) const override;
+    bool IsApplicable(
+        const ExecutionContext& context,
+        const miopen::cosineembeddingloss::FwdReducedProblemDescription& problem) const override;
 
-//     ConvSolution GetSolution(
-//         const ExecutionContext& context,
-//         const miopen::cosineembeddingloss::FwdReducedProblemDescription& problem) const override;
-// };
+    ConvSolution GetSolution(
+        const ExecutionContext& context,
+        const miopen::cosineembeddingloss::FwdReducedProblemDescription& problem) const override;
+};
 
-// // BACKWARD UNREDUCE
-// struct CosineEmbeddingLossUnreducedBackward2d final : CosineEmbeddingLossBwdUnreducedSolver
-// {
-//     const std::string& SolverDbId() const override
-//     {
-//         return GetSolverDbId<CosineEmbeddingLossUnreducedBackward2d>();
-//     }
+// BACKWARD UNREDUCE
+struct CosineEmbeddingLossUnreducedBackward2d final : CosineEmbeddingLossBwdUnreducedSolver
+{
+    const std::string& SolverDbId() const override
+    {
+        return GetSolverDbId<CosineEmbeddingLossUnreducedBackward2d>();
+    }
 
-//     bool IsApplicable(
-//         const ExecutionContext& context,
-//         const miopen::cosineembeddingloss::BwdUnreducedProblemDescription& problem) const
-//         override;
+    bool IsApplicable(
+        const ExecutionContext& context,
+        const miopen::cosineembeddingloss::BwdUnreducedProblemDescription& problem) const override;
 
-//     ConvSolution GetSolution(
-//         const ExecutionContext& context,
-//         const miopen::cosineembeddingloss::BwdUnreducedProblemDescription& problem) const
-//         override;
-// };
+    ConvSolution GetSolution(
+        const ExecutionContext& context,
+        const miopen::cosineembeddingloss::BwdUnreducedProblemDescription& problem) const override;
+};
 
-// // BACKWARD REDUCE
-// struct CosineEmbeddingLossReducedBackward2d final : CosineEmbeddingLossBwdReducedSolver
-// {
-//     const std::string& SolverDbId() const override
-//     {
-//         return GetSolverDbId<CosineEmbeddingLossReducedBackward2d>();
-//     }
+// BACKWARD REDUCE
+struct CosineEmbeddingLossReducedBackward2d final : CosineEmbeddingLossBwdReducedSolver
+{
+    const std::string& SolverDbId() const override
+    {
+        return GetSolverDbId<CosineEmbeddingLossReducedBackward2d>();
+    }
 
-//     bool IsApplicable(
-//         const ExecutionContext& context,
-//         const miopen::cosineembeddingloss::BwdReducedProblemDescription& problem) const override;
+    bool IsApplicable(
+        const ExecutionContext& context,
+        const miopen::cosineembeddingloss::BwdReducedProblemDescription& problem) const override;
 
-//     ConvSolution GetSolution(
-//         const ExecutionContext& context,
-//         const miopen::cosineembeddingloss::BwdReducedProblemDescription& problem) const override;
-// };
+    ConvSolution GetSolution(
+        const ExecutionContext& context,
+        const miopen::cosineembeddingloss::BwdReducedProblemDescription& problem) const override;
+};
 
 } // namespace cosineembeddingloss
 

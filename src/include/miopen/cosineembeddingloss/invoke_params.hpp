@@ -50,13 +50,39 @@ struct FwdInvokeParams : public miopen::InvokeParams
     ConstData_t target = nullptr;
     Data_t output      = nullptr;
 
-    float margin = 0.0f;
-
+    float margin   = 0.0f;
+    float divisor  = std::numeric_limits<float>::quiet_NaN();
     size_t ws_size = 0;
     Data_t ws_data = nullptr;
 
     std::size_t GetWorkspaceSize() const { return ws_size; }
     Data_t GetWorkspace() const { return ws_data; }
+};
+
+struct BwdInvokeParams : public miopen::InvokeParams
+{
+
+    BwdInvokeParams() = default;
+
+    const TensorDescriptor* input1Desc     = nullptr;
+    const TensorDescriptor* input2Desc     = nullptr;
+    const TensorDescriptor* targetDesc     = nullptr;
+    const TensorDescriptor* outputGradDesc = nullptr;
+    const TensorDescriptor* input1GradDesc = nullptr;
+    const TensorDescriptor* input2GradDesc = nullptr;
+
+    ConstData_t input1      = nullptr;
+    ConstData_t input2      = nullptr;
+    ConstData_t target      = nullptr;
+    ConstData_t output_grad = nullptr;
+    ConstData_t input1_grad = nullptr;
+    ConstData_t input2_grad = nullptr;
+
+    float margin  = 0.0f;
+    float divisor = std::numeric_limits<float>::quiet_NaN();
+
+    std::size_t GetWorkspaceSize() const { return 0; }
+    Data_t GetWorkspace() const { return nullptr; }
 };
 
 } // namespace cosineembeddingloss

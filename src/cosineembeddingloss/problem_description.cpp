@@ -70,6 +70,29 @@ NetworkConfig FwdUnreducedProblemDescription::MakeNetworkConfig() const
     return NetworkConfig{ss.str()};
 }
 
+NetworkConfig FwdReducedProblemDescription::MakeNetworkConfig() const
+{
+    auto input_dims  = input1Desc.GetLengths();
+    auto input_dtype = input1Desc.GetType();
+    auto Si1         = input1Desc.GetStrides();
+    auto Si2         = input2Desc.GetStrides();
+    auto St          = targetDesc.GetStrides();
+    auto So          = outputDesc.GetStrides();
+
+    std::ostringstream ss;
+    ss << "cosineembeddingloss_reduce";
+    ss << "is_fwd" << is_fwd;
+    ss << "margin" << margin;
+    ss << "input_dtype" << input_dtype;
+    ss << "input_dims" << input_dims;
+    ss << "input1_stride" << Si1;
+    ss << "input2_stride" << Si2;
+    ss << "target_stride" << St;
+    ss << "output_stride" << So;
+
+    return NetworkConfig{ss.str()};
+}
+
 } // namespace cosineembeddingloss
 
 } // namespace miopen
