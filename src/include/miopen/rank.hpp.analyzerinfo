@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<analyzerinfo hash="6991833029053070798">
-  <FileInfo check="CheckUnusedFunctions">
-    <functioncall functionName="N"/>
-    <functioncall functionName="int"/>
-  </FileInfo>
-</analyzerinfo>

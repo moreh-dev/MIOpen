@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<analyzerinfo hash="13387816389452678043">
-  <FileInfo check="CheckUnusedFunctions">
-    <functiondecl functionName="TileSize" lineNumber="33"/>
-    <functioncall functionName="if"/>
-  </FileInfo>
-</analyzerinfo>

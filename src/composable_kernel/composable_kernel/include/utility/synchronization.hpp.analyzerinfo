@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<analyzerinfo hash="3434873338654276529">
-  <FileInfo check="CheckUnusedFunctions">
-    <functiondecl functionName="block_sync_lds" lineNumber="8"/>
-    <functioncall functionName="AtomicAdd"/>
-    <functioncall functionName="Set"/>
-    <functioncall functionName="asm"/>
-  </FileInfo>
-</analyzerinfo>

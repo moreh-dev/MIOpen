@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<analyzerinfo hash="13736945098485809680">
-  <FileInfo check="CheckUnusedFunctions">
-    <functioncall functionName="B"/>
-    <functioncall functionName="T"/>
-    <functioncall functionName="bool"/>
-    <functioncall functionName="void"/>
-  </FileInfo>
-</analyzerinfo>
