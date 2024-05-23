@@ -31,6 +31,7 @@
 #include "random.hpp"
 #include "tensor_holder.hpp"
 #include "verify.hpp"
+#include <cstddef>
 #include <cstdlib>
 #include <gtest/gtest.h>
 #include <miopen/miopen.h>
@@ -128,11 +129,8 @@ protected:
     void RunTest()
     {
         auto&& handle = get_handle();
-
         miopenStatus_t status;
 
-        cpu_hinge_embedding_loss_unreduced_forward<TIO, TT>(
-            input, target, ref_output, config.margin);
         status = miopen::HingeEmbeddingLossUnreducedForward(handle,
                                                             input.desc,
                                                             input_dev.get(),
@@ -141,8 +139,10 @@ protected:
                                                             output.desc,
                                                             output_dev.get(),
                                                             config.margin);
-        EXPECT_EQ(status, miopenStatusSuccess);
+        cpu_hinge_embedding_loss_unreduced_forward<TIO, TT>(
+            input, target, ref_output, config.margin);
 
+        EXPECT_EQ(status, miopenStatusSuccess);
         output.data = handle.Read<TIO>(output_dev, output.data.size());
     }
 
@@ -210,8 +210,6 @@ protected:
 
         miopenStatus_t status;
 
-        cpu_hinge_embedding_loss_unreduced_backward<TIO, TT>(
-            input, target, dOutput, ref_dInput, config.margin);
         status = miopen::HingeEmbeddingLossUnreducedBackward(handle,
                                                              input.desc,
                                                              input_dev.get(),
@@ -222,6 +220,9 @@ protected:
                                                              dInput.desc,
                                                              dInput_dev.get(),
                                                              config.margin);
+        cpu_hinge_embedding_loss_unreduced_backward<TIO, TT>(
+            input, target, dOutput, ref_dInput, config.margin);
+
         EXPECT_EQ(status, miopenStatusSuccess);
 
         dInput.data = handle.Read<TIO>(dInput_dev, dInput.data.size());
@@ -300,8 +301,6 @@ protected:
 
         miopenStatus_t status;
 
-        cpu_hinge_embedding_loss_forward<TIO, TT>(
-            input, target, workspace, ref_output, config.margin, config.divisor);
         status = miopen::HingeEmbeddingLossForward(handle,
                                                    workspace_dev.get(),
                                                    workspace.GetDataByteSize(),
@@ -313,6 +312,9 @@ protected:
                                                    output_dev.get(),
                                                    config.margin,
                                                    config.divisor);
+        cpu_hinge_embedding_loss_forward<TIO, TT>(
+            input, target, workspace, ref_output, config.margin, config.divisor);
+
         EXPECT_EQ(status, miopenStatusSuccess);
 
         output.data = handle.Read<TIO>(output_dev, output.data.size());
@@ -387,8 +389,6 @@ protected:
 
         miopenStatus_t status;
 
-        cpu_hinge_embedding_loss_backward<TIO, TT>(
-            input, target, dOutput, ref_dInput, config.margin, config.divisor);
         status = miopen::HingeEmbeddingLossBackward(handle,
                                                     input.desc,
                                                     input_dev.get(),
@@ -400,6 +400,9 @@ protected:
                                                     dInput_dev.get(),
                                                     config.margin,
                                                     config.divisor);
+        cpu_hinge_embedding_loss_backward<TIO, TT>(
+            input, target, dOutput, ref_dInput, config.margin, config.divisor);
+
         EXPECT_EQ(status, miopenStatusSuccess);
 
         dInput.data = handle.Read<TIO>(dInput_dev, dInput.data.size());

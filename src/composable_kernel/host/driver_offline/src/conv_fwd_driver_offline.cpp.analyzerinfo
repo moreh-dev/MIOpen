@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="10789657936627504276">
+  <FileInfo check="Bounds checking">
+    <array-index>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/src/conv_fwd_driver_offline.cpp:44:5" my-argnr="2" my-argname="argv" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/src/conv_fwd_driver_offline.cpp" line="65" col="77" value="1"/>
+    </array-index>
+  </FileInfo>
+  <FileInfo check="Null pointer">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/src/conv_fwd_driver_offline.cpp:44:5" my-argnr="2" my-argname="argv" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/src/conv_fwd_driver_offline.cpp" line="65" col="77" value="0"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/src/conv_fwd_driver_offline.cpp:44:5" my-argnr="2" my-argname="argv" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/src/conv_fwd_driver_offline.cpp" line="65" col="77" value="0"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="main" lineNumber="44"/>
+    <functioncall functionName="C"/>
+    <functioncall functionName="ConvForwardAlgo"/>
+    <functioncall functionName="ConvTensorLayout"/>
+    <functioncall functionName="GenerateTensorValue"/>
+    <functioncall functionName="Hi"/>
+    <functioncall functionName="Ho"/>
+    <functioncall functionName="I0"/>
+    <functioncall functionName="I1"/>
+    <functioncall functionName="I2"/>
+    <functioncall functionName="I3"/>
+    <functioncall functionName="I4"/>
+    <functioncall functionName="I5"/>
+    <functioncall functionName="I6"/>
+    <functioncall functionName="K"/>
+    <functioncall functionName="LogRangeAsType"/>
+    <functioncall functionName="N"/>
+    <functioncall functionName="V4R4NCHW"/>
+    <functioncall functionName="V4R4R2NHWC"/>
+    <functioncall functionName="V4R4R2XDLNCHW"/>
+    <functioncall functionName="V4R4R4XDLNHWC"/>
+    <functioncall functionName="V5R1NCHW"/>
+    <functioncall functionName="V6R1NCHW"/>
+    <functioncall functionName="Wi"/>
+    <functioncall functionName="Wo"/>
+    <functioncall functionName="X"/>
+    <functioncall functionName="XEff"/>
+    <functioncall functionName="Y"/>
+    <functioncall functionName="YEff"/>
+    <functioncall functionName="break"/>
+    <functioncall functionName="check_error"/>
+    <functioncall functionName="conv_dilation_h"/>
+    <functioncall functionName="conv_dilation_w"/>
+    <functioncall functionName="conv_dilations_dev"/>
+    <functioncall functionName="conv_stride_h"/>
+    <functioncall functionName="conv_stride_w"/>
+    <functioncall functionName="conv_strides_dev"/>
+    <functioncall functionName="default"/>
+    <functioncall functionName="device_convolution_forward_implicit_gemm_v4r4_dlops_nchw_kcyx_nkhw"/>
+    <functioncall functionName="device_convolution_forward_implicit_gemm_v4r4r2_dlops_nhwc_kyxc_nhwk"/>
+    <functioncall functionName="do_log"/>
+    <functioncall functionName="do_verification"/>
+    <functioncall functionName="exit"/>
+    <functioncall functionName="f_make_for_device_nchw"/>
+    <functioncall functionName="f_make_for_device_nhwc"/>
+    <functioncall functionName="float"/>
+    <functioncall functionName="gen_wei"/>
+    <functioncall functionName="hardware_concurrency"/>
+    <functioncall functionName="host_direct_convolution"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="in"/>
+    <functioncall functionName="in_left_pad_h"/>
+    <functioncall functionName="in_left_pad_w"/>
+    <functioncall functionName="in_left_pads_dev"/>
+    <functioncall functionName="in_lengths_dev"/>
+    <functioncall functionName="in_lengths_host"/>
+    <functioncall functionName="in_right_pad_h"/>
+    <functioncall functionName="in_right_pad_w"/>
+    <functioncall functionName="in_right_pads_dev"/>
+    <functioncall functionName="init_method"/>
+    <functioncall functionName="layout"/>
+    <functioncall functionName="long"/>
+    <functioncall functionName="mData"/>
+    <functioncall functionName="mDesc"/>
+    <functioncall functionName="make_tuple"/>
+    <functioncall functionName="nrepeat"/>
+    <functioncall functionName="num_thread"/>
+    <functioncall functionName="ostream_HostTensorDescriptor"/>
+    <functioncall functionName="out_device"/>
+    <functioncall functionName="out_host"/>
+    <functioncall functionName="out_lengths_dev"/>
+    <functioncall functionName="out_lengths_host"/>
+    <functioncall functionName="print_array"/>
+    <functioncall functionName="printf"/>
+    <functioncall functionName="runtime_error"/>
+    <functioncall functionName="static_cast"/>
+    <functioncall functionName="stoi"/>
+    <functioncall functionName="switch"/>
+    <functioncall functionName="wei"/>
+    <functioncall functionName="wei_lengths_dev"/>
+    <functioncall functionName="wei_lengths_host"/>
+  </FileInfo>
+</analyzerinfo>

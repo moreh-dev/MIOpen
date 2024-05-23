@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="4011957502925730066">
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/object.hpp:56:6" my-argnr="1" my-argname="x" file="/workspaces/MIOpen/src/include/miopen/object.hpp" line="58" col="12" value="0"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="N"/>
+    <functioncall functionName="class"/>
+    <functioncall functionName="decltype"/>
+    <functioncall functionName="get_object_impl"/>
+    <functioncall functionName="int"/>
+    <functioncall functionName="miopen_get_object"/>
+    <functioncall functionName="rank &lt; 0 &gt;"/>
+    <functioncall functionName="x"/>
+  </FileInfo>
+</analyzerinfo>

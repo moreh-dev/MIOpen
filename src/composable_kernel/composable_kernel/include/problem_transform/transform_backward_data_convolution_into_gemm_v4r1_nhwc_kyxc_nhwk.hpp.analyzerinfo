@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="6548453799198997221">
+  <FileInfo check="Null pointer">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_backward_data_convolution_into_gemm_v4r1_nhwc_kyxc_nhwk.hpp:25:1" my-argnr="4" my-argname="conv_strides" file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_backward_data_convolution_into_gemm_v4r1_nhwc_kyxc_nhwk.hpp" line="59" col="30" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_backward_data_convolution_into_gemm_v4r1_nhwc_kyxc_nhwk.hpp:25:1" my-argnr="5" my-argname="conv_dilations" file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_backward_data_convolution_into_gemm_v4r1_nhwc_kyxc_nhwk.hpp" line="62" col="32" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_backward_data_convolution_into_gemm_v4r1_nhwc_kyxc_nhwk.hpp:25:1" my-argnr="6" my-argname="in_left_pads" file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_backward_data_convolution_into_gemm_v4r1_nhwc_kyxc_nhwk.hpp" line="65" col="29" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_backward_data_convolution_into_gemm_v4r1_nhwc_kyxc_nhwk.hpp:25:1" my-argnr="7" my-argname="in_right_pads" file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_backward_data_convolution_into_gemm_v4r1_nhwc_kyxc_nhwk.hpp" line="68" col="30" value="0"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_backward_data_convolution_into_gemm_v4r1_nhwc_kyxc_nhwk.hpp:25:1" my-argnr="1" my-argname="wei_k_y_x_c_grid_desc" file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_backward_data_convolution_into_gemm_v4r1_nhwc_kyxc_nhwk.hpp" line="56" col="20" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_backward_data_convolution_into_gemm_v4r1_nhwc_kyxc_nhwk.hpp:25:1" my-argnr="2" my-argname="out_n_ho_wo_k_grid_desc" file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_backward_data_convolution_into_gemm_v4r1_nhwc_kyxc_nhwk.hpp" line="48" col="20" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_backward_data_convolution_into_gemm_v4r1_nhwc_kyxc_nhwk.hpp:25:1" my-argnr="3" my-argname="in_n_hi_wi_c_grid_desc" file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_backward_data_convolution_into_gemm_v4r1_nhwc_kyxc_nhwk.hpp" line="46" col="20" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_backward_data_convolution_into_gemm_v4r1_nhwc_kyxc_nhwk.hpp:25:1" my-argnr="4" my-argname="conv_strides" file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_backward_data_convolution_into_gemm_v4r1_nhwc_kyxc_nhwk.hpp" line="59" col="30" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_backward_data_convolution_into_gemm_v4r1_nhwc_kyxc_nhwk.hpp:25:1" my-argnr="5" my-argname="conv_dilations" file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_backward_data_convolution_into_gemm_v4r1_nhwc_kyxc_nhwk.hpp" line="62" col="32" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_backward_data_convolution_into_gemm_v4r1_nhwc_kyxc_nhwk.hpp:25:1" my-argnr="6" my-argname="in_left_pads" file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_backward_data_convolution_into_gemm_v4r1_nhwc_kyxc_nhwk.hpp" line="65" col="29" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_backward_data_convolution_into_gemm_v4r1_nhwc_kyxc_nhwk.hpp:25:1" my-argnr="7" my-argname="in_right_pads" file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_backward_data_convolution_into_gemm_v4r1_nhwc_kyxc_nhwk.hpp" line="68" col="30" value="0"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="C"/>
+    <functioncall functionName="ConvDilationH"/>
+    <functioncall functionName="ConvDilationW"/>
+    <functioncall functionName="ConvStrideH"/>
+    <functioncall functionName="ConvStrideW"/>
+    <functioncall functionName="GcdStrideDilationH"/>
+    <functioncall functionName="GcdStrideDilationW"/>
+    <functioncall functionName="GemmK1"/>
+    <functioncall functionName="GemmK1Value"/>
+    <functioncall functionName="GetLength"/>
+    <functioncall functionName="HTilda"/>
+    <functioncall functionName="HTildaSlice"/>
+    <functioncall functionName="Hi"/>
+    <functioncall functionName="Ho"/>
+    <functioncall functionName="I0"/>
+    <functioncall functionName="I1"/>
+    <functioncall functionName="I2"/>
+    <functioncall functionName="I3"/>
+    <functioncall functionName="IHTildaSliceBegin"/>
+    <functioncall functionName="IWTildaSliceBegin"/>
+    <functioncall functionName="IXTilda"/>
+    <functioncall functionName="IXTildaValue"/>
+    <functioncall functionName="IYTilda"/>
+    <functioncall functionName="IYTildaValue"/>
+    <functioncall functionName="In"/>
+    <functioncall functionName="InLeftPadH"/>
+    <functioncall functionName="InLeftPadW"/>
+    <functioncall functionName="InRightPadH"/>
+    <functioncall functionName="InRightPadW"/>
+    <functioncall functionName="K"/>
+    <functioncall functionName="K0"/>
+    <functioncall functionName="K1"/>
+    <functioncall functionName="N"/>
+    <functioncall functionName="Out"/>
+    <functioncall functionName="WTilda"/>
+    <functioncall functionName="WTildaSlice"/>
+    <functioncall functionName="Wei"/>
+    <functioncall functionName="Wi"/>
+    <functioncall functionName="Wo"/>
+    <functioncall functionName="X"/>
+    <functioncall functionName="XDot"/>
+    <functioncall functionName="XDotSlice"/>
+    <functioncall functionName="XTilda"/>
+    <functioncall functionName="Y"/>
+    <functioncall functionName="YDot"/>
+    <functioncall functionName="YDotSlice"/>
+    <functioncall functionName="YTilda"/>
+    <functioncall functionName="gcd"/>
+    <functioncall functionName="in_gemmm_gemmn_grid_desc"/>
+    <functioncall functionName="in_n_hi_wi_c_grid_desc"/>
+    <functioncall functionName="in_n_hip_wip_c_grid_desc"/>
+    <functioncall functionName="in_n_htildaslice_wtildaslice_c_grid_desc"/>
+    <functioncall functionName="in_n_ytilda_htilda_xtilda_wtilda_c_grid_desc"/>
+    <functioncall functionName="integer_divide_ceil"/>
+    <functioncall functionName="integer_divide_floor"/>
+    <functioncall functionName="make_embed_transform"/>
+    <functioncall functionName="make_freeze_transform"/>
+    <functioncall functionName="make_merge_transform"/>
+    <functioncall functionName="make_pad_transform"/>
+    <functioncall functionName="make_pass_through_transform"/>
+    <functioncall functionName="make_slice_transform"/>
+    <functioncall functionName="make_tuple"/>
+    <functioncall functionName="make_unmerge_transform"/>
+    <functioncall functionName="max"/>
+    <functioncall functionName="min"/>
+    <functioncall functionName="out_gemmk0_gemmn_gemmk1_grid_desc"/>
+    <functioncall functionName="out_n_ho_wo_k_grid_desc"/>
+    <functioncall functionName="out_n_hop_wop_k_grid_desc"/>
+    <functioncall functionName="out_n_ydot_htilda_xdot_wtilda_k_grid_desc"/>
+    <functioncall functionName="out_n_ydotslice_htildaslice_xdotslice_wtildaslice_k0_k1_grid_desc"/>
+    <functioncall functionName="transform_tensor_descriptor"/>
+    <functioncall functionName="typename"/>
+    <functioncall functionName="wei_gemmk0_gemmm_gemmk1_grid_desc"/>
+    <functioncall functionName="wei_k0_k1_ydotslice_xdotslice_c_grid_desc"/>
+    <functioncall functionName="wei_k_y_x_c_grid_desc"/>
+    <functioncall functionName="wei_k_ydot_ytilda_xdot_xtilda_c_grid_desc"/>
+  </FileInfo>
+</analyzerinfo>

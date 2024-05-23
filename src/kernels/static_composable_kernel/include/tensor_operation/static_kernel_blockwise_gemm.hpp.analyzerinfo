@@ -1,0 +1,136 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="6343491280557095659">
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:71:28" call-funcname="Run_source" call-argnr="1" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp" line="160" col="9" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:148:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:71:28" call-funcname="Run_source" call-argnr="2" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp" line="160" col="9" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:148:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:71:28" call-funcname="Run_source" call-argnr="3" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp" line="160" col="9" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:148:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_gemm.hpp:120:5" call-funcname="Run_naive" call-argnr="1" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_gemm.hpp" line="343" col="9" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_gemm.hpp:330:21" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_gemm.hpp:120:5" call-funcname="Run_naive" call-argnr="2" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_gemm.hpp" line="343" col="9" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_gemm.hpp:330:21" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_gemm.hpp:120:5" call-funcname="Run_naive" call-argnr="3" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_gemm.hpp" line="343" col="9" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_gemm.hpp:330:21" my-argnr="3"/>
+  </FileInfo>
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:71:28" call-funcname="Run_source" call-argnr="1" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp" line="160" col="9" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:148:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:71:28" call-funcname="Run_source" call-argnr="2" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp" line="160" col="9" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:148:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:71:28" call-funcname="Run_source" call-argnr="3" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp" line="160" col="9" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:148:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_gemm.hpp:196:5" call-funcname="Run_pipelined_2x2" call-argnr="1" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_gemm.hpp" line="340" col="13" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_gemm.hpp:330:21" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_gemm.hpp:196:5" call-funcname="Run_pipelined_2x2" call-argnr="2" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_gemm.hpp" line="340" col="13" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_gemm.hpp:330:21" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_gemm.hpp:196:5" call-funcname="Run_pipelined_2x2" call-argnr="3" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_gemm.hpp" line="340" col="13" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_gemm.hpp:330:21" my-argnr="3"/>
+  </FileInfo>
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:96:28" call-funcname="Run_amd_asm" call-argnr="1" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp" line="157" col="13" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:148:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:96:28" call-funcname="Run_amd_asm" call-argnr="2" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp" line="157" col="13" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:148:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_gemm.hpp:120:5" call-funcname="Run_naive" call-argnr="1" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_gemm.hpp" line="343" col="9" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_gemm.hpp:330:21" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_gemm.hpp:120:5" call-funcname="Run_naive" call-argnr="2" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_gemm.hpp" line="343" col="9" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_gemm.hpp:330:21" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_gemm.hpp:120:5" call-funcname="Run_naive" call-argnr="3" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_gemm.hpp" line="343" col="9" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_gemm.hpp:330:21" my-argnr="3"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="GetThreadMatrixCLengths" lineNumber="66"/>
+    <functiondecl functionName="GetBeginOfThreadMatrixC" lineNumber="79"/>
+    <functiondecl functionName="GetDistanceFromBeginOfThreadMatrixC" lineNumber="98"/>
+    <functiondecl functionName="GetThreadMatrixCLengths" lineNumber="66"/>
+    <functiondecl functionName="GetBeginOfThreadMatrixC" lineNumber="79"/>
+    <functiondecl functionName="GetDistanceFromBeginOfThreadMatrixC" lineNumber="98"/>
+    <functiondecl functionName="GetThreadMatrixCLengths" lineNumber="66"/>
+    <functiondecl functionName="GetBeginOfThreadMatrixC" lineNumber="79"/>
+    <functiondecl functionName="GetDistanceFromBeginOfThreadMatrixC" lineNumber="98"/>
+    <functioncall functionName="BlockMatrixA"/>
+    <functioncall functionName="BlockMatrixB"/>
+    <functioncall functionName="CalculateOffset"/>
+    <functioncall functionName="Data"/>
+    <functioncall functionName="DataPerAccess"/>
+    <functioncall functionName="Else"/>
+    <functioncall functionName="Float"/>
+    <functioncall functionName="FloatA"/>
+    <functioncall functionName="FloatB"/>
+    <functioncall functionName="FloatC"/>
+    <functioncall functionName="GetBeginOfThreadMatrixC"/>
+    <functioncall functionName="GetElementSpace"/>
+    <functioncall functionName="GetLengths"/>
+    <functioncall functionName="GetOffsetFromMultiIndex"/>
+    <functioncall functionName="GetThreadMatrixCLengths"/>
+    <functioncall functionName="KPerThreadLoop"/>
+    <functioncall functionName="MPerLevel1Cluster"/>
+    <functioncall functionName="MPerThread"/>
+    <functioncall functionName="MPerThreadSubC"/>
+    <functioncall functionName="MRepeat"/>
+    <functioncall functionName="MakeSubMatrixDescriptor"/>
+    <functioncall functionName="Matrix"/>
+    <functioncall functionName="N"/>
+    <functioncall functionName="NCol"/>
+    <functioncall functionName="NLevel0ThreadCluster"/>
+    <functioncall functionName="NLevel1ThreadCluster"/>
+    <functioncall functionName="NPerLevel1Cluster"/>
+    <functioncall functionName="NPerThread"/>
+    <functioncall functionName="NPerThreadSubC"/>
+    <functioncall functionName="NRow"/>
+    <functioncall functionName="RowStride"/>
+    <functioncall functionName="Run"/>
+    <functioncall functionName="Run_amd_asm"/>
+    <functioncall functionName="Run_naive"/>
+    <functioncall functionName="Run_pipelined_2x2"/>
+    <functioncall functionName="Run_source"/>
+    <functioncall functionName="ThreadGemmADataPerRead_M"/>
+    <functioncall functionName="ThreadGemmBDataPerRead_N"/>
+    <functioncall functionName="ThreadPerLevel0Cluster"/>
+    <functioncall functionName="a_thread_mtx"/>
+    <functioncall functionName="a_thread_sub_mtx"/>
+    <functioncall functionName="aindex"/>
+    <functioncall functionName="amd_assembly_outer_product_1x2"/>
+    <functioncall functionName="amd_assembly_outer_product_1x4"/>
+    <functioncall functionName="auto"/>
+    <functioncall functionName="b_thread_mtx"/>
+    <functioncall functionName="b_thread_sub_mtx"/>
+    <functioncall functionName="bindex"/>
+    <functioncall functionName="bindex_0"/>
+    <functioncall functionName="bindex_1"/>
+    <functioncall functionName="bindex_2"/>
+    <functioncall functionName="bindex_3"/>
+    <functioncall functionName="c_thread_mtx"/>
+    <functioncall functionName="c_thread_sub_mtx"/>
+    <functioncall functionName="cindex"/>
+    <functioncall functionName="cindex_0"/>
+    <functioncall functionName="cindex_1"/>
+    <functioncall functionName="cindex_2"/>
+    <functioncall functionName="cindex_3"/>
+    <functioncall functionName="col"/>
+    <functioncall functionName="const"/>
+    <functioncall functionName="decltype"/>
+    <functioncall functionName="dst_index"/>
+    <functioncall functionName="float"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="fwd"/>
+    <functioncall functionName="get_thread_local_1d_id"/>
+    <functioncall functionName="half2_t"/>
+    <functioncall functionName="half4_t"/>
+    <functioncall functionName="has_amd_asm"/>
+    <functioncall functionName="i"/>
+    <functioncall functionName="id"/>
+    <functioncall functionName="index_t"/>
+    <functioncall functionName="j"/>
+    <functioncall functionName="k"/>
+    <functioncall functionName="k_begin"/>
+    <functioncall functionName="m"/>
+    <functioncall functionName="mMyThreadOffsetA"/>
+    <functioncall functionName="mMyThreadOffsetB"/>
+    <functioncall functionName="m_in_sub_c"/>
+    <functioncall functionName="make_ConstantMatrixDescriptor_packed"/>
+    <functioncall functionName="n"/>
+    <functioncall functionName="n_in_sub_c"/>
+    <functioncall functionName="p_a"/>
+    <functioncall functionName="p_a_block"/>
+    <functioncall functionName="p_a_block_off"/>
+    <functioncall functionName="p_a_thread"/>
+    <functioncall functionName="p_b"/>
+    <functioncall functionName="p_b_block"/>
+    <functioncall functionName="p_b_block_off"/>
+    <functioncall functionName="p_b_thread"/>
+    <functioncall functionName="p_c"/>
+    <functioncall functionName="p_c_thread"/>
+    <functioncall functionName="reinterpret_cast"/>
+    <functioncall functionName="row"/>
+    <functioncall functionName="src_index"/>
+    <functioncall functionName="static_assert"/>
+    <functioncall functionName="typename"/>
+    <functioncall functionName="vector_t"/>
+  </FileInfo>
+</analyzerinfo>

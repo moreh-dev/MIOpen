@@ -1,0 +1,368 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="4270813701096397533">
+        <error id="constParameter" severity="style" msg="Parameter &apos;T&apos; can be declared as pointer to const" verbose="Parameter &apos;T&apos; can be declared as pointer to const" cwe="398" file0="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="192" column="23" info="Parameter &apos;T&apos; can be declared as pointer to const"/>
+            <symbol>T</symbol>
+        </error>
+        <error id="constParameter" severity="style" msg="Parameter &apos;T&apos; can be declared as pointer to const" verbose="Parameter &apos;T&apos; can be declared as pointer to const" cwe="398" file0="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="104" column="43" info="Parameter &apos;T&apos; can be declared as pointer to const"/>
+            <symbol>T</symbol>
+        </error>
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:84:17" call-funcname="losssum &lt; float &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="99" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:96:1" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:84:17" call-funcname="losssum &lt; float &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="99" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:96:1" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="4" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="4"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="4" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="4"/>
+  </FileInfo>
+  <FileInfo check="Class">
+<class name="tensor_view_5d_t" file="/workspaces/MIOpen/src/kernels/tensor_view_5d.hpp" line="30" col="26" hash="7975095716618518159"/>
+  </FileInfo>
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:84:17" call-funcname="losssum &lt; float &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="99" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:96:1" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:84:17" call-funcname="losssum &lt; float &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="99" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:96:1" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="4" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="4"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="4" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="4"/>
+  </FileInfo>
+  <FileInfo check="Class">
+<class name="tensor_view_5d_t" file="/workspaces/MIOpen/src/kernels/tensor_view_5d.hpp" line="30" col="26" hash="7975095716618518159"/>
+  </FileInfo>
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:84:17" call-funcname="losssum &lt; float &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="99" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:96:1" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:84:17" call-funcname="losssum &lt; float &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="99" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:96:1" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="4" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="4"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="4" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="4"/>
+  </FileInfo>
+  <FileInfo check="Class">
+<class name="tensor_view_5d_t" file="/workspaces/MIOpen/src/kernels/tensor_view_5d.hpp" line="30" col="26" hash="7975095716618518159"/>
+  </FileInfo>
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:84:17" call-funcname="losssum &lt; float &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="99" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:96:1" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:84:17" call-funcname="losssum &lt; float &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="99" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:96:1" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="4" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="4"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="4" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="4"/>
+  </FileInfo>
+  <FileInfo check="Class">
+<class name="tensor_view_5d_t" file="/workspaces/MIOpen/src/kernels/tensor_view_5d.hpp" line="30" col="26" hash="7975095716618518159"/>
+  </FileInfo>
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:84:17" call-funcname="losssum &lt; float &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="99" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:96:1" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:84:17" call-funcname="losssum &lt; float &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="99" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:96:1" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="4" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="4"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="4" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="4"/>
+  </FileInfo>
+  <FileInfo check="Class">
+<class name="tensor_view_5d_t" file="/workspaces/MIOpen/src/kernels/tensor_view_5d.hpp" line="30" col="26" hash="7975095716618518159"/>
+  </FileInfo>
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:84:17" call-funcname="losssum &lt; float &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="99" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:96:1" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:84:17" call-funcname="losssum &lt; float &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="99" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:96:1" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="4" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="4"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="4" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="4"/>
+  </FileInfo>
+  <FileInfo check="Class">
+<class name="tensor_view_5d_t" file="/workspaces/MIOpen/src/kernels/tensor_view_5d.hpp" line="30" col="26" hash="7975095716618518159"/>
+  </FileInfo>
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:84:17" call-funcname="losssum &lt; float &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="99" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:96:1" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:84:17" call-funcname="losssum &lt; float &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="99" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:96:1" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="4" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="4"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="4" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="4"/>
+  </FileInfo>
+  <FileInfo check="Class">
+<class name="tensor_view_5d_t" file="/workspaces/MIOpen/src/kernels/tensor_view_5d.hpp" line="30" col="26" hash="7975095716618518159"/>
+  </FileInfo>
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:84:17" call-funcname="losssum &lt; float &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="99" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:96:1" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:84:17" call-funcname="losssum &lt; float &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="99" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:96:1" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="4" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="4"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="4" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="4"/>
+  </FileInfo>
+  <FileInfo check="Class">
+<class name="tensor_view_5d_t" file="/workspaces/MIOpen/src/kernels/tensor_view_5d.hpp" line="30" col="26" hash="7975095716618518159"/>
+  </FileInfo>
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:84:17" call-funcname="losssum &lt; float &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="99" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:96:1" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:84:17" call-funcname="losssum &lt; float &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="99" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:96:1" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="4" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="4"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="4" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="4"/>
+  </FileInfo>
+  <FileInfo check="Class">
+<class name="tensor_view_5d_t" file="/workspaces/MIOpen/src/kernels/tensor_view_5d.hpp" line="30" col="26" hash="7975095716618518159"/>
+  </FileInfo>
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:84:17" call-funcname="losssum &lt; float &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="99" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:96:1" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:84:17" call-funcname="losssum &lt; float &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="99" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:96:1" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="4" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="4"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="4" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="4"/>
+  </FileInfo>
+  <FileInfo check="Class">
+<class name="tensor_view_5d_t" file="/workspaces/MIOpen/src/kernels/tensor_view_5d.hpp" line="30" col="26" hash="7975095716618518159"/>
+  </FileInfo>
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:84:17" call-funcname="losssum &lt; float &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="99" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:96:1" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:84:17" call-funcname="losssum &lt; float &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="99" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:96:1" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:103:17" call-funcname="hingeEmbeddingLossFwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="139" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:131:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:143:17" call-funcname="hingeEmbeddingLossBwd &lt; float , int &gt;" call-argnr="4" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="186" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:176:28" my-argnr="4"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:191:17" call-funcname="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="221" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:214:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="2" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:225:17" call-funcname="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" call-argnr="4" file="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp" line="266" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenHingeEmbeddingLoss.cpp:257:28" my-argnr="4"/>
+  </FileInfo>
+  <FileInfo check="Class">
+<class name="tensor_view_5d_t" file="/workspaces/MIOpen/src/kernels/tensor_view_5d.hpp" line="30" col="26" hash="7975095716618518159"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="warp_reduce_sum" lineNumber="47"/>
+    <functiondecl functionName="block_reduce_sum" lineNumber="64"/>
+    <functiondecl functionName="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" lineNumber="225"/>
+    <functiondecl functionName="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" lineNumber="191"/>
+    <functiondecl functionName="hingeEmbeddingLossBwd &lt; float , int &gt;" lineNumber="143"/>
+    <functiondecl functionName="hingeEmbeddingLossFwd &lt; float , int &gt;" lineNumber="103"/>
+    <functiondecl functionName="losssum &lt; float &gt;" lineNumber="84"/>
+    <functiondecl functionName="warp_reduce_sum" lineNumber="47"/>
+    <functiondecl functionName="block_reduce_sum" lineNumber="64"/>
+    <functiondecl functionName="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" lineNumber="225"/>
+    <functiondecl functionName="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" lineNumber="191"/>
+    <functiondecl functionName="hingeEmbeddingLossBwd &lt; float , int &gt;" lineNumber="143"/>
+    <functiondecl functionName="hingeEmbeddingLossFwd &lt; float , int &gt;" lineNumber="103"/>
+    <functiondecl functionName="losssum &lt; float &gt;" lineNumber="84"/>
+    <functiondecl functionName="warp_reduce_sum" lineNumber="47"/>
+    <functiondecl functionName="block_reduce_sum" lineNumber="64"/>
+    <functiondecl functionName="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" lineNumber="225"/>
+    <functiondecl functionName="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" lineNumber="191"/>
+    <functiondecl functionName="hingeEmbeddingLossBwd &lt; float , int &gt;" lineNumber="143"/>
+    <functiondecl functionName="hingeEmbeddingLossFwd &lt; float , int &gt;" lineNumber="103"/>
+    <functiondecl functionName="losssum &lt; float &gt;" lineNumber="84"/>
+    <functiondecl functionName="warp_reduce_sum" lineNumber="47"/>
+    <functiondecl functionName="block_reduce_sum" lineNumber="64"/>
+    <functiondecl functionName="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" lineNumber="225"/>
+    <functiondecl functionName="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" lineNumber="191"/>
+    <functiondecl functionName="hingeEmbeddingLossBwd &lt; float , int &gt;" lineNumber="143"/>
+    <functiondecl functionName="hingeEmbeddingLossFwd &lt; float , int &gt;" lineNumber="103"/>
+    <functiondecl functionName="losssum &lt; float &gt;" lineNumber="84"/>
+    <functiondecl functionName="warp_reduce_sum" lineNumber="47"/>
+    <functiondecl functionName="block_reduce_sum" lineNumber="64"/>
+    <functiondecl functionName="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" lineNumber="225"/>
+    <functiondecl functionName="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" lineNumber="191"/>
+    <functiondecl functionName="hingeEmbeddingLossBwd &lt; float , int &gt;" lineNumber="143"/>
+    <functiondecl functionName="hingeEmbeddingLossFwd &lt; float , int &gt;" lineNumber="103"/>
+    <functiondecl functionName="losssum &lt; float &gt;" lineNumber="84"/>
+    <functiondecl functionName="warp_reduce_sum" lineNumber="47"/>
+    <functiondecl functionName="block_reduce_sum" lineNumber="64"/>
+    <functiondecl functionName="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" lineNumber="225"/>
+    <functiondecl functionName="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" lineNumber="191"/>
+    <functiondecl functionName="hingeEmbeddingLossBwd &lt; float , int &gt;" lineNumber="143"/>
+    <functiondecl functionName="hingeEmbeddingLossFwd &lt; float , int &gt;" lineNumber="103"/>
+    <functiondecl functionName="losssum &lt; float &gt;" lineNumber="84"/>
+    <functiondecl functionName="warp_reduce_sum" lineNumber="47"/>
+    <functiondecl functionName="block_reduce_sum" lineNumber="64"/>
+    <functiondecl functionName="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" lineNumber="225"/>
+    <functiondecl functionName="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" lineNumber="191"/>
+    <functiondecl functionName="hingeEmbeddingLossBwd &lt; float , int &gt;" lineNumber="143"/>
+    <functiondecl functionName="hingeEmbeddingLossFwd &lt; float , int &gt;" lineNumber="103"/>
+    <functiondecl functionName="losssum &lt; float &gt;" lineNumber="84"/>
+    <functiondecl functionName="warp_reduce_sum" lineNumber="47"/>
+    <functiondecl functionName="block_reduce_sum" lineNumber="64"/>
+    <functiondecl functionName="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" lineNumber="225"/>
+    <functiondecl functionName="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" lineNumber="191"/>
+    <functiondecl functionName="hingeEmbeddingLossBwd &lt; float , int &gt;" lineNumber="143"/>
+    <functiondecl functionName="hingeEmbeddingLossFwd &lt; float , int &gt;" lineNumber="103"/>
+    <functiondecl functionName="losssum &lt; float &gt;" lineNumber="84"/>
+    <functiondecl functionName="warp_reduce_sum" lineNumber="47"/>
+    <functiondecl functionName="block_reduce_sum" lineNumber="64"/>
+    <functiondecl functionName="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" lineNumber="225"/>
+    <functiondecl functionName="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" lineNumber="191"/>
+    <functiondecl functionName="hingeEmbeddingLossBwd &lt; float , int &gt;" lineNumber="143"/>
+    <functiondecl functionName="hingeEmbeddingLossFwd &lt; float , int &gt;" lineNumber="103"/>
+    <functiondecl functionName="losssum &lt; float &gt;" lineNumber="84"/>
+    <functiondecl functionName="warp_reduce_sum" lineNumber="47"/>
+    <functiondecl functionName="block_reduce_sum" lineNumber="64"/>
+    <functiondecl functionName="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" lineNumber="225"/>
+    <functiondecl functionName="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" lineNumber="191"/>
+    <functiondecl functionName="hingeEmbeddingLossBwd &lt; float , int &gt;" lineNumber="143"/>
+    <functiondecl functionName="hingeEmbeddingLossFwd &lt; float , int &gt;" lineNumber="103"/>
+    <functiondecl functionName="losssum &lt; float &gt;" lineNumber="84"/>
+    <functiondecl functionName="warp_reduce_sum" lineNumber="47"/>
+    <functiondecl functionName="block_reduce_sum" lineNumber="64"/>
+    <functiondecl functionName="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;" lineNumber="225"/>
+    <functiondecl functionName="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;" lineNumber="191"/>
+    <functiondecl functionName="hingeEmbeddingLossBwd &lt; float , int &gt;" lineNumber="143"/>
+    <functiondecl functionName="hingeEmbeddingLossFwd &lt; float , int &gt;" lineNumber="103"/>
+    <functiondecl functionName="losssum &lt; float &gt;" lineNumber="84"/>
+    <functioncall functionName="CVT_ACCUM2FLOAT"/>
+    <functioncall functionName="CVT_FLOAT2ACCUM"/>
+    <functioncall functionName="FLOAT_ACCUM"/>
+    <functioncall functionName="I"/>
+    <functioncall functionName="I_tv"/>
+    <functioncall functionName="N"/>
+    <functioncall functionName="O"/>
+    <functioncall functionName="T"/>
+    <functioncall functionName="T_tv"/>
+    <functioncall functionName="_Float16"/>
+    <functioncall functionName="__shfl_down"/>
+    <functioncall functionName="__syncthreads"/>
+    <functioncall functionName="bfloat16_to_float"/>
+    <functioncall functionName="block_reduce_sum"/>
+    <functioncall functionName="dI"/>
+    <functioncall functionName="dO"/>
+    <functioncall functionName="dO_tv"/>
+    <functioncall functionName="divisor"/>
+    <functioncall functionName="f32"/>
+    <functioncall functionName="float"/>
+    <functioncall functionName="float_to_bfloat16"/>
+    <functioncall functionName="fmaxf"/>
+    <functioncall functionName="gid"/>
+    <functioncall functionName="half"/>
+    <functioncall functionName="hi"/>
+    <functioncall functionName="hingeEmbeddingLossBwd &lt; float , int &gt;"/>
+    <functioncall functionName="hingeEmbeddingLossFwd &lt; float , int &gt;"/>
+    <functioncall functionName="hingeEmbeddingLossUnreducedBwd &lt; float , int &gt;"/>
+    <functioncall functionName="hingeEmbeddingLossUnreducedFwd &lt; float , int &gt;"/>
+    <functioncall functionName="i"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="input"/>
+    <functioncall functionName="lane"/>
+    <functioncall functionName="loss"/>
+    <functioncall functionName="losssum &lt; float &gt;"/>
+    <functioncall functionName="make_ushort2"/>
+    <functioncall functionName="margin"/>
+    <functioncall functionName="output"/>
+    <functioncall functionName="return"/>
+    <functioncall functionName="src_val"/>
+    <functioncall functionName="static_cast"/>
+    <functioncall functionName="ushort2"/>
+    <functioncall functionName="val"/>
+    <functioncall functionName="warpSize"/>
+    <functioncall functionName="warp_reduce_sum"/>
+    <functioncall functionName="wid"/>
+    <functioncall functionName="x"/>
+  </FileInfo>
+</analyzerinfo>

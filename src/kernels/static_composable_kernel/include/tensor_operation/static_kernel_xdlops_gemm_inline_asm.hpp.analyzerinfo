@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="4427494636947258050">
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="GetMRepeats" lineNumber="434"/>
+    <functiondecl functionName="GetNRepeats" lineNumber="436"/>
+    <functiondecl functionName="M1" lineNumber="447"/>
+    <functiondecl functionName="M0" lineNumber="448"/>
+    <functiondecl functionName="N1" lineNumber="449"/>
+    <functiondecl functionName="N0" lineNumber="450"/>
+    <functiondecl functionName="GetBlkSize" lineNumber="451"/>
+    <functiondecl functionName="GetNumBlks" lineNumber="453"/>
+    <functiondecl functionName="GetNumBlksPerXdlops" lineNumber="459"/>
+    <functiondecl functionName="GetRegSizePerXdlops" lineNumber="494"/>
+    <functiondecl functionName="IsABroadcast" lineNumber="499"/>
+    <functiondecl functionName="IsKReduction" lineNumber="501"/>
+    <functiondecl functionName="GetBeginOfThreadBlk" lineNumber="761"/>
+    <functiondecl functionName="GetOutputLayout" lineNumber="790"/>
+    <functiondecl functionName="SetZeroXdlopsRegs" lineNumber="802"/>
+    <functioncall functionName="AStride"/>
+    <functioncall functionName="BStride"/>
+    <functioncall functionName="Else"/>
+    <functioncall functionName="FloatA"/>
+    <functioncall functionName="FloatB"/>
+    <functioncall functionName="FloatC"/>
+    <functioncall functionName="GemmMPerWave"/>
+    <functioncall functionName="GemmNPerWave"/>
+    <functioncall functionName="GetMFMAInfo"/>
+    <functioncall functionName="GetNumBlksPerXdlops"/>
+    <functioncall functionName="GetRegSizePerXdlops"/>
+    <functioncall functionName="IsABroadcast"/>
+    <functioncall functionName="IsKReduction"/>
+    <functioncall functionName="M0"/>
+    <functioncall functionName="M1"/>
+    <functioncall functionName="MPerXdlops"/>
+    <functioncall functionName="N0"/>
+    <functioncall functionName="N1"/>
+    <functioncall functionName="NPerXdlops"/>
+    <functioncall functionName="NRepeats"/>
+    <functioncall functionName="WaveSize"/>
+    <functioncall functionName="a"/>
+    <functioncall functionName="auto"/>
+    <functioncall functionName="b"/>
+    <functioncall functionName="blk_id"/>
+    <functioncall functionName="blk_td"/>
+    <functioncall functionName="class"/>
+    <functioncall functionName="col"/>
+    <functioncall functionName="const"/>
+    <functioncall functionName="cycles"/>
+    <functioncall functionName="data_type"/>
+    <functioncall functionName="float"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="gcnasm_accvgpr_read"/>
+    <functioncall functionName="gcnasm_accvgpr_zero"/>
+    <functioncall functionName="gcnasm_mfma_f32_16x16x16f16"/>
+    <functioncall functionName="gcnasm_mfma_f32_16x16x1f32"/>
+    <functioncall functionName="gcnasm_mfma_f32_16x16x2bf16"/>
+    <functioncall functionName="gcnasm_mfma_f32_16x16x4f16"/>
+    <functioncall functionName="gcnasm_mfma_f32_16x16x4f32"/>
+    <functioncall functionName="gcnasm_mfma_f32_16x16x8bf16"/>
+    <functioncall functionName="gcnasm_mfma_f32_32x32x2f32"/>
+    <functioncall functionName="gcnasm_mfma_f32_32x32x4bf16"/>
+    <functioncall functionName="gcnasm_mfma_f32_32x32x8f16"/>
+    <functioncall functionName="gcnasm_mfma_f32_4x4x1f32"/>
+    <functioncall functionName="gcnasm_mfma_f32_4x4x2bf16"/>
+    <functioncall functionName="gcnasm_mfma_f32_4x4x4f16"/>
+    <functioncall functionName="gcnasm_nop"/>
+    <functioncall functionName="get_thread_local_1d_id"/>
+    <functioncall functionName="group_size"/>
+    <functioncall functionName="half_t"/>
+    <functioncall functionName="i"/>
+    <functioncall functionName="index_t"/>
+    <functioncall functionName="k_base"/>
+    <functioncall functionName="k_i"/>
+    <functioncall functionName="m"/>
+    <functioncall functionName="mfma_instr"/>
+    <functioncall functionName="mfma_type"/>
+    <functioncall functionName="n"/>
+    <functioncall functionName="num_groups_blk"/>
+    <functioncall functionName="num_input_blks"/>
+    <functioncall functionName="num_output_blks"/>
+    <functioncall functionName="num_regs_blk"/>
+    <functioncall functionName="num_threads_blk"/>
+    <functioncall functionName="p_a"/>
+    <functioncall functionName="p_b"/>
+    <functioncall functionName="p_c_thread"/>
+    <functioncall functionName="reg_size"/>
+    <functioncall functionName="reinterpret_cast"/>
+    <functioncall functionName="return"/>
+    <functioncall functionName="row"/>
+    <functioncall functionName="run"/>
+    <functioncall functionName="sizeof"/>
+    <functioncall functionName="static_assert"/>
+    <functioncall functionName="ushort"/>
+    <functioncall functionName="wave_size"/>
+  </FileInfo>
+</analyzerinfo>

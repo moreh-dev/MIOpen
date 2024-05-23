@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="3675728385466224337">
+  <FileInfo check="Class">
+<class name="get_type_from_type_id &lt; &apos;H&apos; &gt;" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/src/kernel_wrapper/static_kernel_gridwise_generic_reduction.cpp" line="17" col="1" hash="9359798604412191987"/>
+<class name="get_type_from_type_id &lt; &apos;F&apos; &gt;" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/src/kernel_wrapper/static_kernel_gridwise_generic_reduction.cpp" line="23" col="1" hash="6375147883595324626"/>
+<class name="get_type_from_type_id &lt; &apos;D&apos; &gt;" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/src/kernel_wrapper/static_kernel_gridwise_generic_reduction.cpp" line="29" col="1" hash="6895463341003156040"/>
+<class name="get_reduce_op &lt; 656868 &gt;" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/src/kernel_wrapper/static_kernel_gridwise_generic_reduction.cpp" line="41" col="1" hash="10755098034249609795"/>
+<class name="get_reduce_op &lt; 778576 &gt;" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/src/kernel_wrapper/static_kernel_gridwise_generic_reduction.cpp" line="47" col="1" hash="7495132402579763335"/>
+<class name="get_reduce_op &lt; 777378 &gt;" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/src/kernel_wrapper/static_kernel_gridwise_generic_reduction.cpp" line="53" col="1" hash="3842087669072350690"/>
+<class name="get_reduce_op &lt; 776588 &gt;" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/src/kernel_wrapper/static_kernel_gridwise_generic_reduction.cpp" line="59" col="1" hash="9203509282091628076"/>
+<class name="get_reduce_op &lt; 657788 &gt;" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/src/kernel_wrapper/static_kernel_gridwise_generic_reduction.cpp" line="65" col="1" hash="391120551740867021"/>
+<class name="get_reduce_op &lt; 658671 &gt;" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/src/kernel_wrapper/static_kernel_gridwise_generic_reduction.cpp" line="71" col="1" hash="8126833730627879157"/>
+<class name="get_reduce_op &lt; 788201 &gt;" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/src/kernel_wrapper/static_kernel_gridwise_generic_reduction.cpp" line="77" col="1" hash="12610563171354173614"/>
+<class name="get_reduce_op &lt; 788202 &gt;" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/src/kernel_wrapper/static_kernel_gridwise_generic_reduction.cpp" line="83" col="1" hash="916895223237080375"/>
+<class name="get_reduce_op &lt; CK_PARAM_REDUCE_OP &gt;" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/src/kernel_wrapper/static_kernel_gridwise_generic_reduction.cpp" line="35" col="1" hash="16781122008690061582"/>
+<class name="get_type_from_type_id &lt; static_cast &lt; char &gt; ( CK_PARAM_REDUCE_COMPTYPE ) &gt;" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/src/kernel_wrapper/static_kernel_gridwise_generic_reduction.cpp" line="11" col="1" hash="1150151436005602325"/>
+<class name="get_type_from_type_id &lt; static_cast &lt; char &gt; ( CK_PARAM_DST_DATATYPE ) &gt;" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/src/kernel_wrapper/static_kernel_gridwise_generic_reduction.cpp" line="11" col="1" hash="7165826168627377468"/>
+<class name="get_type_from_type_id &lt; static_cast &lt; char &gt; ( CK_PARAM_SRC_DATATYPE ) &gt;" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/src/kernel_wrapper/static_kernel_gridwise_generic_reduction.cpp" line="11" col="1" hash="13278122260461874886"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="ADD"/>
+    <functioncall functionName="AMAX"/>
+    <functioncall functionName="AVG"/>
+    <functioncall functionName="CK_PARAM_ACCESSES_PER_THREAD_INBLOCK"/>
+    <functioncall functionName="CK_PARAM_ACCESSES_PER_THREAD_INWARP"/>
+    <functioncall functionName="CK_PARAM_BLKGROUPSIZE"/>
+    <functioncall functionName="CK_PARAM_BLOCKSIZE"/>
+    <functioncall functionName="CK_PARAM_DST_DESC_LENGTHS"/>
+    <functioncall functionName="CK_PARAM_DST_DESC_STRIDES"/>
+    <functioncall functionName="CK_PARAM_GRIDSIZE"/>
+    <functioncall functionName="CK_PARAM_INVARIANT_DIMS"/>
+    <functioncall functionName="CK_PARAM_REDUCE_IMPL"/>
+    <functioncall functionName="CK_PARAM_SRC_DESC_LENGTHS"/>
+    <functioncall functionName="CK_PARAM_SRC_DESC_STRIDES"/>
+    <functioncall functionName="CK_PARAM_THREAD_BUFFER_LENGTH"/>
+    <functioncall functionName="CK_PARAM_TOREDUCE_DIMS"/>
+    <functioncall functionName="FLATTENED_INDICES"/>
+    <functioncall functionName="GredAccessesPerThreadInBlock"/>
+    <functioncall functionName="GredAccessesPerThreadInWarp"/>
+    <functioncall functionName="GredThreadBufferLength"/>
+    <functioncall functionName="MAX"/>
+    <functioncall functionName="MIN"/>
+    <functioncall functionName="MUL"/>
+    <functioncall functionName="NORM1"/>
+    <functioncall functionName="NORM2"/>
+    <functioncall functionName="NOT_PROPAGATE_NAN"/>
+    <functioncall functionName="NO_INDICES"/>
+    <functioncall functionName="PROPAGATE_NAN"/>
+    <functioncall functionName="ReductionMethod_t"/>
+    <functioncall functionName="Run"/>
+    <functioncall functionName="Run_2"/>
+    <functioncall functionName="Size"/>
+    <functioncall functionName="alpha"/>
+    <functioncall functionName="beta"/>
+    <functioncall functionName="blkGroupSize"/>
+    <functioncall functionName="blockSize"/>
+    <functioncall functionName="const"/>
+    <functioncall functionName="const_cast"/>
+    <functioncall functionName="decltype"/>
+    <functioncall functionName="dstDesc"/>
+    <functioncall functionName="float"/>
+    <functioncall functionName="gridSize"/>
+    <functioncall functionName="index_t"/>
+    <functioncall functionName="indices_global"/>
+    <functioncall functionName="make_native_tensor_descriptor"/>
+    <functioncall functionName="nanPropaOpt"/>
+    <functioncall functionName="op"/>
+    <functioncall functionName="p_dst_global"/>
+    <functioncall functionName="p_src_global"/>
+    <functioncall functionName="reduceImpl"/>
+    <functioncall functionName="reduceIndicesOpt"/>
+    <functioncall functionName="srcDesc"/>
+    <functioncall functionName="static_assert"/>
+    <functioncall functionName="static_cast"/>
+    <functioncall functionName="void"/>
+    <functioncall functionName="ws_buf1_global"/>
+    <functioncall functionName="ws_buf2_bytes_offset"/>
+  </FileInfo>
+</analyzerinfo>

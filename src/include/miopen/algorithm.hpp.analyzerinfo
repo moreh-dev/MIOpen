@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="16482534955577227127">
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/algorithm.hpp:34:6" my-argnr="1" my-argname="r" file="/workspaces/MIOpen/src/include/miopen/algorithm.hpp" line="36" col="24" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/algorithm.hpp:40:6" my-argnr="1" my-argname="r" file="/workspaces/MIOpen/src/include/miopen/algorithm.hpp" line="42" col="24" value="0"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="all_of"/>
+    <functioncall functionName="any_of"/>
+    <functioncall functionName="begin"/>
+    <functioncall functionName="end"/>
+    <functioncall functionName="p"/>
+    <functioncall functionName="typename"/>
+  </FileInfo>
+</analyzerinfo>

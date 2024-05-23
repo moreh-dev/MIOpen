@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="14473202356366955917">
+  <FileInfo check="Null pointer">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_forward_convolution_into_gemm_v6r1_nchw_kcyx_nkhw.hpp:26:1" my-argnr="4" my-argname="conv_strides" file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_forward_convolution_into_gemm_v6r1_nchw_kcyx_nkhw.hpp" line="55" col="30" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_forward_convolution_into_gemm_v6r1_nchw_kcyx_nkhw.hpp:26:1" my-argnr="5" my-argname="conv_dilations" file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_forward_convolution_into_gemm_v6r1_nchw_kcyx_nkhw.hpp" line="58" col="32" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_forward_convolution_into_gemm_v6r1_nchw_kcyx_nkhw.hpp:26:1" my-argnr="6" my-argname="in_left_pads" file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_forward_convolution_into_gemm_v6r1_nchw_kcyx_nkhw.hpp" line="61" col="29" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_forward_convolution_into_gemm_v6r1_nchw_kcyx_nkhw.hpp:26:1" my-argnr="7" my-argname="in_right_pads" file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_forward_convolution_into_gemm_v6r1_nchw_kcyx_nkhw.hpp" line="64" col="30" value="0"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_forward_convolution_into_gemm_v6r1_nchw_kcyx_nkhw.hpp:26:1" my-argnr="1" my-argname="wei_k_c_y_x_grid_desc" file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_forward_convolution_into_gemm_v6r1_nchw_kcyx_nkhw.hpp" line="52" col="20" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_forward_convolution_into_gemm_v6r1_nchw_kcyx_nkhw.hpp:26:1" my-argnr="2" my-argname="in_n_c_hi_wi_grid_desc" file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_forward_convolution_into_gemm_v6r1_nchw_kcyx_nkhw.hpp" line="42" col="20" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_forward_convolution_into_gemm_v6r1_nchw_kcyx_nkhw.hpp:26:1" my-argnr="3" my-argname="out_n_k_ho_wo_grid_desc" file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_forward_convolution_into_gemm_v6r1_nchw_kcyx_nkhw.hpp" line="44" col="20" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_forward_convolution_into_gemm_v6r1_nchw_kcyx_nkhw.hpp:26:1" my-argnr="4" my-argname="conv_strides" file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_forward_convolution_into_gemm_v6r1_nchw_kcyx_nkhw.hpp" line="55" col="30" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_forward_convolution_into_gemm_v6r1_nchw_kcyx_nkhw.hpp:26:1" my-argnr="5" my-argname="conv_dilations" file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_forward_convolution_into_gemm_v6r1_nchw_kcyx_nkhw.hpp" line="58" col="32" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_forward_convolution_into_gemm_v6r1_nchw_kcyx_nkhw.hpp:26:1" my-argnr="6" my-argname="in_left_pads" file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_forward_convolution_into_gemm_v6r1_nchw_kcyx_nkhw.hpp" line="61" col="29" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_forward_convolution_into_gemm_v6r1_nchw_kcyx_nkhw.hpp:26:1" my-argnr="7" my-argname="in_right_pads" file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_forward_convolution_into_gemm_v6r1_nchw_kcyx_nkhw.hpp" line="64" col="30" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_forward_convolution_into_gemm_v6r1_nchw_kcyx_nkhw.hpp:26:1" my-argnr="8" my-argname="N0" file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_forward_convolution_into_gemm_v6r1_nchw_kcyx_nkhw.hpp" line="67" col="25" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_forward_convolution_into_gemm_v6r1_nchw_kcyx_nkhw.hpp:26:1" my-argnr="9" my-argname="C0" file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/problem_transform/transform_forward_convolution_into_gemm_v6r1_nchw_kcyx_nkhw.hpp" line="68" col="25" value="0"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="C"/>
+    <functioncall functionName="C0"/>
+    <functioncall functionName="C1"/>
+    <functioncall functionName="ConvDilationH"/>
+    <functioncall functionName="ConvDilationW"/>
+    <functioncall functionName="ConvStrideH"/>
+    <functioncall functionName="ConvStrideW"/>
+    <functioncall functionName="GetLength"/>
+    <functioncall functionName="Hi"/>
+    <functioncall functionName="Ho"/>
+    <functioncall functionName="I0"/>
+    <functioncall functionName="I1"/>
+    <functioncall functionName="I2"/>
+    <functioncall functionName="I3"/>
+    <functioncall functionName="In"/>
+    <functioncall functionName="InLeftPadH"/>
+    <functioncall functionName="InLeftPadW"/>
+    <functioncall functionName="InRightPadH"/>
+    <functioncall functionName="InRightPadW"/>
+    <functioncall functionName="K"/>
+    <functioncall functionName="N"/>
+    <functioncall functionName="N0"/>
+    <functioncall functionName="N1"/>
+    <functioncall functionName="Out"/>
+    <functioncall functionName="Wei"/>
+    <functioncall functionName="Wi"/>
+    <functioncall functionName="Wo"/>
+    <functioncall functionName="X"/>
+    <functioncall functionName="Y"/>
+    <functioncall functionName="in_gk0_gn0_gn1_gk1_grid_desc"/>
+    <functioncall functionName="in_n0_n1_c0_c1_y_ho_x_wo_grid_desc"/>
+    <functioncall functionName="in_n_c_hi_wi_grid_desc"/>
+    <functioncall functionName="in_n_c_hip_wip_grid_desc"/>
+    <functioncall functionName="make_embed_transform"/>
+    <functioncall functionName="make_merge_transform"/>
+    <functioncall functionName="make_merge_transform_v2_magic_division"/>
+    <functioncall functionName="make_naive_tensor_descriptor_packed"/>
+    <functioncall functionName="make_pad_transform"/>
+    <functioncall functionName="make_pass_through_transform"/>
+    <functioncall functionName="make_tuple"/>
+    <functioncall functionName="make_unmerge_transform"/>
+    <functioncall functionName="out_gm0_gm1_gn0_gn1_grid_desc"/>
+    <functioncall functionName="out_n0_n1_1_k_howo_grid_desc"/>
+    <functioncall functionName="out_n_k_howo_grid_desc"/>
+    <functioncall functionName="transform_tensor_descriptor"/>
+    <functioncall functionName="typename"/>
+    <functioncall functionName="wei_gk0_gm0_gm1_gk1_grid_desc"/>
+  </FileInfo>
+</analyzerinfo>

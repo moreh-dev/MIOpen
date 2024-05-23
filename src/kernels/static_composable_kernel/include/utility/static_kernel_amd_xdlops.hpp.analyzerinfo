@@ -1,0 +1,200 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="15706934166246922609">
+        <error id="objectIndex" severity="warning" msg="The address of local variable &apos;a&apos; might be accessed at non-zero index." verbose="The address of local variable &apos;a&apos; might be accessed at non-zero index." cwe="758" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp" line="449" column="37"/>
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp" line="443" column="65" info="Address of variable taken here."/>
+        </error>
+        <error id="objectIndex" severity="warning" msg="The address of local variable &apos;b&apos; might be accessed at non-zero index." verbose="The address of local variable &apos;b&apos; might be accessed at non-zero index." cwe="758" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp" line="449" column="61"/>
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp" line="444" column="65" info="Address of variable taken here."/>
+        </error>
+        <error id="objectIndex" severity="warning" msg="The address of local variable &apos;a&apos; might be accessed at non-zero index." verbose="The address of local variable &apos;a&apos; might be accessed at non-zero index." cwe="758" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp" line="463" column="37"/>
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp" line="457" column="65" info="Address of variable taken here."/>
+        </error>
+        <error id="objectIndex" severity="warning" msg="The address of local variable &apos;b&apos; might be accessed at non-zero index." verbose="The address of local variable &apos;b&apos; might be accessed at non-zero index." cwe="758" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp" line="463" column="61"/>
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp" line="458" column="65" info="Address of variable taken here."/>
+        </error>
+  <FileInfo check="Bounds checking">
+    <array-index>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:61:5" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="63" col="60" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:61:5" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="63" col="70" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:79:5" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="81" col="60" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:79:5" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="81" col="70" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:97:5" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="99" col="60" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:97:5" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="99" col="70" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:109:5" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="111" col="60" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:109:5" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="111" col="70" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:120:5" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="122" col="60" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:120:5" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="122" col="70" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:128:1" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="130" col="56" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:128:1" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="130" col="66" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:135:1" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="137" col="56" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:135:1" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="137" col="66" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:146:33" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="150" col="56" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:146:33" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="150" col="66" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:155:33" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="159" col="56" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:155:33" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="159" col="66" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:170:5" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="172" col="58" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:170:5" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="172" col="68" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:181:5" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="183" col="58" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:181:5" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="183" col="68" value="0"/>
+    </array-index>
+  </FileInfo>
+  <FileInfo check="Null pointer">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:61:5" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="63" col="60" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:61:5" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="63" col="70" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:79:5" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="81" col="60" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:79:5" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="81" col="70" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:97:5" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="99" col="60" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:97:5" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="99" col="70" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:109:5" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="111" col="60" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:109:5" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="111" col="70" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:120:5" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="122" col="60" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:120:5" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="122" col="70" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:128:1" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="130" col="56" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:128:1" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="130" col="66" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:135:1" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="137" col="56" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:135:1" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="137" col="66" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:146:33" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="150" col="56" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:146:33" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="150" col="66" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:155:33" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="159" col="56" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:155:33" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="159" col="66" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:170:5" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="172" col="58" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:170:5" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="172" col="68" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:181:5" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="183" col="58" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:181:5" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="183" col="68" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:196:5" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="199" col="60" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:196:5" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="199" col="70" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:215:5" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="217" col="60" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:215:5" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="217" col="70" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:233:5" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="235" col="60" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:233:5" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="235" col="70" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:246:5" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="248" col="60" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:246:5" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="248" col="70" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:257:5" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="259" col="60" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:257:5" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="259" col="70" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:265:1" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="267" col="56" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:265:1" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="267" col="66" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:272:1" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="274" col="57" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:272:1" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="274" col="67" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:283:33" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="287" col="56" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:283:33" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="287" col="66" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:292:33" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="297" col="56" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:292:33" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="297" col="66" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:308:5" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="310" col="58" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:308:5" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="310" col="68" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:319:5" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="321" col="58" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:319:5" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="321" col="68" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:335:5" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="337" col="61" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:335:5" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="337" col="71" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:353:5" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="355" col="61" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:353:5" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="355" col="71" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:371:5" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="373" col="61" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:371:5" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="373" col="71" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:384:5" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="386" col="61" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:384:5" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="386" col="71" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:396:5" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="398" col="61" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:396:5" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="398" col="71" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:403:33" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="407" col="57" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:403:33" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="407" col="67" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:411:32" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="415" col="57" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:411:32" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="415" col="67" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:425:33" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="429" col="57" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:425:33" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="429" col="67" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:434:33" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="438" col="57" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:434:33" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="438" col="67" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:449:5" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="451" col="59" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:449:5" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="451" col="69" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:460:5" my-argnr="1" my-argname="reg_a" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="462" col="59" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp:460:5" my-argnr="2" my-argname="reg_b" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_xdlops.hpp" line="462" col="69" value="0"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="run" lineNumber="61"/>
+    <functiondecl functionName="run" lineNumber="79"/>
+    <functiondecl functionName="run" lineNumber="97"/>
+    <functiondecl functionName="run" lineNumber="109"/>
+    <functiondecl functionName="run" lineNumber="120"/>
+    <functiondecl functionName="intrin_mfma_f32_32x32x2f32" lineNumber="128"/>
+    <functiondecl functionName="intrin_mfma_f32_16x16x4f32" lineNumber="135"/>
+    <functiondecl functionName="intrin_mfma_f32_16x16x1f32 &lt; 16 , 64 &gt;" lineNumber="146"/>
+    <functiondecl functionName="intrin_mfma_f32_16x16x1f32 &lt; 64 , 16 &gt;" lineNumber="155"/>
+    <functiondecl functionName="run" lineNumber="170"/>
+    <functiondecl functionName="run" lineNumber="181"/>
+    <functiondecl functionName="run" lineNumber="196"/>
+    <functiondecl functionName="run" lineNumber="215"/>
+    <functiondecl functionName="run" lineNumber="233"/>
+    <functiondecl functionName="run" lineNumber="246"/>
+    <functiondecl functionName="run" lineNumber="257"/>
+    <functiondecl functionName="intrin_mfma_f32_32x32x8f16" lineNumber="265"/>
+    <functiondecl functionName="intrin_mfma_f32_16x16x16f16" lineNumber="272"/>
+    <functiondecl functionName="intrin_mfma_f32_16x16x4f16 &lt; 16 , 64 &gt;" lineNumber="283"/>
+    <functiondecl functionName="intrin_mfma_f32_16x16x4f16 &lt; 64 , 16 &gt;" lineNumber="292"/>
+    <functiondecl functionName="run" lineNumber="308"/>
+    <functiondecl functionName="run" lineNumber="319"/>
+    <functiondecl functionName="run" lineNumber="335"/>
+    <functiondecl functionName="run" lineNumber="353"/>
+    <functiondecl functionName="run" lineNumber="371"/>
+    <functiondecl functionName="run" lineNumber="384"/>
+    <functiondecl functionName="run" lineNumber="396"/>
+    <functiondecl functionName="intrin_mfma_f32_32x32x4bf16" lineNumber="403"/>
+    <functiondecl functionName="intrin_mfma_f32_16x16x8bf16" lineNumber="411"/>
+    <functiondecl functionName="intrin_mfma_f32_16x16x2bf16 &lt; 16 , 64 &gt;" lineNumber="425"/>
+    <functiondecl functionName="intrin_mfma_f32_16x16x2bf16 &lt; 64 , 16 &gt;" lineNumber="434"/>
+    <functiondecl functionName="run" lineNumber="449"/>
+    <functiondecl functionName="run" lineNumber="460"/>
+    <functioncall functionName="AStride"/>
+    <functioncall functionName="BStride"/>
+    <functioncall functionName="I"/>
+    <functioncall functionName="N"/>
+    <functioncall functionName="T"/>
+    <functioncall functionName="_Float16"/>
+    <functioncall functionName="a"/>
+    <functioncall functionName="asm"/>
+    <functioncall functionName="b"/>
+    <functioncall functionName="class"/>
+    <functioncall functionName="const"/>
+    <functioncall functionName="convert"/>
+    <functioncall functionName="float"/>
+    <functioncall functionName="float16_t"/>
+    <functioncall functionName="float32_t"/>
+    <functioncall functionName="float4_t"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="half4_t"/>
+    <functioncall functionName="index_t"/>
+    <functioncall functionName="int"/>
+    <functioncall functionName="llvm_intrin_amdgcn_mfma_f32_16x16x16f16"/>
+    <functioncall functionName="llvm_intrin_amdgcn_mfma_f32_16x16x1f32"/>
+    <functioncall functionName="llvm_intrin_amdgcn_mfma_f32_16x16x2bf16"/>
+    <functioncall functionName="llvm_intrin_amdgcn_mfma_f32_16x16x4f16"/>
+    <functioncall functionName="llvm_intrin_amdgcn_mfma_f32_16x16x4f32"/>
+    <functioncall functionName="llvm_intrin_amdgcn_mfma_f32_16x16x8bf16"/>
+    <functioncall functionName="llvm_intrin_amdgcn_mfma_f32_32x32x1f32"/>
+    <functioncall functionName="llvm_intrin_amdgcn_mfma_f32_32x32x2bf16"/>
+    <functioncall functionName="llvm_intrin_amdgcn_mfma_f32_32x32x2f32"/>
+    <functioncall functionName="llvm_intrin_amdgcn_mfma_f32_32x32x4bf16"/>
+    <functioncall functionName="llvm_intrin_amdgcn_mfma_f32_32x32x4f16"/>
+    <functioncall functionName="llvm_intrin_amdgcn_mfma_f32_32x32x8f16"/>
+    <functioncall functionName="llvm_intrin_amdgcn_mfma_f32_4x4x1f32"/>
+    <functioncall functionName="llvm_intrin_amdgcn_mfma_f32_4x4x2bf16"/>
+    <functioncall functionName="llvm_intrin_amdgcn_mfma_f32_4x4x4f16"/>
+    <functioncall functionName="reinterpret_cast"/>
+    <functioncall functionName="s"/>
+    <functioncall functionName="s0"/>
+    <functioncall functionName="s1"/>
+    <functioncall functionName="s2"/>
+    <functioncall functionName="s3"/>
+    <functioncall functionName="static_assert"/>
+    <functioncall functionName="static_cast"/>
+    <functioncall functionName="typename"/>
+    <functioncall functionName="ushort"/>
+    <functioncall functionName="ushort2_t"/>
+    <functioncall functionName="v"/>
+    <functioncall functionName="vector"/>
+    <functioncall functionName="w"/>
+    <functioncall functionName="x"/>
+    <functioncall functionName="y"/>
+    <functioncall functionName="z"/>
+  </FileInfo>
+</analyzerinfo>

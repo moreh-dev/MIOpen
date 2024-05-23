@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="5065091688788178079">
+        <error id="passedByValue" severity="performance" msg="Function parameter &apos;delim&apos; should be passed by const reference." verbose="Parameter &apos;delim&apos; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." cwe="398" file0="/workspaces/MIOpen/src/include/miopen/timer.hpp">
+            <location file="/workspaces/MIOpen/src/include/miopen/logger.hpp" line="144" column="65"/>
+            <symbol>delim</symbol>
+        </error>
+  <FileInfo check="Null pointer">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/logger.hpp:249:6" my-argnr="1" my-argname="x" file="/workspaces/MIOpen/src/include/miopen/logger.hpp" line="251" col="24" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/logger.hpp:448:14" my-argnr="1" my-argname="name" file="/workspaces/MIOpen/src/include/miopen/logger.hpp" line="448" col="64" value="0"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/object.hpp:56:6" my-argnr="1" my-argname="x" file="/workspaces/MIOpen/src/include/miopen/object.hpp" line="58" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/logger.hpp:144:15" my-argnr="2" my-argname="r" file="/workspaces/MIOpen/src/include/miopen/logger.hpp" line="147" col="20" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/logger.hpp:182:15" my-argnr="3" my-argname="values" file="/workspaces/MIOpen/src/include/miopen/logger.hpp" line="184" col="28" value="0"/>
+  </FileInfo>
+  <FileInfo check="Null pointer">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/logger.hpp:249:6" my-argnr="1" my-argname="x" file="/workspaces/MIOpen/src/include/miopen/logger.hpp" line="251" col="24" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/logger.hpp:448:14" my-argnr="1" my-argname="name" file="/workspaces/MIOpen/src/include/miopen/logger.hpp" line="448" col="64" value="0"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/object.hpp:56:6" my-argnr="1" my-argname="x" file="/workspaces/MIOpen/src/include/miopen/object.hpp" line="58" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/logger.hpp:144:15" my-argnr="2" my-argname="r" file="/workspaces/MIOpen/src/include/miopen/logger.hpp" line="147" col="20" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/logger.hpp:182:15" my-argnr="3" my-argname="values" file="/workspaces/MIOpen/src/include/miopen/logger.hpp" line="184" col="28" value="0"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="start" lineNumber="37"/>
+    <functiondecl functionName="elapsed_ms" lineNumber="38"/>
+    <functiondecl functionName="capture" lineNumber="46"/>
+    <functiondecl functionName="Log" lineNumber="63"/>
+    <functiondecl functionName="start" lineNumber="37"/>
+    <functiondecl functionName="elapsed_ms" lineNumber="38"/>
+    <functiondecl functionName="capture" lineNumber="46"/>
+    <functiondecl functionName="Log" lineNumber="63"/>
+    <functioncall functionName="CArray"/>
+    <functioncall functionName="Error"/>
+    <functioncall functionName="F"/>
+    <functioncall functionName="N"/>
+    <functioncall functionName="Ns"/>
+    <functioncall functionName="T"/>
+    <functioncall functionName="Ts"/>
+    <functioncall functionName="Warning"/>
+    <functioncall functionName="Xs"/>
+    <functioncall functionName="Ys"/>
+    <functioncall functionName="begin"/>
+    <functioncall functionName="c_str"/>
+    <functioncall functionName="capture"/>
+    <functioncall functionName="class"/>
+    <functioncall functionName="count"/>
+    <functioncall functionName="decltype"/>
+    <functioncall functionName="default"/>
+    <functioncall functionName="duration"/>
+    <functioncall functionName="duration_cast"/>
+    <functioncall functionName="each_args_i_impl"/>
+    <functioncall functionName="end"/>
+    <functioncall functionName="f"/>
+    <functioncall functionName="false"/>
+    <functioncall functionName="find_first_of"/>
+    <functioncall functionName="find_if"/>
+    <functioncall functionName="find_last_of"/>
+    <functioncall functionName="first"/>
+    <functioncall functionName="float"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="forward"/>
+    <functioncall functionName="gens"/>
+    <functioncall functionName="get"/>
+    <functioncall functionName="get_object"/>
+    <functioncall functionName="get_object_impl"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="int"/>
+    <functioncall functionName="logRange"/>
+    <functioncall functionName="long"/>
+    <functioncall functionName="m_active"/>
+    <functioncall functionName="milli"/>
+    <functioncall functionName="miopen_get_object"/>
+    <functioncall functionName="name"/>
+    <functioncall functionName="now"/>
+    <functioncall functionName="r"/>
+    <functioncall functionName="rank &lt; 0 &gt;"/>
+    <functioncall functionName="remove_reference"/>
+    <functioncall functionName="roctxRangePop"/>
+    <functioncall functionName="roctxRangePush"/>
+    <functioncall functionName="s1"/>
+    <functioncall functionName="s2"/>
+    <functioncall functionName="seq"/>
+    <functioncall functionName="size"/>
+    <functioncall functionName="sizeof..."/>
+    <functioncall functionName="st"/>
+    <functioncall functionName="static_cast"/>
+    <functioncall functionName="steady_clock"/>
+    <functioncall functionName="substr"/>
+    <functioncall functionName="true"/>
+    <functioncall functionName="tuple_size"/>
+    <functioncall functionName="type"/>
+    <functioncall functionName="typename"/>
+    <functioncall functionName="unpack_impl"/>
+    <functioncall functionName="void"/>
+    <functioncall functionName="x"/>
+    <functioncall functionName="xs"/>
+  </FileInfo>
+</analyzerinfo>

@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="4057700791646684646">
+        <error id="objectIndex" severity="warning" msg="The address of local variable &apos;a&apos; might be accessed at non-zero index." verbose="The address of local variable &apos;a&apos; might be accessed at non-zero index." cwe="758" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp" line="449" column="37"/>
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp" line="443" column="65" info="Address of variable taken here."/>
+        </error>
+        <error id="objectIndex" severity="warning" msg="The address of local variable &apos;b&apos; might be accessed at non-zero index." verbose="The address of local variable &apos;b&apos; might be accessed at non-zero index." cwe="758" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp" line="449" column="61"/>
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp" line="444" column="65" info="Address of variable taken here."/>
+        </error>
+        <error id="objectIndex" severity="warning" msg="The address of local variable &apos;a&apos; might be accessed at non-zero index." verbose="The address of local variable &apos;a&apos; might be accessed at non-zero index." cwe="758" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp" line="463" column="37"/>
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp" line="457" column="65" info="Address of variable taken here."/>
+        </error>
+        <error id="objectIndex" severity="warning" msg="The address of local variable &apos;b&apos; might be accessed at non-zero index." verbose="The address of local variable &apos;b&apos; might be accessed at non-zero index." cwe="758" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp" line="463" column="61"/>
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp" line="458" column="65" info="Address of variable taken here."/>
+        </error>
+        <error id="unusedStructMember" severity="style" msg="union member &apos;VecType::n&apos; is never used." verbose="union member &apos;VecType::n&apos; is never used." cwe="563" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp" line="35" column="15"/>
+            <symbol>VecType::n</symbol>
+        </error>
+        <error id="unusedStructMember" severity="style" msg="union member &apos;VecType::n&apos; is never used." verbose="union member &apos;VecType::n&apos; is never used." cwe="563" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp" line="58" column="15"/>
+            <symbol>VecType::n</symbol>
+        </error>
+        <error id="unusedStructMember" severity="style" msg="union member &apos;VecType::n&apos; is never used." verbose="union member &apos;VecType::n&apos; is never used." cwe="563" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp" line="79" column="15"/>
+            <symbol>VecType::n</symbol>
+        </error>
+        <error id="unusedStructMember" severity="style" msg="union member &apos;VecType::n&apos; is never used." verbose="union member &apos;VecType::n&apos; is never used." cwe="563" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp" line="101" column="15"/>
+            <symbol>VecType::n</symbol>
+        </error>
+        <error id="unusedStructMember" severity="style" msg="union member &apos;VecType::n&apos; is never used." verbose="union member &apos;VecType::n&apos; is never used." cwe="563" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp" line="120" column="15"/>
+            <symbol>VecType::n</symbol>
+        </error>
+        <error id="unusedStructMember" severity="style" msg="union member &apos;VecType::n&apos; is never used." verbose="union member &apos;VecType::n&apos; is never used." cwe="563" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp" line="140" column="15"/>
+            <symbol>VecType::n</symbol>
+        </error>
+        <error id="unusedStructMember" severity="style" msg="union member &apos;VecType::n&apos; is never used." verbose="union member &apos;VecType::n&apos; is never used." cwe="563" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp" line="160" column="15"/>
+            <symbol>VecType::n</symbol>
+        </error>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="CreateVecZero" lineNumber="38"/>
+    <functiondecl functionName="CreateVecZero" lineNumber="61"/>
+    <functiondecl functionName="CreateVecZero" lineNumber="82"/>
+    <functiondecl functionName="CreateVecZero" lineNumber="104"/>
+    <functiondecl functionName="CreateVecZero" lineNumber="123"/>
+    <functiondecl functionName="CreateVecZero" lineNumber="143"/>
+    <functiondecl functionName="CreateVecZero" lineNumber="163"/>
+    <functiondecl functionName="Pack" lineNumber="211"/>
+    <functiondecl functionName="GetSize" lineNumber="225"/>
+    <functiondecl functionName="Pack" lineNumber="266"/>
+    <functiondecl functionName="Pack" lineNumber="293"/>
+    <functiondecl functionName="Pack" lineNumber="354"/>
+    <functiondecl functionName="Pack" lineNumber="381"/>
+    <functioncall functionName="I"/>
+    <functioncall functionName="N"/>
+    <functioncall functionName="T"/>
+    <functioncall functionName="_Float16"/>
+    <functioncall functionName="a"/>
+    <functioncall functionName="b"/>
+    <functioncall functionName="class"/>
+    <functioncall functionName="const"/>
+    <functioncall functionName="convert"/>
+    <functioncall functionName="float"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="index_t"/>
+    <functioncall functionName="reinterpret_cast"/>
+    <functioncall functionName="s"/>
+    <functioncall functionName="s0"/>
+    <functioncall functionName="s1"/>
+    <functioncall functionName="s2"/>
+    <functioncall functionName="s3"/>
+    <functioncall functionName="static_assert"/>
+    <functioncall functionName="static_cast"/>
+    <functioncall functionName="typename"/>
+    <functioncall functionName="ushort"/>
+    <functioncall functionName="v"/>
+    <functioncall functionName="vector"/>
+    <functioncall functionName="x"/>
+  </FileInfo>
+</analyzerinfo>

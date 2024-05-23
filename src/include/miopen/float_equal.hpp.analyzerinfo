@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="11790311303490808995">
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="T"/>
+    <functioncall functionName="Ts"/>
+    <functioncall functionName="U"/>
+    <functioncall functionName="apply"/>
+    <functioncall functionName="class"/>
+    <functioncall functionName="common_type"/>
+    <functioncall functionName="double"/>
+    <functioncall functionName="isfinite"/>
+    <functioncall functionName="lowest"/>
+    <functioncall functionName="max"/>
+    <functioncall functionName="nextafter"/>
+    <functioncall functionName="static_cast"/>
+    <functioncall functionName="x"/>
+    <functioncall functionName="y"/>
+  </FileInfo>
+</analyzerinfo>

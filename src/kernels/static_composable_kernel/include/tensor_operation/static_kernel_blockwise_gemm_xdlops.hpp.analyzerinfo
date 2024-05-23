@@ -1,0 +1,238 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="14301414359443223241">
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:71:28" call-funcname="Run_source" call-argnr="1" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp" line="160" col="9" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:148:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:71:28" call-funcname="Run_source" call-argnr="2" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp" line="160" col="9" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:148:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:71:28" call-funcname="Run_source" call-argnr="3" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp" line="160" col="9" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:148:28" my-argnr="3"/>
+  </FileInfo>
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:96:28" call-funcname="Run_amd_asm" call-argnr="1" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp" line="157" col="13" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:148:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:96:28" call-funcname="Run_amd_asm" call-argnr="2" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp" line="157" col="13" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:148:28" my-argnr="2"/>
+  </FileInfo>
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:71:28" call-funcname="Run_source" call-argnr="1" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp" line="160" col="9" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:148:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:71:28" call-funcname="Run_source" call-argnr="2" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp" line="160" col="9" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:148:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:71:28" call-funcname="Run_source" call-argnr="3" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp" line="160" col="9" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:148:28" my-argnr="3"/>
+  </FileInfo>
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:71:28" call-funcname="Run_source" call-argnr="1" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp" line="160" col="9" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:148:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:71:28" call-funcname="Run_source" call-argnr="2" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp" line="160" col="9" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:148:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:71:28" call-funcname="Run_source" call-argnr="3" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp" line="160" col="9" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:148:28" my-argnr="3"/>
+  </FileInfo>
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:71:28" call-funcname="Run_source" call-argnr="1" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp" line="160" col="9" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:148:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:71:28" call-funcname="Run_source" call-argnr="2" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp" line="160" col="9" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:148:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:71:28" call-funcname="Run_source" call-argnr="3" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp" line="160" col="9" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_threadwise_gemm.hpp:148:28" my-argnr="3"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="GetOutputLayout" lineNumber="57"/>
+    <functiondecl functionName="CreateOutputVecZero" lineNumber="81"/>
+    <functiondecl functionName="GetNumBlks" lineNumber="87"/>
+    <functiondecl functionName="GetBlkSize" lineNumber="96"/>
+    <functiondecl functionName="GetThreadMatrixCDescriptor" lineNumber="222"/>
+    <functiondecl functionName="XdlopsMatrixCSetZero" lineNumber="228"/>
+    <functiondecl functionName="GetOutputLayout" lineNumber="57"/>
+    <functiondecl functionName="CreateOutputVecZero" lineNumber="81"/>
+    <functiondecl functionName="GetNumBlks" lineNumber="87"/>
+    <functiondecl functionName="GetBlkSize" lineNumber="96"/>
+    <functiondecl functionName="GetThreadMatrixCDescriptor" lineNumber="222"/>
+    <functiondecl functionName="XdlopsMatrixCSetZero" lineNumber="228"/>
+    <functiondecl functionName="GetOutputLayout" lineNumber="57"/>
+    <functiondecl functionName="CreateOutputVecZero" lineNumber="81"/>
+    <functiondecl functionName="GetNumBlks" lineNumber="87"/>
+    <functiondecl functionName="GetBlkSize" lineNumber="96"/>
+    <functiondecl functionName="GetThreadMatrixCDescriptor" lineNumber="222"/>
+    <functiondecl functionName="XdlopsMatrixCSetZero" lineNumber="228"/>
+    <functiondecl functionName="GetOutputLayout" lineNumber="57"/>
+    <functiondecl functionName="CreateOutputVecZero" lineNumber="81"/>
+    <functiondecl functionName="GetNumBlks" lineNumber="87"/>
+    <functiondecl functionName="GetBlkSize" lineNumber="96"/>
+    <functiondecl functionName="GetThreadMatrixCDescriptor" lineNumber="222"/>
+    <functiondecl functionName="XdlopsMatrixCSetZero" lineNumber="228"/>
+    <functiondecl functionName="GetOutputLayout" lineNumber="57"/>
+    <functiondecl functionName="GetNumBlks" lineNumber="87"/>
+    <functiondecl functionName="GetBlkSize" lineNumber="96"/>
+    <functiondecl functionName="GetThreadMatrixCDescriptor" lineNumber="222"/>
+    <functiondecl functionName="XdlopsMatrixCSetZero" lineNumber="228"/>
+    <functioncall functionName="AStride"/>
+    <functioncall functionName="BStride"/>
+    <functioncall functionName="CalculateOffset"/>
+    <functioncall functionName="CreateOutputVecZero"/>
+    <functioncall functionName="CreateVecZero"/>
+    <functioncall functionName="Data"/>
+    <functioncall functionName="DataPerAccess"/>
+    <functioncall functionName="Else"/>
+    <functioncall functionName="Float"/>
+    <functioncall functionName="FloatA"/>
+    <functioncall functionName="FloatB"/>
+    <functioncall functionName="FloatC"/>
+    <functioncall functionName="GemmDataPerReadA"/>
+    <functioncall functionName="GemmDataPerReadB"/>
+    <functioncall functionName="GemmMPerWave"/>
+    <functioncall functionName="GemmNPerWave"/>
+    <functioncall functionName="GemmNWaves"/>
+    <functioncall functionName="GetBeginOfThreadBlk"/>
+    <functioncall functionName="GetBlkSize"/>
+    <functioncall functionName="GetMFMAInfo"/>
+    <functioncall functionName="GetNumBlks"/>
+    <functioncall functionName="GetNumBlksPerXdlops"/>
+    <functioncall functionName="GetOutputLayout"/>
+    <functioncall functionName="GetRegSizePerXdlops"/>
+    <functioncall functionName="GetXdlopsInfo"/>
+    <functioncall functionName="IsABroadcast"/>
+    <functioncall functionName="IsKReduction"/>
+    <functioncall functionName="K"/>
+    <functioncall functionName="M"/>
+    <functioncall functionName="M0"/>
+    <functioncall functionName="M1"/>
+    <functioncall functionName="MPerXdlops"/>
+    <functioncall functionName="MPerXdlops_"/>
+    <functioncall functionName="MRepeats"/>
+    <functioncall functionName="MRepeats_"/>
+    <functioncall functionName="Matrix"/>
+    <functioncall functionName="N"/>
+    <functioncall functionName="N0"/>
+    <functioncall functionName="N1"/>
+    <functioncall functionName="NCol"/>
+    <functioncall functionName="NPerXdlops"/>
+    <functioncall functionName="NPerXdlops_"/>
+    <functioncall functionName="NRepeats"/>
+    <functioncall functionName="NRepeats_"/>
+    <functioncall functionName="NRow"/>
+    <functioncall functionName="ReadXdlopsRegs"/>
+    <functioncall functionName="RowStride"/>
+    <functioncall functionName="Run"/>
+    <functioncall functionName="Run_amd_asm"/>
+    <functioncall functionName="Run_source"/>
+    <functioncall functionName="SetZeroXdlopsRegs"/>
+    <functioncall functionName="WaveSize"/>
+    <functioncall functionName="XdlopsEmulate"/>
+    <functioncall functionName="a"/>
+    <functioncall functionName="a_off"/>
+    <functioncall functionName="aindex"/>
+    <functioncall functionName="amd_assembly_outer_product_1x2"/>
+    <functioncall functionName="amd_assembly_outer_product_1x4"/>
+    <functioncall functionName="auto"/>
+    <functioncall functionName="b"/>
+    <functioncall functionName="b_off"/>
+    <functioncall functionName="bindex"/>
+    <functioncall functionName="bindex_0"/>
+    <functioncall functionName="bindex_1"/>
+    <functioncall functionName="bindex_2"/>
+    <functioncall functionName="bindex_3"/>
+    <functioncall functionName="blk_id"/>
+    <functioncall functionName="blk_td"/>
+    <functioncall functionName="c_off"/>
+    <functioncall functionName="c_vec16_1_t"/>
+    <functioncall functionName="c_vec32_1_t"/>
+    <functioncall functionName="c_vec32_2_t"/>
+    <functioncall functionName="c_vec32_4_t"/>
+    <functioncall functionName="c_vec4_1_t"/>
+    <functioncall functionName="c_vec4_2_t"/>
+    <functioncall functionName="cindex"/>
+    <functioncall functionName="cindex_0"/>
+    <functioncall functionName="cindex_1"/>
+    <functioncall functionName="cindex_2"/>
+    <functioncall functionName="cindex_3"/>
+    <functioncall functionName="class"/>
+    <functioncall functionName="col"/>
+    <functioncall functionName="const"/>
+    <functioncall functionName="cycles"/>
+    <functioncall functionName="data_type"/>
+    <functioncall functionName="dst_index"/>
+    <functioncall functionName="false"/>
+    <functioncall functionName="float"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="fwd"/>
+    <functioncall functionName="gcnasm_accvgpr_read"/>
+    <functioncall functionName="gcnasm_accvgpr_zero"/>
+    <functioncall functionName="gcnasm_mfma_f32_16x16x16f16"/>
+    <functioncall functionName="gcnasm_mfma_f32_16x16x1f32"/>
+    <functioncall functionName="gcnasm_mfma_f32_16x16x2bf16"/>
+    <functioncall functionName="gcnasm_mfma_f32_16x16x4f16"/>
+    <functioncall functionName="gcnasm_mfma_f32_16x16x4f32"/>
+    <functioncall functionName="gcnasm_mfma_f32_16x16x8bf16"/>
+    <functioncall functionName="gcnasm_mfma_f32_32x32x2f32"/>
+    <functioncall functionName="gcnasm_mfma_f32_32x32x4bf16"/>
+    <functioncall functionName="gcnasm_mfma_f32_32x32x8f16"/>
+    <functioncall functionName="gcnasm_mfma_f32_4x4x1f32"/>
+    <functioncall functionName="gcnasm_mfma_f32_4x4x2bf16"/>
+    <functioncall functionName="gcnasm_mfma_f32_4x4x4f16"/>
+    <functioncall functionName="gcnasm_nop"/>
+    <functioncall functionName="get_thread_local_1d_id"/>
+    <functioncall functionName="group_size"/>
+    <functioncall functionName="half2_t"/>
+    <functioncall functionName="half4_t"/>
+    <functioncall functionName="half_t"/>
+    <functioncall functionName="has_amd_asm"/>
+    <functioncall functionName="i"/>
+    <functioncall functionName="id"/>
+    <functioncall functionName="index_t"/>
+    <functioncall functionName="instr"/>
+    <functioncall functionName="intrin_mfma_f32_16x16x16f16"/>
+    <functioncall functionName="intrin_mfma_f32_16x16x1f32"/>
+    <functioncall functionName="intrin_mfma_f32_16x16x2bf16"/>
+    <functioncall functionName="intrin_mfma_f32_16x16x4f16"/>
+    <functioncall functionName="intrin_mfma_f32_16x16x4f32"/>
+    <functioncall functionName="intrin_mfma_f32_16x16x8bf16"/>
+    <functioncall functionName="intrin_mfma_f32_32x32x2f32"/>
+    <functioncall functionName="intrin_mfma_f32_32x32x4bf16"/>
+    <functioncall functionName="intrin_mfma_f32_32x32x8f16"/>
+    <functioncall functionName="j"/>
+    <functioncall functionName="k"/>
+    <functioncall functionName="k_base"/>
+    <functioncall functionName="k_i"/>
+    <functioncall functionName="l"/>
+    <functioncall functionName="m"/>
+    <functioncall functionName="mMyWaveOffsetA"/>
+    <functioncall functionName="mMyWaveOffsetB"/>
+    <functioncall functionName="make_ConstantMatrixDescriptor_packed"/>
+    <functioncall functionName="mfma_f32_16x16x16f16"/>
+    <functioncall functionName="mfma_f32_16x16x1xf32"/>
+    <functioncall functionName="mfma_f32_16x16x2bf16"/>
+    <functioncall functionName="mfma_f32_16x16x4f16"/>
+    <functioncall functionName="mfma_f32_16x16x4xf32"/>
+    <functioncall functionName="mfma_f32_16x16x8bf16"/>
+    <functioncall functionName="mfma_f32_32x32x1xf32"/>
+    <functioncall functionName="mfma_f32_32x32x2bf16"/>
+    <functioncall functionName="mfma_f32_32x32x2xf32"/>
+    <functioncall functionName="mfma_f32_32x32x4bf16"/>
+    <functioncall functionName="mfma_f32_32x32x4f16"/>
+    <functioncall functionName="mfma_f32_32x32x8f16"/>
+    <functioncall functionName="mfma_f32_4x4x1xf32"/>
+    <functioncall functionName="mfma_f32_4x4x2bf16"/>
+    <functioncall functionName="mfma_f32_4x4x4f16"/>
+    <functioncall functionName="mfma_instr"/>
+    <functioncall functionName="mfma_type"/>
+    <functioncall functionName="n"/>
+    <functioncall functionName="n_i"/>
+    <functioncall functionName="num_groups_blk"/>
+    <functioncall functionName="num_input_blks"/>
+    <functioncall functionName="num_output_blks"/>
+    <functioncall functionName="num_regs_blk"/>
+    <functioncall functionName="num_regs_xdlops"/>
+    <functioncall functionName="num_threads_blk"/>
+    <functioncall functionName="p_a"/>
+    <functioncall functionName="p_a_block"/>
+    <functioncall functionName="p_a_wave"/>
+    <functioncall functionName="p_b"/>
+    <functioncall functionName="p_b_block"/>
+    <functioncall functionName="p_b_wave"/>
+    <functioncall functionName="p_c"/>
+    <functioncall functionName="p_c_thread"/>
+    <functioncall functionName="reg_c"/>
+    <functioncall functionName="reg_size"/>
+    <functioncall functionName="reinterpret_cast"/>
+    <functioncall functionName="return"/>
+    <functioncall functionName="row"/>
+    <functioncall functionName="run"/>
+    <functioncall functionName="sizeof"/>
+    <functioncall functionName="src_index"/>
+    <functioncall functionName="static_assert"/>
+    <functioncall functionName="total_reg_size"/>
+    <functioncall functionName="typename"/>
+    <functioncall functionName="ushort"/>
+    <functioncall functionName="vector_t"/>
+    <functioncall functionName="wave_size"/>
+  </FileInfo>
+</analyzerinfo>

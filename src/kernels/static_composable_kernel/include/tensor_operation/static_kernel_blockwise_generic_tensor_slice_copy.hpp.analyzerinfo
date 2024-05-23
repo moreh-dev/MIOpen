@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="3541900714884414272">
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_generic_tensor_slice_copy.hpp:84:21" call-funcname="RunLoadThreadBuffer" call-argnr="2" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_generic_tensor_slice_copy.hpp" line="150" col="32" call-argexpr="p_thread_buffer" call-argvaluetype="7" call-argvalue="0"/><function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_generic_tensor_slice_copy.hpp:109:21" call-funcname="RunStoreThreadBuffer" call-argnr="1" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_generic_tensor_slice_copy.hpp" line="153" col="33" call-argexpr="p_thread_buffer" call-argvaluetype="7" call-argvalue="0"/><function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_generic_tensor_slice_copy.hpp:84:21" call-funcname="RunLoadThreadBuffer" call-argnr="1" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_generic_tensor_slice_copy.hpp" line="150" col="13" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_generic_tensor_slice_copy.hpp:135:5" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_generic_tensor_slice_copy.hpp:109:21" call-funcname="RunStoreThreadBuffer" call-argnr="2" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_generic_tensor_slice_copy.hpp" line="153" col="13" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_generic_tensor_slice_copy.hpp:135:5" my-argnr="2"/>
+  </FileInfo>
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_generic_tensor_slice_copy.hpp:84:21" call-funcname="RunLoadThreadBuffer" call-argnr="2" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_generic_tensor_slice_copy.hpp" line="150" col="32" call-argexpr="p_thread_buffer" call-argvaluetype="7" call-argvalue="0"/><function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_generic_tensor_slice_copy.hpp:109:21" call-funcname="RunStoreThreadBuffer" call-argnr="1" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_generic_tensor_slice_copy.hpp" line="153" col="33" call-argexpr="p_thread_buffer" call-argvaluetype="7" call-argvalue="0"/><function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_generic_tensor_slice_copy.hpp:84:21" call-funcname="RunLoadThreadBuffer" call-argnr="1" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_generic_tensor_slice_copy.hpp" line="150" col="13" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_generic_tensor_slice_copy.hpp:135:5" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_generic_tensor_slice_copy.hpp:109:21" call-funcname="RunStoreThreadBuffer" call-argnr="2" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_generic_tensor_slice_copy.hpp" line="153" col="13" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_generic_tensor_slice_copy.hpp:135:5" my-argnr="2"/>
+  </FileInfo>
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_generic_tensor_slice_copy.hpp:84:21" call-funcname="RunLoadThreadBuffer" call-argnr="2" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_generic_tensor_slice_copy.hpp" line="150" col="32" call-argexpr="p_thread_buffer" call-argvaluetype="7" call-argvalue="0"/><function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_generic_tensor_slice_copy.hpp:109:21" call-funcname="RunStoreThreadBuffer" call-argnr="1" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_generic_tensor_slice_copy.hpp" line="153" col="33" call-argexpr="p_thread_buffer" call-argvaluetype="7" call-argvalue="0"/><function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_generic_tensor_slice_copy.hpp:84:21" call-funcname="RunLoadThreadBuffer" call-argnr="1" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_generic_tensor_slice_copy.hpp" line="150" col="13" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_generic_tensor_slice_copy.hpp:135:5" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_generic_tensor_slice_copy.hpp:109:21" call-funcname="RunStoreThreadBuffer" call-argnr="2" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_generic_tensor_slice_copy.hpp" line="153" col="13" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_operation/static_kernel_blockwise_generic_tensor_slice_copy.hpp:135:5" my-argnr="2"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="GetThreadBufferSize" lineNumber="78"/>
+    <functiondecl functionName="GetThreadBufferSize" lineNumber="78"/>
+    <functiondecl functionName="GetThreadBufferSize" lineNumber="78"/>
+    <functioncall functionName="At"/>
+    <functioncall functionName="BlockDstDesc"/>
+    <functioncall functionName="BlockSliceLengths"/>
+    <functioncall functionName="BlockSrcData"/>
+    <functioncall functionName="BlockSrcDesc"/>
+    <functioncall functionName="CalculateClusterIndex"/>
+    <functioncall functionName="CalculateOffsetDiff"/>
+    <functioncall functionName="DstAddressSpace"/>
+    <functioncall functionName="DstData"/>
+    <functioncall functionName="DstDataPerWrite"/>
+    <functioncall functionName="DstDataStride"/>
+    <functioncall functionName="DstDesc"/>
+    <functioncall functionName="DstDimAccessOrder"/>
+    <functioncall functionName="DstInMemOp"/>
+    <functioncall functionName="DstVectorWriteDim"/>
+    <functioncall functionName="Else"/>
+    <functioncall functionName="Generic"/>
+    <functioncall functionName="Get"/>
+    <functioncall functionName="GetElementSize"/>
+    <functioncall functionName="GetElementSpace"/>
+    <functioncall functionName="GetLinearDimensionMask"/>
+    <functioncall functionName="GetNonLinearDimensionMask"/>
+    <functioncall functionName="GetNumOfDimension"/>
+    <functioncall functionName="GetOffset"/>
+    <functioncall functionName="GetThreadBufferSize"/>
+    <functioncall functionName="HasWorkingOptimizedAddressCalculation"/>
+    <functioncall functionName="IsOffsetValidAssumingUpperIndexIsValid"/>
+    <functioncall functionName="Lengths"/>
+    <functioncall functionName="Mask"/>
+    <functioncall functionName="Modify"/>
+    <functioncall functionName="MoveDstSliceWindow"/>
+    <functioncall functionName="MoveSrcSliceWindow"/>
+    <functioncall functionName="PositiveDirection"/>
+    <functioncall functionName="Run"/>
+    <functioncall functionName="RunLoadThreadBuffer"/>
+    <functioncall functionName="RunStoreThreadBuffer"/>
+    <functioncall functionName="Run_optimized_dst_address_calculation"/>
+    <functioncall functionName="Run_optimized_src_address_calculation"/>
+    <functioncall functionName="Set"/>
+    <functioncall functionName="SetDstSliceOrigin"/>
+    <functioncall functionName="SetSrcSliceOrigin"/>
+    <functioncall functionName="Size"/>
+    <functioncall functionName="SrcAddressSpace"/>
+    <functioncall functionName="SrcData"/>
+    <functioncall functionName="SrcDataPerRead"/>
+    <functioncall functionName="SrcDataStride"/>
+    <functioncall functionName="SrcDesc"/>
+    <functioncall functionName="SrcDimAccessOrder"/>
+    <functioncall functionName="SrcDstDimAccessOrder"/>
+    <functioncall functionName="SrcDstVectorReadWriteDim"/>
+    <functioncall functionName="SrcVectoReadDim"/>
+    <functioncall functionName="ThreadBufferAddressSpace"/>
+    <functioncall functionName="ThreadBufferData"/>
+    <functioncall functionName="ThreadBufferDesc"/>
+    <functioncall functionName="ThreadSliceLengths"/>
+    <functioncall functionName="ThreadwiseGenericTensorSliceCopy_v4r2"/>
+    <functioncall functionName="Vgpr"/>
+    <functioncall functionName="auto"/>
+    <functioncall functionName="bool"/>
+    <functioncall functionName="buffer_offset"/>
+    <functioncall functionName="decltype"/>
+    <functioncall functionName="dst_data_per_access"/>
+    <functioncall functionName="dst_linear_dim_mask"/>
+    <functioncall functionName="dst_linear_offset"/>
+    <functioncall functionName="dst_nonlinear_dim_mask"/>
+    <functioncall functionName="dst_slice_origin"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="get_thread_local_1d_id"/>
+    <functioncall functionName="has_optimized_address_calculation"/>
+    <functioncall functionName="i"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="index_t"/>
+    <functioncall functionName="lcm"/>
+    <functioncall functionName="linear_dim_data_steps"/>
+    <functioncall functionName="linear_dim_long_vector_access_id"/>
+    <functioncall functionName="linear_long_vector_access_lengths"/>
+    <functioncall functionName="long_vector_access_id"/>
+    <functioncall functionName="long_vector_access_lengths"/>
+    <functioncall functionName="long_vector_data_begin_id"/>
+    <functioncall functionName="long_vector_size"/>
+    <functioncall functionName="mDstSliceOrigin"/>
+    <functioncall functionName="mSrcSliceOrigin"/>
+    <functioncall functionName="mThreadwiseStore"/>
+    <functioncall functionName="make_cluster_descriptor"/>
+    <functioncall functionName="make_native_tensor_descriptor_packed"/>
+    <functioncall functionName="make_zero_array"/>
+    <functioncall functionName="mask_lengths"/>
+    <functioncall functionName="nDim"/>
+    <functioncall functionName="nonlinear_dim_data_steps"/>
+    <functioncall functionName="nonlinear_dim_long_vector_access_id"/>
+    <functioncall functionName="nonlinear_long_vector_access_lengths"/>
+    <functioncall functionName="p_block_dst"/>
+    <functioncall functionName="p_block_src"/>
+    <functioncall functionName="p_dst"/>
+    <functioncall functionName="p_dst_long_vector"/>
+    <functioncall functionName="p_src"/>
+    <functioncall functionName="p_src_long_vector"/>
+    <functioncall functionName="p_thread_buffer"/>
+    <functioncall functionName="positive_direction"/>
+    <functioncall functionName="scalar_id"/>
+    <functioncall functionName="src_data_per_access"/>
+    <functioncall functionName="src_linear_dim_mask"/>
+    <functioncall functionName="src_linear_offset"/>
+    <functioncall functionName="src_nonlinear_dim_mask"/>
+    <functioncall functionName="src_out_of_bound_value"/>
+    <functioncall functionName="src_slice_origin"/>
+    <functioncall functionName="static_assert"/>
+    <functioncall functionName="step_sizes"/>
+    <functioncall functionName="step_sizes_"/>
+    <functioncall functionName="thread_data_id_begin"/>
+    <functioncall functionName="to_array"/>
+    <functioncall functionName="transfer_data"/>
+    <functioncall functionName="typename"/>
+    <functioncall functionName="vector_access_dim"/>
+  </FileInfo>
+</analyzerinfo>

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="6853234047844609784">
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="N"/>
+    <functioncall functionName="X"/>
+    <functioncall functionName="Y"/>
+    <functioncall functionName="class"/>
+    <functioncall functionName="index_t"/>
+    <functioncall functionName="static_assert"/>
+    <functioncall functionName="true"/>
+    <functioncall functionName="v"/>
+  </FileInfo>
+</analyzerinfo>

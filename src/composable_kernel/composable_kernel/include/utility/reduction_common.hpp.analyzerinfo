@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="2787188283925484014">
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="T"/>
+    <functioncall functionName="class"/>
+    <functioncall functionName="static_cast"/>
+  </FileInfo>
+</analyzerinfo>

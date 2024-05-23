@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="7039731953579932915">
+        <error id="unusedStructMember" severity="style" msg="union member &apos;cvt_bf16_fp32::f32&apos; is never used." verbose="union member &apos;cvt_bf16_fp32::f32&apos; is never used." cwe="563" file0="/workspaces/MIOpen/src/kernels/bfloat16_dev.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/bfloat16_dev.hpp" line="49" column="11"/>
+            <symbol>cvt_bf16_fp32::f32</symbol>
+        </error>
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="f32"/>
+    <functioncall functionName="hi"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="make_ushort2"/>
+    <functioncall functionName="src_val"/>
+    <functioncall functionName="ushort2"/>
+  </FileInfo>
+</analyzerinfo>

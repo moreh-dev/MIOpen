@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="15322919907182949560">
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/kernel_algorithm/static_kernel_reduction_functions.hpp:184:28" call-funcname="ReduceImpl1" call-argnr="1" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/kernel_algorithm/static_kernel_reduction_functions.hpp" line="179" col="13" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/kernel_algorithm/static_kernel_reduction_functions.hpp:176:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/kernel_algorithm/static_kernel_reduction_functions.hpp:262:28" call-funcname="Reduce2Impl1" call-argnr="1" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/kernel_algorithm/static_kernel_reduction_functions.hpp" line="257" col="13" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/kernel_algorithm/static_kernel_reduction_functions.hpp:254:5" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/kernel_algorithm/static_kernel_reduction_functions.hpp:359:28" call-funcname="Reduce3Impl1" call-argnr="1" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/kernel_algorithm/static_kernel_reduction_functions.hpp" line="352" col="13" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/kernel_algorithm/static_kernel_reduction_functions.hpp:346:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/kernel_algorithm/static_kernel_reduction_functions.hpp:359:28" call-funcname="Reduce3Impl1" call-argnr="2" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/kernel_algorithm/static_kernel_reduction_functions.hpp" line="352" col="13" my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/kernel_algorithm/static_kernel_reduction_functions.hpp:346:28" my-argnr="2"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="isnan" lineNumber="37"/>
+    <functiondecl functionName="calculate" lineNumber="47"/>
+    <functiondecl functionName="calculate" lineNumber="53"/>
+    <functiondecl functionName="calculate" lineNumber="70"/>
+    <functiondecl functionName="calculate" lineNumber="80"/>
+    <functiondecl functionName="Reduce" lineNumber="110"/>
+    <functiondecl functionName="Reduce2" lineNumber="122"/>
+    <functiondecl functionName="Reduce3" lineNumber="134"/>
+    <functiondecl functionName="set_buffer_value" lineNumber="148"/>
+    <functiondecl functionName="Reduce" lineNumber="176"/>
+    <functiondecl functionName="ReduceImpl1" lineNumber="184"/>
+    <functiondecl functionName="ReduceImpl2" lineNumber="209"/>
+    <functiondecl functionName="Reduce2" lineNumber="254"/>
+    <functiondecl functionName="Reduce2Impl1" lineNumber="262"/>
+    <functiondecl functionName="Reduce2Impl2" lineNumber="296"/>
+    <functiondecl functionName="Reduce3" lineNumber="346"/>
+    <functiondecl functionName="Reduce3Impl1" lineNumber="359"/>
+    <functiondecl functionName="Reduce3Impl2" lineNumber="391"/>
+    <functiondecl functionName="set_buffer_value" lineNumber="439"/>
+    <functiondecl functionName="Reduce" lineNumber="474"/>
+    <functiondecl functionName="Reduce2" lineNumber="526"/>
+    <functiondecl functionName="set_buffer_value" lineNumber="625"/>
+    <functiondecl functionName="init_buffer_indices" lineNumber="644"/>
+    <functioncall functionName="BlockSize"/>
+    <functioncall functionName="CalculateOffset"/>
+    <functioncall functionName="DataType"/>
+    <functioncall functionName="Else"/>
+    <functioncall functionName="GetLengths"/>
+    <functioncall functionName="GetZeroVal"/>
+    <functioncall functionName="NOT_PROPAGATE_NAN"/>
+    <functioncall functionName="NanPropagation_t"/>
+    <functioncall functionName="PROPAGATE_NAN"/>
+    <functioncall functionName="Reduce2Impl1"/>
+    <functioncall functionName="Reduce2Impl2"/>
+    <functioncall functionName="Reduce3Impl1"/>
+    <functioncall functionName="Reduce3Impl2"/>
+    <functioncall functionName="ReduceImpl1"/>
+    <functioncall functionName="ReduceImpl2"/>
+    <functioncall functionName="__all"/>
+    <functioncall functionName="__hisnan"/>
+    <functioncall functionName="__shfl_down"/>
+    <functioncall functionName="__syncthreads"/>
+    <functioncall functionName="accuData"/>
+    <functioncall functionName="accuIndex"/>
+    <functioncall functionName="accuVal"/>
+    <functioncall functionName="auto"/>
+    <functioncall functionName="blockIsOneRow"/>
+    <functioncall functionName="calculate"/>
+    <functioncall functionName="changed"/>
+    <functioncall functionName="compType"/>
+    <functioncall functionName="const_cast"/>
+    <functioncall functionName="currIndex"/>
+    <functioncall functionName="currIndex1"/>
+    <functioncall functionName="currIndex2"/>
+    <functioncall functionName="currVal"/>
+    <functioncall functionName="currVal1"/>
+    <functioncall functionName="currVal2"/>
+    <functioncall functionName="double"/>
+    <functioncall functionName="false"/>
+    <functioncall functionName="float"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="get_thread_local_1d_id"/>
+    <functioncall functionName="have_builtin_shuffle"/>
+    <functioncall functionName="i"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="indOffset"/>
+    <functioncall functionName="indexStart"/>
+    <functioncall functionName="isnan"/>
+    <functioncall functionName="lAccuData"/>
+    <functioncall functionName="lAccuIndex"/>
+    <functioncall functionName="nanPropaOpt"/>
+    <functioncall functionName="offset"/>
+    <functioncall functionName="offset1"/>
+    <functioncall functionName="offset2"/>
+    <functioncall functionName="opData"/>
+    <functioncall functionName="opData1"/>
+    <functioncall functionName="opData2"/>
+    <functioncall functionName="opReduce"/>
+    <functioncall functionName="otherDimInd"/>
+    <functioncall functionName="p_thread_buffer"/>
+    <functioncall functionName="stride"/>
+    <functioncall functionName="thread_id"/>
+    <functioncall functionName="thread_indices_buffer"/>
+    <functioncall functionName="thread_inwarp_id"/>
+    <functioncall functionName="thread_local_id"/>
+    <functioncall functionName="tmpIndex"/>
+    <functioncall functionName="tmpVal"/>
+    <functioncall functionName="typename"/>
+    <functioncall functionName="value"/>
+    <functioncall functionName="warpSize"/>
+    <functioncall functionName="x"/>
+  </FileInfo>
+</analyzerinfo>

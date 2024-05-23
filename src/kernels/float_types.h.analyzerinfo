@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="13302964021451830521">
+        <error id="unreadVariable" severity="style" msg="Variable &apos;target_val.ushortx2&apos; is assigned a value that is never used." verbose="Variable &apos;target_val.ushortx2&apos; is assigned a value that is never used." cwe="563" file0="/workspaces/MIOpen/src/kernels/float_types.h">
+            <location file="/workspaces/MIOpen/src/kernels/bfloat16_dev.hpp" line="59" column="25"/>
+            <symbol>target_val.ushortx2</symbol>
+        </error>
+        <error id="unreadVariable" severity="style" msg="Variable &apos;target_val.f32&apos; is assigned a value that is never used." verbose="Variable &apos;target_val.f32&apos; is assigned a value that is never used." cwe="563" file0="/workspaces/MIOpen/src/kernels/float_types.h">
+            <location file="/workspaces/MIOpen/src/kernels/bfloat16_dev.hpp" line="68" column="20"/>
+            <symbol>target_val.f32</symbol>
+        </error>
+        <error id="unreadVariable" severity="style" msg="Variable &apos;target_val.u32&apos; is assigned a value that is never used." verbose="Variable &apos;target_val.u32&apos; is assigned a value that is never used." cwe="563" file0="/workspaces/MIOpen/src/kernels/float_types.h">
+            <location file="/workspaces/MIOpen/src/kernels/bfloat16_dev.hpp" line="83" column="28"/>
+            <symbol>target_val.u32</symbol>
+        </error>
+        <error id="unreadVariable" severity="style" msg="Variable &apos;target_val.ushortx2&apos; is assigned a value that is never used." verbose="Variable &apos;target_val.ushortx2&apos; is assigned a value that is never used." cwe="563" file0="/workspaces/MIOpen/src/kernels/float_types.h">
+            <location file="/workspaces/MIOpen/src/kernels/bfloat16_dev.hpp" line="57" column="25"/>
+            <symbol>target_val.ushortx2</symbol>
+        </error>
+        <error id="identicalConditionAfterEarlyExit" severity="warning" msg="Identical condition &apos;x==0&apos;, second condition is always false" verbose="Identical condition &apos;x==0&apos;, second condition is always false" cwe="398" file0="/workspaces/MIOpen/src/kernels/float_types.h">
+            <location file="/workspaces/MIOpen/src/kernels/bfloat16_dev.hpp" line="260" column="14" info="Testing identical condition &apos;x==0&apos;"/>
+            <location file="/workspaces/MIOpen/src/kernels/bfloat16_dev.hpp" line="239" column="10" info="If condition &apos;x==0&apos; is true, the function will return/exit"/>
+        </error>
+        <error id="identicalConditionAfterEarlyExit" severity="warning" msg="Identical condition &apos;x==0&apos;, second condition is always false" verbose="Identical condition &apos;x==0&apos;, second condition is always false" cwe="398" file0="/workspaces/MIOpen/src/kernels/float_types.h">
+            <location file="/workspaces/MIOpen/src/kernels/bfloat16_dev.hpp" line="260" column="14" info="Testing identical condition &apos;x==0&apos;"/>
+            <location file="/workspaces/MIOpen/src/kernels/bfloat16_dev.hpp" line="239" column="10" info="If condition &apos;x==0&apos; is true, the function will return/exit"/>
+        </error>
+        <error id="unreadVariable" severity="style" msg="Variable &apos;target_val.u32&apos; is assigned a value that is never used." verbose="Variable &apos;target_val.u32&apos; is assigned a value that is never used." cwe="563" file0="/workspaces/MIOpen/src/kernels/float_types.h">
+            <location file="/workspaces/MIOpen/src/kernels/bfloat16_dev.hpp" line="108" column="24"/>
+            <symbol>target_val.u32</symbol>
+        </error>
+        <error id="unreadVariable" severity="style" msg="Variable &apos;target_val.u32&apos; is assigned a value that is never used." verbose="Variable &apos;target_val.u32&apos; is assigned a value that is never used." cwe="563" file0="/workspaces/MIOpen/src/kernels/float_types.h">
+            <location file="/workspaces/MIOpen/src/kernels/bfloat16_dev.hpp" line="106" column="24"/>
+            <symbol>target_val.u32</symbol>
+        </error>
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="MIOPEN_FP8_CLIPPING"/>
+    <functioncall functionName="_x"/>
+    <functioncall functionName="clip"/>
+    <functioncall functionName="clz"/>
+    <functioncall functionName="drop_mask"/>
+    <functioncall functionName="exponent"/>
+    <functioncall functionName="f32"/>
+    <functioncall functionName="fInf"/>
+    <functioncall functionName="fNaN"/>
+    <functioncall functionName="fNegInf"/>
+    <functioncall functionName="false"/>
+    <functioncall functionName="float"/>
+    <functioncall functionName="float_to_fp8_impl"/>
+    <functioncall functionName="fp8_to_float_impl"/>
+    <functioncall functionName="hi"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="ifInf"/>
+    <functioncall functionName="ifNaN"/>
+    <functioncall functionName="ifNeg0"/>
+    <functioncall functionName="ifNegInf"/>
+    <functioncall functionName="make_ushort2"/>
+    <functioncall functionName="mantissa"/>
+    <functioncall functionName="max_exp"/>
+    <functioncall functionName="negative_zero_nan"/>
+    <functioncall functionName="return"/>
+    <functioncall functionName="retval"/>
+    <functioncall functionName="rng"/>
+    <functioncall functionName="sh"/>
+    <functioncall functionName="src_val"/>
+    <functioncall functionName="true"/>
+    <functioncall functionName="ushort2"/>
+    <functioncall functionName="wm"/>
+    <functioncall functionName="x"/>
+  </FileInfo>
+</analyzerinfo>

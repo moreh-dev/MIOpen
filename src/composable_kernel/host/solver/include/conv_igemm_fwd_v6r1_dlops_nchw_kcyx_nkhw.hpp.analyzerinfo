@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="15459609275860454702">
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/solver/include/conv_igemm_fwd_v6r1_dlops_nchw_kcyx_nkhw.hpp:243:5" my-argnr="1" my-argname="conv_problem_desc" file="/workspaces/MIOpen/src/composable_kernel/host/solver/include/conv_igemm_fwd_v6r1_dlops_nchw_kcyx_nkhw.hpp" line="246" col="24" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/solver/include/conv_igemm_fwd_v6r1_dlops_nchw_kcyx_nkhw.hpp:243:5" my-argnr="2" my-argname="tunable" file="/workspaces/MIOpen/src/composable_kernel/host/solver/include/conv_igemm_fwd_v6r1_dlops_nchw_kcyx_nkhw.hpp" line="252" col="50" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/solver/include/conv_igemm_fwd_v6r1_dlops_nchw_kcyx_nkhw.hpp:375:17" my-argnr="1" my-argname="conv_problem_desc" file="/workspaces/MIOpen/src/composable_kernel/host/solver/include/conv_igemm_fwd_v6r1_dlops_nchw_kcyx_nkhw.hpp" line="379" col="67" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/solver/include/conv_igemm_fwd_v6r1_dlops_nchw_kcyx_nkhw.hpp:385:5" my-argnr="1" my-argname="conv_problem_desc" file="/workspaces/MIOpen/src/composable_kernel/host/solver/include/conv_igemm_fwd_v6r1_dlops_nchw_kcyx_nkhw.hpp" line="388" col="24" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/solver/include/conv_igemm_fwd_v6r1_dlops_nchw_kcyx_nkhw.hpp:385:5" my-argnr="2" my-argname="compile_param" file="/workspaces/MIOpen/src/composable_kernel/host/solver/include/conv_igemm_fwd_v6r1_dlops_nchw_kcyx_nkhw.hpp" line="396" col="26" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/solver/include/conv_igemm_fwd_v6r1_dlops_nchw_kcyx_nkhw.hpp:643:16" my-argnr="2" my-argname="compile_param" file="/workspaces/MIOpen/src/composable_kernel/host/solver/include/conv_igemm_fwd_v6r1_dlops_nchw_kcyx_nkhw.hpp" line="646" col="16" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/solver/include/conv_igemm_fwd_v6r1_dlops_nchw_kcyx_nkhw.hpp:649:16" my-argnr="1" my-argname="conv_problem_desc" file="/workspaces/MIOpen/src/composable_kernel/host/solver/include/conv_igemm_fwd_v6r1_dlops_nchw_kcyx_nkhw.hpp" line="652" col="24" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/solver/include/conv_igemm_fwd_v6r1_dlops_nchw_kcyx_nkhw.hpp:649:16" my-argnr="2" my-argname="compile_param" file="/workspaces/MIOpen/src/composable_kernel/host/solver/include/conv_igemm_fwd_v6r1_dlops_nchw_kcyx_nkhw.hpp" line="657" col="24" value="0"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="GetCompileParameterString" lineNumber="12"/>
+    <functiondecl functionName="generate_tunable_list_conv_igemm_fwd_v6r1_dlops_nchw_kcyx_nkhw" lineNumber="183"/>
+    <functiondecl functionName="CalculateCompileParameterBasedOnTunable" lineNumber="243"/>
+    <functiondecl functionName="GetDefaultCompileParameter" lineNumber="358"/>
+    <functiondecl functionName="IsApplicable" lineNumber="375"/>
+    <functiondecl functionName="IsValidCompileParameter" lineNumber="385"/>
+    <functiondecl functionName="GetBlockSize" lineNumber="643"/>
+    <functiondecl functionName="GetGridSize" lineNumber="649"/>
+    <functiondecl functionName="GetWorkSpaceSize" lineNumber="672"/>
+    <functiondecl functionName="GetMaxWorkSpaceSize" lineNumber="679"/>
+    <functiondecl functionName="GetTunableList" lineNumber="681"/>
+    <functioncall functionName="ABDataTypeEnum"/>
+    <functioncall functionName="ABlockTransferDstVectorTensorLengths_GK0_GM0_GM10_GM11_GK1"/>
+    <functioncall functionName="ABlockTransferSrcVectorTensorLengths_GK0_GM0_GM10_GM11_GK1"/>
+    <functioncall functionName="ABlockTransferThreadClusterLengths_GK0_GM0_GM10_GM11_GK1"/>
+    <functioncall functionName="ABlockTransferThreadSliceLengths_GK0_GM0_GM10_GM11_GK1"/>
+    <functioncall functionName="AccDataTypeEnum"/>
+    <functioncall functionName="BBlockTransferDstVectorTensorLengths_GK0_GN0_GN10_GN11_GK1"/>
+    <functioncall functionName="BBlockTransferSrcVectorTensorLengths_GK0_GN0_GN10_GN11_GK1"/>
+    <functioncall functionName="BBlockTransferThreadClusterLengths_GK0_GN0_GN10_GN11_GK1"/>
+    <functioncall functionName="BBlockTransferThreadSliceLengths_GK0_GN0_GN10_GN11_GK1"/>
+    <functioncall functionName="BK0PerThread"/>
+    <functioncall functionName="BM1"/>
+    <functioncall functionName="BM10BN10ThreadClusterBM10Xs"/>
+    <functioncall functionName="BM10BN10ThreadClusterBN10Xs"/>
+    <functioncall functionName="BM11"/>
+    <functioncall functionName="BM1PerThreadBM11"/>
+    <functioncall functionName="BN1"/>
+    <functioncall functionName="BN11"/>
+    <functioncall functionName="BN1PerThreadBN11"/>
+    <functioncall functionName="BlockSize"/>
+    <functioncall functionName="C"/>
+    <functioncall functionName="C0"/>
+    <functioncall functionName="CDataTypeEnum"/>
+    <functioncall functionName="CThreadTransferDstScalarPerVector"/>
+    <functioncall functionName="CalculateCompileParameterBasedOnTunable"/>
+    <functioncall functionName="Float"/>
+    <functioncall functionName="GK0PerBlock"/>
+    <functioncall functionName="GK1"/>
+    <functioncall functionName="GM0"/>
+    <functioncall functionName="GM11"/>
+    <functioncall functionName="GM1PerBlockGM11"/>
+    <functioncall functionName="GN0"/>
+    <functioncall functionName="GN11"/>
+    <functioncall functionName="GN1PerBlockGN11"/>
+    <functioncall functionName="GetDefaultCompileParameter"/>
+    <functioncall functionName="Half"/>
+    <functioncall functionName="HasDoubleTailKBlockLoop"/>
+    <functioncall functionName="HasMainKBlockLoop"/>
+    <functioncall functionName="Ho"/>
+    <functioncall functionName="InDataTypeEnum"/>
+    <functioncall functionName="Int32"/>
+    <functioncall functionName="Int8"/>
+    <functioncall functionName="IsValidCompileParameter"/>
+    <functioncall functionName="K"/>
+    <functioncall functionName="N"/>
+    <functioncall functionName="N0"/>
+    <functioncall functionName="OutDataTypeEnum"/>
+    <functioncall functionName="TunableConvIgemmFwdV6r1DlopsNchwKcyxNkhw"/>
+    <functioncall functionName="Unknown"/>
+    <functioncall functionName="Wo"/>
+    <functioncall functionName="X"/>
+    <functioncall functionName="Y"/>
+    <functioncall functionName="accumulate"/>
+    <functioncall functionName="begin"/>
+    <functioncall functionName="compile_param"/>
+    <functioncall functionName="conv_problem_desc"/>
+    <functioncall functionName="end"/>
+    <functioncall functionName="f16"/>
+    <functioncall functionName="f32"/>
+    <functioncall functionName="false"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="found"/>
+    <functioncall functionName="gcd"/>
+    <functioncall functionName="generate_tunable_list_conv_igemm_fwd_v6r1_dlops_nchw_kcyx_nkhw"/>
+    <functioncall functionName="i"/>
+    <functioncall functionName="i8"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="ignore"/>
+    <functioncall functionName="int"/>
+    <functioncall functionName="make_tuple"/>
+    <functioncall functionName="static_cast"/>
+    <functioncall functionName="str"/>
+    <functioncall functionName="stringstream"/>
+    <functioncall functionName="tie"/>
+    <functioncall functionName="true"/>
+    <functioncall functionName="tunable"/>
+  </FileInfo>
+</analyzerinfo>

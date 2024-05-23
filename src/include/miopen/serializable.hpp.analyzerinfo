@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="16687714924704264323">
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/serializable.hpp:60:14" my-argnr="3" my-argname="x" file="/workspaces/MIOpen/src/include/miopen/serializable.hpp" line="64" col="23" value="0"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="apply" lineNumber="44"/>
+    <functiondecl functionName="Serialize" lineNumber="120"/>
+    <functiondecl functionName="Deserialize" lineNumber="125"/>
+    <functioncall functionName="Derived"/>
+    <functioncall functionName="Deserialize"/>
+    <functioncall functionName="Separator"/>
+    <functioncall functionName="Serialize"/>
+    <functioncall functionName="T"/>
+    <functioncall functionName="Visit"/>
+    <functioncall functionName="_1"/>
+    <functioncall functionName="apply"/>
+    <functioncall functionName="bind"/>
+    <functioncall functionName="char"/>
+    <functioncall functionName="class"/>
+    <functioncall functionName="const"/>
+    <functioncall functionName="false"/>
+    <functioncall functionName="getline"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="ok"/>
+    <functioncall functionName="out"/>
+    <functioncall functionName="part"/>
+    <functioncall functionName="ref"/>
+    <functioncall functionName="return"/>
+    <functioncall functionName="s"/>
+    <functioncall functionName="self"/>
+    <functioncall functionName="sep"/>
+    <functioncall functionName="ss"/>
+    <functioncall functionName="static_cast"/>
+    <functioncall functionName="str"/>
+    <functioncall functionName="stream"/>
+    <functioncall functionName="true"/>
+    <functioncall functionName="x"/>
+  </FileInfo>
+</analyzerinfo>

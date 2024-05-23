@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="5359017261945948436">
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="OpAdd"/>
+    <functioncall functionName="OpAnd"/>
+    <functioncall functionName="OpAny"/>
+    <functioncall functionName="OpAssign"/>
+    <functioncall functionName="OpCeil"/>
+    <functioncall functionName="OpDiv"/>
+    <functioncall functionName="OpEqual"/>
+    <functioncall functionName="OpEval"/>
+    <functioncall functionName="OpGT"/>
+    <functioncall functionName="OpGTE"/>
+    <functioncall functionName="OpLT"/>
+    <functioncall functionName="OpLTE"/>
+    <functioncall functionName="OpModulo"/>
+    <functioncall functionName="OpMul"/>
+    <functioncall functionName="OpNotEqual"/>
+    <functioncall functionName="OpOr"/>
+    <functioncall functionName="OpPow"/>
+    <functioncall functionName="OpSub"/>
+  </FileInfo>
+</analyzerinfo>

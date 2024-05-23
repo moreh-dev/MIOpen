@@ -1,0 +1,969 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="863986972064216960">
+        <error id="uninitMemberVar" severity="warning" msg="Member variable &apos;hip_f8x4::data&apos; is not initialized in the constructor." verbose="Member variable &apos;hip_f8x4::data&apos; is not initialized in the constructor." cwe="398" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="655" column="28"/>
+            <symbol>hip_f8x4::data</symbol>
+        </error>
+        <error id="uninitMemberVar" severity="warning" msg="Member variable &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt;::data&apos; is not initialized in the constructor." verbose="Member variable &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt;::data&apos; is not initialized in the constructor." cwe="398" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="99" column="28"/>
+            <symbol>hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt;::data</symbol>
+        </error>
+        <error id="uninitMemberVar" severity="warning" msg="Member variable &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt;::data&apos; is not initialized in the constructor." verbose="Member variable &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt;::data&apos; is not initialized in the constructor." cwe="398" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="99" column="28"/>
+            <symbol>hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt;::data</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;hip_f8x4&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;hip_f8x4&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="658" column="28"/>
+            <symbol>hip_f8x4</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;hip_f8x4&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;hip_f8x4&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="662" column="5"/>
+            <symbol>hip_f8x4</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;hip_f8x4&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;hip_f8x4&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="669" column="5"/>
+            <symbol>hip_f8x4</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;hip_f8x4&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;hip_f8x4&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="673" column="5"/>
+            <symbol>hip_f8x4</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;hip_f8x4&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;hip_f8x4&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="679" column="5"/>
+            <symbol>hip_f8x4</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;hip_f8x4&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;hip_f8x4&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="686" column="5"/>
+            <symbol>hip_f8x4</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;hip_f8x4&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;hip_f8x4&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="690" column="5"/>
+            <symbol>hip_f8x4</symbol>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="105" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="107" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="105" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="107" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="105" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="107" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="105" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="107" column="15"/>
+        </error>
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:68:1" call-funcname="check_numerics &lt; float , float &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="121" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:116:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:68:1" call-funcname="check_numerics &lt; _Float16 , float &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="129" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:124:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:68:1" call-funcname="check_numerics &lt; hip_bfloat16 , float &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="138" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:133:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:68:1" call-funcname="check_numerics &lt; miopen_f8 :: hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt; , float &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="147" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:142:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:68:1" call-funcname="check_numerics &lt; miopen_f8 :: hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt; , float &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="159" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:154:28" my-argnr="3"/>
+  </FileInfo>
+  <FileInfo check="Class">
+<class name="Numerics" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="37" col="1" hash="6653655812242998060"/>
+<class name="CheckNumericsResult" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="45" col="1" hash="6501706562008830704"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:434:52" my-argnr="2" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="437" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:442:52" my-argnr="2" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="445" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:450:52" my-argnr="2" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="453" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:240:13" my-argnr="1" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="242" col="73" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:270:40" my-argnr="1" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="272" col="13" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:240:13" my-argnr="1" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="242" col="73" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:270:40" my-argnr="1" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="272" col="13" value="0"/>
+  </FileInfo>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="105" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="107" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="105" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="107" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="105" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="107" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="105" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="107" column="15"/>
+        </error>
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:68:1" call-funcname="check_numerics &lt; float , float &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="121" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:116:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:68:1" call-funcname="check_numerics &lt; _Float16 , float &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="129" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:124:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:68:1" call-funcname="check_numerics &lt; hip_bfloat16 , float &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="138" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:133:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:68:1" call-funcname="check_numerics &lt; miopen_f8 :: hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt; , float &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="147" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:142:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:68:1" call-funcname="check_numerics &lt; miopen_f8 :: hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt; , float &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="159" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:154:28" my-argnr="3"/>
+  </FileInfo>
+  <FileInfo check="Class">
+<class name="Numerics" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="37" col="1" hash="6653655812242998060"/>
+<class name="CheckNumericsResult" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="45" col="1" hash="6501706562008830704"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:434:52" my-argnr="2" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="437" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:442:52" my-argnr="2" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="445" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:450:52" my-argnr="2" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="453" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:240:13" my-argnr="1" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="242" col="73" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:270:40" my-argnr="1" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="272" col="13" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:240:13" my-argnr="1" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="242" col="73" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:270:40" my-argnr="1" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="272" col="13" value="0"/>
+  </FileInfo>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="105" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="107" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="105" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="107" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="105" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="107" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="105" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="107" column="15"/>
+        </error>
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:68:1" call-funcname="check_numerics &lt; float , float &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="121" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:116:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:68:1" call-funcname="check_numerics &lt; _Float16 , float &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="129" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:124:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:68:1" call-funcname="check_numerics &lt; hip_bfloat16 , float &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="138" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:133:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:68:1" call-funcname="check_numerics &lt; miopen_f8 :: hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt; , float &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="147" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:142:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:68:1" call-funcname="check_numerics &lt; miopen_f8 :: hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt; , float &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="159" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:154:28" my-argnr="3"/>
+  </FileInfo>
+  <FileInfo check="Class">
+<class name="Numerics" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="37" col="1" hash="6653655812242998060"/>
+<class name="CheckNumericsResult" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="45" col="1" hash="6501706562008830704"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:434:52" my-argnr="2" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="437" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:442:52" my-argnr="2" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="445" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:450:52" my-argnr="2" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="453" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:240:13" my-argnr="1" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="242" col="73" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:270:40" my-argnr="1" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="272" col="13" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:240:13" my-argnr="1" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="242" col="73" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:270:40" my-argnr="1" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="272" col="13" value="0"/>
+  </FileInfo>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="105" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="107" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="105" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="107" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="105" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="107" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="105" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="107" column="15"/>
+        </error>
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:68:1" call-funcname="check_numerics &lt; float , float &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="121" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:116:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:68:1" call-funcname="check_numerics &lt; _Float16 , float &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="129" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:124:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:68:1" call-funcname="check_numerics &lt; hip_bfloat16 , float &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="138" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:133:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:68:1" call-funcname="check_numerics &lt; miopen_f8 :: hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt; , float &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="147" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:142:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:68:1" call-funcname="check_numerics &lt; miopen_f8 :: hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt; , float &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="159" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:154:28" my-argnr="3"/>
+  </FileInfo>
+  <FileInfo check="Class">
+<class name="Numerics" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="37" col="1" hash="6653655812242998060"/>
+<class name="CheckNumericsResult" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="45" col="1" hash="6501706562008830704"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:434:52" my-argnr="2" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="437" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:442:52" my-argnr="2" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="445" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:450:52" my-argnr="2" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="453" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:240:13" my-argnr="1" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="242" col="73" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:270:40" my-argnr="1" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="272" col="13" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:240:13" my-argnr="1" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="242" col="73" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:270:40" my-argnr="1" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="272" col="13" value="0"/>
+  </FileInfo>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt;&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt;&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="104" column="37"/>
+            <symbol>hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt;</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt;&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt;&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="107" column="37"/>
+            <symbol>hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt;</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt;&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt;&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="109" column="37"/>
+            <symbol>hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt;</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt;&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt;&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="113" column="5"/>
+            <symbol>hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt;</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt;&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt;&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="163" column="5"/>
+            <symbol>hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt;</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt;&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt;&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="212" column="5"/>
+            <symbol>hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt;</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt;&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt;&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="235" column="5"/>
+            <symbol>hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt;</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt;&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt;&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="104" column="37"/>
+            <symbol>hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt;</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt;&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt;&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="107" column="37"/>
+            <symbol>hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt;</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt;&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt;&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="109" column="37"/>
+            <symbol>hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt;</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt;&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt;&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="113" column="5"/>
+            <symbol>hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt;</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt;&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt;&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="163" column="5"/>
+            <symbol>hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt;</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt;&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt;&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="212" column="5"/>
+            <symbol>hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt;</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt;&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt;&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="235" column="5"/>
+            <symbol>hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt;</symbol>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="305" column="18"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="307" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="308" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between const unsigned int * and const float * which have an incompatible binary data representation." verbose="Casting between const unsigned int * and const float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="309" column="19"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="105" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="107" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="105" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="107" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="105" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="107" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned int * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="105" column="15"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." verbose="Casting from float * to unsigned short * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/hip_f8_impl.hpp" line="107" column="15"/>
+        </error>
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:68:1" call-funcname="check_numerics &lt; float , float &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="121" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:116:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:68:1" call-funcname="check_numerics &lt; _Float16 , float &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="129" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:124:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:68:1" call-funcname="check_numerics &lt; hip_bfloat16 , float &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="138" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:133:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:68:1" call-funcname="check_numerics &lt; miopen_f8 :: hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt; , float &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="147" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:142:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:68:1" call-funcname="check_numerics &lt; miopen_f8 :: hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt; , float &gt;" call-argnr="3" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="159" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp:154:28" my-argnr="3"/>
+  </FileInfo>
+  <FileInfo check="Class">
+<class name="Numerics" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="37" col="1" hash="6653655812242998060"/>
+<class name="CheckNumericsResult" file="/workspaces/MIOpen/src/kernels/MIOpenCheckNumerics.cpp" line="45" col="1" hash="6501706562008830704"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:434:52" my-argnr="2" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="437" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:442:52" my-argnr="2" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="445" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:450:52" my-argnr="2" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="453" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:240:13" my-argnr="1" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="242" col="73" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:270:40" my-argnr="1" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="272" col="13" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:240:13" my-argnr="1" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="242" col="73" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/hip_float8.hpp:270:40" my-argnr="1" my-argname="rhs" file="/workspaces/MIOpen/src/kernels/hip_float8.hpp" line="272" col="13" value="0"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="thread_redux" lineNumber="54"/>
+    <functiondecl functionName="check_numerics &lt; float , float &gt;" lineNumber="68"/>
+    <functiondecl functionName="check_numerics &lt; _Float16 , float &gt;" lineNumber="68"/>
+    <functiondecl functionName="check_numerics &lt; hip_bfloat16 , float &gt;" lineNumber="68"/>
+    <functiondecl functionName="check_numerics &lt; miopen_f8 :: hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt; , float &gt;" lineNumber="68"/>
+    <functiondecl functionName="check_numerics &lt; miopen_f8 :: hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt; , float &gt;" lineNumber="68"/>
+    <functiondecl functionName="thread_redux" lineNumber="54"/>
+    <functiondecl functionName="check_numerics &lt; float , float &gt;" lineNumber="68"/>
+    <functiondecl functionName="check_numerics &lt; _Float16 , float &gt;" lineNumber="68"/>
+    <functiondecl functionName="check_numerics &lt; hip_bfloat16 , float &gt;" lineNumber="68"/>
+    <functiondecl functionName="check_numerics &lt; miopen_f8 :: hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt; , float &gt;" lineNumber="68"/>
+    <functiondecl functionName="check_numerics &lt; miopen_f8 :: hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt; , float &gt;" lineNumber="68"/>
+    <functiondecl functionName="thread_redux" lineNumber="54"/>
+    <functiondecl functionName="check_numerics &lt; float , float &gt;" lineNumber="68"/>
+    <functiondecl functionName="check_numerics &lt; _Float16 , float &gt;" lineNumber="68"/>
+    <functiondecl functionName="check_numerics &lt; hip_bfloat16 , float &gt;" lineNumber="68"/>
+    <functiondecl functionName="check_numerics &lt; miopen_f8 :: hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt; , float &gt;" lineNumber="68"/>
+    <functiondecl functionName="check_numerics &lt; miopen_f8 :: hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt; , float &gt;" lineNumber="68"/>
+    <functiondecl functionName="thread_redux" lineNumber="54"/>
+    <functiondecl functionName="check_numerics &lt; float , float &gt;" lineNumber="68"/>
+    <functiondecl functionName="check_numerics &lt; _Float16 , float &gt;" lineNumber="68"/>
+    <functiondecl functionName="check_numerics &lt; hip_bfloat16 , float &gt;" lineNumber="68"/>
+    <functiondecl functionName="check_numerics &lt; miopen_f8 :: hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt; , float &gt;" lineNumber="68"/>
+    <functiondecl functionName="check_numerics &lt; miopen_f8 :: hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt; , float &gt;" lineNumber="68"/>
+    <functiondecl functionName="thread_redux" lineNumber="54"/>
+    <functiondecl functionName="check_numerics &lt; float , float &gt;" lineNumber="68"/>
+    <functiondecl functionName="check_numerics &lt; _Float16 , float &gt;" lineNumber="68"/>
+    <functiondecl functionName="check_numerics &lt; hip_bfloat16 , float &gt;" lineNumber="68"/>
+    <functiondecl functionName="check_numerics &lt; miopen_f8 :: hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt; , float &gt;" lineNumber="68"/>
+    <functiondecl functionName="check_numerics &lt; miopen_f8 :: hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt; , float &gt;" lineNumber="68"/>
+    <functioncall functionName="C_d"/>
+    <functioncall functionName="Generate &lt; miopen_f8 :: hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt; &gt;"/>
+    <functioncall functionName="Generate &lt; miopen_f8 :: hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt; &gt;"/>
+    <functioncall functionName="T"/>
+    <functioncall functionName="T_A"/>
+    <functioncall functionName="T_B"/>
+    <functioncall functionName="U"/>
+    <functioncall functionName="X"/>
+    <functioncall functionName="Y"/>
+    <functioncall functionName="_Float16"/>
+    <functioncall functionName="__builtin_clz"/>
+    <functioncall functionName="__is_same_as"/>
+    <functioncall functionName="__syncthreads"/>
+    <functioncall functionName="_x"/>
+    <functioncall functionName="abnormal"/>
+    <functioncall functionName="absSum"/>
+    <functioncall functionName="act_exponent"/>
+    <functioncall functionName="atomicAdd"/>
+    <functioncall functionName="atomicMax"/>
+    <functioncall functionName="atomicMin"/>
+    <functioncall functionName="bias"/>
+    <functioncall functionName="bits"/>
+    <functioncall functionName="bool"/>
+    <functioncall functionName="cast_from_f8 &lt; 2 , 5 , float , false &gt;"/>
+    <functioncall functionName="cast_from_f8 &lt; 2 , 5 , float , true &gt;"/>
+    <functioncall functionName="cast_from_f8 &lt; 2 , 5 , half , false &gt;"/>
+    <functioncall functionName="cast_from_f8 &lt; 2 , 5 , half , true &gt;"/>
+    <functioncall functionName="cast_from_f8 &lt; 3 , 4 , float , false &gt;"/>
+    <functioncall functionName="cast_from_f8 &lt; 3 , 4 , float , true &gt;"/>
+    <functioncall functionName="cast_from_f8 &lt; 3 , 4 , half , false &gt;"/>
+    <functioncall functionName="cast_from_f8 &lt; 3 , 4 , half , true &gt;"/>
+    <functioncall functionName="cast_to_f8 &lt; 2 , 5 , float , false , 1 &gt;"/>
+    <functioncall functionName="cast_to_f8 &lt; 2 , 5 , float , true , 1 &gt;"/>
+    <functioncall functionName="cast_to_f8 &lt; 2 , 5 , half , false , 1 &gt;"/>
+    <functioncall functionName="cast_to_f8 &lt; 2 , 5 , half , true , 1 &gt;"/>
+    <functioncall functionName="cast_to_f8 &lt; 3 , 4 , float , false , 1 &gt;"/>
+    <functioncall functionName="cast_to_f8 &lt; 3 , 4 , float , true , 1 &gt;"/>
+    <functioncall functionName="cast_to_f8 &lt; 3 , 4 , half , false , 1 &gt;"/>
+    <functioncall functionName="cast_to_f8 &lt; 3 , 4 , half , true , 1 &gt;"/>
+    <functioncall functionName="cast_to_f8_no_range_reduce &lt; 2 , 5 , half &gt;"/>
+    <functioncall functionName="check_numerics &lt; _Float16 , float &gt;"/>
+    <functioncall functionName="check_numerics &lt; float , float &gt;"/>
+    <functioncall functionName="check_numerics &lt; hip_bfloat16 , float &gt;"/>
+    <functioncall functionName="check_numerics &lt; miopen_f8 :: hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt; , float &gt;"/>
+    <functioncall functionName="check_numerics &lt; miopen_f8 :: hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt; , float &gt;"/>
+    <functioncall functionName="class"/>
+    <functioncall functionName="computeStats"/>
+    <functioncall functionName="const"/>
+    <functioncall functionName="data"/>
+    <functioncall functionName="default"/>
+    <functioncall functionName="drop_mask"/>
+    <functioncall functionName="exponent"/>
+    <functioncall functionName="exponent_diff"/>
+    <functioncall functionName="f8_bias"/>
+    <functioncall functionName="f8_exponent"/>
+    <functioncall functionName="fInf"/>
+    <functioncall functionName="fNaN"/>
+    <functioncall functionName="fNegInf"/>
+    <functioncall functionName="fabs"/>
+    <functioncall functionName="false"/>
+    <functioncall functionName="float"/>
+    <functioncall functionName="fmax"/>
+    <functioncall functionName="fmin"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="get_hip_f8_bias_mode"/>
+    <functioncall functionName="half"/>
+    <functioncall functionName="hip_bfloat16"/>
+    <functioncall functionName="hip_f8"/>
+    <functioncall functionName="hip_f8 &lt; miopen_f8 :: hip_f8_type :: bf8 &gt;"/>
+    <functioncall functionName="hip_f8 &lt; miopen_f8 :: hip_f8_type :: fp8 &gt;"/>
+    <functioncall functionName="hip_f8_rounding_mode"/>
+    <functioncall functionName="hip_f8_type"/>
+    <functioncall functionName="hip_f8x4"/>
+    <functioncall functionName="hip_f8x8"/>
+    <functioncall functionName="i"/>
+    <functioncall functionName="idx"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="ifInf"/>
+    <functioncall functionName="ifNaN"/>
+    <functioncall functionName="ifNeg0"/>
+    <functioncall functionName="ifNegInf"/>
+    <functioncall functionName="ihInf"/>
+    <functioncall functionName="ihNaN"/>
+    <functioncall functionName="ihNeg0"/>
+    <functioncall functionName="ihNegInf"/>
+    <functioncall functionName="is_float"/>
+    <functioncall functionName="is_half"/>
+    <functioncall functionName="is_inf"/>
+    <functioncall functionName="is_nan"/>
+    <functioncall functionName="is_zero"/>
+    <functioncall functionName="isinf"/>
+    <functioncall functionName="isnan"/>
+    <functioncall functionName="lhs"/>
+    <functioncall functionName="lid"/>
+    <functioncall functionName="mantissa"/>
+    <functioncall functionName="max"/>
+    <functioncall functionName="maxV"/>
+    <functioncall functionName="max_exp"/>
+    <functioncall functionName="min"/>
+    <functioncall functionName="minV"/>
+    <functioncall functionName="noexcept"/>
+    <functioncall functionName="offset"/>
+    <functioncall functionName="operatorfloat"/>
+    <functioncall functionName="operatorfloat32x4"/>
+    <functioncall functionName="operatorhalf"/>
+    <functioncall functionName="operatorhalfx4"/>
+    <functioncall functionName="operatorhip_bfloat16"/>
+    <functioncall functionName="predicate"/>
+    <functioncall functionName="reinterpret_cast"/>
+    <functioncall functionName="remove_cv"/>
+    <functioncall functionName="return"/>
+    <functioncall functionName="retval"/>
+    <functioncall functionName="rhs"/>
+    <functioncall functionName="rm"/>
+    <functioncall functionName="rng"/>
+    <functioncall functionName="sh"/>
+    <functioncall functionName="short"/>
+    <functioncall functionName="sizeof"/>
+    <functioncall functionName="standard"/>
+    <functioncall functionName="static_assert"/>
+    <functioncall functionName="static_cast"/>
+    <functioncall functionName="stats"/>
+    <functioncall functionName="stoch"/>
+    <functioncall functionName="stochastic"/>
+    <functioncall functionName="sum"/>
+    <functioncall functionName="sz"/>
+    <functioncall functionName="thread_redux"/>
+    <functioncall functionName="tmp"/>
+    <functioncall functionName="true"/>
+    <functioncall functionName="typename"/>
+    <functioncall functionName="uint16_t"/>
+    <functioncall functionName="uint32_t"/>
+    <functioncall functionName="v"/>
+    <functioncall functionName="val"/>
+    <functioncall functionName="value"/>
+    <functioncall functionName="volatile"/>
+    <functioncall functionName="wid"/>
+    <functioncall functionName="x"/>
+  </FileInfo>
+</analyzerinfo>

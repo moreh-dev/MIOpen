@@ -1,0 +1,675 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="2356653836943255199">
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;Exception&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;Exception&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/pooling.cpp">
+            <location file="/workspaces/MIOpen/src/include/miopen/errors.hpp" line="43" column="5"/>
+            <symbol>Exception</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;Exception&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;Exception&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/pooling.cpp">
+            <location file="/workspaces/MIOpen/src/include/miopen/errors.hpp" line="45" column="5"/>
+            <symbol>Exception</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;TensorDescriptor&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;TensorDescriptor&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/pooling.cpp">
+            <location file="/workspaces/MIOpen/src/include/miopen/tensor.hpp" line="133" column="5"/>
+            <symbol>TensorDescriptor</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;KBPInit&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;KBPInit&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/pooling.cpp">
+            <location file="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp" line="63" column="9"/>
+            <symbol>KBPInit</symbol>
+        </error>
+        <error id="passedByValue" severity="performance" msg="Function parameter &apos;delim&apos; should be passed by const reference." verbose="Parameter &apos;delim&apos; is passed by value. It could be passed as a const reference which is usually faster and recommended in C++." cwe="398" file0="/workspaces/MIOpen/src/pooling.cpp">
+            <location file="/workspaces/MIOpen/src/include/miopen/logger.hpp" line="144" column="65"/>
+            <symbol>delim</symbol>
+        </error>
+  <FileInfo check="Class">
+<class name="miopenHandle" file="/workspaces/MIOpen/include/miopen/miopen.h" line="94" col="1" hash="8309549692933933785"/>
+<class name="miopenFusionOpDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="275" col="1" hash="4704277320073627763"/>
+<class name="miopenTensorDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="284" col="1" hash="12770968629304976"/>
+<class name="miopenSeqTensorDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="292" col="1" hash="6507238484369692205"/>
+<class name="miopenConvolutionDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="301" col="1" hash="17378807823611353902"/>
+<class name="miopenPoolingDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="310" col="1" hash="8610054100614131996"/>
+<class name="miopenLRNDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="319" col="1" hash="471603686082321102"/>
+<class name="miopenActivationDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="327" col="1" hash="12560879182228328475"/>
+<class name="miopenRNNDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="332" col="1" hash="16517038674311836935"/>
+<class name="miopenCTCLossDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="337" col="1" hash="7680476721827668461"/>
+<class name="miopenDropoutDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="342" col="1" hash="1503342196614512285"/>
+<class name="miopenReduceTensorDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="347" col="1" hash="5277864812723682945"/>
+<class name="miopenMhaDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="352" col="1" hash="10272737294791820148"/>
+<class name="miopenSoftmaxDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="357" col="1" hash="15873477500517700482"/>
+<class name="miopenConvAlgoPerf_t" file="/workspaces/MIOpen/include/miopen/miopen.h" line="1205" col="9" hash="1612599100050064260"/>
+<class name="miopenConvSolution_t" file="/workspaces/MIOpen/include/miopen/miopen.h" line="1229" col="9" hash="3464632565062302098"/>
+<class name="miopenFusionPlanDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="3005" col="1" hash="13340728664695295100"/>
+<class name="miopenOperatorDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="3006" col="1" hash="636472955923712347"/>
+<class name="miopenOperatorArgs" file="/workspaces/MIOpen/include/miopen/miopen.h" line="3007" col="1" hash="3317099903601190523"/>
+<class name="miopenProblem" file="/workspaces/MIOpen/include/miopen/miopen.h" line="5297" col="1" hash="4293138115591050699"/>
+<class name="miopenFindOptions" file="/workspaces/MIOpen/include/miopen/miopen.h" line="5479" col="1" hash="367317323858302858"/>
+<class name="miopenSolution" file="/workspaces/MIOpen/include/miopen/miopen.h" line="5547" col="1" hash="15945215896066486701"/>
+<class name="miopenTensorArgument_t" file="/workspaces/MIOpen/include/miopen/miopen.h" line="5569" col="1" hash="2747439117073704386"/>
+<class name="bfloat16" file="/workspaces/MIOpen/src/include/miopen/bfloat16.hpp" line="32" col="1" hash="776773424714052104"/>
+  </FileInfo>
+  <FileInfo check="Null pointer">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/errors.hpp:61:19" my-argnr="1" my-argname="file" file="/workspaces/MIOpen/src/include/miopen/errors.hpp" line="63" col="71" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/logger.hpp:249:6" my-argnr="1" my-argname="x" file="/workspaces/MIOpen/src/include/miopen/logger.hpp" line="251" col="24" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/logger.hpp:448:14" my-argnr="1" my-argname="name" file="/workspaces/MIOpen/src/include/miopen/logger.hpp" line="448" col="64" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp:101:10" my-argnr="1" my-argname="name" file="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp" line="103" col="35" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp:108:10" my-argnr="1" my-argname="name" file="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp" line="110" col="16" value="0"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/object.hpp:56:6" my-argnr="1" my-argname="x" file="/workspaces/MIOpen/src/include/miopen/object.hpp" line="58" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/logger.hpp:144:15" my-argnr="2" my-argname="r" file="/workspaces/MIOpen/src/include/miopen/logger.hpp" line="147" col="20" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/logger.hpp:182:15" my-argnr="3" my-argname="values" file="/workspaces/MIOpen/src/include/miopen/logger.hpp" line="184" col="28" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor.hpp:49:6" my-argnr="1" my-argname="x" file="/workspaces/MIOpen/src/include/miopen/tensor.hpp" line="51" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor.hpp:56:6" my-argnr="1" my-argname="x" file="/workspaces/MIOpen/src/include/miopen/tensor.hpp" line="58" col="34" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor.hpp:219:40" my-argnr="1" my-argname="lens" file="/workspaces/MIOpen/src/include/miopen/tensor.hpp" line="222" col="42" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp:39:6" my-argnr="1" my-argname="len" file="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp" line="46" col="20" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp:39:6" my-argnr="2" my-argname="len_layout" file="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp" line="48" col="20" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp:73:6" my-argnr="1" my-argname="len" file="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp" line="79" col="54" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp:73:6" my-argnr="2" my-argname="len_layout" file="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp" line="84" col="20" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp:73:6" my-argnr="3" my-argname="layout" file="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp" line="79" col="37" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp:89:5" my-argnr="1" my-argname="defines_" file="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp" line="91" col="25" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp:101:10" my-argnr="2" my-argname="value" file="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp" line="104" col="58" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp:113:28" my-argnr="1" my-argname="other" file="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp" line="115" col="19" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/pooling.hpp:98:5" my-argnr="3" my-argname="plens" file="/workspaces/MIOpen/src/pooling.cpp" line="79" col="8" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/pooling.hpp:132:5" my-argnr="1" my-argname="xDesc" file="/workspaces/MIOpen/src/pooling.cpp" line="117" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/pooling.hpp:134:10" my-argnr="1" my-argname="xDesc" file="/workspaces/MIOpen/src/pooling.cpp" line="162" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/pooling.hpp:136:22" my-argnr="1" my-argname="xDesc" file="/workspaces/MIOpen/src/pooling.cpp" line="218" col="30" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/pooling.hpp:138:17" my-argnr="1" my-argname="yDesc" file="/workspaces/MIOpen/src/pooling.cpp" line="231" col="31" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/pooling.cpp:262:15" my-argnr="1" my-argname="stream" file="/workspaces/MIOpen/src/pooling.cpp" line="264" col="5" value="0"/>
+  </FileInfo>
+  <FileInfo check="Class">
+<class name="miopenHandle" file="/workspaces/MIOpen/include/miopen/miopen.h" line="94" col="1" hash="8309549692933933785"/>
+<class name="miopenFusionOpDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="275" col="1" hash="4704277320073627763"/>
+<class name="miopenTensorDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="284" col="1" hash="12770968629304976"/>
+<class name="miopenSeqTensorDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="292" col="1" hash="6507238484369692205"/>
+<class name="miopenConvolutionDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="301" col="1" hash="17378807823611353902"/>
+<class name="miopenPoolingDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="310" col="1" hash="8610054100614131996"/>
+<class name="miopenLRNDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="319" col="1" hash="471603686082321102"/>
+<class name="miopenActivationDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="327" col="1" hash="12560879182228328475"/>
+<class name="miopenRNNDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="332" col="1" hash="16517038674311836935"/>
+<class name="miopenCTCLossDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="337" col="1" hash="7680476721827668461"/>
+<class name="miopenDropoutDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="342" col="1" hash="1503342196614512285"/>
+<class name="miopenReduceTensorDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="347" col="1" hash="5277864812723682945"/>
+<class name="miopenMhaDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="352" col="1" hash="10272737294791820148"/>
+<class name="miopenSoftmaxDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="357" col="1" hash="15873477500517700482"/>
+<class name="miopenConvAlgoPerf_t" file="/workspaces/MIOpen/include/miopen/miopen.h" line="1205" col="9" hash="1612599100050064260"/>
+<class name="miopenConvSolution_t" file="/workspaces/MIOpen/include/miopen/miopen.h" line="1229" col="9" hash="3464632565062302098"/>
+<class name="miopenFusionPlanDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="3005" col="1" hash="13340728664695295100"/>
+<class name="miopenOperatorDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="3006" col="1" hash="636472955923712347"/>
+<class name="miopenOperatorArgs" file="/workspaces/MIOpen/include/miopen/miopen.h" line="3007" col="1" hash="3317099903601190523"/>
+<class name="miopenProblem" file="/workspaces/MIOpen/include/miopen/miopen.h" line="5297" col="1" hash="4293138115591050699"/>
+<class name="miopenFindOptions" file="/workspaces/MIOpen/include/miopen/miopen.h" line="5479" col="1" hash="367317323858302858"/>
+<class name="miopenSolution" file="/workspaces/MIOpen/include/miopen/miopen.h" line="5547" col="1" hash="15945215896066486701"/>
+<class name="miopenTensorArgument_t" file="/workspaces/MIOpen/include/miopen/miopen.h" line="5569" col="1" hash="2747439117073704386"/>
+<class name="miopenBackendDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="6407" col="1" hash="9552838019874832289"/>
+<class name="bfloat16" file="/workspaces/MIOpen/src/include/miopen/bfloat16.hpp" line="32" col="1" hash="776773424714052104"/>
+  </FileInfo>
+  <FileInfo check="Null pointer">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/errors.hpp:61:19" my-argnr="1" my-argname="file" file="/workspaces/MIOpen/src/include/miopen/errors.hpp" line="63" col="71" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/logger.hpp:249:6" my-argnr="1" my-argname="x" file="/workspaces/MIOpen/src/include/miopen/logger.hpp" line="251" col="24" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/logger.hpp:448:14" my-argnr="1" my-argname="name" file="/workspaces/MIOpen/src/include/miopen/logger.hpp" line="448" col="64" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp:101:10" my-argnr="1" my-argname="name" file="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp" line="103" col="35" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp:108:10" my-argnr="1" my-argname="name" file="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp" line="110" col="16" value="0"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/object.hpp:56:6" my-argnr="1" my-argname="x" file="/workspaces/MIOpen/src/include/miopen/object.hpp" line="58" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/logger.hpp:144:15" my-argnr="2" my-argname="r" file="/workspaces/MIOpen/src/include/miopen/logger.hpp" line="147" col="20" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/logger.hpp:182:15" my-argnr="3" my-argname="values" file="/workspaces/MIOpen/src/include/miopen/logger.hpp" line="184" col="28" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor.hpp:49:6" my-argnr="1" my-argname="x" file="/workspaces/MIOpen/src/include/miopen/tensor.hpp" line="51" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor.hpp:56:6" my-argnr="1" my-argname="x" file="/workspaces/MIOpen/src/include/miopen/tensor.hpp" line="58" col="34" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor.hpp:219:40" my-argnr="1" my-argname="lens" file="/workspaces/MIOpen/src/include/miopen/tensor.hpp" line="222" col="42" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp:39:6" my-argnr="1" my-argname="len" file="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp" line="46" col="20" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp:39:6" my-argnr="2" my-argname="len_layout" file="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp" line="48" col="20" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp:73:6" my-argnr="1" my-argname="len" file="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp" line="79" col="54" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp:73:6" my-argnr="2" my-argname="len_layout" file="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp" line="84" col="20" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp:73:6" my-argnr="3" my-argname="layout" file="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp" line="79" col="37" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp:89:5" my-argnr="1" my-argname="defines_" file="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp" line="91" col="25" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp:101:10" my-argnr="2" my-argname="value" file="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp" line="104" col="58" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp:113:28" my-argnr="1" my-argname="other" file="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp" line="115" col="19" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/pooling.hpp:98:5" my-argnr="3" my-argname="plens" file="/workspaces/MIOpen/src/pooling.cpp" line="79" col="8" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/pooling.hpp:132:5" my-argnr="1" my-argname="xDesc" file="/workspaces/MIOpen/src/pooling.cpp" line="117" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/pooling.hpp:134:10" my-argnr="1" my-argname="xDesc" file="/workspaces/MIOpen/src/pooling.cpp" line="162" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/pooling.hpp:136:22" my-argnr="1" my-argname="xDesc" file="/workspaces/MIOpen/src/pooling.cpp" line="218" col="30" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/pooling.hpp:138:17" my-argnr="1" my-argname="yDesc" file="/workspaces/MIOpen/src/pooling.cpp" line="231" col="31" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/pooling.cpp:262:15" my-argnr="1" my-argname="stream" file="/workspaces/MIOpen/src/pooling.cpp" line="264" col="5" value="0"/>
+  </FileInfo>
+  <FileInfo check="Class">
+<class name="miopenHandle" file="/workspaces/MIOpen/include/miopen/miopen.h" line="94" col="1" hash="8309549692933933785"/>
+<class name="miopenFusionOpDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="275" col="1" hash="4704277320073627763"/>
+<class name="miopenTensorDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="284" col="1" hash="12770968629304976"/>
+<class name="miopenSeqTensorDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="292" col="1" hash="6507238484369692205"/>
+<class name="miopenConvolutionDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="301" col="1" hash="17378807823611353902"/>
+<class name="miopenPoolingDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="310" col="1" hash="8610054100614131996"/>
+<class name="miopenLRNDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="319" col="1" hash="471603686082321102"/>
+<class name="miopenActivationDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="327" col="1" hash="12560879182228328475"/>
+<class name="miopenRNNDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="332" col="1" hash="16517038674311836935"/>
+<class name="miopenCTCLossDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="337" col="1" hash="7680476721827668461"/>
+<class name="miopenDropoutDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="342" col="1" hash="1503342196614512285"/>
+<class name="miopenReduceTensorDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="347" col="1" hash="5277864812723682945"/>
+<class name="miopenMhaDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="352" col="1" hash="10272737294791820148"/>
+<class name="miopenSoftmaxDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="357" col="1" hash="15873477500517700482"/>
+<class name="miopenConvAlgoPerf_t" file="/workspaces/MIOpen/include/miopen/miopen.h" line="1205" col="9" hash="1612599100050064260"/>
+<class name="miopenConvSolution_t" file="/workspaces/MIOpen/include/miopen/miopen.h" line="1229" col="9" hash="3464632565062302098"/>
+<class name="miopenFusionPlanDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="3005" col="1" hash="13340728664695295100"/>
+<class name="miopenOperatorDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="3006" col="1" hash="636472955923712347"/>
+<class name="miopenOperatorArgs" file="/workspaces/MIOpen/include/miopen/miopen.h" line="3007" col="1" hash="3317099903601190523"/>
+<class name="miopenProblem" file="/workspaces/MIOpen/include/miopen/miopen.h" line="5297" col="1" hash="4293138115591050699"/>
+<class name="miopenFindOptions" file="/workspaces/MIOpen/include/miopen/miopen.h" line="5479" col="1" hash="367317323858302858"/>
+<class name="miopenSolution" file="/workspaces/MIOpen/include/miopen/miopen.h" line="5547" col="1" hash="15945215896066486701"/>
+<class name="miopenTensorArgument_t" file="/workspaces/MIOpen/include/miopen/miopen.h" line="5569" col="1" hash="2747439117073704386"/>
+<class name="bfloat16" file="/workspaces/MIOpen/src/include/miopen/bfloat16.hpp" line="32" col="1" hash="776773424714052104"/>
+  </FileInfo>
+  <FileInfo check="Null pointer">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/errors.hpp:61:19" my-argnr="1" my-argname="file" file="/workspaces/MIOpen/src/include/miopen/errors.hpp" line="63" col="71" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/logger.hpp:249:6" my-argnr="1" my-argname="x" file="/workspaces/MIOpen/src/include/miopen/logger.hpp" line="251" col="24" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/logger.hpp:448:14" my-argnr="1" my-argname="name" file="/workspaces/MIOpen/src/include/miopen/logger.hpp" line="448" col="64" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp:101:10" my-argnr="1" my-argname="name" file="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp" line="103" col="35" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp:108:10" my-argnr="1" my-argname="name" file="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp" line="110" col="16" value="0"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/object.hpp:56:6" my-argnr="1" my-argname="x" file="/workspaces/MIOpen/src/include/miopen/object.hpp" line="58" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/logger.hpp:144:15" my-argnr="2" my-argname="r" file="/workspaces/MIOpen/src/include/miopen/logger.hpp" line="147" col="20" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/logger.hpp:182:15" my-argnr="3" my-argname="values" file="/workspaces/MIOpen/src/include/miopen/logger.hpp" line="184" col="28" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor.hpp:49:6" my-argnr="1" my-argname="x" file="/workspaces/MIOpen/src/include/miopen/tensor.hpp" line="51" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor.hpp:56:6" my-argnr="1" my-argname="x" file="/workspaces/MIOpen/src/include/miopen/tensor.hpp" line="58" col="34" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor.hpp:219:40" my-argnr="1" my-argname="lens" file="/workspaces/MIOpen/src/include/miopen/tensor.hpp" line="222" col="42" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp:39:6" my-argnr="1" my-argname="len" file="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp" line="46" col="20" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp:39:6" my-argnr="2" my-argname="len_layout" file="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp" line="48" col="20" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp:73:6" my-argnr="1" my-argname="len" file="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp" line="79" col="54" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp:73:6" my-argnr="2" my-argname="len_layout" file="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp" line="84" col="20" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp:73:6" my-argnr="3" my-argname="layout" file="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp" line="79" col="37" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp:89:5" my-argnr="1" my-argname="defines_" file="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp" line="91" col="25" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp:101:10" my-argnr="2" my-argname="value" file="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp" line="104" col="58" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp:113:28" my-argnr="1" my-argname="other" file="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp" line="115" col="19" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/pooling.hpp:98:5" my-argnr="3" my-argname="plens" file="/workspaces/MIOpen/src/pooling.cpp" line="79" col="8" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/pooling.hpp:132:5" my-argnr="1" my-argname="xDesc" file="/workspaces/MIOpen/src/pooling.cpp" line="117" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/pooling.hpp:134:10" my-argnr="1" my-argname="xDesc" file="/workspaces/MIOpen/src/pooling.cpp" line="162" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/pooling.hpp:136:22" my-argnr="1" my-argname="xDesc" file="/workspaces/MIOpen/src/pooling.cpp" line="218" col="30" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/pooling.hpp:138:17" my-argnr="1" my-argname="yDesc" file="/workspaces/MIOpen/src/pooling.cpp" line="231" col="31" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/pooling.cpp:262:15" my-argnr="1" my-argname="stream" file="/workspaces/MIOpen/src/pooling.cpp" line="264" col="5" value="0"/>
+  </FileInfo>
+  <FileInfo check="Class">
+<class name="miopenHandle" file="/workspaces/MIOpen/include/miopen/miopen.h" line="94" col="1" hash="8309549692933933785"/>
+<class name="miopenFusionOpDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="275" col="1" hash="4704277320073627763"/>
+<class name="miopenTensorDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="284" col="1" hash="12770968629304976"/>
+<class name="miopenSeqTensorDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="292" col="1" hash="6507238484369692205"/>
+<class name="miopenConvolutionDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="301" col="1" hash="17378807823611353902"/>
+<class name="miopenPoolingDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="310" col="1" hash="8610054100614131996"/>
+<class name="miopenLRNDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="319" col="1" hash="471603686082321102"/>
+<class name="miopenActivationDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="327" col="1" hash="12560879182228328475"/>
+<class name="miopenRNNDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="332" col="1" hash="16517038674311836935"/>
+<class name="miopenCTCLossDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="337" col="1" hash="7680476721827668461"/>
+<class name="miopenDropoutDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="342" col="1" hash="1503342196614512285"/>
+<class name="miopenReduceTensorDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="347" col="1" hash="5277864812723682945"/>
+<class name="miopenMhaDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="352" col="1" hash="10272737294791820148"/>
+<class name="miopenSoftmaxDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="357" col="1" hash="15873477500517700482"/>
+<class name="miopenConvAlgoPerf_t" file="/workspaces/MIOpen/include/miopen/miopen.h" line="1205" col="9" hash="1612599100050064260"/>
+<class name="miopenConvSolution_t" file="/workspaces/MIOpen/include/miopen/miopen.h" line="1229" col="9" hash="3464632565062302098"/>
+<class name="miopenFusionPlanDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="3005" col="1" hash="13340728664695295100"/>
+<class name="miopenOperatorDescriptor" file="/workspaces/MIOpen/include/miopen/miopen.h" line="3006" col="1" hash="636472955923712347"/>
+<class name="miopenOperatorArgs" file="/workspaces/MIOpen/include/miopen/miopen.h" line="3007" col="1" hash="3317099903601190523"/>
+<class name="miopenProblem" file="/workspaces/MIOpen/include/miopen/miopen.h" line="5297" col="1" hash="4293138115591050699"/>
+<class name="miopenFindOptions" file="/workspaces/MIOpen/include/miopen/miopen.h" line="5479" col="1" hash="367317323858302858"/>
+<class name="miopenSolution" file="/workspaces/MIOpen/include/miopen/miopen.h" line="5547" col="1" hash="15945215896066486701"/>
+<class name="miopenTensorArgument_t" file="/workspaces/MIOpen/include/miopen/miopen.h" line="5569" col="1" hash="2747439117073704386"/>
+<class name="bfloat16" file="/workspaces/MIOpen/src/include/miopen/bfloat16.hpp" line="32" col="1" hash="776773424714052104"/>
+  </FileInfo>
+  <FileInfo check="Null pointer">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/errors.hpp:61:19" my-argnr="1" my-argname="file" file="/workspaces/MIOpen/src/include/miopen/errors.hpp" line="63" col="71" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/logger.hpp:249:6" my-argnr="1" my-argname="x" file="/workspaces/MIOpen/src/include/miopen/logger.hpp" line="251" col="24" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/logger.hpp:448:14" my-argnr="1" my-argname="name" file="/workspaces/MIOpen/src/include/miopen/logger.hpp" line="448" col="64" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor.hpp:69:6" my-argnr="1" my-argname="x" file="/workspaces/MIOpen/src/include/miopen/tensor.hpp" line="74" col="21" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp:101:10" my-argnr="1" my-argname="name" file="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp" line="103" col="35" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp:108:10" my-argnr="1" my-argname="name" file="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp" line="110" col="16" value="0"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/object.hpp:56:6" my-argnr="1" my-argname="x" file="/workspaces/MIOpen/src/include/miopen/object.hpp" line="58" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/logger.hpp:144:15" my-argnr="2" my-argname="r" file="/workspaces/MIOpen/src/include/miopen/logger.hpp" line="147" col="20" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/logger.hpp:182:15" my-argnr="3" my-argname="values" file="/workspaces/MIOpen/src/include/miopen/logger.hpp" line="184" col="28" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor.hpp:49:6" my-argnr="1" my-argname="x" file="/workspaces/MIOpen/src/include/miopen/tensor.hpp" line="51" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor.hpp:56:6" my-argnr="1" my-argname="x" file="/workspaces/MIOpen/src/include/miopen/tensor.hpp" line="58" col="34" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor.hpp:69:6" my-argnr="1" my-argname="x" file="/workspaces/MIOpen/src/include/miopen/tensor.hpp" line="74" col="21" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor.hpp:219:40" my-argnr="1" my-argname="lens" file="/workspaces/MIOpen/src/include/miopen/tensor.hpp" line="222" col="42" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp:39:6" my-argnr="1" my-argname="len" file="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp" line="46" col="20" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp:39:6" my-argnr="2" my-argname="len_layout" file="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp" line="48" col="20" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp:73:6" my-argnr="1" my-argname="len" file="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp" line="79" col="54" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp:73:6" my-argnr="2" my-argname="len_layout" file="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp" line="84" col="20" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp:73:6" my-argnr="3" my-argname="layout" file="/workspaces/MIOpen/src/include/miopen/tensor_layout.hpp" line="79" col="37" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp:89:5" my-argnr="1" my-argname="defines_" file="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp" line="91" col="25" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp:101:10" my-argnr="2" my-argname="value" file="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp" line="104" col="58" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp:113:28" my-argnr="1" my-argname="other" file="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp" line="115" col="19" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/pooling.hpp:98:5" my-argnr="3" my-argname="plens" file="/workspaces/MIOpen/src/pooling.cpp" line="79" col="8" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/pooling.hpp:132:5" my-argnr="1" my-argname="xDesc" file="/workspaces/MIOpen/src/pooling.cpp" line="117" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/pooling.hpp:134:10" my-argnr="1" my-argname="xDesc" file="/workspaces/MIOpen/src/pooling.cpp" line="162" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/pooling.hpp:136:22" my-argnr="1" my-argname="xDesc" file="/workspaces/MIOpen/src/pooling.cpp" line="218" col="30" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/pooling.hpp:138:17" my-argnr="1" my-argname="yDesc" file="/workspaces/MIOpen/src/pooling.cpp" line="231" col="31" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/pooling.cpp:262:15" my-argnr="1" my-argname="stream" file="/workspaces/MIOpen/src/pooling.cpp" line="264" col="5" value="0"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="SetIndexType" lineNumber="83"/>
+    <functiondecl functionName="GetIndexType" lineNumber="85"/>
+    <functiondecl functionName="SetWorkspaceIndexMode" lineNumber="87"/>
+    <functiondecl functionName="GetWorkspaceIndexMode" lineNumber="92"/>
+    <functiondecl functionName="GetMode" lineNumber="97"/>
+    <functiondecl functionName="GetPaddingMode" lineNumber="99"/>
+    <functiondecl functionName="GetLengths" lineNumber="101"/>
+    <functiondecl functionName="GetStrides" lineNumber="103"/>
+    <functiondecl functionName="GetPads" lineNumber="105"/>
+    <functiondecl functionName="GetSize" lineNumber="107"/>
+    <functiondecl functionName="GetForwardOutputDim" lineNumber="114"/>
+    <functiondecl functionName="GetForwardOutputDimNd" lineNumber="158"/>
+    <functiondecl functionName="GetForwardOutputTensor" lineNumber="216"/>
+    <functiondecl functionName="GetWorkSpaceSize" lineNumber="229"/>
+    <functiondecl functionName="SetIndexType" lineNumber="83"/>
+    <functiondecl functionName="GetIndexType" lineNumber="85"/>
+    <functiondecl functionName="SetWorkspaceIndexMode" lineNumber="87"/>
+    <functiondecl functionName="GetWorkspaceIndexMode" lineNumber="92"/>
+    <functiondecl functionName="GetMode" lineNumber="97"/>
+    <functiondecl functionName="GetPaddingMode" lineNumber="99"/>
+    <functiondecl functionName="GetLengths" lineNumber="101"/>
+    <functiondecl functionName="GetStrides" lineNumber="103"/>
+    <functiondecl functionName="GetPads" lineNumber="105"/>
+    <functiondecl functionName="GetSize" lineNumber="107"/>
+    <functiondecl functionName="GetForwardOutputDim" lineNumber="114"/>
+    <functiondecl functionName="GetForwardOutputDimNd" lineNumber="158"/>
+    <functiondecl functionName="GetForwardOutputTensor" lineNumber="216"/>
+    <functiondecl functionName="GetWorkSpaceSize" lineNumber="229"/>
+    <functiondecl functionName="SetIndexType" lineNumber="83"/>
+    <functiondecl functionName="GetIndexType" lineNumber="85"/>
+    <functiondecl functionName="SetWorkspaceIndexMode" lineNumber="87"/>
+    <functiondecl functionName="GetWorkspaceIndexMode" lineNumber="92"/>
+    <functiondecl functionName="GetMode" lineNumber="97"/>
+    <functiondecl functionName="GetPaddingMode" lineNumber="99"/>
+    <functiondecl functionName="GetLengths" lineNumber="101"/>
+    <functiondecl functionName="GetStrides" lineNumber="103"/>
+    <functiondecl functionName="GetPads" lineNumber="105"/>
+    <functiondecl functionName="GetSize" lineNumber="107"/>
+    <functiondecl functionName="GetForwardOutputDim" lineNumber="114"/>
+    <functiondecl functionName="GetForwardOutputDimNd" lineNumber="158"/>
+    <functiondecl functionName="GetForwardOutputTensor" lineNumber="216"/>
+    <functiondecl functionName="GetWorkSpaceSize" lineNumber="229"/>
+    <functiondecl functionName="SetIndexType" lineNumber="83"/>
+    <functiondecl functionName="GetIndexType" lineNumber="85"/>
+    <functiondecl functionName="SetWorkspaceIndexMode" lineNumber="87"/>
+    <functiondecl functionName="GetWorkspaceIndexMode" lineNumber="92"/>
+    <functiondecl functionName="GetMode" lineNumber="97"/>
+    <functiondecl functionName="GetPaddingMode" lineNumber="99"/>
+    <functiondecl functionName="GetLengths" lineNumber="101"/>
+    <functiondecl functionName="GetStrides" lineNumber="103"/>
+    <functiondecl functionName="GetPads" lineNumber="105"/>
+    <functiondecl functionName="GetSize" lineNumber="107"/>
+    <functiondecl functionName="GetForwardOutputDim" lineNumber="114"/>
+    <functiondecl functionName="GetForwardOutputDimNd" lineNumber="158"/>
+    <functiondecl functionName="GetForwardOutputTensor" lineNumber="216"/>
+    <functiondecl functionName="GetWorkSpaceSize" lineNumber="229"/>
+    <functioncall functionName="CArray"/>
+    <functioncall functionName="Define"/>
+    <functioncall functionName="Error"/>
+    <functioncall functionName="Exception"/>
+    <functioncall functionName="F"/>
+    <functioncall functionName="G"/>
+    <functioncall functionName="Generate"/>
+    <functioncall functionName="GenerateFor"/>
+    <functioncall functionName="GetDataTypeKBP"/>
+    <functioncall functionName="GetDefaultLayout"/>
+    <functioncall functionName="GetElementSize"/>
+    <functioncall functionName="GetElementSpace"/>
+    <functioncall functionName="GetForwardOutputDimNd"/>
+    <functioncall functionName="GetIndex"/>
+    <functioncall functionName="GetIndexType"/>
+    <functioncall functionName="GetLayout"/>
+    <functioncall functionName="GetLengths"/>
+    <functioncall functionName="GetMode"/>
+    <functioncall functionName="GetPaddingMode"/>
+    <functioncall functionName="GetPads"/>
+    <functioncall functionName="GetSize"/>
+    <functioncall functionName="GetStrides"/>
+    <functioncall functionName="GetSubbufferAlignment"/>
+    <functioncall functionName="GetType"/>
+    <functioncall functionName="IntegralConstant"/>
+    <functioncall functionName="KBPInit"/>
+    <functioncall functionName="KernelBuildParameter"/>
+    <functioncall functionName="KernelBuildParameters"/>
+    <functioncall functionName="LogRange"/>
+    <functioncall functionName="MIOPEN_BACKEND_CONVOLUTION_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_BACKEND_ENGINECFG_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_BACKEND_ENGINEHEUR_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_BACKEND_ENGINE_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_BACKEND_EXECUTION_PLAN_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_BACKEND_INTERMEDIATE_INFO_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_BACKEND_KNOB_CHOICE_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_BACKEND_KNOB_INFO_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_BACKEND_LAYOUT_INFO_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_BACKEND_MATMUL_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_BACKEND_OPERATIONGRAPH_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_BACKEND_OPERATION_CONCAT_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_BACKEND_OPERATION_CONVOLUTION_BACKWARD_DATA_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_BACKEND_OPERATION_CONVOLUTION_BACKWARD_FILTER_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_BACKEND_OPERATION_CONVOLUTION_FORWARD_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_BACKEND_OPERATION_GEN_STATS_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_BACKEND_OPERATION_MATMUL_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_BACKEND_OPERATION_NORM_BACKWARD_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_BACKEND_OPERATION_NORM_FORWARD_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_BACKEND_OPERATION_POINTWISE_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_BACKEND_OPERATION_REDUCTION_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_BACKEND_OPERATION_RESAMPLE_BWD_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_BACKEND_OPERATION_RESAMPLE_FWD_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_BACKEND_OPERATION_RNG_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_BACKEND_OPERATION_SIGNAL_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_BACKEND_POINTWISE_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_BACKEND_REDUCTION_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_BACKEND_RESAMPLE_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_BACKEND_RNG_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_BACKEND_TENSOR_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_BACKEND_VARIANT_PACK_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_POINTWISE_ABS"/>
+    <functioncall functionName="MIOPEN_POINTWISE_ADD"/>
+    <functioncall functionName="MIOPEN_POINTWISE_ADD_SQUARE"/>
+    <functioncall functionName="MIOPEN_POINTWISE_BINARY_SELECT"/>
+    <functioncall functionName="MIOPEN_POINTWISE_CEIL"/>
+    <functioncall functionName="MIOPEN_POINTWISE_CMP_EQ"/>
+    <functioncall functionName="MIOPEN_POINTWISE_CMP_GE"/>
+    <functioncall functionName="MIOPEN_POINTWISE_CMP_GT"/>
+    <functioncall functionName="MIOPEN_POINTWISE_CMP_LE"/>
+    <functioncall functionName="MIOPEN_POINTWISE_CMP_LT"/>
+    <functioncall functionName="MIOPEN_POINTWISE_CMP_NEQ"/>
+    <functioncall functionName="MIOPEN_POINTWISE_COS"/>
+    <functioncall functionName="MIOPEN_POINTWISE_DIV"/>
+    <functioncall functionName="MIOPEN_POINTWISE_ELU_BWD"/>
+    <functioncall functionName="MIOPEN_POINTWISE_ELU_FWD"/>
+    <functioncall functionName="MIOPEN_POINTWISE_ERF"/>
+    <functioncall functionName="MIOPEN_POINTWISE_EXP"/>
+    <functioncall functionName="MIOPEN_POINTWISE_FLOOR"/>
+    <functioncall functionName="MIOPEN_POINTWISE_GELU_APPROX_TANH_BWD"/>
+    <functioncall functionName="MIOPEN_POINTWISE_GELU_APPROX_TANH_FWD"/>
+    <functioncall functionName="MIOPEN_POINTWISE_GELU_BWD"/>
+    <functioncall functionName="MIOPEN_POINTWISE_GELU_FWD"/>
+    <functioncall functionName="MIOPEN_POINTWISE_GEN_INDEX"/>
+    <functioncall functionName="MIOPEN_POINTWISE_IDENTITY"/>
+    <functioncall functionName="MIOPEN_POINTWISE_LOG"/>
+    <functioncall functionName="MIOPEN_POINTWISE_LOGICAL_AND"/>
+    <functioncall functionName="MIOPEN_POINTWISE_LOGICAL_NOT"/>
+    <functioncall functionName="MIOPEN_POINTWISE_LOGICAL_OR"/>
+    <functioncall functionName="MIOPEN_POINTWISE_MAX"/>
+    <functioncall functionName="MIOPEN_POINTWISE_MIN"/>
+    <functioncall functionName="MIOPEN_POINTWISE_MOD"/>
+    <functioncall functionName="MIOPEN_POINTWISE_MUL"/>
+    <functioncall functionName="MIOPEN_POINTWISE_NEG"/>
+    <functioncall functionName="MIOPEN_POINTWISE_POW"/>
+    <functioncall functionName="MIOPEN_POINTWISE_RECIPROCAL"/>
+    <functioncall functionName="MIOPEN_POINTWISE_RELU_BWD"/>
+    <functioncall functionName="MIOPEN_POINTWISE_RELU_FWD"/>
+    <functioncall functionName="MIOPEN_POINTWISE_RSQRT"/>
+    <functioncall functionName="MIOPEN_POINTWISE_SIGMOID_BWD"/>
+    <functioncall functionName="MIOPEN_POINTWISE_SIGMOID_FWD"/>
+    <functioncall functionName="MIOPEN_POINTWISE_SIN"/>
+    <functioncall functionName="MIOPEN_POINTWISE_SOFTPLUS_BWD"/>
+    <functioncall functionName="MIOPEN_POINTWISE_SOFTPLUS_FWD"/>
+    <functioncall functionName="MIOPEN_POINTWISE_SQRT"/>
+    <functioncall functionName="MIOPEN_POINTWISE_SUB"/>
+    <functioncall functionName="MIOPEN_POINTWISE_SWISH_BWD"/>
+    <functioncall functionName="MIOPEN_POINTWISE_SWISH_FWD"/>
+    <functioncall functionName="MIOPEN_POINTWISE_TAN"/>
+    <functioncall functionName="MIOPEN_POINTWISE_TANH_BWD"/>
+    <functioncall functionName="MIOPEN_POINTWISE_TANH_FWD"/>
+    <functioncall functionName="MIOPEN_RNG_DISTRIBUTION_BERNOULLI"/>
+    <functioncall functionName="MIOPEN_RNG_DISTRIBUTION_NORMAL"/>
+    <functioncall functionName="MIOPEN_RNG_DISTRIBUTION_UNIFORM"/>
+    <functioncall functionName="MIOPEN_TYPE_ATTRIB_NAME"/>
+    <functioncall functionName="MIOPEN_TYPE_BACKEND_DESCRIPTOR"/>
+    <functioncall functionName="MIOPEN_TYPE_BEHAVIOR_NOTE"/>
+    <functioncall functionName="MIOPEN_TYPE_BN_FINALIZE_STATS_MODE"/>
+    <functioncall functionName="MIOPEN_TYPE_BOOLEAN"/>
+    <functioncall functionName="MIOPEN_TYPE_CHAR"/>
+    <functioncall functionName="MIOPEN_TYPE_CONVOLUTION_MODE"/>
+    <functioncall functionName="MIOPEN_TYPE_DATA_TYPE"/>
+    <functioncall functionName="MIOPEN_TYPE_DOUBLE"/>
+    <functioncall functionName="MIOPEN_TYPE_FLOAT"/>
+    <functioncall functionName="MIOPEN_TYPE_FRACTION"/>
+    <functioncall functionName="MIOPEN_TYPE_GENSTATS_MODE"/>
+    <functioncall functionName="MIOPEN_TYPE_HEUR_MODE"/>
+    <functioncall functionName="MIOPEN_TYPE_INT32"/>
+    <functioncall functionName="MIOPEN_TYPE_INT64"/>
+    <functioncall functionName="MIOPEN_TYPE_KNOB_TYPE"/>
+    <functioncall functionName="MIOPEN_TYPE_LAYOUT_TYPE"/>
+    <functioncall functionName="MIOPEN_TYPE_NAN_PROPOGATION"/>
+    <functioncall functionName="MIOPEN_TYPE_NORM_FWD_PHASE"/>
+    <functioncall functionName="MIOPEN_TYPE_NORM_MODE"/>
+    <functioncall functionName="MIOPEN_TYPE_NUMERICAL_NOTE"/>
+    <functioncall functionName="MIOPEN_TYPE_PADDING_MODE"/>
+    <functioncall functionName="MIOPEN_TYPE_POINTWISE_MODE"/>
+    <functioncall functionName="MIOPEN_TYPE_REDUCTION_OPERATOR_TYPE"/>
+    <functioncall functionName="MIOPEN_TYPE_RESAMPLE_MODE"/>
+    <functioncall functionName="MIOPEN_TYPE_RNG_DISTRIBUTION"/>
+    <functioncall functionName="MIOPEN_TYPE_SIGNAL_MODE"/>
+    <functioncall functionName="MIOPEN_TYPE_TENSOR_REORDERING_MODE"/>
+    <functioncall functionName="MIOPEN_TYPE_VOID_PTR"/>
+    <functioncall functionName="MIOpenThrow"/>
+    <functioncall functionName="N"/>
+    <functioncall functionName="Ns"/>
+    <functioncall functionName="Option"/>
+    <functioncall functionName="P"/>
+    <functioncall functionName="Params"/>
+    <functioncall functionName="PoolingDescriptor"/>
+    <functioncall functionName="SetContext"/>
+    <functioncall functionName="T"/>
+    <functioncall functionName="TElement"/>
+    <functioncall functionName="TValue"/>
+    <functioncall functionName="TensorDescriptor"/>
+    <functioncall functionName="Ts"/>
+    <functioncall functionName="U"/>
+    <functioncall functionName="ValidateUniqueness"/>
+    <functioncall functionName="Warning"/>
+    <functioncall functionName="X"/>
+    <functioncall functionName="Xs"/>
+    <functioncall functionName="Ys"/>
+    <functioncall functionName="accumulate"/>
+    <functioncall functionName="all_of"/>
+    <functioncall functionName="append"/>
+    <functioncall functionName="args"/>
+    <functioncall functionName="as_float"/>
+    <functioncall functionName="assert"/>
+    <functioncall functionName="back_inserter"/>
+    <functioncall functionName="base_label"/>
+    <functioncall functionName="base_layout"/>
+    <functioncall functionName="begin"/>
+    <functioncall functionName="bfloat16"/>
+    <functioncall functionName="bool"/>
+    <functioncall functionName="break"/>
+    <functioncall functionName="by"/>
+    <functioncall functionName="c_str"/>
+    <functioncall functionName="catch"/>
+    <functioncall functionName="ceil"/>
+    <functioncall functionName="char"/>
+    <functioncall functionName="class"/>
+    <functioncall functionName="const"/>
+    <functioncall functionName="copy"/>
+    <functioncall functionName="create_tuple_impl"/>
+    <functioncall functionName="cur_layout_char"/>
+    <functioncall functionName="d"/>
+    <functioncall functionName="data"/>
+    <functioncall functionName="data_"/>
+    <functioncall functionName="decltype"/>
+    <functioncall functionName="default"/>
+    <functioncall functionName="default_layout"/>
+    <functioncall functionName="defines_"/>
+    <functioncall functionName="delete_obj"/>
+    <functioncall functionName="deref"/>
+    <functioncall functionName="dim"/>
+    <functioncall functionName="dim_to_len"/>
+    <functioncall functionName="dims"/>
+    <functioncall functionName="double"/>
+    <functioncall functionName="each_args"/>
+    <functioncall functionName="each_args_i_impl"/>
+    <functioncall functionName="each_i_impl"/>
+    <functioncall functionName="empty"/>
+    <functioncall functionName="end"/>
+    <functioncall functionName="eq"/>
+    <functioncall functionName="equal_to"/>
+    <functioncall functionName="err"/>
+    <functioncall functionName="f"/>
+    <functioncall functionName="false"/>
+    <functioncall functionName="file"/>
+    <functioncall functionName="find"/>
+    <functioncall functionName="find_first_of"/>
+    <functioncall functionName="find_if"/>
+    <functioncall functionName="find_last_of"/>
+    <functioncall functionName="find_permutation"/>
+    <functioncall functionName="first"/>
+    <functioncall functionName="float"/>
+    <functioncall functionName="float_st"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="forward"/>
+    <functioncall functionName="fs"/>
+    <functioncall functionName="g"/>
+    <functioncall functionName="generate"/>
+    <functioncall functionName="gens"/>
+    <functioncall functionName="get"/>
+    <functioncall functionName="get_data_size"/>
+    <functioncall functionName="get_object"/>
+    <functioncall functionName="get_object_impl"/>
+    <functioncall functionName="half"/>
+    <functioncall functionName="i"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="in_layout"/>
+    <functioncall functionName="indexType"/>
+    <functioncall functionName="index_type"/>
+    <functioncall functionName="input_c"/>
+    <functioncall functionName="input_h"/>
+    <functioncall functionName="input_n"/>
+    <functioncall functionName="input_w"/>
+    <functioncall functionName="inserter"/>
+    <functioncall functionName="int"/>
+    <functioncall functionName="int64_t"/>
+    <functioncall functionName="int8_t"/>
+    <functioncall functionName="iota"/>
+    <functioncall functionName="is"/>
+    <functioncall functionName="is_pointer"/>
+    <functioncall functionName="l"/>
+    <functioncall functionName="labels"/>
+    <functioncall functionName="layout"/>
+    <functioncall functionName="lens"/>
+    <functioncall functionName="line"/>
+    <functioncall functionName="logRange"/>
+    <functioncall functionName="long"/>
+    <functioncall functionName="m"/>
+    <functioncall functionName="m_active"/>
+    <functioncall functionName="main_ws"/>
+    <functioncall functionName="make_pair"/>
+    <functioncall functionName="make_tuple"/>
+    <functioncall functionName="max"/>
+    <functioncall functionName="message"/>
+    <functioncall functionName="miopenDataType_t"/>
+    <functioncall functionName="miopenFloat"/>
+    <functioncall functionName="miopenIndexUint8"/>
+    <functioncall functionName="miopenPaddingDefault"/>
+    <functioncall functionName="miopenPoolingMax"/>
+    <functioncall functionName="miopenPoolingWorkspaceIndexImage"/>
+    <functioncall functionName="miopenPoolingWorkspaceIndexMask"/>
+    <functioncall functionName="miopenStatusBadParm"/>
+    <functioncall functionName="miopenStatusUnknownError"/>
+    <functioncall functionName="miopen_get_object"/>
+    <functioncall functionName="mode"/>
+    <functioncall functionName="move"/>
+    <functioncall functionName="msg"/>
+    <functioncall functionName="name"/>
+    <functioncall functionName="noexcept"/>
+    <functioncall functionName="nullptr"/>
+    <functioncall functionName="obj"/>
+    <functioncall functionName="operatorfloat"/>
+    <functioncall functionName="options"/>
+    <functioncall functionName="out_dim"/>
+    <functioncall functionName="out_strides"/>
+    <functioncall functionName="out_tmp"/>
+    <functioncall functionName="output"/>
+    <functioncall functionName="output_h"/>
+    <functioncall functionName="output_w"/>
+    <functioncall functionName="p"/>
+    <functioncall functionName="pad_h"/>
+    <functioncall functionName="pad_w"/>
+    <functioncall functionName="pads"/>
+    <functioncall functionName="plens"/>
+    <functioncall functionName="pm"/>
+    <functioncall functionName="pmode"/>
+    <functioncall functionName="ppads"/>
+    <functioncall functionName="pstrides"/>
+    <functioncall functionName="push_back"/>
+    <functioncall functionName="r"/>
+    <functioncall functionName="rank &lt; 0 &gt;"/>
+    <functioncall functionName="reinterpret_cast"/>
+    <functioncall functionName="rem"/>
+    <functioncall functionName="remove_ptr"/>
+    <functioncall functionName="remove_reference"/>
+    <functioncall functionName="reserve"/>
+    <functioncall functionName="result"/>
+    <functioncall functionName="return"/>
+    <functioncall functionName="rhs"/>
+    <functioncall functionName="roctxRangePop"/>
+    <functioncall functionName="roctxRangePush"/>
+    <functioncall functionName="s"/>
+    <functioncall functionName="seq"/>
+    <functioncall functionName="sequence"/>
+    <functioncall functionName="size"/>
+    <functioncall functionName="sizeof"/>
+    <functioncall functionName="sizeof..."/>
+    <functioncall functionName="stable_sort"/>
+    <functioncall functionName="static_cast"/>
+    <functioncall functionName="status"/>
+    <functioncall functionName="stream"/>
+    <functioncall functionName="stride_h"/>
+    <functioncall functionName="stride_w"/>
+    <functioncall functionName="strides"/>
+    <functioncall functionName="string"/>
+    <functioncall functionName="substr"/>
+    <functioncall functionName="switch"/>
+    <functioncall functionName="t"/>
+    <functioncall functionName="tensorDimArr"/>
+    <functioncall functionName="tensor_layout_get_default"/>
+    <functioncall functionName="tensor_layout_to_strides"/>
+    <functioncall functionName="tie"/>
+    <functioncall functionName="tie_impl"/>
+    <functioncall functionName="tie_pick_impl"/>
+    <functioncall functionName="tien"/>
+    <functioncall functionName="to_string"/>
+    <functioncall functionName="transform"/>
+    <functioncall functionName="transpose_ws"/>
+    <functioncall functionName="transposed_strides"/>
+    <functioncall functionName="true"/>
+    <functioncall functionName="tuple_size"/>
+    <functioncall functionName="ty"/>
+    <functioncall functionName="type"/>
+    <functioncall functionName="typename"/>
+    <functioncall functionName="uint16_t"/>
+    <functioncall functionName="uint32_t"/>
+    <functioncall functionName="uint64_t"/>
+    <functioncall functionName="uint8_t"/>
+    <functioncall functionName="unpack"/>
+    <functioncall functionName="unpack_impl"/>
+    <functioncall functionName="use_bfp16"/>
+    <functioncall functionName="use_bfp8"/>
+    <functioncall functionName="use_fp16"/>
+    <functioncall functionName="use_fp16x4"/>
+    <functioncall functionName="use_fp16x8"/>
+    <functioncall functionName="use_fp32"/>
+    <functioncall functionName="use_fp64"/>
+    <functioncall functionName="use_fp8"/>
+    <functioncall functionName="use_int32"/>
+    <functioncall functionName="use_int8"/>
+    <functioncall functionName="use_rne_bfloat16"/>
+    <functioncall functionName="val"/>
+    <functioncall functionName="value"/>
+    <functioncall functionName="vector"/>
+    <functioncall functionName="visit_float"/>
+    <functioncall functionName="void"/>
+    <functioncall functionName="what"/>
+    <functioncall functionName="while"/>
+    <functioncall functionName="window_h"/>
+    <functioncall functionName="window_w"/>
+    <functioncall functionName="workspaceIndexMode"/>
+    <functioncall functionName="workspace_index"/>
+    <functioncall functionName="x"/>
+    <functioncall functionName="xDesc"/>
+    <functioncall functionName="x_transpose_size"/>
+    <functioncall functionName="xs"/>
+    <functioncall functionName="y"/>
+    <functioncall functionName="y_transpose_size"/>
+  </FileInfo>
+</analyzerinfo>

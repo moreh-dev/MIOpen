@@ -1,0 +1,145 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="12755535650649659783">
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;ThreadwiseTensorSliceTransfer_v4&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;ThreadwiseTensorSliceTransfer_v4&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/tensor_operation/threadwise_tensor_slice_transfer.hpp">
+            <location file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/tensor_operation/threadwise_tensor_slice_transfer.hpp" line="1283" column="26"/>
+            <symbol>ThreadwiseTensorSliceTransfer_v4</symbol>
+        </error>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="SetDstSliceOrigin" lineNumber="79"/>
+    <functiondecl functionName="GetDstCoordinateResetStep" lineNumber="278"/>
+    <functiondecl functionName="MoveDstSliceWindow" lineNumber="339"/>
+    <functiondecl functionName="SetDstSliceOrigin" lineNumber="395"/>
+    <functiondecl functionName="GetSrcCoordinateResetStep" lineNumber="590"/>
+    <functiondecl functionName="MoveSrcSliceWindow" lineNumber="651"/>
+    <functiondecl functionName="SetSrcSliceOrigin" lineNumber="714"/>
+    <functiondecl functionName="SetDstSliceOrigin" lineNumber="719"/>
+    <functiondecl functionName="GetSrcCoordinateResetStep" lineNumber="1069"/>
+    <functiondecl functionName="GetDstCoordinateResetStep" lineNumber="1129"/>
+    <functiondecl functionName="MoveSrcSliceWindow" lineNumber="1190"/>
+    <functiondecl functionName="MoveDstSliceWindow" lineNumber="1223"/>
+    <functioncall functionName="AsType"/>
+    <functioncall functionName="At"/>
+    <functioncall functionName="CalculateOffset"/>
+    <functioncall functionName="DstData"/>
+    <functioncall functionName="DstDesc"/>
+    <functioncall functionName="DstOriginIdx"/>
+    <functioncall functionName="DstResetCoordinateAfterRun"/>
+    <functioncall functionName="DstScalarPerVector"/>
+    <functioncall functionName="DstSliceOriginIdx"/>
+    <functioncall functionName="DstVectorDim"/>
+    <functioncall functionName="Get"/>
+    <functioncall functionName="GetAddressSpace"/>
+    <functioncall functionName="GetDstCoordinateResetStep"/>
+    <functioncall functionName="GetElementSpaceSize"/>
+    <functioncall functionName="GetNumOfTransform"/>
+    <functioncall functionName="GetOffset"/>
+    <functioncall functionName="GetSrcCoordinateResetStep"/>
+    <functioncall functionName="I0"/>
+    <functioncall functionName="I1"/>
+    <functioncall functionName="IsKnownAtCompileTime"/>
+    <functioncall functionName="IsStaticBuffer"/>
+    <functioncall functionName="ReorderGivenOld2New"/>
+    <functioncall functionName="Run"/>
+    <functioncall functionName="RunRead"/>
+    <functioncall functionName="RunWrite"/>
+    <functioncall functionName="ScalarPerVector"/>
+    <functioncall functionName="Set"/>
+    <functioncall functionName="Size"/>
+    <functioncall functionName="SrcData"/>
+    <functioncall functionName="SrcDesc"/>
+    <functioncall functionName="SrcRefToOriginDisplacement"/>
+    <functioncall functionName="SrcResetCoordinateAfterRun"/>
+    <functioncall functionName="SrcScalarPerVector"/>
+    <functioncall functionName="SrcSliceOriginIdx"/>
+    <functioncall functionName="SrcVectorDim"/>
+    <functioncall functionName="Vgpr"/>
+    <functioncall functionName="access_lengths"/>
+    <functioncall functionName="adjusted_step"/>
+    <functioncall functionName="adjusted_step_idx"/>
+    <functioncall functionName="auto"/>
+    <functioncall functionName="backward_step_idx"/>
+    <functioncall functionName="bool"/>
+    <functioncall functionName="buffer_"/>
+    <functioncall functionName="buffer_offset"/>
+    <functioncall functionName="buffer_size_"/>
+    <functioncall functionName="container_reorder_given_new2old"/>
+    <functioncall functionName="container_reorder_given_old2new"/>
+    <functioncall functionName="coordinate_has_valid_offset_assuming_visible_index_is_valid"/>
+    <functioncall functionName="data_to_origin_disp_idx"/>
+    <functioncall functionName="decltype"/>
+    <functioncall functionName="dim_access_order"/>
+    <functioncall functionName="dst_access_lengths"/>
+    <functioncall functionName="dst_buf"/>
+    <functioncall functionName="dst_coord_"/>
+    <functioncall functionName="dst_desc"/>
+    <functioncall functionName="dst_dim_access_order"/>
+    <functioncall functionName="dst_offset"/>
+    <functioncall functionName="dst_reset_step"/>
+    <functioncall functionName="dst_scalar_per_access"/>
+    <functioncall functionName="dst_slice_origin"/>
+    <functioncall functionName="dst_slice_origin_idx"/>
+    <functioncall functionName="dst_slice_origin_step_idx"/>
+    <functioncall functionName="dst_step_hacks"/>
+    <functioncall functionName="dst_tmp_vector"/>
+    <functioncall functionName="dst_vector_t"/>
+    <functioncall functionName="false"/>
+    <functioncall functionName="forward_step_idx"/>
+    <functioncall functionName="forward_sweep_"/>
+    <functioncall functionName="generate_sequence"/>
+    <functioncall functionName="generate_sequence_v2"/>
+    <functioncall functionName="generate_tuple"/>
+    <functioncall functionName="i"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="index_t"/>
+    <functioncall functionName="is_dst_valid"/>
+    <functioncall functionName="is_src_valid"/>
+    <functioncall functionName="j"/>
+    <functioncall functionName="make_naive_tensor_descriptor_packed"/>
+    <functioncall functionName="make_tensor_coordinate"/>
+    <functioncall functionName="make_tensor_coordinate_step"/>
+    <functioncall functionName="make_tuple"/>
+    <functioncall functionName="move_on_dim_"/>
+    <functioncall functionName="move_tensor_coordinate"/>
+    <functioncall functionName="nDim"/>
+    <functioncall functionName="ntransform_dst"/>
+    <functioncall functionName="ntransform_src"/>
+    <functioncall functionName="ordered_access_lengths"/>
+    <functioncall functionName="ordered_dst_access_lengths"/>
+    <functioncall functionName="ordered_idx"/>
+    <functioncall functionName="ordered_src_access_lengths"/>
+    <functioncall functionName="remove_cv_t"/>
+    <functioncall functionName="remove_reference_t"/>
+    <functioncall functionName="reset_dst_data_step_"/>
+    <functioncall functionName="reset_src_data_step_"/>
+    <functioncall functionName="return"/>
+    <functioncall functionName="sequence_to_tuple_of_number"/>
+    <functioncall functionName="src_access_lengths"/>
+    <functioncall functionName="src_buf"/>
+    <functioncall functionName="src_coord_"/>
+    <functioncall functionName="src_data_coord"/>
+    <functioncall functionName="src_desc"/>
+    <functioncall functionName="src_dim_access_order"/>
+    <functioncall functionName="src_move_slice_window_step_hack"/>
+    <functioncall functionName="src_offset"/>
+    <functioncall functionName="src_ref_coord_"/>
+    <functioncall functionName="src_ref_idx"/>
+    <functioncall functionName="src_ref_to_data_disp_coord_step"/>
+    <functioncall functionName="src_ref_to_data_disp_idx"/>
+    <functioncall functionName="src_reset_step"/>
+    <functioncall functionName="src_scalar_per_access"/>
+    <functioncall functionName="src_slice_move_step_idx"/>
+    <functioncall functionName="src_slice_move_step_iter"/>
+    <functioncall functionName="src_slice_origin"/>
+    <functioncall functionName="src_slice_origin_idx"/>
+    <functioncall functionName="src_slice_origin_step_idx"/>
+    <functioncall functionName="src_step_hacks"/>
+    <functioncall functionName="src_tmp_vector"/>
+    <functioncall functionName="src_vector_t"/>
+    <functioncall functionName="static_assert"/>
+    <functioncall functionName="to_multi_index"/>
+    <functioncall functionName="true"/>
+    <functioncall functionName="type"/>
+    <functioncall functionName="typename"/>
+    <functioncall functionName="value"/>
+  </FileInfo>
+</analyzerinfo>

@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="9308332786945422811">
+        <error id="uninitMemberVar" severity="warning" msg="Member variable &apos;ConvolutionProblemDescriptor::N&apos; is not initialized in the constructor." verbose="Member variable &apos;ConvolutionProblemDescriptor::N&apos; is not initialized in the constructor." cwe="398" file0="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp">
+            <location file="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp" line="9" column="5"/>
+            <symbol>ConvolutionProblemDescriptor::N</symbol>
+        </error>
+        <error id="uninitMemberVar" severity="warning" msg="Member variable &apos;ConvolutionProblemDescriptor::K&apos; is not initialized in the constructor." verbose="Member variable &apos;ConvolutionProblemDescriptor::K&apos; is not initialized in the constructor." cwe="398" file0="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp">
+            <location file="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp" line="9" column="5"/>
+            <symbol>ConvolutionProblemDescriptor::K</symbol>
+        </error>
+        <error id="uninitMemberVar" severity="warning" msg="Member variable &apos;ConvolutionProblemDescriptor::C&apos; is not initialized in the constructor." verbose="Member variable &apos;ConvolutionProblemDescriptor::C&apos; is not initialized in the constructor." cwe="398" file0="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp">
+            <location file="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp" line="9" column="5"/>
+            <symbol>ConvolutionProblemDescriptor::C</symbol>
+        </error>
+        <error id="uninitMemberVar" severity="warning" msg="Member variable &apos;ConvolutionProblemDescriptor::Y&apos; is not initialized in the constructor." verbose="Member variable &apos;ConvolutionProblemDescriptor::Y&apos; is not initialized in the constructor." cwe="398" file0="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp">
+            <location file="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp" line="9" column="5"/>
+            <symbol>ConvolutionProblemDescriptor::Y</symbol>
+        </error>
+        <error id="uninitMemberVar" severity="warning" msg="Member variable &apos;ConvolutionProblemDescriptor::X&apos; is not initialized in the constructor." verbose="Member variable &apos;ConvolutionProblemDescriptor::X&apos; is not initialized in the constructor." cwe="398" file0="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp">
+            <location file="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp" line="9" column="5"/>
+            <symbol>ConvolutionProblemDescriptor::X</symbol>
+        </error>
+        <error id="uninitMemberVar" severity="warning" msg="Member variable &apos;ConvolutionProblemDescriptor::Hi&apos; is not initialized in the constructor." verbose="Member variable &apos;ConvolutionProblemDescriptor::Hi&apos; is not initialized in the constructor." cwe="398" file0="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp">
+            <location file="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp" line="9" column="5"/>
+            <symbol>ConvolutionProblemDescriptor::Hi</symbol>
+        </error>
+        <error id="uninitMemberVar" severity="warning" msg="Member variable &apos;ConvolutionProblemDescriptor::Wi&apos; is not initialized in the constructor." verbose="Member variable &apos;ConvolutionProblemDescriptor::Wi&apos; is not initialized in the constructor." cwe="398" file0="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp">
+            <location file="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp" line="9" column="5"/>
+            <symbol>ConvolutionProblemDescriptor::Wi</symbol>
+        </error>
+        <error id="uninitMemberVar" severity="warning" msg="Member variable &apos;ConvolutionProblemDescriptor::Ho&apos; is not initialized in the constructor." verbose="Member variable &apos;ConvolutionProblemDescriptor::Ho&apos; is not initialized in the constructor." cwe="398" file0="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp">
+            <location file="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp" line="9" column="5"/>
+            <symbol>ConvolutionProblemDescriptor::Ho</symbol>
+        </error>
+        <error id="uninitMemberVar" severity="warning" msg="Member variable &apos;ConvolutionProblemDescriptor::Wo&apos; is not initialized in the constructor." verbose="Member variable &apos;ConvolutionProblemDescriptor::Wo&apos; is not initialized in the constructor." cwe="398" file0="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp">
+            <location file="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp" line="9" column="5"/>
+            <symbol>ConvolutionProblemDescriptor::Wo</symbol>
+        </error>
+        <error id="uninitMemberVar" severity="warning" msg="Member variable &apos;ConvolutionProblemDescriptor::ConvStrideH&apos; is not initialized in the constructor." verbose="Member variable &apos;ConvolutionProblemDescriptor::ConvStrideH&apos; is not initialized in the constructor." cwe="398" file0="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp">
+            <location file="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp" line="9" column="5"/>
+            <symbol>ConvolutionProblemDescriptor::ConvStrideH</symbol>
+        </error>
+        <error id="uninitMemberVar" severity="warning" msg="Member variable &apos;ConvolutionProblemDescriptor::ConvStrideW&apos; is not initialized in the constructor." verbose="Member variable &apos;ConvolutionProblemDescriptor::ConvStrideW&apos; is not initialized in the constructor." cwe="398" file0="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp">
+            <location file="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp" line="9" column="5"/>
+            <symbol>ConvolutionProblemDescriptor::ConvStrideW</symbol>
+        </error>
+        <error id="uninitMemberVar" severity="warning" msg="Member variable &apos;ConvolutionProblemDescriptor::ConvDilationH&apos; is not initialized in the constructor." verbose="Member variable &apos;ConvolutionProblemDescriptor::ConvDilationH&apos; is not initialized in the constructor." cwe="398" file0="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp">
+            <location file="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp" line="9" column="5"/>
+            <symbol>ConvolutionProblemDescriptor::ConvDilationH</symbol>
+        </error>
+        <error id="uninitMemberVar" severity="warning" msg="Member variable &apos;ConvolutionProblemDescriptor::ConvDilationW&apos; is not initialized in the constructor." verbose="Member variable &apos;ConvolutionProblemDescriptor::ConvDilationW&apos; is not initialized in the constructor." cwe="398" file0="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp">
+            <location file="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp" line="9" column="5"/>
+            <symbol>ConvolutionProblemDescriptor::ConvDilationW</symbol>
+        </error>
+        <error id="uninitMemberVar" severity="warning" msg="Member variable &apos;ConvolutionProblemDescriptor::InLeftPadH&apos; is not initialized in the constructor." verbose="Member variable &apos;ConvolutionProblemDescriptor::InLeftPadH&apos; is not initialized in the constructor." cwe="398" file0="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp">
+            <location file="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp" line="9" column="5"/>
+            <symbol>ConvolutionProblemDescriptor::InLeftPadH</symbol>
+        </error>
+        <error id="uninitMemberVar" severity="warning" msg="Member variable &apos;ConvolutionProblemDescriptor::InLeftPadW&apos; is not initialized in the constructor." verbose="Member variable &apos;ConvolutionProblemDescriptor::InLeftPadW&apos; is not initialized in the constructor." cwe="398" file0="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp">
+            <location file="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp" line="9" column="5"/>
+            <symbol>ConvolutionProblemDescriptor::InLeftPadW</symbol>
+        </error>
+        <error id="uninitMemberVar" severity="warning" msg="Member variable &apos;ConvolutionProblemDescriptor::InRightPadH&apos; is not initialized in the constructor." verbose="Member variable &apos;ConvolutionProblemDescriptor::InRightPadH&apos; is not initialized in the constructor." cwe="398" file0="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp">
+            <location file="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp" line="9" column="5"/>
+            <symbol>ConvolutionProblemDescriptor::InRightPadH</symbol>
+        </error>
+        <error id="uninitMemberVar" severity="warning" msg="Member variable &apos;ConvolutionProblemDescriptor::InRightPadW&apos; is not initialized in the constructor." verbose="Member variable &apos;ConvolutionProblemDescriptor::InRightPadW&apos; is not initialized in the constructor." cwe="398" file0="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp">
+            <location file="/workspaces/MIOpen/src/composable_kernel/host/solver/include/convolution_problem_descriptor.hpp" line="9" column="5"/>
+            <symbol>ConvolutionProblemDescriptor::InRightPadW</symbol>
+        </error>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="CalculateFlop" lineNumber="76"/>
+    <functioncall functionName="C_"/>
+    <functioncall functionName="ConvDilationH_"/>
+    <functioncall functionName="ConvDilationW_"/>
+    <functioncall functionName="ConvStrideH_"/>
+    <functioncall functionName="ConvStrideW_"/>
+    <functioncall functionName="ConvolutionProblemDescriptor"/>
+    <functioncall functionName="Hi_"/>
+    <functioncall functionName="Ho_"/>
+    <functioncall functionName="InDataTypeEnum_"/>
+    <functioncall functionName="InLeftPadH_"/>
+    <functioncall functionName="InLeftPadW_"/>
+    <functioncall functionName="InRightPadH_"/>
+    <functioncall functionName="InRightPadW_"/>
+    <functioncall functionName="K_"/>
+    <functioncall functionName="N_"/>
+    <functioncall functionName="OutDataTypeEnum_"/>
+    <functioncall functionName="WeiDataTypeEnum_"/>
+    <functioncall functionName="Wi_"/>
+    <functioncall functionName="Wo_"/>
+    <functioncall functionName="X_"/>
+    <functioncall functionName="Y_"/>
+    <functioncall functionName="default"/>
+  </FileInfo>
+</analyzerinfo>

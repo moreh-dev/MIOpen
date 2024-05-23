@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="10496437321063426245">
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="AtomicAdd"/>
+    <functioncall functionName="Set"/>
+  </FileInfo>
+</analyzerinfo>

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="9873511755901935616">
+  <FileInfo check="Class">
+<class name="ThreadSafeQueue" file="/workspaces/MIOpen/src/include/miopen/mt_queue.hpp" line="34" col="1" hash="14354334296794307172"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="push" lineNumber="41"/>
+    <functiondecl functionName="pop" lineNumber="51"/>
+    <functioncall functionName="T"/>
+    <functioncall functionName="empty"/>
+    <functioncall functionName="front"/>
+    <functioncall functionName="item"/>
+    <functioncall functionName="lock"/>
+    <functioncall functionName="mutex"/>
+    <functioncall functionName="notify_one"/>
+    <functioncall functionName="pop"/>
+    <functioncall functionName="push"/>
+    <functioncall functionName="typename"/>
+    <functioncall functionName="wait"/>
+  </FileInfo>
+</analyzerinfo>

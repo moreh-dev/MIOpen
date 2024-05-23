@@ -1,0 +1,185 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="7450249179557900392">
+  <FileInfo check="Class">
+<class name="DriverDynamicConvolutionForwardImplicitGemmDlops_v5r1_nchw_kcyx_nkhw_pad" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp" line="28" col="1" hash="6172120929251344346"/>
+<class name="DriverDynamicConvolutionForwardImplicitGemmDlops_v5r1_nchw_kcyx_nkhw_outpad" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw_outpad.hpp" line="28" col="1" hash="15851431151985097382"/>
+  </FileInfo>
+  <FileInfo check="Null pointer">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp:37:19" my-argnr="4" my-argname="conv_strides" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp" line="72" col="34" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp:37:19" my-argnr="5" my-argname="conv_dilations" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp" line="75" col="36" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp:37:19" my-argnr="6" my-argname="in_left_pads" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp" line="78" col="33" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp:37:19" my-argnr="7" my-argname="in_right_pads" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp" line="81" col="34" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw_outpad.hpp:37:19" my-argnr="4" my-argname="conv_strides" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw_outpad.hpp" line="72" col="34" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw_outpad.hpp:37:19" my-argnr="5" my-argname="conv_dilations" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw_outpad.hpp" line="75" col="36" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw_outpad.hpp:37:19" my-argnr="6" my-argname="in_left_pads" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw_outpad.hpp" line="84" col="33" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw_outpad.hpp:37:19" my-argnr="7" my-argname="in_right_pads" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw_outpad.hpp" line="87" col="34" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp:18:6" my-argnr="1" my-argname="in_n_c_hi_wi_lengths" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp" line="44" col="21" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp:18:6" my-argnr="2" my-argname="wei_k_c_y_x_lengths" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp" line="42" col="20" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp:18:6" my-argnr="3" my-argname="out_n_k_ho_wo_lengths" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp" line="40" col="20" value="0"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp:37:19" my-argnr="1" my-argname="wei_k_c_y_x_global_desc" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp" line="68" col="24" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp:37:19" my-argnr="2" my-argname="in_n_c_hi_wi_global_desc" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp" line="56" col="25" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp:37:19" my-argnr="3" my-argname="out_n_k0_ho_wo_k1_global_desc" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp" line="58" col="25" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp:37:19" my-argnr="4" my-argname="conv_strides" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp" line="72" col="34" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp:37:19" my-argnr="5" my-argname="conv_dilations" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp" line="75" col="36" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp:37:19" my-argnr="6" my-argname="in_left_pads" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp" line="78" col="33" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp:37:19" my-argnr="7" my-argname="in_right_pads" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp" line="81" col="34" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw_outpad.hpp:37:19" my-argnr="1" my-argname="wei_k_c_y_x_global_desc" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw_outpad.hpp" line="68" col="24" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw_outpad.hpp:37:19" my-argnr="2" my-argname="in_n_c_hi_wi_global_desc" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw_outpad.hpp" line="56" col="25" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw_outpad.hpp:37:19" my-argnr="3" my-argname="out_n_k0_ho_wo_k1_global_desc" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw_outpad.hpp" line="58" col="25" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw_outpad.hpp:37:19" my-argnr="4" my-argname="conv_strides" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw_outpad.hpp" line="72" col="34" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw_outpad.hpp:37:19" my-argnr="5" my-argname="conv_dilations" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw_outpad.hpp" line="75" col="36" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw_outpad.hpp:37:19" my-argnr="6" my-argname="in_left_pads" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw_outpad.hpp" line="84" col="33" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw_outpad.hpp:37:19" my-argnr="7" my-argname="in_right_pads" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw_outpad.hpp" line="87" col="34" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp:18:6" my-argnr="1" my-argname="in_n_c_hi_wi_lengths" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp" line="44" col="21" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp:18:6" my-argnr="2" my-argname="wei_k_c_y_x_lengths" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp" line="42" col="20" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp:18:6" my-argnr="3" my-argname="out_n_k_ho_wo_lengths" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v5r1_dlops_nchw_kcyx_nkhw.hpp" line="40" col="20" value="0"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="ABlockTransferDstScalarPerVector_K"/>
+    <functioncall functionName="ABlockTransferSrcScalarPerVector_E"/>
+    <functioncall functionName="ABlockTransferThreadClusterLengths_E_K"/>
+    <functioncall functionName="ABlockTransferThreadSliceLengths_E_K"/>
+    <functioncall functionName="BThreadTransferSrcScalarPerVector_W"/>
+    <functioncall functionName="BlockSize"/>
+    <functioncall functionName="C"/>
+    <functioncall functionName="C0"/>
+    <functioncall functionName="C1"/>
+    <functioncall functionName="CThreadTransferDstScalarPerVector_W"/>
+    <functioncall functionName="ConvDilationH"/>
+    <functioncall functionName="ConvDilationW"/>
+    <functioncall functionName="ConvStrideH"/>
+    <functioncall functionName="ConvStrideW"/>
+    <functioncall functionName="EPerBlock"/>
+    <functioncall functionName="EPerThread"/>
+    <functioncall functionName="End"/>
+    <functioncall functionName="FloatAB"/>
+    <functioncall functionName="FloatAcc"/>
+    <functioncall functionName="FloatC"/>
+    <functioncall functionName="FromDevice"/>
+    <functioncall functionName="GetDeviceBuffer"/>
+    <functioncall functionName="GetElapsedTime"/>
+    <functioncall functionName="GetElementSpace"/>
+    <functioncall functionName="GetLength"/>
+    <functioncall functionName="GridSize"/>
+    <functioncall functionName="Hi"/>
+    <functioncall functionName="Ho"/>
+    <functioncall functionName="HoPerBlock"/>
+    <functioncall functionName="HoPerThread"/>
+    <functioncall functionName="Hop"/>
+    <functioncall functionName="HostTensorDescriptor"/>
+    <functioncall functionName="I0"/>
+    <functioncall functionName="I1"/>
+    <functioncall functionName="I2"/>
+    <functioncall functionName="I3"/>
+    <functioncall functionName="I4"/>
+    <functioncall functionName="In"/>
+    <functioncall functionName="InLeftPadH"/>
+    <functioncall functionName="InLeftPadW"/>
+    <functioncall functionName="InRightPadH"/>
+    <functioncall functionName="InRightPadW"/>
+    <functioncall functionName="InWeiVectorSize"/>
+    <functioncall functionName="K"/>
+    <functioncall functionName="K0"/>
+    <functioncall functionName="K1"/>
+    <functioncall functionName="KPerBlock"/>
+    <functioncall functionName="KPerThread"/>
+    <functioncall functionName="N"/>
+    <functioncall functionName="Out"/>
+    <functioncall functionName="OutRightPadH"/>
+    <functioncall functionName="OutRightPadW"/>
+    <functioncall functionName="Run"/>
+    <functioncall functionName="Set"/>
+    <functioncall functionName="Start"/>
+    <functioncall functionName="TAcc"/>
+    <functioncall functionName="TInWei"/>
+    <functioncall functionName="TOut"/>
+    <functioncall functionName="ToDevice"/>
+    <functioncall functionName="Wei"/>
+    <functioncall functionName="Wi"/>
+    <functioncall functionName="Wo"/>
+    <functioncall functionName="WoPerBlock"/>
+    <functioncall functionName="WoPerThread"/>
+    <functioncall functionName="Wop"/>
+    <functioncall functionName="X"/>
+    <functioncall functionName="Y"/>
+    <functioncall functionName="a_e_k_global_move_slice_window_step_hack"/>
+    <functioncall functionName="a_e_k_global_step_hacks"/>
+    <functioncall functionName="ave_time"/>
+    <functioncall functionName="b_e_n_ho_wo_global_move_slice_window_step_hack"/>
+    <functioncall functionName="b_e_n_ho_wo_global_step_hacks"/>
+    <functioncall functionName="bool"/>
+    <functioncall functionName="c"/>
+    <functioncall functionName="c_k_n_ho_wo_global_tensor_step_hacks"/>
+    <functioncall functionName="calculate_convolution_flops"/>
+    <functioncall functionName="conv_dilations"/>
+    <functioncall functionName="conv_strides"/>
+    <functioncall functionName="data"/>
+    <functioncall functionName="decltype"/>
+    <functioncall functionName="dim3"/>
+    <functioncall functionName="f_kcyx2kc0yxc1"/>
+    <functioncall functionName="f_nchw2nc0hwc1"/>
+    <functioncall functionName="f_nk0hwk1_to_nkhw"/>
+    <functioncall functionName="false"/>
+    <functioncall functionName="float"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="gridwise_gemm"/>
+    <functioncall functionName="has_double_tail_k_block_loop"/>
+    <functioncall functionName="hi"/>
+    <functioncall functionName="ho"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="in_e_n_ho_wo_global_desc"/>
+    <functioncall functionName="in_left_pads"/>
+    <functioncall functionName="in_n_c0_hi_wi_c1"/>
+    <functioncall functionName="in_n_c0_hi_wi_c1_device_buf"/>
+    <functioncall functionName="in_n_c0_hi_wi_desc"/>
+    <functioncall functionName="in_n_c_hi_wi"/>
+    <functioncall functionName="in_n_c_hi_wi_global_desc"/>
+    <functioncall functionName="in_n_c_hip_wip_global_desc"/>
+    <functioncall functionName="in_n_c_y_ho_x_wo_global_desc"/>
+    <functioncall functionName="in_right_pads"/>
+    <functioncall functionName="index_t"/>
+    <functioncall functionName="k"/>
+    <functioncall functionName="kernel"/>
+    <functioncall functionName="launch_kernel"/>
+    <functioncall functionName="long"/>
+    <functioncall functionName="make_ParallelTensorFunctor"/>
+    <functioncall functionName="make_embed_transform"/>
+    <functioncall functionName="make_merge_transform"/>
+    <functioncall functionName="make_naive_tensor_descriptor_packed"/>
+    <functioncall functionName="make_pad_transform"/>
+    <functioncall functionName="make_pass_through_transform"/>
+    <functioncall functionName="make_tuple"/>
+    <functioncall functionName="n"/>
+    <functioncall functionName="nrepeat"/>
+    <functioncall functionName="out_k_n_ho_wo_global_desc"/>
+    <functioncall functionName="out_k_n_hop_wop_global_desc"/>
+    <functioncall functionName="out_n_k0_ho_wo_k1"/>
+    <functioncall functionName="out_n_k0_ho_wo_k1_desc"/>
+    <functioncall functionName="out_n_k0_ho_wo_k1_device_buf"/>
+    <functioncall functionName="out_n_k0_ho_wo_k1_global_desc"/>
+    <functioncall functionName="out_n_k_ho_wo"/>
+    <functioncall functionName="p_in_global"/>
+    <functioncall functionName="p_out_global"/>
+    <functioncall functionName="p_wei_global"/>
+    <functioncall functionName="runtime_error"/>
+    <functioncall functionName="sizeof"/>
+    <functioncall functionName="static_assert"/>
+    <functioncall functionName="static_cast"/>
+    <functioncall functionName="transform_tensor_descriptor"/>
+    <functioncall functionName="true"/>
+    <functioncall functionName="typename"/>
+    <functioncall functionName="vector_type"/>
+    <functioncall functionName="wei_e_k_global_desc"/>
+    <functioncall functionName="wei_k_c0_y_x_c1"/>
+    <functioncall functionName="wei_k_c0_y_x_c1_device_buf"/>
+    <functioncall functionName="wei_k_c0_y_x_desc"/>
+    <functioncall functionName="wei_k_c_y_x"/>
+    <functioncall functionName="wei_k_c_y_x_global_desc"/>
+    <functioncall functionName="wi"/>
+    <functioncall functionName="wo"/>
+    <functioncall functionName="x"/>
+    <functioncall functionName="y"/>
+  </FileInfo>
+</analyzerinfo>

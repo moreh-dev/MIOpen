@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="9836010362069612713">
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;KBPInit&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;KBPInit&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp">
+            <location file="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp" line="63" column="9"/>
+            <symbol>KBPInit</symbol>
+        </error>
+        <error id="unusedStructMember" severity="style" msg="struct member &apos;KernelBuildParameter::type&apos; is never used." verbose="struct member &apos;KernelBuildParameter::type&apos; is never used." cwe="563" file0="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp">
+            <location file="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp" line="51" column="20"/>
+            <symbol>KernelBuildParameter::type</symbol>
+        </error>
+        <error id="unusedStructMember" severity="style" msg="struct member &apos;KernelBuildParameter::name&apos; is never used." verbose="struct member &apos;KernelBuildParameter::name&apos; is never used." cwe="563" file0="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp">
+            <location file="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp" line="52" column="17"/>
+            <symbol>KernelBuildParameter::name</symbol>
+        </error>
+        <error id="unusedStructMember" severity="style" msg="struct member &apos;KernelBuildParameter::value&apos; is never used." verbose="struct member &apos;KernelBuildParameter::value&apos; is never used." cwe="563" file0="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp">
+            <location file="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp" line="53" column="17"/>
+            <symbol>KernelBuildParameter::value</symbol>
+        </error>
+  <FileInfo check="Null pointer">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp:101:10" my-argnr="1" my-argname="name" file="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp" line="103" col="35" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp:108:10" my-argnr="1" my-argname="name" file="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp" line="110" col="16" value="0"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp:89:5" my-argnr="1" my-argname="defines_" file="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp" line="91" col="25" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp:101:10" my-argnr="2" my-argname="value" file="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp" line="104" col="58" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp:113:28" my-argnr="1" my-argname="other" file="/workspaces/MIOpen/src/include/miopen/kernel_build_params.hpp" line="115" col="19" value="0"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="Empty" lineNumber="99"/>
+    <functiondecl functionName="Define" lineNumber="101"/>
+    <functiondecl functionName="ValidateUniqueness" lineNumber="128"/>
+    <functioncall functionName="Define"/>
+    <functioncall functionName="Generate"/>
+    <functioncall functionName="KBPInit"/>
+    <functioncall functionName="KernelBuildParameter"/>
+    <functioncall functionName="KernelBuildParameters"/>
+    <functioncall functionName="Option"/>
+    <functioncall functionName="TValue"/>
+    <functioncall functionName="ValidateUniqueness"/>
+    <functioncall functionName="assert"/>
+    <functioncall functionName="back_inserter"/>
+    <functioncall functionName="begin"/>
+    <functioncall functionName="class"/>
+    <functioncall functionName="copy"/>
+    <functioncall functionName="data"/>
+    <functioncall functionName="decltype"/>
+    <functioncall functionName="default"/>
+    <functioncall functionName="defines_"/>
+    <functioncall functionName="empty"/>
+    <functioncall functionName="end"/>
+    <functioncall functionName="eq"/>
+    <functioncall functionName="find_if"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="name"/>
+    <functioncall functionName="options"/>
+    <functioncall functionName="push_back"/>
+    <functioncall functionName="reserve"/>
+    <functioncall functionName="size"/>
+    <functioncall functionName="to_string"/>
+    <functioncall functionName="value"/>
+  </FileInfo>
+</analyzerinfo>

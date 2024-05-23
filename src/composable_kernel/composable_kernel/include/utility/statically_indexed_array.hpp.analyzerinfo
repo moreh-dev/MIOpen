@@ -1,0 +1,196 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="10659392131207921275">
+        <error id="returnTempReference" severity="error" msg="Reference to temporary returned." verbose="Reference to temporary returned." cwe="562" file0="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/utility/statically_indexed_array.hpp">
+            <location file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/utility/tuple.hpp" line="124" column="37"/>
+        </error>
+        <error id="returnTempReference" severity="error" msg="Reference to temporary returned." verbose="Reference to temporary returned." cwe="562" file0="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/utility/statically_indexed_array.hpp">
+            <location file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/utility/tuple.hpp" line="131" column="37"/>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;TupleElement&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;TupleElement&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/utility/statically_indexed_array.hpp">
+            <location file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/utility/tuple.hpp" line="27" column="35"/>
+            <symbol>TupleElement</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;TupleImpl&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;TupleImpl&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/utility/statically_indexed_array.hpp">
+            <location file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/utility/tuple.hpp" line="65" column="35"/>
+            <symbol>TupleImpl</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;Tuple&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;Tuple&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/utility/statically_indexed_array.hpp">
+            <location file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/utility/tuple.hpp" line="107" column="35"/>
+            <symbol>Tuple</symbol>
+        </error>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/utility/math.hpp:34:40" my-argnr="1" my-argname="a" file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/utility/math.hpp" line="36" col="16" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/utility/math.hpp:34:40" my-argnr="2" my-argname="b" file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/utility/math.hpp" line="36" col="20" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/utility/tuple.hpp:35:43" my-argnr="1" my-argname="x" file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/utility/tuple.hpp" line="37" col="37" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/utility/tuple.hpp:41:37" my-argnr="1" my-argname="x" file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/utility/tuple.hpp" line="43" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/utility/statically_indexed_array.hpp:27:36" my-argnr="1" my-argname="x" file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/utility/statically_indexed_array.hpp" line="29" col="57" value="0"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="At"/>
+    <functioncall functionName="AtomicAdd"/>
+    <functioncall functionName="B"/>
+    <functioncall functionName="Comp"/>
+    <functioncall functionName="Compare"/>
+    <functioncall functionName="Data"/>
+    <functioncall functionName="Eq"/>
+    <functioncall functionName="Equal"/>
+    <functioncall functionName="Extract"/>
+    <functioncall functionName="F"/>
+    <functioncall functionName="Front"/>
+    <functioncall functionName="G"/>
+    <functioncall functionName="GetElementByKey"/>
+    <functioncall functionName="I"/>
+    <functioncall functionName="I0"/>
+    <functioncall functionName="I1"/>
+    <functioncall functionName="IBegin"/>
+    <functioncall functionName="IMiddle"/>
+    <functioncall functionName="IRs"/>
+    <functioncall functionName="Id"/>
+    <functioncall functionName="IdX"/>
+    <functioncall functionName="IdY"/>
+    <functioncall functionName="Ids"/>
+    <functioncall functionName="Increment"/>
+    <functioncall functionName="Init"/>
+    <functioncall functionName="Is"/>
+    <functioncall functionName="Key"/>
+    <functioncall functionName="LeftIds"/>
+    <functioncall functionName="LeftValues"/>
+    <functioncall functionName="Less"/>
+    <functioncall functionName="MapOld2New"/>
+    <functioncall functionName="Mask"/>
+    <functioncall functionName="MergedIds"/>
+    <functioncall functionName="MergedValues"/>
+    <functioncall functionName="Modify"/>
+    <functioncall functionName="N"/>
+    <functioncall functionName="NBegin"/>
+    <functioncall functionName="NEnd"/>
+    <functioncall functionName="NRemainLeft"/>
+    <functioncall functionName="NRemainRight"/>
+    <functioncall functionName="NSize"/>
+    <functioncall functionName="Ns"/>
+    <functioncall functionName="PopFront"/>
+    <functioncall functionName="PushBack"/>
+    <functioncall functionName="Reduce"/>
+    <functioncall functionName="ReorderGivenNew2Old"/>
+    <functioncall functionName="Reverse"/>
+    <functioncall functionName="RightIds"/>
+    <functioncall functionName="RightValues"/>
+    <functioncall functionName="Seq"/>
+    <functioncall functionName="SeqMap"/>
+    <functioncall functionName="Seqs"/>
+    <functioncall functionName="Sequence"/>
+    <functioncall functionName="Set"/>
+    <functioncall functionName="Size"/>
+    <functioncall functionName="StaticallyIndexedArray"/>
+    <functioncall functionName="T"/>
+    <functioncall functionName="Tuple"/>
+    <functioncall functionName="TupleElement"/>
+    <functioncall functionName="TupleElementKey"/>
+    <functioncall functionName="TupleImpl"/>
+    <functioncall functionName="Type"/>
+    <functioncall functionName="UniquifiedIds"/>
+    <functioncall functionName="UniquifiedValues"/>
+    <functioncall functionName="Value"/>
+    <functioncall functionName="ValueX"/>
+    <functioncall functionName="ValueY"/>
+    <functioncall functionName="Values"/>
+    <functioncall functionName="WorkSeq"/>
+    <functioncall functionName="WorkingY2X"/>
+    <functioncall functionName="X"/>
+    <functioncall functionName="X2Y"/>
+    <functioncall functionName="XBegin"/>
+    <functioncall functionName="Xs"/>
+    <functioncall functionName="Y"/>
+    <functioncall functionName="Ys"/>
+    <functioncall functionName="Zs"/>
+    <functioncall functionName="a"/>
+    <functioncall functionName="arithmetic_sequence_gen"/>
+    <functioncall functionName="auto"/>
+    <functioncall functionName="b"/>
+    <functioncall functionName="base"/>
+    <functioncall functionName="bool"/>
+    <functioncall functionName="choose_left"/>
+    <functioncall functionName="choose_x"/>
+    <functioncall functionName="chosen_id"/>
+    <functioncall functionName="chosen_value"/>
+    <functioncall functionName="class"/>
+    <functioncall functionName="const"/>
+    <functioncall functionName="current_id"/>
+    <functioncall functionName="current_value"/>
+    <functioncall functionName="decltype"/>
+    <functioncall functionName="default"/>
+    <functioncall functionName="f"/>
+    <functioncall functionName="false"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="forward"/>
+    <functioncall functionName="gcd"/>
+    <functioncall functionName="generate_tuple"/>
+    <functioncall functionName="get_tuple_element"/>
+    <functioncall functionName="i"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="index_t"/>
+    <functioncall functionName="int"/>
+    <functioncall functionName="integer_divide_ceil"/>
+    <functioncall functionName="integral_constant"/>
+    <functioncall functionName="is_unique_value"/>
+    <functioncall functionName="lcm"/>
+    <functioncall functionName="left_sorted_ids"/>
+    <functioncall functionName="left_sorted_values"/>
+    <functioncall functionName="left_type"/>
+    <functioncall functionName="left_unsorted_ids"/>
+    <functioncall functionName="left_unsorted_values"/>
+    <functioncall functionName="mData"/>
+    <functioncall functionName="mSize"/>
+    <functioncall functionName="max"/>
+    <functioncall functionName="min"/>
+    <functioncall functionName="new_left_ids"/>
+    <functioncall functionName="new_left_values"/>
+    <functioncall functionName="new_merged_ids"/>
+    <functioncall functionName="new_merged_values"/>
+    <functioncall functionName="new_reduce"/>
+    <functioncall functionName="new_remain_ids"/>
+    <functioncall functionName="new_remain_values"/>
+    <functioncall functionName="new_right_ids"/>
+    <functioncall functionName="new_right_values"/>
+    <functioncall functionName="new_uniquified_ids"/>
+    <functioncall functionName="new_uniquified_values"/>
+    <functioncall functionName="new_work_seq"/>
+    <functioncall functionName="new_y2x"/>
+    <functioncall functionName="old_scan"/>
+    <functioncall functionName="operator()"/>
+    <functioncall functionName="predicate"/>
+    <functioncall functionName="printf"/>
+    <functioncall functionName="r"/>
+    <functioncall functionName="remove_cv_t"/>
+    <functioncall functionName="remove_reference_t"/>
+    <functioncall functionName="result"/>
+    <functioncall functionName="return"/>
+    <functioncall functionName="reverse_inclusive_scan_sequence"/>
+    <functioncall functionName="right_sorted_ids"/>
+    <functioncall functionName="right_sorted_values"/>
+    <functioncall functionName="right_type"/>
+    <functioncall functionName="right_unsorted_ids"/>
+    <functioncall functionName="right_unsorted_values"/>
+    <functioncall functionName="seq_right"/>
+    <functioncall functionName="sequence_gen_impl"/>
+    <functioncall functionName="sequence_pop_back"/>
+    <functioncall functionName="sequence_pop_front"/>
+    <functioncall functionName="sequence_reverse"/>
+    <functioncall functionName="sizeof"/>
+    <functioncall functionName="sizeof..."/>
+    <functioncall functionName="sorted_ids"/>
+    <functioncall functionName="sorted_values"/>
+    <functioncall functionName="static_assert"/>
+    <functioncall functionName="static_cast"/>
+    <functioncall functionName="true"/>
+    <functioncall functionName="typename"/>
+    <functioncall functionName="unsorted_ids"/>
+    <functioncall functionName="v"/>
+    <functioncall functionName="value"/>
+    <functioncall functionName="void"/>
+    <functioncall functionName="x"/>
+    <functioncall functionName="xs"/>
+    <functioncall functionName="y"/>
+    <functioncall functionName="ys"/>
+  </FileInfo>
+</analyzerinfo>

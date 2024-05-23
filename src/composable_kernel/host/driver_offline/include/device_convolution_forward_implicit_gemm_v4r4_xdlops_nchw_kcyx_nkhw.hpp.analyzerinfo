@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="17361287717610716818">
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v4r4_xdlops_nchw_kcyx_nkhw.hpp:16:6" my-argnr="8" my-argname="in_n_c_hi_wi" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v4r4_xdlops_nchw_kcyx_nkhw.hpp" line="43" col="56" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v4r4_xdlops_nchw_kcyx_nkhw.hpp:16:6" my-argnr="9" my-argname="wei_k_c_y_x" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v4r4_xdlops_nchw_kcyx_nkhw.hpp" line="44" col="55" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v4r4_xdlops_nchw_kcyx_nkhw.hpp:16:6" my-argnr="10" my-argname="out_n_k_ho_wo" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v4r4_xdlops_nchw_kcyx_nkhw.hpp" line="45" col="55" value="0"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="BlockSize"/>
+    <functioncall functionName="FromDevice"/>
+    <functioncall functionName="GemmABlockTransferDstScalarPerVector_KPack"/>
+    <functioncall functionName="GemmABlockTransferSrcScalarPerVector_GemmK"/>
+    <functioncall functionName="GemmABlockTransferThreadClusterLengths_GemmK0_GemmM_GemmK1"/>
+    <functioncall functionName="GemmABlockTransferThreadSliceLengths_GemmK0_GemmM_GemmK1"/>
+    <functioncall functionName="GemmBBlockTransferDstScalarPerVector_KPack"/>
+    <functioncall functionName="GemmBBlockTransferSrcScalarPerVector_GemmN"/>
+    <functioncall functionName="GemmBBlockTransferThreadClusterLengths_GemmK0_GemmN_GemmK1"/>
+    <functioncall functionName="GemmBBlockTransferThreadSliceLengths_GemmK0_GemmN_GemmK1"/>
+    <functioncall functionName="GemmCThreadTransferDstScalarPerVector_GemmN1"/>
+    <functioncall functionName="GemmKPack"/>
+    <functioncall functionName="GemmKPerBlock"/>
+    <functioncall functionName="GemmMPerBlock"/>
+    <functioncall functionName="GemmMPerWave"/>
+    <functioncall functionName="GemmNPerBlock"/>
+    <functioncall functionName="GemmNPerWave"/>
+    <functioncall functionName="GetDeviceBuffer"/>
+    <functioncall functionName="GetElementSpace"/>
+    <functioncall functionName="I0"/>
+    <functioncall functionName="I1"/>
+    <functioncall functionName="I2"/>
+    <functioncall functionName="I3"/>
+    <functioncall functionName="I4"/>
+    <functioncall functionName="I5"/>
+    <functioncall functionName="I6"/>
+    <functioncall functionName="I7"/>
+    <functioncall functionName="I8"/>
+    <functioncall functionName="MRepeat"/>
+    <functioncall functionName="NRepeat"/>
+    <functioncall functionName="Set"/>
+    <functioncall functionName="TAcc"/>
+    <functioncall functionName="TInWei"/>
+    <functioncall functionName="TOut"/>
+    <functioncall functionName="ToDevice"/>
+    <functioncall functionName="ave_time"/>
+    <functioncall functionName="calculate_convolution_flops"/>
+    <functioncall functionName="conv_dilations"/>
+    <functioncall functionName="conv_strides"/>
+    <functioncall functionName="data"/>
+    <functioncall functionName="decltype"/>
+    <functioncall functionName="false"/>
+    <functioncall functionName="float"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="in_left_pads"/>
+    <functioncall functionName="in_n_c_hi_wi_desc"/>
+    <functioncall functionName="in_n_c_hi_wi_device_buf"/>
+    <functioncall functionName="in_n_c_hi_wi_lengths"/>
+    <functioncall functionName="in_right_pads"/>
+    <functioncall functionName="launch_kernel_gemm_xdlops_v2"/>
+    <functioncall functionName="long"/>
+    <functioncall functionName="make_naive_tensor_descriptor_packed"/>
+    <functioncall functionName="nrepeat"/>
+    <functioncall functionName="out_n_k_ho_wo_desc"/>
+    <functioncall functionName="out_n_k_ho_wo_device_buf"/>
+    <functioncall functionName="out_n_k_ho_wo_lengths"/>
+    <functioncall functionName="sizeof"/>
+    <functioncall functionName="static_cast"/>
+    <functioncall functionName="transform_forward_convolution_into_gemm_v4r4_xdlops_nchw_kcyx_nkhw_pad"/>
+    <functioncall functionName="typename"/>
+    <functioncall functionName="wei_k_c_y_x_desc"/>
+    <functioncall functionName="wei_k_c_y_x_device_buf"/>
+    <functioncall functionName="wei_k_c_y_x_lengths"/>
+  </FileInfo>
+</analyzerinfo>

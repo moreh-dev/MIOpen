@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="17454159851215205611">
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp:30:18" call-funcname="cat_copy_buf" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp" line="90" col="14" my-id="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp:62:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp:30:18" call-funcname="cat_copy_buf" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp" line="91" col="14" my-id="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp:62:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp:30:18" call-funcname="cat_copy_buf" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp" line="92" col="14" my-id="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp:62:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp:30:18" call-funcname="cat_copy_buf" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp" line="93" col="14" my-id="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp:62:28" my-argnr="4"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp:30:18" call-funcname="cat_copy_buf" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp" line="94" col="14" my-id="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp:62:28" my-argnr="5"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp:30:18" call-funcname="cat_copy_buf" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp" line="95" col="14" my-id="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp:62:28" my-argnr="6"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp:30:18" call-funcname="cat_copy_buf" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp" line="96" col="14" my-id="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp:62:28" my-argnr="7"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp:30:18" call-funcname="cat_copy_buf" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp" line="97" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp:62:28" my-argnr="8"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp:30:18" call-funcname="cat_copy_buf" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp" line="120" col="14" my-id="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp:100:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp:30:18" call-funcname="cat_copy_buf" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp" line="121" col="14" my-id="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp:100:28" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp:30:18" call-funcname="cat_copy_buf" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp" line="122" col="14" my-id="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp:100:28" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp:30:18" call-funcname="cat_copy_buf" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp" line="123" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp:100:28" my-argnr="4"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp:30:18" call-funcname="cat_copy_buf" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp" line="142" col="14" my-id="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp:126:28" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp:30:18" call-funcname="cat_copy_buf" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp" line="143" col="5" my-id="/workspaces/MIOpen/src/kernels/MIOpenCat.cpp:126:28" my-argnr="2"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="cat_copy_buf" lineNumber="30"/>
+    <functioncall functionName="cat_copy_buf"/>
+    <functioncall functionName="const"/>
+    <functioncall functionName="end"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="i"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="input"/>
+    <functioncall functionName="input1"/>
+    <functioncall functionName="input1_dim_size"/>
+    <functioncall functionName="input2"/>
+    <functioncall functionName="input2_dim_size"/>
+    <functioncall functionName="input3"/>
+    <functioncall functionName="input3_dim_size"/>
+    <functioncall functionName="input4"/>
+    <functioncall functionName="input4_dim_size"/>
+    <functioncall functionName="input5"/>
+    <functioncall functionName="input5_dim_size"/>
+    <functioncall functionName="input6"/>
+    <functioncall functionName="input6_dim_size"/>
+    <functioncall functionName="input7"/>
+    <functioncall functionName="input7_dim_size"/>
+    <functioncall functionName="input8"/>
+    <functioncall functionName="input8_dim_size"/>
+    <functioncall functionName="output"/>
+    <functioncall functionName="reinterpret_cast"/>
+    <functioncall functionName="return"/>
+    <functioncall functionName="sizeof"/>
+    <functioncall functionName="stride"/>
+    <functioncall functionName="ushort1"/>
+    <functioncall functionName="ushort2"/>
+    <functioncall functionName="ushort4"/>
+    <functioncall functionName="x"/>
+    <functioncall functionName="y"/>
+  </FileInfo>
+</analyzerinfo>

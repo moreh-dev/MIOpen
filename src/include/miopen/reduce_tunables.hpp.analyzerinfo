@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="15708438859118544943">
+        <error id="unusedStructMember" severity="style" msg="struct member &apos;tunable_generic_reduction::BlockSize&apos; is never used." verbose="struct member &apos;tunable_generic_reduction::BlockSize&apos; is never used." cwe="563" file0="/workspaces/MIOpen/src/include/miopen/reduce_tunables.hpp">
+            <location file="/workspaces/MIOpen/src/include/miopen/reduce_tunables.hpp" line="6" column="9"/>
+            <symbol>tunable_generic_reduction::BlockSize</symbol>
+        </error>
+        <error id="unusedStructMember" severity="style" msg="struct member &apos;tunable_generic_reduction::GredThreadBufferLength&apos; is never used." verbose="struct member &apos;tunable_generic_reduction::GredThreadBufferLength&apos; is never used." cwe="563" file0="/workspaces/MIOpen/src/include/miopen/reduce_tunables.hpp">
+            <location file="/workspaces/MIOpen/src/include/miopen/reduce_tunables.hpp" line="7" column="9"/>
+            <symbol>tunable_generic_reduction::GredThreadBufferLength</symbol>
+        </error>
+        <error id="unusedStructMember" severity="style" msg="struct member &apos;tunable_generic_reduction::GredAccessesPerThreadInBlock&apos; is never used." verbose="struct member &apos;tunable_generic_reduction::GredAccessesPerThreadInBlock&apos; is never used." cwe="563" file0="/workspaces/MIOpen/src/include/miopen/reduce_tunables.hpp">
+            <location file="/workspaces/MIOpen/src/include/miopen/reduce_tunables.hpp" line="8" column="9"/>
+            <symbol>tunable_generic_reduction::GredAccessesPerThreadInBlock</symbol>
+        </error>
+        <error id="unusedStructMember" severity="style" msg="struct member &apos;tunable_generic_reduction::GredAccessesPerThreadInWarp&apos; is never used." verbose="struct member &apos;tunable_generic_reduction::GredAccessesPerThreadInWarp&apos; is never used." cwe="563" file0="/workspaces/MIOpen/src/include/miopen/reduce_tunables.hpp">
+            <location file="/workspaces/MIOpen/src/include/miopen/reduce_tunables.hpp" line="9" column="9"/>
+            <symbol>tunable_generic_reduction::GredAccessesPerThreadInWarp</symbol>
+        </error>
+  <FileInfo check="Class">
+<class name="tunable_generic_reduction" file="/workspaces/MIOpen/src/include/miopen/reduce_tunables.hpp" line="4" col="1" hash="14627347904281622440"/>
+  </FileInfo>
+</analyzerinfo>

@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="12772576686424007034">
+  <FileInfo check="Null pointer">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/buffer_info.hpp:94:21" my-argnr="1" my-argname="b" file="/workspaces/MIOpen/src/include/miopen/buffer_info.hpp" line="96" col="5" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/buffer_info.hpp:102:21" my-argnr="1" my-argname="b" file="/workspaces/MIOpen/src/include/miopen/buffer_info.hpp" line="104" col="5" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/buffer_info.hpp:110:21" my-argnr="1" my-argname="b" file="/workspaces/MIOpen/src/include/miopen/buffer_info.hpp" line="112" col="5" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/buffer_info.hpp:118:21" my-argnr="1" my-argname="b" file="/workspaces/MIOpen/src/include/miopen/buffer_info.hpp" line="120" col="5" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/buffer_info.hpp:126:21" my-argnr="1" my-argname="b" file="/workspaces/MIOpen/src/include/miopen/buffer_info.hpp" line="128" col="5" value="0"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="FillStride &lt; LPart_t :: H &gt;" lineNumber="94"/>
+    <functiondecl functionName="FillStride &lt; LPart_t :: W &gt;" lineNumber="102"/>
+    <functiondecl functionName="FillStride &lt; LPart_t :: C &gt;" lineNumber="110"/>
+    <functiondecl functionName="FillStride &lt; LPart_t :: N &gt;" lineNumber="118"/>
+    <functiondecl functionName="FillStride &lt; LPart_t :: G &gt;" lineNumber="126"/>
+    <functiondecl functionName="FillNextLayoutStride &lt; LPart_t :: LPart_begin &gt;" lineNumber="140"/>
+    <functioncall functionName="BuffInfo"/>
+    <functioncall functionName="FillNextLayoutStride"/>
+    <functioncall functionName="FillStride"/>
+    <functioncall functionName="Input"/>
+    <functioncall functionName="LPart_begin"/>
+    <functioncall functionName="LPart_t"/>
+    <functioncall functionName="MultiBufferWorkspaceTraits"/>
+    <functioncall functionName="N_1_CThTw_Xh_Xw"/>
+    <functioncall functionName="N_GXhXw_C_Th_Tw"/>
+    <functioncall functionName="Output"/>
+    <functioncall functionName="Weight"/>
+    <functioncall functionName="WinoDataH"/>
+    <functioncall functionName="WinoDataW"/>
+    <functioncall functionName="WinoFilterH"/>
+    <functioncall functionName="WinoFilterW"/>
+    <functioncall functionName="WinogradBufferInfo"/>
+    <functioncall functionName="_element_size"/>
+    <functioncall functionName="assert"/>
+    <functioncall functionName="b"/>
+    <functioncall functionName="break"/>
+    <functioncall functionName="buff_type"/>
+    <functioncall functionName="c"/>
+    <functioncall functionName="const"/>
+    <functioncall functionName="cum_stride"/>
+    <functioncall functionName="default"/>
+    <functioncall functionName="element_size"/>
+    <functioncall functionName="first"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="h"/>
+    <functioncall functionName="i"/>
+    <functioncall functionName="int"/>
+    <functioncall functionName="k"/>
+    <functioncall functionName="layout"/>
+    <functioncall functionName="long"/>
+    <functioncall functionName="n"/>
+    <functioncall functionName="nk"/>
+    <functioncall functionName="others"/>
+    <functioncall functionName="out_h"/>
+    <functioncall functionName="out_w"/>
+    <functioncall functionName="static_assert"/>
+    <functioncall functionName="sum"/>
+    <functioncall functionName="switch"/>
+    <functioncall functionName="w"/>
+    <functioncall functionName="wei_h"/>
+    <functioncall functionName="wei_w"/>
+    <functioncall functionName="wino_c"/>
+    <functioncall functionName="wino_data"/>
+    <functioncall functionName="wino_filter"/>
+    <functioncall functionName="wino_g"/>
+    <functioncall functionName="wino_xform_h"/>
+    <functioncall functionName="wino_xform_w"/>
+    <functioncall functionName="xform_t"/>
+  </FileInfo>
+</analyzerinfo>

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="2549003985125840882">
+        <error id="unusedStructMember" severity="style" msg="struct member &apos;is_known_at_compile_time::value&apos; is never used." verbose="struct member &apos;is_known_at_compile_time::value&apos; is never used." cwe="563" file0="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/utility/type.hpp">
+            <location file="/workspaces/MIOpen/src/composable_kernel/composable_kernel/include/utility/type.hpp" line="44" column="27"/>
+            <symbol>is_known_at_compile_time::value</symbol>
+        </error>
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="B"/>
+    <functioncall functionName="T"/>
+    <functioncall functionName="X"/>
+    <functioncall functionName="Y"/>
+    <functioncall functionName="bool"/>
+    <functioncall functionName="class"/>
+    <functioncall functionName="false"/>
+    <functioncall functionName="integral_constant"/>
+    <functioncall functionName="remove_reference_t"/>
+    <functioncall functionName="sizeof"/>
+    <functioncall functionName="true"/>
+    <functioncall functionName="typename"/>
+    <functioncall functionName="v"/>
+    <functioncall functionName="void"/>
+    <functioncall functionName="x"/>
+    <functioncall functionName="y"/>
+  </FileInfo>
+</analyzerinfo>

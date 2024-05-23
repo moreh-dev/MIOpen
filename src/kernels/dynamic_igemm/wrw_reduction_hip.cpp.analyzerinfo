@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="3288625915170125019">
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="float4"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="i_len"/>
+    <functioncall functionName="offset"/>
+    <functioncall functionName="vec_out"/>
+    <functioncall functionName="x"/>
+  </FileInfo>
+</analyzerinfo>

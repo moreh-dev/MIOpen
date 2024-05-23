@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="3778023593918871804">
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="BackwardData"/>
+    <functioncall functionName="BackwardWeight"/>
+    <functioncall functionName="ForwardData"/>
+  </FileInfo>
+</analyzerinfo>

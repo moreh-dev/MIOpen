@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="9238510592746237119">
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="gcd" lineNumber="8"/>
+    <functioncall functionName="Ys"/>
+    <functioncall functionName="bool"/>
+    <functioncall functionName="false"/>
+    <functioncall functionName="gcd"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="sizeof..."/>
+    <functioncall functionName="typename"/>
+    <functioncall functionName="x"/>
+    <functioncall functionName="y"/>
+  </FileInfo>
+</analyzerinfo>

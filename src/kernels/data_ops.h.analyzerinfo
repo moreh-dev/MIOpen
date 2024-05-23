@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="11616774508527811109">
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/data_ops.h:33:6" call-funcname="readDataElem" call-argnr="2" file="/workspaces/MIOpen/src/kernels/data_ops.h" line="106" col="9" my-id="/workspaces/MIOpen/src/kernels/data_ops.h:83:6" my-argnr="4"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/data_ops.h:33:6" call-funcname="readDataElem" call-argnr="9" file="/workspaces/MIOpen/src/kernels/data_ops.h" line="106" col="9" my-id="/workspaces/MIOpen/src/kernels/data_ops.h:83:6" my-argnr="11"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/data_ops.h:83:6" call-funcname="readData" call-argnr="4" file="/workspaces/MIOpen/src/kernels/data_ops.h" line="305" col="9" my-id="/workspaces/MIOpen/src/kernels/data_ops.h:278:6" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/data_ops.h:83:6" call-funcname="readData" call-argnr="11" file="/workspaces/MIOpen/src/kernels/data_ops.h" line="305" col="9" my-id="/workspaces/MIOpen/src/kernels/data_ops.h:278:6" my-argnr="11"/>
+  </FileInfo>
+  <FileInfo check="Null pointer">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/data_ops.h:21:6" my-argnr="3" my-argname="x" file="/workspaces/MIOpen/src/kernels/data_ops.h" line="24" col="7" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/data_ops.h:21:6" my-argnr="4" my-argname="y" file="/workspaces/MIOpen/src/kernels/data_ops.h" line="23" col="7" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/data_ops.h:33:6" my-argnr="2" my-argname="lcl_data" file="/workspaces/MIOpen/src/kernels/data_ops.h" line="80" col="5" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/data_ops.h:33:6" my-argnr="9" my-argname="gbl_data" file="/workspaces/MIOpen/src/kernels/data_ops.h" line="77" col="22" value="0"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/data_ops.h:33:6" my-argnr="9" my-argname="gbl_data" file="/workspaces/MIOpen/src/kernels/data_ops.h" line="77" col="22" value="0"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="calculateXYPos" lineNumber="21"/>
+    <functiondecl functionName="calculateOffset" lineNumber="27"/>
+    <functiondecl functionName="readDataElem" lineNumber="33"/>
+    <functiondecl functionName="readData" lineNumber="83"/>
+    <functiondecl functionName="readDataVec2" lineNumber="126"/>
+    <functiondecl functionName="readDataTile" lineNumber="183"/>
+    <functiondecl functionName="readDataTileVec2" lineNumber="230"/>
+    <functiondecl functionName="loadData" lineNumber="278"/>
+    <functioncall functionName="IsLast"/>
+    <functioncall functionName="_FLOAT"/>
+    <functioncall functionName="_FLOAT2"/>
+    <functioncall functionName="calculateOffset"/>
+    <functioncall functionName="calculateXYPos"/>
+    <functioncall functionName="debug"/>
+    <functioncall functionName="float"/>
+    <functioncall functionName="fltr_pad0"/>
+    <functioncall functionName="fltr_pad1"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="g_off"/>
+    <functioncall functionName="g_x"/>
+    <functioncall functionName="g_y"/>
+    <functioncall functionName="gbl_base"/>
+    <functioncall functionName="gbl_bot_x"/>
+    <functioncall functionName="gbl_bot_y"/>
+    <functioncall functionName="gbl_data"/>
+    <functioncall functionName="gbl_height"/>
+    <functioncall functionName="gbl_off"/>
+    <functioncall functionName="gbl_off0"/>
+    <functioncall functionName="gbl_stride"/>
+    <functioncall functionName="gbl_val"/>
+    <functioncall functionName="gbl_width"/>
+    <functioncall functionName="gbl_x"/>
+    <functioncall functionName="gbl_y"/>
+    <functioncall functionName="glb_width"/>
+    <functioncall functionName="i"/>
+    <functioncall functionName="invis"/>
+    <functioncall functionName="l_x"/>
+    <functioncall functionName="l_y"/>
+    <functioncall functionName="lcl_base"/>
+    <functioncall functionName="lcl_bot_x"/>
+    <functioncall functionName="lcl_bot_y"/>
+    <functioncall functionName="lcl_data"/>
+    <functioncall functionName="lcl_height"/>
+    <functioncall functionName="lcl_id"/>
+    <functioncall functionName="lcl_id0"/>
+    <functioncall functionName="lcl_id1"/>
+    <functioncall functionName="lcl_off"/>
+    <functioncall functionName="lcl_p_stride"/>
+    <functioncall functionName="lcl_size"/>
+    <functioncall functionName="lcl_stride"/>
+    <functioncall functionName="lcl_width"/>
+    <functioncall functionName="lcl_x"/>
+    <functioncall functionName="lcl_y"/>
+    <functioncall functionName="linPos"/>
+    <functioncall functionName="lvisX"/>
+    <functioncall functionName="lvisY"/>
+    <functioncall functionName="mad24"/>
+    <functioncall functionName="mul24"/>
+    <functioncall functionName="padding_val"/>
+    <functioncall functionName="readData"/>
+    <functioncall functionName="readDataElem"/>
+    <functioncall functionName="ret"/>
+    <functioncall functionName="return"/>
+    <functioncall functionName="uint"/>
+    <functioncall functionName="uint2"/>
+    <functioncall functionName="val"/>
+    <functioncall functionName="vis"/>
+    <functioncall functionName="visX"/>
+    <functioncall functionName="visY"/>
+    <functioncall functionName="void"/>
+    <functioncall functionName="width"/>
+    <functioncall functionName="x"/>
+    <functioncall functionName="x_act"/>
+    <functioncall functionName="y"/>
+  </FileInfo>
+</analyzerinfo>

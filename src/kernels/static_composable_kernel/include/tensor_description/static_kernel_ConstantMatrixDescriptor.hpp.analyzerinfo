@@ -1,0 +1,270 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="5500251025894091198">
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;lambda_AreDimensionsContinuous&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;lambda_AreDimensionsContinuous&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_ConstantMatrixDescriptor.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_ConstantTensorDescriptor_deprecated.hpp" line="60" column="39"/>
+            <symbol>lambda_AreDimensionsContinuous</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;lambda_IsVectorizationAllowed&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;lambda_IsVectorizationAllowed&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_ConstantMatrixDescriptor.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_ConstantTensorDescriptor_deprecated.hpp" line="311" column="39"/>
+            <symbol>lambda_IsVectorizationAllowed</symbol>
+        </error>
+        <error id="wrongPrintfScanfArgNum" severity="error" msg="printf format string requires 6 parameters but only 4 are given." verbose="printf format string requires 6 parameters but only 4 are given." cwe="685" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_ConstantMatrixDescriptor.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_ConstantTensorDescriptor_deprecated.hpp" line="524" column="9"/>
+        </error>
+        <error id="wrongPrintfScanfArgNum" severity="error" msg="printf format string requires 8 parameters but only 4 are given." verbose="printf format string requires 8 parameters but only 4 are given." cwe="685" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_ConstantMatrixDescriptor.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_ConstantTensorDescriptor_deprecated.hpp" line="528" column="9"/>
+        </error>
+        <error id="wrongPrintfScanfArgNum" severity="error" msg="printf format string requires 10 parameters but only 4 are given." verbose="printf format string requires 10 parameters but only 4 are given." cwe="685" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_ConstantMatrixDescriptor.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_ConstantTensorDescriptor_deprecated.hpp" line="533" column="9"/>
+        </error>
+        <error id="wrongPrintfScanfArgNum" severity="error" msg="printf format string requires 12 parameters but only 4 are given." verbose="printf format string requires 12 parameters but only 4 are given." cwe="685" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_ConstantMatrixDescriptor.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_ConstantTensorDescriptor_deprecated.hpp" line="541" column="9"/>
+        </error>
+        <error id="wrongPrintfScanfArgNum" severity="error" msg="printf format string requires 14 parameters but only 4 are given." verbose="printf format string requires 14 parameters but only 4 are given." cwe="685" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_ConstantMatrixDescriptor.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_ConstantTensorDescriptor_deprecated.hpp" line="549" column="9"/>
+        </error>
+        <error id="wrongPrintfScanfArgNum" severity="error" msg="printf format string requires 16 parameters but only 4 are given." verbose="printf format string requires 16 parameters but only 4 are given." cwe="685" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_ConstantMatrixDescriptor.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_ConstantTensorDescriptor_deprecated.hpp" line="557" column="9"/>
+        </error>
+        <error id="wrongPrintfScanfArgNum" severity="error" msg="printf format string requires 18 parameters but only 4 are given." verbose="printf format string requires 18 parameters but only 4 are given." cwe="685" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_ConstantMatrixDescriptor.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_ConstantTensorDescriptor_deprecated.hpp" line="565" column="9"/>
+        </error>
+        <error id="wrongPrintfScanfArgNum" severity="error" msg="printf format string requires 20 parameters but only 4 are given." verbose="printf format string requires 20 parameters but only 4 are given." cwe="685" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_ConstantMatrixDescriptor.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_ConstantTensorDescriptor_deprecated.hpp" line="573" column="9"/>
+        </error>
+        <error id="wrongPrintfScanfArgNum" severity="error" msg="printf format string requires 22 parameters but only 4 are given." verbose="printf format string requires 22 parameters but only 4 are given." cwe="685" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_ConstantMatrixDescriptor.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_ConstantTensorDescriptor_deprecated.hpp" line="582" column="9"/>
+        </error>
+        <error id="wrongPrintfScanfArgNum" severity="error" msg="printf format string requires 24 parameters but only 4 are given." verbose="printf format string requires 24 parameters but only 4 are given." cwe="685" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_ConstantMatrixDescriptor.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_ConstantTensorDescriptor_deprecated.hpp" line="591" column="9"/>
+        </error>
+        <error id="wrongPrintfScanfArgNum" severity="error" msg="printf format string requires 26 parameters but only 4 are given." verbose="printf format string requires 26 parameters but only 4 are given." cwe="685" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_ConstantMatrixDescriptor.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_ConstantTensorDescriptor_deprecated.hpp" line="601" column="9"/>
+        </error>
+  <FileInfo check="Null pointer">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_multi_index_transform.hpp:215:47" my-argnr="1" my-argname="idx_up" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_multi_index_transform.hpp" line="219" col="24" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_multi_index_transform.hpp:239:5" my-argnr="1" my-argname="idx_up_diff" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_multi_index_transform.hpp" line="243" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_ConstantMatrixDescriptor.hpp:85:26" my-argnr="2" my-argname="s" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_ConstantMatrixDescriptor.hpp" line="88" col="46" value="0"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_multi_index_transform.hpp:215:47" my-argnr="1" my-argname="idx_up" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_multi_index_transform.hpp" line="219" col="24" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_multi_index_transform.hpp:239:5" my-argnr="1" my-argname="idx_up_diff" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_multi_index_transform.hpp" line="243" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_multi_index_transform.hpp:375:5" my-argnr="1" my-argname="idx_up_diff" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_multi_index_transform.hpp" line="379" col="36" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_multi_index_transform.hpp:512:47" my-argnr="1" my-argname="idx_up" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_multi_index_transform.hpp" line="514" col="29" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_multi_index_transform.hpp:518:5" my-argnr="1" my-argname="idx_up_diff" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_multi_index_transform.hpp" line="522" col="29" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_tensor_descriptor.hpp:238:44" my-argnr="1" my-argname="tran" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_tensor_descriptor.hpp" line="240" col="20" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_tensor_descriptor.hpp:355:50" my-argnr="1" my-argname="idx_up" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_tensor_descriptor.hpp" line="357" col="79" value="0"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="NRow" lineNumber="18"/>
+    <functiondecl functionName="NCol" lineNumber="20"/>
+    <functiondecl functionName="RowStride" lineNumber="22"/>
+    <functiondecl functionName="GetLengths" lineNumber="24"/>
+    <functiondecl functionName="GetElementSize" lineNumber="26"/>
+    <functiondecl functionName="GetElementSpace" lineNumber="28"/>
+    <functiondecl functionName="GetOffsetFromMultiIndex" lineNumber="30"/>
+    <functiondecl functionName="CalculateOffset" lineNumber="35"/>
+    <functioncall functionName="Align"/>
+    <functioncall functionName="AreDimensionsContinuous"/>
+    <functioncall functionName="At"/>
+    <functioncall functionName="Back"/>
+    <functioncall functionName="CalculateLowerIndex"/>
+    <functioncall functionName="CalculateLowerIndexDiff"/>
+    <functioncall functionName="CalculateOffset"/>
+    <functioncall functionName="ConstantTensorDescriptor_deprecated"/>
+    <functioncall functionName="DataPerVector"/>
+    <functioncall functionName="Else"/>
+    <functioncall functionName="Extract"/>
+    <functioncall functionName="FirstUnfoldDim"/>
+    <functioncall functionName="Fold"/>
+    <functioncall functionName="FoldIntervals"/>
+    <functioncall functionName="Get"/>
+    <functioncall functionName="GetElementSpace"/>
+    <functioncall functionName="GetLength"/>
+    <functioncall functionName="GetLengths"/>
+    <functioncall functionName="GetLinearDimensionMask"/>
+    <functioncall functionName="GetLowerTensorDescriptor"/>
+    <functioncall functionName="GetMultiIndexFrom1dIndex"/>
+    <functioncall functionName="GetNonLinearDimensionMask"/>
+    <functioncall functionName="GetNumOfDimension"/>
+    <functioncall functionName="GetNumOfLowerDimension"/>
+    <functioncall functionName="GetNumOfUpperDimension"/>
+    <functioncall functionName="GetOffsetFromMultiIndex"/>
+    <functioncall functionName="GetSize"/>
+    <functioncall functionName="GetStride"/>
+    <functioncall functionName="GetStrides"/>
+    <functioncall functionName="GetUpperLengths"/>
+    <functioncall functionName="IDim"/>
+    <functioncall functionName="IDimReverse"/>
+    <functioncall functionName="IDimVector"/>
+    <functioncall functionName="IDim_"/>
+    <functioncall functionName="IDim_p1"/>
+    <functioncall functionName="IDims"/>
+    <functioncall functionName="Is"/>
+    <functioncall functionName="IsLinearTransform"/>
+    <functioncall functionName="IsValidUpperIndexAlwaysMappedToValidLowerIndex"/>
+    <functioncall functionName="IsVectorizationAllowed"/>
+    <functioncall functionName="L_back_align"/>
+    <functioncall functionName="LastUnfoldDim"/>
+    <functioncall functionName="Length"/>
+    <functioncall functionName="Lengths"/>
+    <functioncall functionName="LowDimensionId"/>
+    <functioncall functionName="LowerLength"/>
+    <functioncall functionName="MapNew2Old"/>
+    <functioncall functionName="MapOld2New"/>
+    <functioncall functionName="Modify"/>
+    <functioncall functionName="MultiIndex"/>
+    <functioncall functionName="N"/>
+    <functioncall functionName="NCol"/>
+    <functioncall functionName="NCol_"/>
+    <functioncall functionName="NRow"/>
+    <functioncall functionName="NRow_"/>
+    <functioncall functionName="NSize"/>
+    <functioncall functionName="NativeDimensions"/>
+    <functioncall functionName="NativeTensorDescriptor"/>
+    <functioncall functionName="PackedStrides"/>
+    <functioncall functionName="PopFront"/>
+    <functioncall functionName="PositiveDirection"/>
+    <functioncall functionName="PushBack"/>
+    <functioncall functionName="ReorderGivenNew2Old"/>
+    <functioncall functionName="ReorderGivenOld2New"/>
+    <functioncall functionName="RowStride"/>
+    <functioncall functionName="RowStride_"/>
+    <functioncall functionName="Sequence"/>
+    <functioncall functionName="Size"/>
+    <functioncall functionName="SkipIsValidCheck"/>
+    <functioncall functionName="SliceLen"/>
+    <functioncall functionName="SliceLength"/>
+    <functioncall functionName="SliceStride"/>
+    <functioncall functionName="Stride"/>
+    <functioncall functionName="Strides"/>
+    <functioncall functionName="SubNCol"/>
+    <functioncall functionName="SubNRow"/>
+    <functioncall functionName="T"/>
+    <functioncall functionName="TDesc"/>
+    <functioncall functionName="Transform"/>
+    <functioncall functionName="TransformedTensorDescriptor"/>
+    <functioncall functionName="Ts"/>
+    <functioncall functionName="UpDimensionId"/>
+    <functioncall functionName="VectorSize"/>
+    <functioncall functionName="Xs"/>
+    <functioncall functionName="are_up_dim_linear"/>
+    <functioncall functionName="auto"/>
+    <functioncall functionName="bool"/>
+    <functioncall functionName="borrow"/>
+    <functioncall functionName="calculate_tensor_strides_aligned_old"/>
+    <functioncall functionName="calculate_tensor_strides_packed_deprecated"/>
+    <functioncall functionName="carry"/>
+    <functioncall functionName="class"/>
+    <functioncall functionName="data_per_vector"/>
+    <functioncall functionName="decltype"/>
+    <functioncall functionName="dummy_transform_tuples_impl"/>
+    <functioncall functionName="duplicated_low_active_dims"/>
+    <functioncall functionName="duplicated_up_active_dims"/>
+    <functioncall functionName="element_space_unaligned"/>
+    <functioncall functionName="extract_lengths"/>
+    <functioncall functionName="extract_strides"/>
+    <functioncall functionName="f"/>
+    <functioncall functionName="false"/>
+    <functioncall functionName="fold_intervals"/>
+    <functioncall functionName="fold_intervals_product"/>
+    <functioncall functionName="fold_lengths"/>
+    <functioncall functionName="fold_strides"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="i"/>
+    <functioncall functionName="icol"/>
+    <functioncall functionName="icorner"/>
+    <functioncall functionName="id"/>
+    <functioncall functionName="id_"/>
+    <functioncall functionName="idim"/>
+    <functioncall functionName="idx_low"/>
+    <functioncall functionName="idx_low_"/>
+    <functioncall functionName="idx_low_diff"/>
+    <functioncall functionName="idx_low_diff_tmp"/>
+    <functioncall functionName="idx_low_new"/>
+    <functioncall functionName="idx_low_old"/>
+    <functioncall functionName="idx_low_old_part"/>
+    <functioncall functionName="idx_up"/>
+    <functioncall functionName="idx_up_diff"/>
+    <functioncall functionName="idx_up_diff_part"/>
+    <functioncall functionName="idx_up_old"/>
+    <functioncall functionName="idx_up_old_part"/>
+    <functioncall functionName="idx_up_part"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="index_t"/>
+    <functioncall functionName="irow"/>
+    <functioncall functionName="is_allowed"/>
+    <functioncall functionName="is_allowed_"/>
+    <functioncall functionName="is_continuous"/>
+    <functioncall functionName="is_continuous_"/>
+    <functioncall functionName="is_valid_up_always_mapped_to_valid_low"/>
+    <functioncall functionName="itmp"/>
+    <functioncall functionName="itmp_"/>
+    <functioncall functionName="itran"/>
+    <functioncall functionName="lambda_AreDimensionsContinuous"/>
+    <functioncall functionName="lambda_CalculateLowerIndex"/>
+    <functioncall functionName="lambda_GetMultiIndexFrom1dIndex"/>
+    <functioncall functionName="lambda_GetOffsetFromMultiIndex"/>
+    <functioncall functionName="left"/>
+    <functioncall functionName="linear_dimension_mask"/>
+    <functioncall functionName="logical_and"/>
+    <functioncall functionName="low_dims_part"/>
+    <functioncall functionName="make_tuple"/>
+    <functioncall functionName="make_zero_array"/>
+    <functioncall functionName="merge_sequences"/>
+    <functioncall functionName="middle"/>
+    <functioncall functionName="mingled_low_dimension_ids"/>
+    <functioncall functionName="mingled_up_dimension_ids"/>
+    <functioncall functionName="mingled_up_lengths"/>
+    <functioncall functionName="modify_sequence_elements_by_ids"/>
+    <functioncall functionName="multi_id"/>
+    <functioncall functionName="multi_id_"/>
+    <functioncall functionName="nDim"/>
+    <functioncall functionName="nDimLow"/>
+    <functioncall functionName="nDimUp"/>
+    <functioncall functionName="nTransform"/>
+    <functioncall functionName="ndim"/>
+    <functioncall functionName="new_lengths"/>
+    <functioncall functionName="new_multi_id"/>
+    <functioncall functionName="new_stride"/>
+    <functioncall functionName="new_strides"/>
+    <functioncall functionName="nonlinear_dimension_mask"/>
+    <functioncall functionName="offset"/>
+    <functioncall functionName="offset_"/>
+    <functioncall functionName="packed_strides"/>
+    <functioncall functionName="pick_array_element"/>
+    <functioncall functionName="pick_sequence_elements_by_ids"/>
+    <functioncall functionName="pick_sequence_elements_by_mask"/>
+    <functioncall functionName="printf"/>
+    <functioncall functionName="pseudo_low_strides"/>
+    <functioncall functionName="reduce_on_sequence"/>
+    <functioncall functionName="reverse_inclusive_scan_sequence"/>
+    <functioncall functionName="right"/>
+    <functioncall functionName="s"/>
+    <functioncall functionName="sequence_all_of"/>
+    <functioncall functionName="sizeof..."/>
+    <functioncall functionName="slice_lengths"/>
+    <functioncall functionName="sorted2unsorted_map"/>
+    <functioncall functionName="sorted_low_dimension_ids"/>
+    <functioncall functionName="sorted_up_dimension_ids"/>
+    <functioncall functionName="static_assert"/>
+    <functioncall functionName="static_cast"/>
+    <functioncall functionName="step_size_of_1d_index"/>
+    <functioncall functionName="step_sizes"/>
+    <functioncall functionName="stride"/>
+    <functioncall functionName="to_array"/>
+    <functioncall functionName="tran"/>
+    <functioncall functionName="transform_tuples"/>
+    <functioncall functionName="true"/>
+    <functioncall functionName="tuple_of_linear_dimension_mask"/>
+    <functioncall functionName="tuple_of_up_lengths"/>
+    <functioncall functionName="type"/>
+    <functioncall functionName="typename"/>
+    <functioncall functionName="unfold_length"/>
+    <functioncall functionName="unfold_stride"/>
+    <functioncall functionName="unpack"/>
+    <functioncall functionName="vectorized_lengths"/>
+    <functioncall functionName="vectorized_strides"/>
+    <functioncall functionName="x"/>
+  </FileInfo>
+</analyzerinfo>

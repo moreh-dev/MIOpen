@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="879141534785460054">
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="block_sync_lds" lineNumber="8"/>
+    <functioncall functionName="AtomicAdd"/>
+    <functioncall functionName="Generic"/>
+    <functioncall functionName="Global"/>
+    <functioncall functionName="Lds"/>
+    <functioncall functionName="Set"/>
+    <functioncall functionName="Vgpr"/>
+    <functioncall functionName="asm"/>
+  </FileInfo>
+</analyzerinfo>

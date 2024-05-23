@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="13168908986737558216">
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="GenerateClangDefsym"/>
+    <functioncall functionName="bool"/>
+    <functioncall functionName="const"/>
+    <functioncall functionName="name"/>
+    <functioncall functionName="none"/>
+    <functioncall functionName="stream"/>
+    <functioncall functionName="to_string"/>
+    <functioncall functionName="typename"/>
+    <functioncall functionName="value"/>
+  </FileInfo>
+</analyzerinfo>

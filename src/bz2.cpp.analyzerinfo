@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="17807021796216598426">
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/bz2.hpp:35:19" my-argnr="1" my-argname="v" file="/workspaces/MIOpen/src/bz2.cpp" line="88" col="48" value="0"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="check_bz2_error" lineNumber="34"/>
+    <functiondecl functionName="compress" lineNumber="62"/>
+    <functiondecl functionName="decompress" lineNumber="82"/>
+    <functioncall functionName="BZ2_bzBuffToBuffCompress"/>
+    <functioncall functionName="BZ2_bzBuffToBuffDecompress"/>
+    <functioncall functionName="char"/>
+    <functioncall functionName="check_bz2_error"/>
+    <functioncall functionName="const_cast"/>
+    <functioncall functionName="data"/>
+    <functioncall functionName="e"/>
+    <functioncall functionName="false"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="len"/>
+    <functioncall functionName="nullptr"/>
+    <functioncall functionName="resize"/>
+    <functioncall functionName="result"/>
+    <functioncall functionName="return"/>
+    <functioncall functionName="runtime_error"/>
+    <functioncall functionName="size"/>
+    <functioncall functionName="true"/>
+    <functioncall functionName="v"/>
+  </FileInfo>
+</analyzerinfo>

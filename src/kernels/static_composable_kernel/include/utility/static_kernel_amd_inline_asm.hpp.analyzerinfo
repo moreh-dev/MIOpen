@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="12535802217956699732">
+        <error id="objectIndex" severity="warning" msg="The address of local variable &apos;a&apos; might be accessed at non-zero index." verbose="The address of local variable &apos;a&apos; might be accessed at non-zero index." cwe="758" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_inline_asm.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp" line="449" column="37"/>
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp" line="443" column="65" info="Address of variable taken here."/>
+        </error>
+        <error id="objectIndex" severity="warning" msg="The address of local variable &apos;b&apos; might be accessed at non-zero index." verbose="The address of local variable &apos;b&apos; might be accessed at non-zero index." cwe="758" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_inline_asm.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp" line="449" column="61"/>
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp" line="444" column="65" info="Address of variable taken here."/>
+        </error>
+        <error id="objectIndex" severity="warning" msg="The address of local variable &apos;a&apos; might be accessed at non-zero index." verbose="The address of local variable &apos;a&apos; might be accessed at non-zero index." cwe="758" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_inline_asm.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp" line="463" column="37"/>
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp" line="457" column="65" info="Address of variable taken here."/>
+        </error>
+        <error id="objectIndex" severity="warning" msg="The address of local variable &apos;b&apos; might be accessed at non-zero index." verbose="The address of local variable &apos;b&apos; might be accessed at non-zero index." cwe="758" file0="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_amd_inline_asm.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp" line="463" column="61"/>
+            <location file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/utility/static_kernel_float_type.hpp" line="458" column="65" info="Address of variable taken here."/>
+        </error>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="amd_assembly_outer_product_1x2" lineNumber="10"/>
+    <functiondecl functionName="amd_assembly_outer_product_1x4" lineNumber="30"/>
+    <functiondecl functionName="amd_assembly_outer_product_1x2" lineNumber="58"/>
+    <functiondecl functionName="amd_assembly_outer_product_1x2" lineNumber="74"/>
+    <functiondecl functionName="amd_assembly_outer_product_1x4" lineNumber="99"/>
+    <functiondecl functionName="amd_assembly_outer_product_1x4" lineNumber="128"/>
+    <functiondecl functionName="amd_assembly_outer_product_1x2" lineNumber="10"/>
+    <functiondecl functionName="amd_assembly_outer_product_1x4" lineNumber="30"/>
+    <functioncall functionName="I"/>
+    <functioncall functionName="N"/>
+    <functioncall functionName="T"/>
+    <functioncall functionName="_Float16"/>
+    <functioncall functionName="a"/>
+    <functioncall functionName="asm"/>
+    <functioncall functionName="b"/>
+    <functioncall functionName="b0"/>
+    <functioncall functionName="b1"/>
+    <functioncall functionName="b2"/>
+    <functioncall functionName="b3"/>
+    <functioncall functionName="class"/>
+    <functioncall functionName="const"/>
+    <functioncall functionName="convert"/>
+    <functioncall functionName="float"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="index_t"/>
+    <functioncall functionName="reinterpret_cast"/>
+    <functioncall functionName="s"/>
+    <functioncall functionName="s0"/>
+    <functioncall functionName="s1"/>
+    <functioncall functionName="s2"/>
+    <functioncall functionName="s3"/>
+    <functioncall functionName="static_assert"/>
+    <functioncall functionName="static_cast"/>
+    <functioncall functionName="typename"/>
+    <functioncall functionName="ushort"/>
+    <functioncall functionName="v"/>
+    <functioncall functionName="vector"/>
+    <functioncall functionName="x"/>
+  </FileInfo>
+</analyzerinfo>

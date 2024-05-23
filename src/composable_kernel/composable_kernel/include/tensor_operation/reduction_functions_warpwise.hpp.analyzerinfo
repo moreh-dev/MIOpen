@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="12350151991797168246">
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="Reduce" lineNumber="57"/>
+    <functiondecl functionName="ReduceImpl1" lineNumber="66"/>
+    <functiondecl functionName="ReduceImpl2" lineNumber="88"/>
+    <functiondecl functionName="Reduce2" lineNumber="130"/>
+    <functiondecl functionName="Reduce2Impl1" lineNumber="139"/>
+    <functiondecl functionName="Reduce2Impl2" lineNumber="171"/>
+    <functiondecl functionName="set_buffer_value" lineNumber="218"/>
+    <functiondecl functionName="Reduce" lineNumber="267"/>
+    <functiondecl functionName="ReduceImpl1" lineNumber="279"/>
+    <functiondecl functionName="ReduceImpl2" lineNumber="308"/>
+    <functiondecl functionName="set_buffer_value" lineNumber="354"/>
+    <functioncall functionName="BlockSize"/>
+    <functioncall functionName="GetReductionZeroVal"/>
+    <functioncall functionName="I"/>
+    <functioncall functionName="IsStaticBuffer"/>
+    <functioncall functionName="Reduce2Impl1"/>
+    <functioncall functionName="Reduce2Impl2"/>
+    <functioncall functionName="ReduceImpl1"/>
+    <functioncall functionName="ReduceImpl2"/>
+    <functioncall functionName="Size"/>
+    <functioncall functionName="ThreadBufferLen"/>
+    <functioncall functionName="__all"/>
+    <functioncall functionName="__shfl_down"/>
+    <functioncall functionName="__syncthreads"/>
+    <functioncall functionName="accuData"/>
+    <functioncall functionName="accuIndex"/>
+    <functioncall functionName="calculate"/>
+    <functioncall functionName="compType"/>
+    <functioncall functionName="currIndex"/>
+    <functioncall functionName="currIndex1"/>
+    <functioncall functionName="currIndex2"/>
+    <functioncall functionName="currVal1"/>
+    <functioncall functionName="currVal2"/>
+    <functioncall functionName="double"/>
+    <functioncall functionName="float"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="get_thread_local_1d_id"/>
+    <functioncall functionName="have_builtin_shuffle"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="indexStart"/>
+    <functioncall functionName="index_t"/>
+    <functioncall functionName="lAccuData"/>
+    <functioncall functionName="lAccuIndex"/>
+    <functioncall functionName="nanPropaOpt"/>
+    <functioncall functionName="opReduce"/>
+    <functioncall functionName="static_assert"/>
+    <functioncall functionName="stride"/>
+    <functioncall functionName="thread_buffer"/>
+    <functioncall functionName="thread_indices_buffer"/>
+    <functioncall functionName="thread_inwarp_id"/>
+    <functioncall functionName="tmpIndex"/>
+    <functioncall functionName="tmpVal"/>
+    <functioncall functionName="type"/>
+    <functioncall functionName="typename"/>
+    <functioncall functionName="unary_op"/>
+    <functioncall functionName="value"/>
+    <functioncall functionName="warpSize"/>
+  </FileInfo>
+</analyzerinfo>

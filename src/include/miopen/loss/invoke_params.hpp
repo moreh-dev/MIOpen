@@ -43,11 +43,9 @@ struct HingeEmbeddingLossInvokeParams : public miopen::InvokeParams
 
     ConstData_t i              = nullptr;
     ConstData_t t              = nullptr;
-    Data_t o                   = nullptr;
     Data_t workspace           = nullptr;
     std::size_t workspace_size = 0;
     float margin               = 1.0f;
-    float divisor              = 1.0f;
 
     std::size_t GetWorkspaceSize() const { return workspace_size; }
     Data_t GetWorkspace() const { return workspace; }
@@ -55,86 +53,44 @@ struct HingeEmbeddingLossInvokeParams : public miopen::InvokeParams
 
 struct FwdInvokeParams : HingeEmbeddingLossInvokeParams
 {
-    // FwdInvokeParams() = default;
+    FwdInvokeParams() = default;
 
-    // const TensorDescriptor* iDesc = nullptr;
-    // const TensorDescriptor* tDesc = nullptr;
     const TensorDescriptor* oDesc = nullptr;
-
-    // ConstData_t i              = nullptr;
-    // ConstData_t t              = nullptr;
-    // Data_t o                   = nullptr;
-    // Data_t workspace           = nullptr;
-    // std::size_t workspace_size = 0;
-    // float margin               = 1.0f;
-    // float divisor              = 1.0f;
-
-    // std::size_t GetWorkspaceSize() const { return workspace_size; }
-    // Data_t GetWorkspace() const { return workspace; }
+    Data_t o                      = nullptr;
+    float divisor                 = 1.0f;
 };
 
-struct BwdInvokeParams : public miopen::InvokeParams
+struct BwdInvokeParams : HingeEmbeddingLossInvokeParams
 {
     BwdInvokeParams() = default;
 
-    const TensorDescriptor* iDesc  = nullptr;
-    const TensorDescriptor* tDesc  = nullptr;
     const TensorDescriptor* dODesc = nullptr;
     const TensorDescriptor* dIDesc = nullptr;
 
-    ConstData_t i              = nullptr;
-    ConstData_t t              = nullptr;
-    ConstData_t dO             = nullptr;
-    ConstData_t dI             = nullptr;
-    Data_t o                   = nullptr;
-    Data_t workspace           = nullptr;
-    std::size_t workspace_size = 0;
-    float margin               = 1.0f;
-    float divisor              = 1.0f;
+    ConstData_t dO = nullptr;
+    ConstData_t dI = nullptr;
 
-    std::size_t GetWorkspaceSize() const { return workspace_size; }
-    Data_t GetWorkspace() const { return workspace; }
+    float divisor = 1.0f;
 };
 
-struct UnreducedFwdInvokeParams : public miopen::InvokeParams
+struct UnreducedFwdInvokeParams : HingeEmbeddingLossInvokeParams
 {
     UnreducedFwdInvokeParams() = default;
 
-    const TensorDescriptor* iDesc = nullptr;
-    const TensorDescriptor* tDesc = nullptr;
     const TensorDescriptor* oDesc = nullptr;
-
-    ConstData_t i              = nullptr;
-    ConstData_t t              = nullptr;
-    Data_t o                   = nullptr;
-    Data_t workspace           = nullptr;
-    std::size_t workspace_size = 0;
-    float margin               = 1.0f;
-
-    std::size_t GetWorkspaceSize() const { return workspace_size; }
-    Data_t GetWorkspace() const { return workspace; }
+    Data_t o                      = nullptr;
 };
 
-struct UnreducedBwdInvokeParams : public miopen::InvokeParams
+struct UnreducedBwdInvokeParams : HingeEmbeddingLossInvokeParams
 {
     UnreducedBwdInvokeParams() = default;
 
-    const TensorDescriptor* iDesc  = nullptr;
-    const TensorDescriptor* tDesc  = nullptr;
     const TensorDescriptor* dODesc = nullptr;
     const TensorDescriptor* dIDesc = nullptr;
 
-    ConstData_t i              = nullptr;
-    ConstData_t t              = nullptr;
-    ConstData_t dO             = nullptr;
-    ConstData_t dI             = nullptr;
-    Data_t o                   = nullptr;
-    Data_t workspace           = nullptr;
-    std::size_t workspace_size = 0;
-    float margin               = 1.0f;
-
-    std::size_t GetWorkspaceSize() const { return workspace_size; }
-    Data_t GetWorkspace() const { return workspace; }
+    ConstData_t dO = nullptr;
+    ConstData_t dI = nullptr;
+    Data_t o       = nullptr;
 };
 
 } // namespace loss

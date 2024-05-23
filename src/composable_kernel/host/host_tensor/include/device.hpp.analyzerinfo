@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="17147723955465485266">
+        <error id="noExplicitConstructor" severity="style" msg="Struct &apos;DeviceMem&apos; has a constructor with 1 argument that is not explicit." verbose="Struct &apos;DeviceMem&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/src/composable_kernel/host/host_tensor/include/device.hpp">
+            <location file="/workspaces/MIOpen/src/composable_kernel/host/host_tensor/include/device.hpp" line="11" column="5"/>
+            <symbol>DeviceMem</symbol>
+        </error>
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="DeviceMem"/>
+    <functioncall functionName="End"/>
+    <functioncall functionName="GetElapsedTime"/>
+    <functioncall functionName="KernelTimer"/>
+    <functioncall functionName="KernelTimerImpl"/>
+    <functioncall functionName="Start"/>
+    <functioncall functionName="__func__"/>
+    <functioncall functionName="block_dim"/>
+    <functioncall functionName="const"/>
+    <functioncall functionName="delete"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="grid_dim"/>
+    <functioncall functionName="hipLaunchKernelGGL"/>
+    <functioncall functionName="kernel"/>
+    <functioncall functionName="lds_byte"/>
+    <functioncall functionName="nrepeat"/>
+    <functioncall functionName="nullptr"/>
+    <functioncall functionName="printf"/>
+    <functioncall functionName="stream_id"/>
+    <functioncall functionName="typename"/>
+    <functioncall functionName="x"/>
+    <functioncall functionName="y"/>
+    <functioncall functionName="z"/>
+  </FileInfo>
+</analyzerinfo>

@@ -1,0 +1,161 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="5811612537053318787">
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_gemm_xdlops_v2r3.hpp:50:16" my-argnr="4" my-argname="a_k0_m_k1_grid_desc" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_gemm_xdlops_v2r3.hpp" line="114" col="48" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_gemm_xdlops_v2r3.hpp:50:16" my-argnr="5" my-argname="b_k0_n_k1_grid_desc" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_gemm_xdlops_v2r3.hpp" line="118" col="48" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_gemm_xdlops_v2r3.hpp:50:16" my-argnr="6" my-argname="c_m_n_grid_desc" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_gemm_xdlops_v2r3.hpp" line="122" col="45" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v4r4r4_xdlops_nhwc_kyxc_nhwk.hpp:17:6" my-argnr="8" my-argname="in_n_hi_wi_c" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v4r4r4_xdlops_nhwc_kyxc_nhwk.hpp" line="39" col="56" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v4r4r4_xdlops_nhwc_kyxc_nhwk.hpp:17:6" my-argnr="9" my-argname="wei_k_y_x_c" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v4r4r4_xdlops_nhwc_kyxc_nhwk.hpp" line="40" col="55" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v4r4r4_xdlops_nhwc_kyxc_nhwk.hpp:17:6" my-argnr="10" my-argname="out_n_ho_wo_k" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v4r4r4_xdlops_nhwc_kyxc_nhwk.hpp" line="41" col="55" value="0"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_gemm_xdlops_v2r3.hpp:50:16" my-argnr="4" my-argname="a_k0_m_k1_grid_desc" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_gemm_xdlops_v2r3.hpp" line="114" col="48" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_gemm_xdlops_v2r3.hpp:50:16" my-argnr="5" my-argname="b_k0_n_k1_grid_desc" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_gemm_xdlops_v2r3.hpp" line="118" col="48" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_gemm_xdlops_v2r3.hpp:50:16" my-argnr="6" my-argname="c_m_n_grid_desc" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_gemm_xdlops_v2r3.hpp" line="122" col="45" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v4r4r4_xdlops_nhwc_kyxc_nhwk.hpp:17:6" my-argnr="8" my-argname="in_n_hi_wi_c" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v4r4r4_xdlops_nhwc_kyxc_nhwk.hpp" line="39" col="56" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v4r4r4_xdlops_nhwc_kyxc_nhwk.hpp:17:6" my-argnr="9" my-argname="wei_k_y_x_c" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v4r4r4_xdlops_nhwc_kyxc_nhwk.hpp" line="40" col="55" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v4r4r4_xdlops_nhwc_kyxc_nhwk.hpp:17:6" my-argnr="10" my-argname="out_n_ho_wo_k" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v4r4r4_xdlops_nhwc_kyxc_nhwk.hpp" line="41" col="55" value="0"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_gemm_xdlops_v2r3.hpp:50:16" my-argnr="4" my-argname="a_k0_m_k1_grid_desc" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_gemm_xdlops_v2r3.hpp" line="114" col="48" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_gemm_xdlops_v2r3.hpp:50:16" my-argnr="5" my-argname="b_k0_n_k1_grid_desc" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_gemm_xdlops_v2r3.hpp" line="118" col="48" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_gemm_xdlops_v2r3.hpp:50:16" my-argnr="6" my-argname="c_m_n_grid_desc" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/driver_gemm_xdlops_v2r3.hpp" line="122" col="45" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v4r4r4_xdlops_nhwc_kyxc_nhwk.hpp:17:6" my-argnr="8" my-argname="in_n_hi_wi_c" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v4r4r4_xdlops_nhwc_kyxc_nhwk.hpp" line="39" col="56" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v4r4r4_xdlops_nhwc_kyxc_nhwk.hpp:17:6" my-argnr="9" my-argname="wei_k_y_x_c" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v4r4r4_xdlops_nhwc_kyxc_nhwk.hpp" line="40" col="55" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v4r4r4_xdlops_nhwc_kyxc_nhwk.hpp:17:6" my-argnr="10" my-argname="out_n_ho_wo_k" file="/workspaces/MIOpen/src/composable_kernel/host/driver_offline/include/device_convolution_forward_implicit_gemm_v4r4r4_xdlops_nhwc_kyxc_nhwk.hpp" line="41" col="55" value="0"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="ABlockTransferDstScalarPerVector_K1"/>
+    <functioncall functionName="ABlockTransferSrcAccessOrder"/>
+    <functioncall functionName="ABlockTransferSrcScalarPerVector"/>
+    <functioncall functionName="ABlockTransferSrcVectorDim"/>
+    <functioncall functionName="ABlockTransferThreadClusterArrangeOrder"/>
+    <functioncall functionName="ABlockTransferThreadClusterLengths_K0_M_K1"/>
+    <functioncall functionName="ABlockTransferThreadSliceLengths_K0_M_K1"/>
+    <functioncall functionName="AGridMoveSliceWindowStepHacks"/>
+    <functioncall functionName="AGridStepHacks"/>
+    <functioncall functionName="AK0MK1GridDesc"/>
+    <functioncall functionName="AThreadTransferSrcResetCoordinateAfterRun"/>
+    <functioncall functionName="BBlockTransferDstScalarPerVector_K1"/>
+    <functioncall functionName="BBlockTransferSrcAccessOrder"/>
+    <functioncall functionName="BBlockTransferSrcScalarPerVector"/>
+    <functioncall functionName="BBlockTransferSrcVectorDim"/>
+    <functioncall functionName="BBlockTransferThreadClusterArrangeOrder"/>
+    <functioncall functionName="BBlockTransferThreadClusterLengths_K0_N_K1"/>
+    <functioncall functionName="BBlockTransferThreadSliceLengths_K0_N_K1"/>
+    <functioncall functionName="BGridMoveSliceWindowStepHacks"/>
+    <functioncall functionName="BGridStepHacks"/>
+    <functioncall functionName="BK0NK1GridDesc"/>
+    <functioncall functionName="BThreadTransferSrcResetCoordinateAfterRun"/>
+    <functioncall functionName="BlockSize"/>
+    <functioncall functionName="CAccessOrderMRepeatNRepeat"/>
+    <functioncall functionName="CBlockClusterAdaptor"/>
+    <functioncall functionName="CGlobalMemoryDataOperation"/>
+    <functioncall functionName="CGridStepHacks"/>
+    <functioncall functionName="CM0M1M2NGridDesc"/>
+    <functioncall functionName="CMNGridDesc"/>
+    <functioncall functionName="CThreadTransferDstScalarPerVector"/>
+    <functioncall functionName="CThreadTransferSrcDstAccessOrder"/>
+    <functioncall functionName="CThreadTransferSrcDstVectorDim"/>
+    <functioncall functionName="CalculateGridSize"/>
+    <functioncall functionName="CheckValidity"/>
+    <functioncall functionName="FloatAB"/>
+    <functioncall functionName="FloatAcc"/>
+    <functioncall functionName="FloatC"/>
+    <functioncall functionName="FromDevice"/>
+    <functioncall functionName="GemmABlockTransferDstScalarPerVector_GemmK1"/>
+    <functioncall functionName="GemmABlockTransferSrcScalarPerVector_GemmK1"/>
+    <functioncall functionName="GemmABlockTransferThreadClusterLengths_GemmK0_GemmM_GemmK1"/>
+    <functioncall functionName="GemmABlockTransferThreadSliceLengths_GemmK0_GemmM_GemmK1"/>
+    <functioncall functionName="GemmBBlockTransferDstScalarPerVector_GemmK1"/>
+    <functioncall functionName="GemmBBlockTransferSrcScalarPerVector_GemmK1"/>
+    <functioncall functionName="GemmBBlockTransferThreadClusterLengths_GemmK0_GemmN_GemmK1"/>
+    <functioncall functionName="GemmBBlockTransferThreadSliceLengths_GemmK0_GemmN_GemmK1"/>
+    <functioncall functionName="GemmCThreadTransferDstScalarPerVector"/>
+    <functioncall functionName="GemmK1"/>
+    <functioncall functionName="GemmKPerBlock"/>
+    <functioncall functionName="GemmMPerBlock"/>
+    <functioncall functionName="GemmMPerWave"/>
+    <functioncall functionName="GemmNPerBlock"/>
+    <functioncall functionName="GemmNPerWave"/>
+    <functioncall functionName="GetDeviceBuffer"/>
+    <functioncall functionName="GetElementSpace"/>
+    <functioncall functionName="GetLength"/>
+    <functioncall functionName="GridwiseGemm"/>
+    <functioncall functionName="I0"/>
+    <functioncall functionName="I1"/>
+    <functioncall functionName="I2"/>
+    <functioncall functionName="I3"/>
+    <functioncall functionName="K1"/>
+    <functioncall functionName="KPerBlock"/>
+    <functioncall functionName="MPerBlock"/>
+    <functioncall functionName="MPerWave"/>
+    <functioncall functionName="MRepeat"/>
+    <functioncall functionName="MakeCBlockClusterAdaptor"/>
+    <functioncall functionName="MakeCM0M1M2NGridDescriptor"/>
+    <functioncall functionName="NPerBlock"/>
+    <functioncall functionName="NPerWave"/>
+    <functioncall functionName="NRepeat"/>
+    <functioncall functionName="Set"/>
+    <functioncall functionName="TAcc"/>
+    <functioncall functionName="TInWei"/>
+    <functioncall functionName="TOut"/>
+    <functioncall functionName="ToDevice"/>
+    <functioncall functionName="a_k0_m_k1_grid_desc"/>
+    <functioncall functionName="a_k0_m_k1_grid_desc_dev_buf"/>
+    <functioncall functionName="ave_time"/>
+    <functioncall functionName="b_k0_n_k1_grid_desc"/>
+    <functioncall functionName="b_k0_n_k1_grid_desc_dev_buf"/>
+    <functioncall functionName="c_block_cluster_adaptor"/>
+    <functioncall functionName="c_block_cluster_adaptor_dev_buf"/>
+    <functioncall functionName="c_m0_m1_m2_n_grid_desc"/>
+    <functioncall functionName="c_m0_m1_m2_n_grid_desc_dev_buf"/>
+    <functioncall functionName="c_m_n_grid_desc"/>
+    <functioncall functionName="cast_pointer_to_constant_address_space"/>
+    <functioncall functionName="conv_dilations"/>
+    <functioncall functionName="conv_strides"/>
+    <functioncall functionName="data"/>
+    <functioncall functionName="decltype"/>
+    <functioncall functionName="dim3"/>
+    <functioncall functionName="driver_gemm_xdlops_v2r3"/>
+    <functioncall functionName="false"/>
+    <functioncall functionName="float"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="grid_size"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="in_gemmk0_gemmm_gemmk1_grid_desc"/>
+    <functioncall functionName="in_gemmk0_gemmm_gemmk1_grid_move_slice_window_step_hacks"/>
+    <functioncall functionName="in_gemmk0_gemmm_gemmk1_grid_step_hacks"/>
+    <functioncall functionName="in_left_pads"/>
+    <functioncall functionName="in_n_hi_wi_c_desc"/>
+    <functioncall functionName="in_n_hi_wi_c_device_buf"/>
+    <functioncall functionName="in_n_hi_wi_c_lengths"/>
+    <functioncall functionName="in_right_pads"/>
+    <functioncall functionName="index_t"/>
+    <functioncall functionName="kernel"/>
+    <functioncall functionName="launch_and_time_kernel"/>
+    <functioncall functionName="long"/>
+    <functioncall functionName="make_naive_tensor_descriptor_packed"/>
+    <functioncall functionName="make_tuple"/>
+    <functioncall functionName="nrepeat"/>
+    <functioncall functionName="out_gemmm_gemmn_grid_desc"/>
+    <functioncall functionName="out_m0_m1_m2_n_grid_step_hacks"/>
+    <functioncall functionName="out_n_ho_wo_k_desc"/>
+    <functioncall functionName="out_n_ho_wo_k_device_buf"/>
+    <functioncall functionName="out_n_ho_wo_k_lengths"/>
+    <functioncall functionName="p_a_grid"/>
+    <functioncall functionName="p_b_grid"/>
+    <functioncall functionName="p_c_grid"/>
+    <functioncall functionName="runtime_error"/>
+    <functioncall functionName="sizeof"/>
+    <functioncall functionName="static_cast"/>
+    <functioncall functionName="transform_forward_convolution_into_gemm_v4r4r4_nhwc_kyxc_nhwk_pad"/>
+    <functioncall functionName="typename"/>
+    <functioncall functionName="wei_gemmk0_gemmn_gemmk1_grid_desc"/>
+    <functioncall functionName="wei_gemmk0_gemmn_gemmk1_grid_move_slice_window_step_hacks"/>
+    <functioncall functionName="wei_gemmk0_gemmn_gemmk1_grid_step_hacks"/>
+    <functioncall functionName="wei_k_y_x_c_desc"/>
+    <functioncall functionName="wei_k_y_x_c_device_buf"/>
+    <functioncall functionName="wei_k_y_x_c_lengths"/>
+  </FileInfo>
+</analyzerinfo>

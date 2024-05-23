@@ -1,0 +1,170 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="16001769533822180909">
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;InlineStackOverflowException&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;InlineStackOverflowException&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/addkernels/addkernels.cpp">
+            <location file="/workspaces/MIOpen/addkernels/include_inliner.hpp" line="50" column="5"/>
+            <symbol>InlineStackOverflowException</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;IncludeExpectedException&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;IncludeExpectedException&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/addkernels/addkernels.cpp">
+            <location file="/workspaces/MIOpen/addkernels/include_inliner.hpp" line="61" column="5"/>
+            <symbol>IncludeExpectedException</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;WrongInlineDirectiveException&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;WrongInlineDirectiveException&apos; has a constructor with 1 argument that is not explicit. Such constructors should in general be explicit for type safety reasons. Using the explicit keyword in the constructor means some mistakes when using the class can be avoided." cwe="398" file0="/workspaces/MIOpen/addkernels/addkernels.cpp">
+            <location file="/workspaces/MIOpen/addkernels/include_inliner.hpp" line="69" column="5"/>
+            <symbol>WrongInlineDirectiveException</symbol>
+        </error>
+  <FileInfo check="Class">
+<class name="SourceFileDesc" file="/workspaces/MIOpen/addkernels/source_file_desc.hpp" line="35" col="1" hash="3809981873775264520"/>
+<class name="InlineStackOverflowException" file="/workspaces/MIOpen/addkernels/include_inliner.hpp" line="47" col="1" hash="17269372319697192262"/>
+<class name="IncludeExpectedException" file="/workspaces/MIOpen/addkernels/include_inliner.hpp" line="58" col="1" hash="12972974146719982716"/>
+<class name="WrongInlineDirectiveException" file="/workspaces/MIOpen/addkernels/include_inliner.hpp" line="66" col="1" hash="14849220382425500385"/>
+<class name="IncludeNotFoundException" file="/workspaces/MIOpen/addkernels/include_inliner.hpp" line="89" col="1" hash="17950026901602943528"/>
+<class name="IncludeCantBeOpenedException" file="/workspaces/MIOpen/addkernels/include_inliner.hpp" line="104" col="1" hash="14601868886466279585"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/filesystem.hpp:81:20" my-argnr="2" my-argname="path" file="/workspaces/MIOpen/src/include/miopen/filesystem.hpp" line="83" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/filesystem.hpp:86:20" my-argnr="1" my-argname="path" file="/workspaces/MIOpen/src/include/miopen/filesystem.hpp" line="88" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/filesystem.hpp:95:17" my-argnr="1" my-argname="path" file="/workspaces/MIOpen/src/include/miopen/filesystem.hpp" line="98" col="19" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/filesystem.hpp:128:17" my-argnr="1" my-argname="path" file="/workspaces/MIOpen/src/include/miopen/filesystem.hpp" line="130" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/filesystem.hpp:133:17" my-argnr="1" my-argname="path" file="/workspaces/MIOpen/src/include/miopen/filesystem.hpp" line="135" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/filesystem.hpp:138:17" my-argnr="1" my-argname="path" file="/workspaces/MIOpen/src/include/miopen/filesystem.hpp" line="140" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/filesystem.hpp:143:17" my-argnr="1" my-argname="path" file="/workspaces/MIOpen/src/include/miopen/filesystem.hpp" line="145" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/addkernels/addkernels.cpp:35:6" my-argnr="1" my-argname="source" file="/workspaces/MIOpen/addkernels/addkernels.cpp" line="42" col="5" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/addkernels/addkernels.cpp:35:6" my-argnr="3" my-argname="variable" file="/workspaces/MIOpen/addkernels/addkernels.cpp" line="47" col="8" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/addkernels/addkernels.cpp:111:19" my-argnr="1" my-argname="error" file="/workspaces/MIOpen/addkernels/addkernels.cpp" line="113" col="37" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/addkernels/addkernels.cpp:120:19" my-argnr="1" my-argname="arg" file="/workspaces/MIOpen/addkernels/addkernels.cpp" line="123" col="36" value="0"/>
+  </FileInfo>
+  <FileInfo check="Class">
+<class name="SourceFileDesc" file="/workspaces/MIOpen/addkernels/source_file_desc.hpp" line="35" col="1" hash="3809981873775264520"/>
+<class name="InlineStackOverflowException" file="/workspaces/MIOpen/addkernels/include_inliner.hpp" line="47" col="1" hash="17269372319697192262"/>
+<class name="IncludeExpectedException" file="/workspaces/MIOpen/addkernels/include_inliner.hpp" line="58" col="1" hash="12972974146719982716"/>
+<class name="WrongInlineDirectiveException" file="/workspaces/MIOpen/addkernels/include_inliner.hpp" line="66" col="1" hash="14849220382425500385"/>
+<class name="IncludeNotFoundException" file="/workspaces/MIOpen/addkernels/include_inliner.hpp" line="89" col="1" hash="17950026901602943528"/>
+<class name="IncludeCantBeOpenedException" file="/workspaces/MIOpen/addkernels/include_inliner.hpp" line="104" col="1" hash="14601868886466279585"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/filesystem.hpp:81:20" my-argnr="2" my-argname="path" file="/workspaces/MIOpen/src/include/miopen/filesystem.hpp" line="83" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/filesystem.hpp:86:20" my-argnr="1" my-argname="path" file="/workspaces/MIOpen/src/include/miopen/filesystem.hpp" line="88" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/filesystem.hpp:95:17" my-argnr="1" my-argname="path" file="/workspaces/MIOpen/src/include/miopen/filesystem.hpp" line="98" col="19" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/filesystem.hpp:128:17" my-argnr="1" my-argname="path" file="/workspaces/MIOpen/src/include/miopen/filesystem.hpp" line="130" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/filesystem.hpp:133:17" my-argnr="1" my-argname="path" file="/workspaces/MIOpen/src/include/miopen/filesystem.hpp" line="135" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/filesystem.hpp:138:17" my-argnr="1" my-argname="path" file="/workspaces/MIOpen/src/include/miopen/filesystem.hpp" line="140" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/filesystem.hpp:143:17" my-argnr="1" my-argname="path" file="/workspaces/MIOpen/src/include/miopen/filesystem.hpp" line="145" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/addkernels/addkernels.cpp:35:6" my-argnr="1" my-argname="source" file="/workspaces/MIOpen/addkernels/addkernels.cpp" line="42" col="5" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/addkernels/addkernels.cpp:35:6" my-argnr="3" my-argname="variable" file="/workspaces/MIOpen/addkernels/addkernels.cpp" line="47" col="8" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/addkernels/addkernels.cpp:111:19" my-argnr="1" my-argname="error" file="/workspaces/MIOpen/addkernels/addkernels.cpp" line="113" col="37" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/addkernels/addkernels.cpp:120:19" my-argnr="1" my-argname="arg" file="/workspaces/MIOpen/addkernels/addkernels.cpp" line="123" col="36" value="0"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="Bin2Hex" lineNumber="35"/>
+    <functiondecl functionName="PrintHelp" lineNumber="91"/>
+    <functiondecl functionName="WrongUsage" lineNumber="111"/>
+    <functiondecl functionName="UnknownArgument" lineNumber="120"/>
+    <functiondecl functionName="Process" lineNumber="127"/>
+    <functiondecl functionName="main" lineNumber="203"/>
+    <functiondecl functionName="Bin2Hex" lineNumber="35"/>
+    <functiondecl functionName="PrintHelp" lineNumber="91"/>
+    <functiondecl functionName="WrongUsage" lineNumber="111"/>
+    <functiondecl functionName="UnknownArgument" lineNumber="120"/>
+    <functiondecl functionName="Process" lineNumber="127"/>
+    <functiondecl functionName="main" lineNumber="203"/>
+    <functioncall functionName="Bin2Hex"/>
+    <functioncall functionName="GetTrace"/>
+    <functioncall functionName="IncludeFileExceptionBase"/>
+    <functioncall functionName="InlineException"/>
+    <functioncall functionName="PATH_MAX"/>
+    <functioncall functionName="PrintHelp"/>
+    <functioncall functionName="Process"/>
+    <functioncall functionName="SourceFileDesc"/>
+    <functioncall functionName="UnknownArgument"/>
+    <functioncall functionName="What"/>
+    <functioncall functionName="WrongUsage"/>
+    <functioncall functionName="_file"/>
+    <functioncall functionName="_trace"/>
+    <functioncall functionName="append"/>
+    <functioncall functionName="arg"/>
+    <functioncall functionName="as_extern"/>
+    <functioncall functionName="beg"/>
+    <functioncall functionName="begin"/>
+    <functioncall functionName="binary"/>
+    <functioncall functionName="blockSize"/>
+    <functioncall functionName="blockStart"/>
+    <functioncall functionName="buffer"/>
+    <functioncall functionName="bufferSize"/>
+    <functioncall functionName="c_str"/>
+    <functioncall functionName="catch"/>
+    <functioncall functionName="char"/>
+    <functioncall functionName="cout"/>
+    <functioncall functionName="current_path"/>
+    <functioncall functionName="dynamic_library_postfix"/>
+    <functioncall functionName="end"/>
+    <functioncall functionName="executable_postfix"/>
+    <functioncall functionName="exists"/>
+    <functioncall functionName="exit"/>
+    <functioncall functionName="extension"/>
+    <functioncall functionName="false"/>
+    <functioncall functionName="file"/>
+    <functioncall functionName="filename"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="from"/>
+    <functioncall functionName="get"/>
+    <functioncall functionName="has_parent_path"/>
+    <functioncall functionName="i"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="included_from"/>
+    <functioncall functionName="included_line"/>
+    <functioncall functionName="inlinerTemp"/>
+    <functioncall functionName="insert"/>
+    <functioncall functionName="int"/>
+    <functioncall functionName="is_asm"/>
+    <functioncall functionName="is_hip"/>
+    <functioncall functionName="is_open"/>
+    <functioncall functionName="is_relative"/>
+    <functioncall functionName="j"/>
+    <functioncall functionName="length"/>
+    <functioncall functionName="line"/>
+    <functioncall functionName="lineSize"/>
+    <functioncall functionName="long"/>
+    <functioncall functionName="mark_includes"/>
+    <functioncall functionName="min"/>
+    <functioncall functionName="nullTerminate"/>
+    <functioncall functionName="nullptr"/>
+    <functioncall functionName="object_file_postfix"/>
+    <functioncall functionName="open"/>
+    <functioncall functionName="out"/>
+    <functioncall functionName="parent_path"/>
+    <functioncall functionName="path"/>
+    <functioncall functionName="path_"/>
+    <functioncall functionName="pos"/>
+    <functioncall functionName="read"/>
+    <functioncall functionName="realpath"/>
+    <functioncall functionName="recurse"/>
+    <functioncall functionName="reinterpret_cast"/>
+    <functioncall functionName="result"/>
+    <functioncall functionName="return"/>
+    <functioncall functionName="root"/>
+    <functioncall functionName="s"/>
+    <functioncall functionName="seekg"/>
+    <functioncall functionName="setbase"/>
+    <functioncall functionName="setfill"/>
+    <functioncall functionName="setw"/>
+    <functioncall functionName="sourceFile"/>
+    <functioncall functionName="sourcePath"/>
+    <functioncall functionName="sourceSize"/>
+    <functioncall functionName="static_cast"/>
+    <functioncall functionName="static_library_postfix"/>
+    <functioncall functionName="stem"/>
+    <functioncall functionName="stol"/>
+    <functioncall functionName="str"/>
+    <functioncall functionName="string"/>
+    <functioncall functionName="target"/>
+    <functioncall functionName="targetFile"/>
+    <functioncall functionName="tellg"/>
+    <functioncall functionName="tolower"/>
+    <functioncall functionName="toupper"/>
+    <functioncall functionName="trace"/>
+    <functioncall functionName="transform"/>
+    <functioncall functionName="true"/>
+    <functioncall functionName="variable"/>
+    <functioncall functionName="while"/>
+  </FileInfo>
+</analyzerinfo>

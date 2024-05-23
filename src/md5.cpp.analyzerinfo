@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="11863019010757060977">
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/md5.cpp:217:13" call-funcname="MD5_Init" call-argnr="1" file="/workspaces/MIOpen/src/md5.cpp" line="313" col="13" call-argexpr="&amp;ctx" call-argvaluetype="7" call-argvalue="0"/><function-call call-id="/workspaces/MIOpen/src/md5.cpp:228:13" call-funcname="MD5_Update" call-argnr="1" file="/workspaces/MIOpen/src/md5.cpp" line="314" col="15" call-argexpr="&amp;ctx" call-argvaluetype="7" call-argvalue="0"/><function-call call-id="/workspaces/MIOpen/src/md5.cpp:272:13" call-funcname="MD5_Final" call-argnr="2" file="/workspaces/MIOpen/src/md5.cpp" line="315" col="14" call-argexpr="&amp;ctx" call-argvaluetype="7" call-argvalue="0"/><function-call call-id="/workspaces/MIOpen/src/md5.cpp:228:13" call-funcname="MD5_Update" call-argnr="2" file="/workspaces/MIOpen/src/md5.cpp" line="314" col="5" my-id="/workspaces/MIOpen/src/md5.cpp:308:13" my-argnr="1"/>
+  </FileInfo>
+  <FileInfo check="Bounds checking">
+    <array-index>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/md5.cpp:272:13" my-argnr="1" my-argname="result" file="/workspaces/MIOpen/src/md5.cpp" line="298" col="5" value="0"/>
+    </array-index>
+  </FileInfo>
+  <FileInfo check="Class">
+<class name="MD5_CTX" file="/workspaces/MIOpen/src/md5.cpp" line="51" col="1" hash="11740317907552103986"/>
+  </FileInfo>
+  <FileInfo check="Null pointer">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/md5.cpp:111:20" my-argnr="1" my-argname="ctx" file="/workspaces/MIOpen/src/md5.cpp" line="118" col="9" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/md5.cpp:217:13" my-argnr="1" my-argname="ctx" file="/workspaces/MIOpen/src/md5.cpp" line="219" col="5" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/md5.cpp:228:13" my-argnr="1" my-argname="ctx" file="/workspaces/MIOpen/src/md5.cpp" line="233" col="16" value="0"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/md5.cpp:111:20" my-argnr="1" my-argname="ctx" file="/workspaces/MIOpen/src/md5.cpp" line="118" col="9" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/md5.cpp:228:13" my-argnr="1" my-argname="ctx" file="/workspaces/MIOpen/src/md5.cpp" line="233" col="16" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/md5.cpp:272:13" my-argnr="2" my-argname="ctx" file="/workspaces/MIOpen/src/md5.cpp" line="276" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/md5.hpp:9:13" my-argnr="1" my-argname="s" file="/workspaces/MIOpen/src/md5.cpp" line="325" col="52" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/md5.hpp:10:13" my-argnr="1" my-argname="v" file="/workspaces/MIOpen/src/md5.cpp" line="327" col="58" value="0"/>
+  </FileInfo>
+        <error id="unusedStructMember" severity="style" msg="struct member &apos;MD5_CTX::block&apos; is never used." verbose="struct member &apos;MD5_CTX::block&apos; is never used." cwe="563" file0="/workspaces/MIOpen/src/md5.cpp">
+            <location file="/workspaces/MIOpen/src/md5.cpp" line="56" column="14"/>
+            <symbol>MD5_CTX::block</symbol>
+        </error>
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/md5.cpp:217:13" call-funcname="MD5_Init" call-argnr="1" file="/workspaces/MIOpen/src/md5.cpp" line="313" col="13" call-argexpr="&amp;ctx" call-argvaluetype="7" call-argvalue="0"/><function-call call-id="/workspaces/MIOpen/src/md5.cpp:228:13" call-funcname="MD5_Update" call-argnr="1" file="/workspaces/MIOpen/src/md5.cpp" line="314" col="15" call-argexpr="&amp;ctx" call-argvaluetype="7" call-argvalue="0"/><function-call call-id="/workspaces/MIOpen/src/md5.cpp:272:13" call-funcname="MD5_Final" call-argnr="2" file="/workspaces/MIOpen/src/md5.cpp" line="315" col="14" call-argexpr="&amp;ctx" call-argvaluetype="7" call-argvalue="0"/><function-call call-id="/workspaces/MIOpen/src/md5.cpp:228:13" call-funcname="MD5_Update" call-argnr="2" file="/workspaces/MIOpen/src/md5.cpp" line="314" col="5" my-id="/workspaces/MIOpen/src/md5.cpp:308:13" my-argnr="1"/>
+  </FileInfo>
+  <FileInfo check="Bounds checking">
+    <array-index>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/md5.cpp:272:13" my-argnr="1" my-argname="result" file="/workspaces/MIOpen/src/md5.cpp" line="298" col="5" value="0"/>
+    </array-index>
+  </FileInfo>
+  <FileInfo check="Class">
+<class name="MD5_CTX" file="/workspaces/MIOpen/src/md5.cpp" line="51" col="1" hash="11740317907552103986"/>
+  </FileInfo>
+  <FileInfo check="Null pointer">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/md5.cpp:111:20" my-argnr="1" my-argname="ctx" file="/workspaces/MIOpen/src/md5.cpp" line="118" col="9" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/md5.cpp:217:13" my-argnr="1" my-argname="ctx" file="/workspaces/MIOpen/src/md5.cpp" line="219" col="5" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/md5.cpp:228:13" my-argnr="1" my-argname="ctx" file="/workspaces/MIOpen/src/md5.cpp" line="233" col="16" value="0"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/md5.cpp:111:20" my-argnr="1" my-argname="ctx" file="/workspaces/MIOpen/src/md5.cpp" line="118" col="9" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/md5.cpp:228:13" my-argnr="1" my-argname="ctx" file="/workspaces/MIOpen/src/md5.cpp" line="233" col="16" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/md5.cpp:272:13" my-argnr="2" my-argname="ctx" file="/workspaces/MIOpen/src/md5.cpp" line="276" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/md5.hpp:9:13" my-argnr="1" my-argname="s" file="/workspaces/MIOpen/src/md5.cpp" line="325" col="52" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/include/miopen/md5.hpp:10:13" my-argnr="1" my-argname="v" file="/workspaces/MIOpen/src/md5.cpp" line="327" col="58" value="0"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="body" lineNumber="111"/>
+    <functiondecl functionName="MD5_Init" lineNumber="217"/>
+    <functiondecl functionName="MD5_Update" lineNumber="228"/>
+    <functiondecl functionName="MD5_Final" lineNumber="272"/>
+    <functiondecl functionName="md5" lineNumber="308"/>
+    <functiondecl functionName="md5" lineNumber="325"/>
+    <functiondecl functionName="md5" lineNumber="327"/>
+    <functiondecl functionName="body" lineNumber="111"/>
+    <functiondecl functionName="MD5_Init" lineNumber="217"/>
+    <functiondecl functionName="MD5_Update" lineNumber="228"/>
+    <functiondecl functionName="MD5_Final" lineNumber="272"/>
+    <functiondecl functionName="md5" lineNumber="308"/>
+    <functiondecl functionName="md5" lineNumber="325"/>
+    <functiondecl functionName="md5" lineNumber="327"/>
+    <functioncall functionName="MD5_Final"/>
+    <functioncall functionName="MD5_Init"/>
+    <functioncall functionName="MD5_Update"/>
+    <functioncall functionName="a"/>
+    <functioncall functionName="available"/>
+    <functioncall functionName="b"/>
+    <functioncall functionName="body"/>
+    <functioncall functionName="buffer"/>
+    <functioncall functionName="c"/>
+    <functioncall functionName="char"/>
+    <functioncall functionName="const"/>
+    <functioncall functionName="ctx"/>
+    <functioncall functionName="d"/>
+    <functioncall functionName="data"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="hi"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="length"/>
+    <functioncall functionName="lo"/>
+    <functioncall functionName="md5"/>
+    <functioncall functionName="memcpy"/>
+    <functioncall functionName="memset"/>
+    <functioncall functionName="reinterpret_cast"/>
+    <functioncall functionName="result"/>
+    <functioncall functionName="return"/>
+    <functioncall functionName="setfill"/>
+    <functioncall functionName="setw"/>
+    <functioncall functionName="size"/>
+    <functioncall functionName="sizeof"/>
+    <functioncall functionName="static_cast"/>
+    <functioncall functionName="str"/>
+    <functioncall functionName="uint32_t"/>
+    <functioncall functionName="used"/>
+    <functioncall functionName="while"/>
+  </FileInfo>
+</analyzerinfo>

@@ -1,0 +1,111 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="6556553206995916352">
+  <FileInfo check="Null pointer">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_multi_index_transform.hpp:215:47" my-argnr="1" my-argname="idx_up" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_multi_index_transform.hpp" line="219" col="24" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_multi_index_transform.hpp:239:5" my-argnr="1" my-argname="idx_up_diff" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_multi_index_transform.hpp" line="243" col="12" value="0"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_multi_index_transform.hpp:215:47" my-argnr="1" my-argname="idx_up" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_multi_index_transform.hpp" line="219" col="24" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_multi_index_transform.hpp:239:5" my-argnr="1" my-argname="idx_up_diff" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_multi_index_transform.hpp" line="243" col="12" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_multi_index_transform.hpp:375:5" my-argnr="1" my-argname="idx_up_diff" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_multi_index_transform.hpp" line="379" col="36" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_multi_index_transform.hpp:512:47" my-argnr="1" my-argname="idx_up" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_multi_index_transform.hpp" line="514" col="29" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_multi_index_transform.hpp:518:5" my-argnr="1" my-argname="idx_up_diff" file="/workspaces/MIOpen/src/kernels/static_composable_kernel/include/tensor_description/static_kernel_multi_index_transform.hpp" line="522" col="29" value="0"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="GetNumOfLowerDimension" lineNumber="23"/>
+    <functiondecl functionName="GetNumOfUpperDimension" lineNumber="25"/>
+    <functiondecl functionName="GetUpperLengths" lineNumber="27"/>
+    <functiondecl functionName="CalculateLowerIndex" lineNumber="29"/>
+    <functiondecl functionName="CalculateLowerIndexDiff" lineNumber="35"/>
+    <functiondecl functionName="IsLinearTransform" lineNumber="42"/>
+    <functiondecl functionName="IsValidUpperIndexAlwaysMappedToValidLowerIndex" lineNumber="44"/>
+    <functiondecl functionName="GetNumOfLowerDimension" lineNumber="72"/>
+    <functiondecl functionName="GetNumOfUpperDimension" lineNumber="74"/>
+    <functiondecl functionName="GetUpperLengths" lineNumber="76"/>
+    <functiondecl functionName="CalculateLowerIndex" lineNumber="81"/>
+    <functiondecl functionName="CalculateLowerIndexDiff" lineNumber="87"/>
+    <functiondecl functionName="IsLinearTransform" lineNumber="94"/>
+    <functiondecl functionName="IsValidUpperIndexAlwaysMappedToValidLowerIndex" lineNumber="96"/>
+    <functiondecl functionName="GetNumOfLowerDimension" lineNumber="143"/>
+    <functiondecl functionName="GetNumOfUpperDimension" lineNumber="145"/>
+    <functiondecl functionName="GetUpperLengths" lineNumber="147"/>
+    <functiondecl functionName="CalculateLowerIndex" lineNumber="152"/>
+    <functiondecl functionName="CalculateLowerIndexDiff" lineNumber="158"/>
+    <functiondecl functionName="IsLinearTransform" lineNumber="165"/>
+    <functiondecl functionName="IsValidUpperIndexAlwaysMappedToValidLowerIndex" lineNumber="167"/>
+    <functiondecl functionName="GetNumOfLowerDimension" lineNumber="183"/>
+    <functiondecl functionName="GetNumOfUpperDimension" lineNumber="185"/>
+    <functiondecl functionName="GetUpperLengths" lineNumber="187"/>
+    <functiondecl functionName="CalculateLowerIndex" lineNumber="215"/>
+    <functiondecl functionName="CalculateLowerIndexDiff" lineNumber="239"/>
+    <functiondecl functionName="IsLinearTransform" lineNumber="335"/>
+    <functiondecl functionName="IsValidUpperIndexAlwaysMappedToValidLowerIndex" lineNumber="337"/>
+    <functiondecl functionName="GetNumOfLowerDimension" lineNumber="353"/>
+    <functiondecl functionName="GetNumOfUpperDimension" lineNumber="355"/>
+    <functiondecl functionName="GetUpperLengths" lineNumber="357"/>
+    <functiondecl functionName="CalculateLowerIndex" lineNumber="359"/>
+    <functiondecl functionName="CalculateLowerIndexDiff" lineNumber="375"/>
+    <functiondecl functionName="IsLinearTransform" lineNumber="382"/>
+    <functiondecl functionName="IsValidUpperIndexAlwaysMappedToValidLowerIndex" lineNumber="384"/>
+    <functiondecl functionName="GetNumOfUpperDimension" lineNumber="414"/>
+    <functiondecl functionName="GetNumOfLowerDimension" lineNumber="416"/>
+    <functiondecl functionName="GetUpperLengths" lineNumber="418"/>
+    <functiondecl functionName="CalculateLowerIndex" lineNumber="420"/>
+    <functiondecl functionName="CalculateLowerIndexDiff" lineNumber="433"/>
+    <functiondecl functionName="IsLinearTransform" lineNumber="447"/>
+    <functiondecl functionName="IsValidUpperIndexAlwaysMappedToValidLowerIndex" lineNumber="449"/>
+    <functiondecl functionName="GetNumOfLowerDimension" lineNumber="503"/>
+    <functiondecl functionName="GetNumOfUpperDimension" lineNumber="505"/>
+    <functiondecl functionName="GetUpperLengths" lineNumber="507"/>
+    <functiondecl functionName="CalculateLowerIndex" lineNumber="512"/>
+    <functiondecl functionName="CalculateLowerIndexDiff" lineNumber="518"/>
+    <functiondecl functionName="IsLinearTransform" lineNumber="525"/>
+    <functiondecl functionName="IsValidUpperIndexAlwaysMappedToValidLowerIndex" lineNumber="527"/>
+    <functioncall functionName="At"/>
+    <functioncall functionName="CalculateLowerIndex"/>
+    <functioncall functionName="GetSize"/>
+    <functioncall functionName="Length"/>
+    <functioncall functionName="LowerLength"/>
+    <functioncall functionName="MultiIndex"/>
+    <functioncall functionName="N"/>
+    <functioncall functionName="PopFront"/>
+    <functioncall functionName="PushBack"/>
+    <functioncall functionName="Size"/>
+    <functioncall functionName="SkipIsValidCheck"/>
+    <functioncall functionName="VectorSize"/>
+    <functioncall functionName="Xs"/>
+    <functioncall functionName="borrow"/>
+    <functioncall functionName="carry"/>
+    <functioncall functionName="decltype"/>
+    <functioncall functionName="false"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="i"/>
+    <functioncall functionName="icorner"/>
+    <functioncall functionName="idim"/>
+    <functioncall functionName="idx_low"/>
+    <functioncall functionName="idx_low_"/>
+    <functioncall functionName="idx_low_diff"/>
+    <functioncall functionName="idx_low_diff_tmp"/>
+    <functioncall functionName="idx_low_new"/>
+    <functioncall functionName="idx_low_old"/>
+    <functioncall functionName="idx_up"/>
+    <functioncall functionName="idx_up_diff"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="index_t"/>
+    <functioncall functionName="itmp"/>
+    <functioncall functionName="itmp_"/>
+    <functioncall functionName="lambda_CalculateLowerIndex"/>
+    <functioncall functionName="make_zero_array"/>
+    <functioncall functionName="nDim"/>
+    <functioncall functionName="nDimLow"/>
+    <functioncall functionName="nDimUp"/>
+    <functioncall functionName="pseudo_low_strides"/>
+    <functioncall functionName="reduce_on_sequence"/>
+    <functioncall functionName="reverse_inclusive_scan_sequence"/>
+    <functioncall functionName="sizeof..."/>
+    <functioncall functionName="static_assert"/>
+    <functioncall functionName="stride"/>
+    <functioncall functionName="true"/>
+    <functioncall functionName="typename"/>
+  </FileInfo>
+</analyzerinfo>

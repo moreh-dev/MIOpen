@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="224184591861865910">
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/activation_functions.h:20:6" call-funcname="ActivationFunction_PassThru" call-argnr="2" file="/workspaces/MIOpen/src/kernels/activation_functions.h" line="206" col="9" my-id="/workspaces/MIOpen/src/kernels/activation_functions.h:197:6" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/activation_functions.h:20:6" call-funcname="ActivationFunction_PassThru" call-argnr="3" file="/workspaces/MIOpen/src/kernels/activation_functions.h" line="206" col="9" my-id="/workspaces/MIOpen/src/kernels/activation_functions.h:197:6" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/activation_functions.h:251:6" call-funcname="ActivationFunction_PassThru_Diff" call-argnr="2" file="/workspaces/MIOpen/src/kernels/activation_functions.h" line="437" col="9" my-id="/workspaces/MIOpen/src/kernels/activation_functions.h:425:6" my-argnr="2"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/activation_functions.h:251:6" call-funcname="ActivationFunction_PassThru_Diff" call-argnr="3" file="/workspaces/MIOpen/src/kernels/activation_functions.h" line="437" col="9" my-id="/workspaces/MIOpen/src/kernels/activation_functions.h:425:6" my-argnr="3"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/activation_functions.h:251:6" call-funcname="ActivationFunction_PassThru_Diff" call-argnr="4" file="/workspaces/MIOpen/src/kernels/activation_functions.h" line="437" col="9" my-id="/workspaces/MIOpen/src/kernels/activation_functions.h:425:6" my-argnr="4"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/activation_functions.h:251:6" call-funcname="ActivationFunction_PassThru_Diff" call-argnr="5" file="/workspaces/MIOpen/src/kernels/activation_functions.h" line="437" col="9" my-id="/workspaces/MIOpen/src/kernels/activation_functions.h:425:6" my-argnr="5"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="ActivationFunction_PassThru" lineNumber="20"/>
+    <functiondecl functionName="ActivationFunction_ReLU" lineNumber="33"/>
+    <functiondecl functionName="ActivationFunction_Sigmoid" lineNumber="46"/>
+    <functiondecl functionName="ActivationFunction_TanH" lineNumber="60"/>
+    <functiondecl functionName="ActivationFunction_Abs" lineNumber="74"/>
+    <functiondecl functionName="ActivationFunction_Square" lineNumber="87"/>
+    <functiondecl functionName="ActivationFunction_Sqrt" lineNumber="101"/>
+    <functiondecl functionName="ActivationFunction_Linear" lineNumber="115"/>
+    <functiondecl functionName="ActivationFunction_Power" lineNumber="128"/>
+    <functiondecl functionName="ActivationFunction_BNLL" lineNumber="143"/>
+    <functiondecl functionName="ActivationFunction_Leaky_ReLU" lineNumber="158"/>
+    <functiondecl functionName="ActivationFunction_Clipped_ReLU" lineNumber="171"/>
+    <functiondecl functionName="ActivationFunction_ELU" lineNumber="184"/>
+    <functiondecl functionName="ActivationFunction" lineNumber="197"/>
+    <functiondecl functionName="ActivationFunction_PassThru_Diff" lineNumber="251"/>
+    <functiondecl functionName="ActivationFunction_ReLU_Diff" lineNumber="267"/>
+    <functiondecl functionName="ActivationFunction_TanH_Diff" lineNumber="283"/>
+    <functiondecl functionName="ActivationFunction_Sigmoid_Diff" lineNumber="303"/>
+    <functiondecl functionName="ActivationFunction_Abs_Diff" lineNumber="321"/>
+    <functiondecl functionName="ActivationFunction_Power_Diff" lineNumber="339"/>
+    <functiondecl functionName="ActivationFunction_BNLL_Diff" lineNumber="357"/>
+    <functiondecl functionName="ActivationFunction_Leaky_ReLU_Diff" lineNumber="376"/>
+    <functiondecl functionName="ActivationFunction_Clipped_ReLU_Diff" lineNumber="392"/>
+    <functiondecl functionName="ActivationFunction_ELU_Diff" lineNumber="409"/>
+    <functiondecl functionName="ActivationFunction_Diff" lineNumber="425"/>
+    <functioncall functionName="ActivationFunction_PassThru"/>
+    <functioncall functionName="ActivationFunction_PassThru_Diff"/>
+    <functioncall functionName="_FLOAT"/>
+    <functioncall functionName="_FLOAT_PREC"/>
+    <functioncall functionName="alpha"/>
+    <functioncall functionName="arg"/>
+    <functioncall functionName="beta"/>
+    <functioncall functionName="bot_data"/>
+    <functioncall functionName="bot_diff"/>
+    <functioncall functionName="data"/>
+    <functioncall functionName="diff_scale"/>
+    <functioncall functionName="exp"/>
+    <functioncall functionName="fabs"/>
+    <functioncall functionName="fmax"/>
+    <functioncall functionName="fmin"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="gamma"/>
+    <functioncall functionName="i"/>
+    <functioncall functionName="kBNLL_THRESHOLD"/>
+    <functioncall functionName="log"/>
+    <functioncall functionName="n"/>
+    <functioncall functionName="pow"/>
+    <functioncall functionName="res"/>
+    <functioncall functionName="sigmoid_x"/>
+    <functioncall functionName="sqrt"/>
+    <functioncall functionName="tanh"/>
+    <functioncall functionName="top_data"/>
+    <functioncall functionName="top_diff"/>
+  </FileInfo>
+</analyzerinfo>

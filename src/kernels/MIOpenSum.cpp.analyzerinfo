@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="3703331279225183719">
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/bfloat16_dev.hpp:65:28" call-funcname="float_to_bfloat16" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenSum.cpp" line="74" col="14" call-argexpr="sum" call-argvaluetype="0" call-argvalue="0">
+  <path file="/workspaces/MIOpen/src/kernels/MIOpenSum.cpp" line="62" col="47" info="Assignment &apos;sum=static_cast&lt;FLOAT_ACCUM&gt;(0)&apos;, assigned value is 0"/>
+  <path file="/workspaces/MIOpen/src/kernels/MIOpenSum.cpp" line="63" col="37" info="Assuming condition is false"/>
+</function-call><function-call call-id="/workspaces/MIOpen/src/kernels/bfloat16_dev.hpp:65:28" call-funcname="float_to_bfloat16" call-argnr="1" file="/workspaces/MIOpen/src/kernels/MIOpenSum.cpp" line="102" col="14" call-argexpr="sum" call-argvaluetype="0" call-argvalue="0">
+  <path file="/workspaces/MIOpen/src/kernels/MIOpenSum.cpp" line="90" col="47" info="Assignment &apos;sum=static_cast&lt;FLOAT_ACCUM&gt;(0)&apos;, assigned value is 0"/>
+  <path file="/workspaces/MIOpen/src/kernels/MIOpenSum.cpp" line="91" col="27" info="Assuming condition is false"/>
+</function-call>  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="CVT_ACCUM2FLOAT"/>
+    <functioncall functionName="CVT_FLOAT2ACCUM"/>
+    <functioncall functionName="FLOAT_ACCUM"/>
+    <functioncall functionName="_Float16"/>
+    <functioncall functionName="bfloat16_to_float"/>
+    <functioncall functionName="f32"/>
+    <functioncall functionName="float"/>
+    <functioncall functionName="float_to_bfloat16"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="gid"/>
+    <functioncall functionName="half"/>
+    <functioncall functionName="hi"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="inner_size"/>
+    <functioncall functionName="input_idx"/>
+    <functioncall functionName="isnan"/>
+    <functioncall functionName="make_ushort2"/>
+    <functioncall functionName="n"/>
+    <functioncall functionName="parallel_id"/>
+    <functioncall functionName="return"/>
+    <functioncall functionName="slice_local_id"/>
+    <functioncall functionName="src_val"/>
+    <functioncall functionName="static_cast"/>
+    <functioncall functionName="sum"/>
+    <functioncall functionName="ushort2"/>
+    <functioncall functionName="val"/>
+    <functioncall functionName="x"/>
+  </FileInfo>
+</analyzerinfo>

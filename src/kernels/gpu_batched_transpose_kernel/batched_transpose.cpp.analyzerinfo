@@ -1,0 +1,330 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="5331951874140972977">
+        <error id="invalidPointerCast" severity="portability" msg="Casting from const float * to const unsigned int * is not portable due to different binary data representations on different platforms." verbose="Casting from const float * to const unsigned int * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="61" column="25"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from const float * to const unsigned int * is not portable due to different binary data representations on different platforms." verbose="Casting from const float * to const unsigned int * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="63" column="25"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between unsigned int * and float * which have an incompatible binary data representation." verbose="Casting between unsigned int * and float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="66" column="10"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from const float * to const unsigned int * is not portable due to different binary data representations on different platforms." verbose="Casting from const float * to const unsigned int * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="78" column="25"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from const float * to const unsigned int * is not portable due to different binary data representations on different platforms." verbose="Casting from const float * to const unsigned int * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="80" column="25"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between unsigned int * and float * which have an incompatible binary data representation." verbose="Casting between unsigned int * and float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="83" column="10"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from const float * to const unsigned int * is not portable due to different binary data representations on different platforms." verbose="Casting from const float * to const unsigned int * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="97" column="26"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from const float * to const unsigned int * is not portable due to different binary data representations on different platforms." verbose="Casting from const float * to const unsigned int * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="99" column="26"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between unsigned int * and float * which have an incompatible binary data representation." verbose="Casting between unsigned int * and float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="103" column="11"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between unsigned int * and float * which have an incompatible binary data representation." verbose="Casting between unsigned int * and float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="105" column="11"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from const float * to const unsigned int * is not portable due to different binary data representations on different platforms." verbose="Casting from const float * to const unsigned int * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="113" column="26"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between unsigned int * and float * which have an incompatible binary data representation." verbose="Casting between unsigned int * and float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="117" column="11"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between unsigned int * and float * which have an incompatible binary data representation." verbose="Casting between unsigned int * and float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="119" column="11"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting from const float * to const unsigned int * is not portable due to different binary data representations on different platforms." verbose="Casting from const float * to const unsigned int * is not portable due to different binary data representations on different platforms." cwe="704" file0="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="126" column="26"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between unsigned int * and float * which have an incompatible binary data representation." verbose="Casting between unsigned int * and float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="130" column="11"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between unsigned int * and float * which have an incompatible binary data representation." verbose="Casting between unsigned int * and float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="132" column="11"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between unsigned int * and float * which have an incompatible binary data representation." verbose="Casting between unsigned int * and float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="145" column="11"/>
+        </error>
+        <error id="invalidPointerCast" severity="portability" msg="Casting between unsigned int * and float * which have an incompatible binary data representation." verbose="Casting between unsigned int * and float * which have an incompatible binary data representation." cwe="704" file0="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="147" column="11"/>
+        </error>
+        <error id="constParameter" severity="style" msg="Parameter &apos;src&apos; can be declared as pointer to const" verbose="Parameter &apos;src&apos; can be declared as pointer to const" cwe="398" file0="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="2314" column="50" info="Parameter &apos;src&apos; can be declared as pointer to const"/>
+            <symbol>src</symbol>
+        </error>
+        <error id="constParameter" severity="style" msg="Parameter &apos;src&apos; can be declared as pointer to const" verbose="Parameter &apos;src&apos; can be declared as pointer to const" cwe="398" file0="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="2269" column="50" info="Parameter &apos;src&apos; can be declared as pointer to const"/>
+            <symbol>src</symbol>
+        </error>
+        <error id="constParameter" severity="style" msg="Parameter &apos;src&apos; can be declared as pointer to const" verbose="Parameter &apos;src&apos; can be declared as pointer to const" cwe="398" file0="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="2216" column="51" info="Parameter &apos;src&apos; can be declared as pointer to const"/>
+            <symbol>src</symbol>
+        </error>
+        <error id="constParameter" severity="style" msg="Parameter &apos;src&apos; can be declared as pointer to const" verbose="Parameter &apos;src&apos; can be declared as pointer to const" cwe="398" file0="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="2163" column="51" info="Parameter &apos;src&apos; can be declared as pointer to const"/>
+            <symbol>src</symbol>
+        </error>
+        <error id="constParameter" severity="style" msg="Parameter &apos;src&apos; can be declared as pointer to const" verbose="Parameter &apos;src&apos; can be declared as pointer to const" cwe="398" file0="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="2094" column="51" info="Parameter &apos;src&apos; can be declared as pointer to const"/>
+            <symbol>src</symbol>
+        </error>
+        <error id="constParameter" severity="style" msg="Parameter &apos;src&apos; can be declared as pointer to const" verbose="Parameter &apos;src&apos; can be declared as pointer to const" cwe="398" file0="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="2025" column="51" info="Parameter &apos;src&apos; can be declared as pointer to const"/>
+            <symbol>src</symbol>
+        </error>
+        <error id="constParameter" severity="style" msg="Parameter &apos;src&apos; can be declared as pointer to const" verbose="Parameter &apos;src&apos; can be declared as pointer to const" cwe="398" file0="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="415" column="51" info="Parameter &apos;src&apos; can be declared as pointer to const"/>
+            <symbol>src</symbol>
+        </error>
+        <error id="constParameter" severity="style" msg="Parameter &apos;src&apos; can be declared as pointer to const" verbose="Parameter &apos;src&apos; can be declared as pointer to const" cwe="398" file0="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="342" column="51" info="Parameter &apos;src&apos; can be declared as pointer to const"/>
+            <symbol>src</symbol>
+        </error>
+        <error id="constParameter" severity="style" msg="Parameter &apos;src&apos; can be declared as pointer to const" verbose="Parameter &apos;src&apos; can be declared as pointer to const" cwe="398" file0="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="269" column="51" info="Parameter &apos;src&apos; can be declared as pointer to const"/>
+            <symbol>src</symbol>
+        </error>
+        <error id="constParameter" severity="style" msg="Parameter &apos;src&apos; can be declared as pointer to const" verbose="Parameter &apos;src&apos; can be declared as pointer to const" cwe="398" file0="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="211" column="51" info="Parameter &apos;src&apos; can be declared as pointer to const"/>
+            <symbol>src</symbol>
+        </error>
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp:87:24" call-funcname="v_pack_b32_f16_2x2" call-argnr="1" file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="557" col="31" call-argexpr="v_a_pack" call-argvaluetype="4" call-argvalue="0"/><function-call call-id="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp:87:24" call-funcname="v_pack_b32_f16_2x2" call-argnr="2" file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="557" col="31" call-argexpr="v_b_pack" call-argvaluetype="4" call-argvalue="0"/>  </FileInfo>
+  <FileInfo check="Class">
+<class name="mapped_vector_type" file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="151" col="1" hash="4091713778554203551"/>
+<class name="mapped_vector_type &lt; float , 4 &gt;" file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="156" col="1" hash="1519194832901462980"/>
+<class name="mapped_vector_type &lt; float , 2 &gt;" file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="162" col="1" hash="9258020972604848990"/>
+<class name="mapped_vector_type &lt; float , 1 &gt;" file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="168" col="1" hash="15922157182536237990"/>
+<class name="mapped_vector_type &lt; ushort , 4 &gt;" file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="174" col="1" hash="17180700492942245410"/>
+<class name="mapped_vector_type &lt; ushort , 2 &gt;" file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="180" col="1" hash="12064689642786538210"/>
+<class name="mapped_vector_type &lt; ushort , 1 &gt;" file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="186" col="1" hash="4422327882492109063"/>
+<class name="mapped_vector_type &lt; uchar , 4 &gt;" file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="192" col="1" hash="12746145306329708959"/>
+<class name="mapped_vector_type &lt; uchar , 2 &gt;" file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="198" col="1" hash="12688260015593860063"/>
+<class name="mapped_vector_type &lt; uchar , 1 &gt;" file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="204" col="1" hash="13631455124024305749"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp:45:28" my-argnr="3" my-argname="shift" file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="50" col="29" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp:122:24" my-argnr="4" my-argname="x1_lo" file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="127" col="42" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp:122:24" my-argnr="5" my-argname="x1_hi" file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="128" col="54" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp:135:24" my-argnr="5" my-argname="x1_lo" file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="142" col="28" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp:135:24" my-argnr="6" my-argname="x1_hi" file="/workspaces/MIOpen/src/kernels/gpu_batched_transpose_kernel/batched_transpose.cpp" line="143" col="28" value="0"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="magic_div_u32" lineNumber="45"/>
+    <functiondecl functionName="v_pack_b32_f16_00" lineNumber="53"/>
+    <functiondecl functionName="v_pack_b32_f16_11" lineNumber="70"/>
+    <functiondecl functionName="v_pack_b32_f16_2x2" lineNumber="87"/>
+    <functiondecl functionName="v_pack_b32_f16_2x2_half_x0" lineNumber="109"/>
+    <functiondecl functionName="v_pack_b32_f16_2x2_half_x1" lineNumber="122"/>
+    <functiondecl functionName="v_pack_b32_f16_2x2_half_x0_half_x1" lineNumber="135"/>
+    <functiondecl functionName="batched_transpose_32x32_pack_2x2_ediv_2x2 &lt; ushort &gt;" lineNumber="513"/>
+    <functiondecl functionName="batched_transpose_32x32_pack_2x2_ediv_1x2 &lt; ushort &gt;" lineNumber="598"/>
+    <functiondecl functionName="batched_transpose_32x32_pack_2x2_ediv_2x1 &lt; ushort &gt;" lineNumber="694"/>
+    <functiondecl functionName="batched_transpose_32x32_pack_2x2_ediv_1x1 &lt; ushort &gt;" lineNumber="794"/>
+    <functiondecl functionName="batched_transpose_64x32_pack_4x2_ediv_4x2 &lt; ushort &gt;" lineNumber="912"/>
+    <functiondecl functionName="batched_transpose_64x32_pack_4x2_ediv_2x2 &lt; ushort &gt;" lineNumber="1032"/>
+    <functiondecl functionName="batched_transpose_64x32_pack_4x2_ediv_2x1 &lt; ushort &gt;" lineNumber="1133"/>
+    <functiondecl functionName="batched_transpose_32x64_pack_2x4_ediv_2x4 &lt; ushort &gt;" lineNumber="1253"/>
+    <functiondecl functionName="batched_transpose_32x64_pack_2x4_ediv_2x2 &lt; ushort &gt;" lineNumber="1379"/>
+    <functiondecl functionName="batched_transpose_32x64_pack_2x4_ediv_1x2 &lt; ushort &gt;" lineNumber="1476"/>
+    <functiondecl functionName="batched_transpose_16x64_pack_1x4_ediv_1x2 &lt; ushort &gt;" lineNumber="1598"/>
+    <functiondecl functionName="batched_transpose_64x16_pack_4x1_ediv_2x1 &lt; ushort &gt;" lineNumber="1706"/>
+    <functiondecl functionName="batched_transpose_64x64_pack_4x4_ediv_4x4 &lt; ushort &gt;" lineNumber="1801"/>
+    <functiondecl functionName="batched_transpose_64x64_pack_4x4_ediv_2x2 &lt; ushort &gt;" lineNumber="1907"/>
+    <functiondecl functionName="batched_transpose_64x4 &lt; float &gt;" lineNumber="2313"/>
+    <functiondecl functionName="batched_transpose_64x4 &lt; ushort &gt;" lineNumber="2313"/>
+    <functiondecl functionName="batched_transpose_64x4 &lt; uchar &gt;" lineNumber="2313"/>
+    <functiondecl functionName="batched_transpose_4x64 &lt; float &gt;" lineNumber="2268"/>
+    <functiondecl functionName="batched_transpose_4x64 &lt; ushort &gt;" lineNumber="2268"/>
+    <functiondecl functionName="batched_transpose_4x64 &lt; uchar &gt;" lineNumber="2268"/>
+    <functiondecl functionName="batched_transpose_128x4 &lt; float &gt;" lineNumber="2215"/>
+    <functiondecl functionName="batched_transpose_128x4 &lt; ushort &gt;" lineNumber="2215"/>
+    <functiondecl functionName="batched_transpose_128x4 &lt; uchar &gt;" lineNumber="2215"/>
+    <functiondecl functionName="batched_transpose_4x128 &lt; float &gt;" lineNumber="2162"/>
+    <functiondecl functionName="batched_transpose_4x128 &lt; ushort &gt;" lineNumber="2162"/>
+    <functiondecl functionName="batched_transpose_4x128 &lt; uchar &gt;" lineNumber="2162"/>
+    <functiondecl functionName="batched_transpose_256x4 &lt; float &gt;" lineNumber="2093"/>
+    <functiondecl functionName="batched_transpose_256x4 &lt; ushort &gt;" lineNumber="2093"/>
+    <functiondecl functionName="batched_transpose_256x4 &lt; uchar &gt;" lineNumber="2093"/>
+    <functiondecl functionName="batched_transpose_4x256 &lt; float &gt;" lineNumber="2024"/>
+    <functiondecl functionName="batched_transpose_4x256 &lt; ushort &gt;" lineNumber="2024"/>
+    <functiondecl functionName="batched_transpose_4x256 &lt; uchar &gt;" lineNumber="2024"/>
+    <functiondecl functionName="batched_transpose_32x32 &lt; float &gt;" lineNumber="414"/>
+    <functiondecl functionName="batched_transpose_32x32 &lt; ushort &gt;" lineNumber="414"/>
+    <functiondecl functionName="batched_transpose_32x32 &lt; uchar &gt;" lineNumber="414"/>
+    <functiondecl functionName="batched_transpose_16x32 &lt; float &gt;" lineNumber="341"/>
+    <functiondecl functionName="batched_transpose_16x32 &lt; ushort &gt;" lineNumber="341"/>
+    <functiondecl functionName="batched_transpose_16x32 &lt; uchar &gt;" lineNumber="341"/>
+    <functiondecl functionName="batched_transpose_32x16 &lt; float &gt;" lineNumber="268"/>
+    <functiondecl functionName="batched_transpose_32x16 &lt; ushort &gt;" lineNumber="268"/>
+    <functiondecl functionName="batched_transpose_32x16 &lt; uchar &gt;" lineNumber="268"/>
+    <functiondecl functionName="batched_transpose_16x16 &lt; float &gt;" lineNumber="210"/>
+    <functiondecl functionName="batched_transpose_16x16 &lt; ushort &gt;" lineNumber="210"/>
+    <functiondecl functionName="batched_transpose_16x16 &lt; uchar &gt;" lineNumber="210"/>
+    <functioncall functionName="__syncthreads"/>
+    <functioncall functionName="__umulhi"/>
+    <functioncall functionName="a"/>
+    <functioncall functionName="b"/>
+    <functioncall functionName="b0"/>
+    <functioncall functionName="b1"/>
+    <functioncall functionName="batched_transpose_128x4 &lt; float &gt;"/>
+    <functioncall functionName="batched_transpose_128x4 &lt; uchar &gt;"/>
+    <functioncall functionName="batched_transpose_128x4 &lt; ushort &gt;"/>
+    <functioncall functionName="batched_transpose_128x4_byte"/>
+    <functioncall functionName="batched_transpose_128x4_dword"/>
+    <functioncall functionName="batched_transpose_128x4_half"/>
+    <functioncall functionName="batched_transpose_16x16 &lt; float &gt;"/>
+    <functioncall functionName="batched_transpose_16x16 &lt; uchar &gt;"/>
+    <functioncall functionName="batched_transpose_16x16 &lt; ushort &gt;"/>
+    <functioncall functionName="batched_transpose_16x16_byte"/>
+    <functioncall functionName="batched_transpose_16x16_dword"/>
+    <functioncall functionName="batched_transpose_16x16_half"/>
+    <functioncall functionName="batched_transpose_16x32 &lt; float &gt;"/>
+    <functioncall functionName="batched_transpose_16x32 &lt; uchar &gt;"/>
+    <functioncall functionName="batched_transpose_16x32 &lt; ushort &gt;"/>
+    <functioncall functionName="batched_transpose_16x32_byte"/>
+    <functioncall functionName="batched_transpose_16x32_dword"/>
+    <functioncall functionName="batched_transpose_16x32_half"/>
+    <functioncall functionName="batched_transpose_16x64_pack_1x4_ediv_1x2 &lt; ushort &gt;"/>
+    <functioncall functionName="batched_transpose_16x64_pack_1x4_ediv_1x2_half"/>
+    <functioncall functionName="batched_transpose_256x4 &lt; float &gt;"/>
+    <functioncall functionName="batched_transpose_256x4 &lt; uchar &gt;"/>
+    <functioncall functionName="batched_transpose_256x4 &lt; ushort &gt;"/>
+    <functioncall functionName="batched_transpose_256x4_byte"/>
+    <functioncall functionName="batched_transpose_256x4_dword"/>
+    <functioncall functionName="batched_transpose_256x4_half"/>
+    <functioncall functionName="batched_transpose_32x16 &lt; float &gt;"/>
+    <functioncall functionName="batched_transpose_32x16 &lt; uchar &gt;"/>
+    <functioncall functionName="batched_transpose_32x16 &lt; ushort &gt;"/>
+    <functioncall functionName="batched_transpose_32x16_byte"/>
+    <functioncall functionName="batched_transpose_32x16_dword"/>
+    <functioncall functionName="batched_transpose_32x16_half"/>
+    <functioncall functionName="batched_transpose_32x32 &lt; float &gt;"/>
+    <functioncall functionName="batched_transpose_32x32 &lt; uchar &gt;"/>
+    <functioncall functionName="batched_transpose_32x32 &lt; ushort &gt;"/>
+    <functioncall functionName="batched_transpose_32x32_byte"/>
+    <functioncall functionName="batched_transpose_32x32_dword"/>
+    <functioncall functionName="batched_transpose_32x32_half"/>
+    <functioncall functionName="batched_transpose_32x32_pack_2x2_ediv_1x1 &lt; ushort &gt;"/>
+    <functioncall functionName="batched_transpose_32x32_pack_2x2_ediv_1x1_half"/>
+    <functioncall functionName="batched_transpose_32x32_pack_2x2_ediv_1x2 &lt; ushort &gt;"/>
+    <functioncall functionName="batched_transpose_32x32_pack_2x2_ediv_1x2_half"/>
+    <functioncall functionName="batched_transpose_32x32_pack_2x2_ediv_2x1 &lt; ushort &gt;"/>
+    <functioncall functionName="batched_transpose_32x32_pack_2x2_ediv_2x1_half"/>
+    <functioncall functionName="batched_transpose_32x32_pack_2x2_ediv_2x2 &lt; ushort &gt;"/>
+    <functioncall functionName="batched_transpose_32x32_pack_2x2_ediv_2x2_half"/>
+    <functioncall functionName="batched_transpose_32x64_pack_2x4_ediv_1x2 &lt; ushort &gt;"/>
+    <functioncall functionName="batched_transpose_32x64_pack_2x4_ediv_1x2_half"/>
+    <functioncall functionName="batched_transpose_32x64_pack_2x4_ediv_2x2 &lt; ushort &gt;"/>
+    <functioncall functionName="batched_transpose_32x64_pack_2x4_ediv_2x2_half"/>
+    <functioncall functionName="batched_transpose_32x64_pack_2x4_ediv_2x4 &lt; ushort &gt;"/>
+    <functioncall functionName="batched_transpose_32x64_pack_2x4_ediv_2x4_half"/>
+    <functioncall functionName="batched_transpose_4x128 &lt; float &gt;"/>
+    <functioncall functionName="batched_transpose_4x128 &lt; uchar &gt;"/>
+    <functioncall functionName="batched_transpose_4x128 &lt; ushort &gt;"/>
+    <functioncall functionName="batched_transpose_4x128_byte"/>
+    <functioncall functionName="batched_transpose_4x128_dword"/>
+    <functioncall functionName="batched_transpose_4x128_half"/>
+    <functioncall functionName="batched_transpose_4x256 &lt; float &gt;"/>
+    <functioncall functionName="batched_transpose_4x256 &lt; uchar &gt;"/>
+    <functioncall functionName="batched_transpose_4x256 &lt; ushort &gt;"/>
+    <functioncall functionName="batched_transpose_4x256_byte"/>
+    <functioncall functionName="batched_transpose_4x256_dword"/>
+    <functioncall functionName="batched_transpose_4x256_half"/>
+    <functioncall functionName="batched_transpose_4x64 &lt; float &gt;"/>
+    <functioncall functionName="batched_transpose_4x64 &lt; uchar &gt;"/>
+    <functioncall functionName="batched_transpose_4x64 &lt; ushort &gt;"/>
+    <functioncall functionName="batched_transpose_4x64_byte"/>
+    <functioncall functionName="batched_transpose_4x64_dword"/>
+    <functioncall functionName="batched_transpose_4x64_half"/>
+    <functioncall functionName="batched_transpose_64x16_pack_4x1_ediv_2x1 &lt; ushort &gt;"/>
+    <functioncall functionName="batched_transpose_64x16_pack_4x1_ediv_2x1_half"/>
+    <functioncall functionName="batched_transpose_64x32_pack_4x2_ediv_2x1 &lt; ushort &gt;"/>
+    <functioncall functionName="batched_transpose_64x32_pack_4x2_ediv_2x1_half"/>
+    <functioncall functionName="batched_transpose_64x32_pack_4x2_ediv_2x2 &lt; ushort &gt;"/>
+    <functioncall functionName="batched_transpose_64x32_pack_4x2_ediv_2x2_half"/>
+    <functioncall functionName="batched_transpose_64x32_pack_4x2_ediv_4x2 &lt; ushort &gt;"/>
+    <functioncall functionName="batched_transpose_64x32_pack_4x2_ediv_4x2_half"/>
+    <functioncall functionName="batched_transpose_64x4 &lt; float &gt;"/>
+    <functioncall functionName="batched_transpose_64x4 &lt; uchar &gt;"/>
+    <functioncall functionName="batched_transpose_64x4 &lt; ushort &gt;"/>
+    <functioncall functionName="batched_transpose_64x4_byte"/>
+    <functioncall functionName="batched_transpose_64x4_dword"/>
+    <functioncall functionName="batched_transpose_64x4_half"/>
+    <functioncall functionName="batched_transpose_64x64_pack_4x4_ediv_2x2 &lt; ushort &gt;"/>
+    <functioncall functionName="batched_transpose_64x64_pack_4x4_ediv_2x2_half"/>
+    <functioncall functionName="batched_transpose_64x64_pack_4x4_ediv_4x4 &lt; ushort &gt;"/>
+    <functioncall functionName="batched_transpose_64x64_pack_4x4_ediv_4x4_half"/>
+    <functioncall functionName="const"/>
+    <functioncall functionName="dim_id"/>
+    <functioncall functionName="dim_ih_tmp"/>
+    <functioncall functionName="dim_in"/>
+    <functioncall functionName="dim_stride"/>
+    <functioncall functionName="dim_total"/>
+    <functioncall functionName="dst"/>
+    <functioncall functionName="dst_index"/>
+    <functioncall functionName="element_byte"/>
+    <functioncall functionName="float"/>
+    <functioncall functionName="float2"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="g_dst_h"/>
+    <functioncall functionName="g_dst_w"/>
+    <functioncall functionName="g_src_h"/>
+    <functioncall functionName="g_src_w"/>
+    <functioncall functionName="height"/>
+    <functioncall functionName="height_2"/>
+    <functioncall functionName="height_4"/>
+    <functioncall functionName="i_dst_h"/>
+    <functioncall functionName="i_dst_w"/>
+    <functioncall functionName="i_src_h"/>
+    <functioncall functionName="i_src_w"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="long"/>
+    <functioncall functionName="magic"/>
+    <functioncall functionName="magic_div_u32"/>
+    <functioncall functionName="magic_h"/>
+    <functioncall functionName="magic_w"/>
+    <functioncall functionName="make_float2"/>
+    <functioncall functionName="make_float4"/>
+    <functioncall functionName="make_ushort2"/>
+    <functioncall functionName="numer"/>
+    <functioncall functionName="padding_element"/>
+    <functioncall functionName="reinterpret_cast"/>
+    <functioncall functionName="return"/>
+    <functioncall functionName="shift_h"/>
+    <functioncall functionName="shift_w"/>
+    <functioncall functionName="sizeof"/>
+    <functioncall functionName="src"/>
+    <functioncall functionName="src_index"/>
+    <functioncall functionName="static_cast"/>
+    <functioncall functionName="typename"/>
+    <functioncall functionName="uchar"/>
+    <functioncall functionName="uint32_t"/>
+    <functioncall functionName="ushort"/>
+    <functioncall functionName="ushort2"/>
+    <functioncall functionName="v_a"/>
+    <functioncall functionName="v_a_pack"/>
+    <functioncall functionName="v_b"/>
+    <functioncall functionName="v_b_pack"/>
+    <functioncall functionName="v_buf"/>
+    <functioncall functionName="v_pack"/>
+    <functioncall functionName="v_pack_b32_f16_2x2"/>
+    <functioncall functionName="v_pack_b32_f16_2x2_half_x0_half_x1"/>
+    <functioncall functionName="v_src"/>
+    <functioncall functionName="w"/>
+    <functioncall functionName="width"/>
+    <functioncall functionName="width_2"/>
+    <functioncall functionName="width_4"/>
+    <functioncall functionName="x"/>
+    <functioncall functionName="x0"/>
+    <functioncall functionName="x1"/>
+    <functioncall functionName="y"/>
+    <functioncall functionName="z"/>
+  </FileInfo>
+</analyzerinfo>

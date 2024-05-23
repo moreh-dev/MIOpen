@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="1350531283031698501">
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="F"/>
+    <functioncall functionName="N"/>
+    <functioncall functionName="Ns"/>
+    <functioncall functionName="T"/>
+    <functioncall functionName="Ts"/>
+    <functioncall functionName="Xs"/>
+    <functioncall functionName="Ys"/>
+    <functioncall functionName="class"/>
+    <functioncall functionName="each_args_i_impl"/>
+    <functioncall functionName="f"/>
+    <functioncall functionName="forward"/>
+    <functioncall functionName="gens"/>
+    <functioncall functionName="get"/>
+    <functioncall functionName="int"/>
+    <functioncall functionName="long"/>
+    <functioncall functionName="remove_reference"/>
+    <functioncall functionName="seq"/>
+    <functioncall functionName="sizeof..."/>
+    <functioncall functionName="tuple_size"/>
+    <functioncall functionName="type"/>
+    <functioncall functionName="unpack_impl"/>
+    <functioncall functionName="void"/>
+    <functioncall functionName="x"/>
+    <functioncall functionName="xs"/>
+  </FileInfo>
+</analyzerinfo>

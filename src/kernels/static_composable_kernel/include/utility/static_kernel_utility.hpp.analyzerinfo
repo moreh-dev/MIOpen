@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="17883932728439240633">
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="get_thread_local_1d_id" lineNumber="8"/>
+    <functiondecl functionName="get_block_1d_id" lineNumber="10"/>
+    <functioncall functionName="AtomicAdd"/>
+    <functioncall functionName="Generic"/>
+    <functioncall functionName="Global"/>
+    <functioncall functionName="Lds"/>
+    <functioncall functionName="Set"/>
+    <functioncall functionName="Vgpr"/>
+    <functioncall functionName="x"/>
+  </FileInfo>
+</analyzerinfo>

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="7968548435691466260">
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="T"/>
+    <functioncall functionName="X"/>
+    <functioncall functionName="Y"/>
+    <functioncall functionName="bool"/>
+    <functioncall functionName="class"/>
+    <functioncall functionName="const"/>
+    <functioncall functionName="false"/>
+    <functioncall functionName="noexcept"/>
+    <functioncall functionName="predicate"/>
+    <functioncall functionName="remove_cv"/>
+    <functioncall functionName="t_"/>
+    <functioncall functionName="true"/>
+    <functioncall functionName="typename"/>
+    <functioncall functionName="volatile"/>
+  </FileInfo>
+</analyzerinfo>

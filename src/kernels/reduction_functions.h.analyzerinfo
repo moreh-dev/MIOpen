@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="17061696489068308872">
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/reduction_functions.h:28:20" call-funcname="ReduceKernel" call-argnr="3" file="/workspaces/MIOpen/src/kernels/reduction_functions.h" line="55" col="21" call-argexpr="localID" call-argvaluetype="0" call-argvalue="0" warning="true">
+  <path file="/workspaces/MIOpen/src/kernels/reduction_functions.h" line="54" col="16" info="Assuming that condition &apos;localID==0&apos; is not redundant"/>
+</function-call>  </FileInfo>
+  <FileInfo check="Null pointer">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/reduction_functions.h:5:20" my-argnr="4" my-argname="lcl_data_x" file="/workspaces/MIOpen/src/kernels/reduction_functions.h" line="12" col="5" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/reduction_functions.h:5:20" my-argnr="5" my-argname="lcl_data_y" file="/workspaces/MIOpen/src/kernels/reduction_functions.h" line="13" col="5" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/reduction_functions.h:28:20" my-argnr="1" my-argname="lcl_mem" file="/workspaces/MIOpen/src/kernels/reduction_functions.h" line="40" col="5" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/reduction_functions.h:44:1" my-argnr="1" my-argname="value" file="/workspaces/MIOpen/src/kernels/reduction_functions.h" line="46" col="22" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/reduction_functions.h:44:1" my-argnr="2" my-argname="data" file="/workspaces/MIOpen/src/kernels/reduction_functions.h" line="46" col="5" value="0"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/reduction_functions.h:5:20" my-argnr="1" my-argname="x" file="/workspaces/MIOpen/src/kernels/reduction_functions.h" line="12" col="38" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/reduction_functions.h:5:20" my-argnr="2" my-argname="y" file="/workspaces/MIOpen/src/kernels/reduction_functions.h" line="13" col="38" value="0"/>
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/reduction_functions.h:44:1" my-argnr="1" my-argname="value" file="/workspaces/MIOpen/src/kernels/reduction_functions.h" line="46" col="22" value="0"/>
+  </FileInfo>
+  <FileInfo check="ctu">
+<function-call call-id="/workspaces/MIOpen/src/kernels/reduction_functions.h:82:20" call-funcname="dpp_interleaved_reduction" call-argnr="1" file="/workspaces/MIOpen/src/kernels/reduction_functions.h" line="141" col="5" my-id="/workspaces/MIOpen/src/kernels/reduction_functions.h:133:20" my-argnr="1"/>
+<function-call call-id="/workspaces/MIOpen/src/kernels/reduction_functions.h:82:20" call-funcname="dpp_interleaved_reduction" call-argnr="2" file="/workspaces/MIOpen/src/kernels/reduction_functions.h" line="141" col="5" my-id="/workspaces/MIOpen/src/kernels/reduction_functions.h:133:20" my-argnr="2"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="lds_reduce2" lineNumber="5"/>
+    <functiondecl functionName="ReduceKernel" lineNumber="28"/>
+    <functiondecl functionName="regLDSreduce" lineNumber="44"/>
+    <functiondecl functionName="dpp_reduction" lineNumber="63"/>
+    <functiondecl functionName="dpp_interleaved_reduction" lineNumber="82"/>
+    <functiondecl functionName="dpp_triple_reduction" lineNumber="108"/>
+    <functiondecl functionName="gcn_reduce2" lineNumber="133"/>
+    <functioncall functionName="CLK_LOCAL_MEM_FENCE"/>
+    <functioncall functionName="MIO_BN_LDS_SIZE"/>
+    <functioncall functionName="ReduceKernel"/>
+    <functioncall functionName="_FLOAT_ACCUM"/>
+    <functioncall functionName="asm"/>
+    <functioncall functionName="barrier"/>
+    <functioncall functionName="data"/>
+    <functioncall functionName="dpp_interleaved_reduction"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="i"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="lcl_offset"/>
+    <functioncall functionName="ldsidx"/>
+    <functioncall functionName="lid"/>
+    <functioncall functionName="localID"/>
+    <functioncall functionName="red"/>
+    <functioncall functionName="sum"/>
+    <functioncall functionName="x"/>
+    <functioncall functionName="y"/>
+  </FileInfo>
+</analyzerinfo>

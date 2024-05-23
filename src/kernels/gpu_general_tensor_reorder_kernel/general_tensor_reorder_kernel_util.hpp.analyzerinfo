@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="17536924403365294352">
+        <error id="constParameter" severity="style" msg="Parameter &apos;src&apos; can be declared as pointer to const" verbose="Parameter &apos;src&apos; can be declared as pointer to const" cwe="398" file0="/workspaces/MIOpen/src/kernels/gpu_general_tensor_reorder_kernel/general_tensor_reorder_kernel_util.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_general_tensor_reorder_kernel/general_tensor_reorder_kernel_util.hpp" line="64" column="52" info="Parameter &apos;src&apos; can be declared as pointer to const"/>
+            <symbol>src</symbol>
+        </error>
+        <error id="constParameter" severity="style" msg="Parameter &apos;src&apos; can be declared as pointer to const" verbose="Parameter &apos;src&apos; can be declared as pointer to const" cwe="398" file0="/workspaces/MIOpen/src/kernels/gpu_general_tensor_reorder_kernel/general_tensor_reorder_kernel_util.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_general_tensor_reorder_kernel/general_tensor_reorder_kernel_util.hpp" line="125" column="52" info="Parameter &apos;src&apos; can be declared as pointer to const"/>
+            <symbol>src</symbol>
+        </error>
+        <error id="constParameter" severity="style" msg="Parameter &apos;src&apos; can be declared as pointer to const" verbose="Parameter &apos;src&apos; can be declared as pointer to const" cwe="398" file0="/workspaces/MIOpen/src/kernels/gpu_general_tensor_reorder_kernel/general_tensor_reorder_kernel_util.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_general_tensor_reorder_kernel/general_tensor_reorder_kernel_util.hpp" line="186" column="52" info="Parameter &apos;src&apos; can be declared as pointer to const"/>
+            <symbol>src</symbol>
+        </error>
+        <error id="constParameter" severity="style" msg="Parameter &apos;src&apos; can be declared as pointer to const" verbose="Parameter &apos;src&apos; can be declared as pointer to const" cwe="398" file0="/workspaces/MIOpen/src/kernels/gpu_general_tensor_reorder_kernel/general_tensor_reorder_kernel_util.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_general_tensor_reorder_kernel/general_tensor_reorder_kernel_util.hpp" line="247" column="52" info="Parameter &apos;src&apos; can be declared as pointer to const"/>
+            <symbol>src</symbol>
+        </error>
+        <error id="constParameter" severity="style" msg="Parameter &apos;src&apos; can be declared as pointer to const" verbose="Parameter &apos;src&apos; can be declared as pointer to const" cwe="398" file0="/workspaces/MIOpen/src/kernels/gpu_general_tensor_reorder_kernel/general_tensor_reorder_kernel_util.hpp">
+            <location file="/workspaces/MIOpen/src/kernels/gpu_general_tensor_reorder_kernel/general_tensor_reorder_kernel_util.hpp" line="308" column="53" info="Parameter &apos;src&apos; can be declared as pointer to const"/>
+            <symbol>src</symbol>
+        </error>
+  <FileInfo check="Class">
+<class name="order" file="/workspaces/MIOpen/src/kernels/gpu_general_tensor_reorder_kernel/general_tensor_reorder_kernel_util.hpp" line="41" col="1" hash="15363646794288465039"/>
+  </FileInfo>
+  <FileInfo check="Uninitialized variables">
+    <unsafe-usage my-id="/workspaces/MIOpen/src/kernels/gpu_general_tensor_reorder_kernel/general_tensor_reorder_kernel_util.hpp:54:28" my-argnr="3" my-argname="shift" file="/workspaces/MIOpen/src/kernels/gpu_general_tensor_reorder_kernel/general_tensor_reorder_kernel_util.hpp" line="59" col="29" value="0"/>
+  </FileInfo>
+  <FileInfo check="CheckUnusedFunctions">
+    <functiondecl functionName="size" lineNumber="47"/>
+    <functiondecl functionName="get_size" lineNumber="49"/>
+    <functiondecl functionName="at" lineNumber="51"/>
+    <functiondecl functionName="magic_div_u32" lineNumber="54"/>
+    <functioncall functionName="I"/>
+    <functioncall functionName="Is"/>
+    <functioncall functionName="__umulhi"/>
+    <functioncall functionName="at"/>
+    <functioncall functionName="dim_0"/>
+    <functioncall functionName="dim_1"/>
+    <functioncall functionName="dim_2"/>
+    <functioncall functionName="dim_3"/>
+    <functioncall functionName="dst_index"/>
+    <functioncall functionName="for"/>
+    <functioncall functionName="if"/>
+    <functioncall functionName="int"/>
+    <functioncall functionName="magic"/>
+    <functioncall functionName="magic_div_u32"/>
+    <functioncall functionName="magic_stride0"/>
+    <functioncall functionName="magic_stride1"/>
+    <functioncall functionName="magic_stride2"/>
+    <functioncall functionName="numer"/>
+    <functioncall functionName="return"/>
+    <functioncall functionName="shift_stride0"/>
+    <functioncall functionName="shift_stride1"/>
+    <functioncall functionName="shift_stride2"/>
+    <functioncall functionName="size"/>
+    <functioncall functionName="sizeof..."/>
+    <functioncall functionName="src_index"/>
+    <functioncall functionName="typename"/>
+    <functioncall functionName="x"/>
+  </FileInfo>
+</analyzerinfo>

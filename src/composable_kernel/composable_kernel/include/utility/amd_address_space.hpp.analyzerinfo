@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<analyzerinfo hash="3699012162402326867">
+  <FileInfo check="CheckUnusedFunctions">
+    <functioncall functionName="AtomicAdd"/>
+    <functioncall functionName="B"/>
+    <functioncall functionName="Generic"/>
+    <functioncall functionName="Global"/>
+    <functioncall functionName="Lds"/>
+    <functioncall functionName="PX"/>
+    <functioncall functionName="PY"/>
+    <functioncall functionName="Set"/>
+    <functioncall functionName="Sgpr"/>
+    <functioncall functionName="T"/>
+    <functioncall functionName="Vgpr"/>
+    <functioncall functionName="X"/>
+    <functioncall functionName="Y"/>
+    <functioncall functionName="bool"/>
+    <functioncall functionName="class"/>
+    <functioncall functionName="false"/>
+    <functioncall functionName="integral_constant"/>
+    <functioncall functionName="is_pointer_v"/>
+    <functioncall functionName="p"/>
+    <functioncall functionName="p_x"/>
+    <functioncall functionName="remove_reference_t"/>
+    <functioncall functionName="return"/>
+    <functioncall functionName="sizeof"/>
+    <functioncall functionName="true"/>
+    <functioncall functionName="typename"/>
+    <functioncall functionName="v"/>
+    <functioncall functionName="void"/>
+    <functioncall functionName="x"/>
+    <functioncall functionName="y"/>
+  </FileInfo>
+</analyzerinfo>
