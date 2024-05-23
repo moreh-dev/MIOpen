@@ -47,15 +47,12 @@ bool CosineEmbeddingLossUnreducedForward2d::IsApplicable(
     const ExecutionContext& context,
     const miopen::cosineembeddingloss::FwdUnreducedProblemDescription& problem) const
 {
-    if(!CosineEmbeddingLossUnreducedFwdSolver::IsApplicable(context, problem))
-        return false;
-
     return true;
 }
 
 ConvSolution CosineEmbeddingLossUnreducedForward2d::GetSolution(
     const ExecutionContext& context,
-    const miopen::cosineembeddingloss::UnreducedProblemDescription& problem) const
+    const miopen::cosineembeddingloss::FwdUnreducedProblemDescription& problem) const
 {
     std::ignore = context;
 

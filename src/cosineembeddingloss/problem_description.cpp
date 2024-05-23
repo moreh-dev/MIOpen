@@ -89,6 +89,34 @@ NetworkConfig FwdReducedProblemDescription::MakeNetworkConfig() const
     ss << "input2_stride" << Si2;
     ss << "target_stride" << St;
     ss << "output_stride" << So;
+    ss << "divisor" << divisor;
+
+    return NetworkConfig{ss.str()};
+}
+
+NetworkConfig BwdUnreducedProblemDescription::MakeNetworkConfig() const
+{
+    auto input_dims  = input1Desc.GetLengths();
+    auto input_dtype = input1Desc.GetType();
+    auto Si1         = input1Desc.GetStrides();
+    auto Si2         = input2Desc.GetStrides();
+    auto St          = targetDesc.GetStrides();
+    auto So          = outputDesc.GetStrides();
+    auto Sg1         = input1GradDesc.GetStrides();
+    auto Sg2         = input2GradDesc.GetStrides();
+
+    std::ostringstream ss;
+    ss << "cosineembeddingloss_unreduce";
+    ss << "is_fwd" << is_fwd;
+    ss << "margin" << margin;
+    ss << "input_dtype" << input_dtype;
+    ss << "input_dims" << input_dims;
+    ss << "input1_stride" << Si1;
+    ss << "input2_stride" << Si2;
+    ss << "target_stride" << St;
+    ss << "output_grad_stride" << So;
+    ss << "input1_grad_stride" << Sg1;
+    ss << "input2_grad_stride" << Sg2;
 
     return NetworkConfig{ss.str()};
 }
