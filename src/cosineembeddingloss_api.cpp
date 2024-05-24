@@ -66,8 +66,7 @@ static void LogCmdCosineEmbeddingLoss(const miopenTensorDescriptor_t x1Desc,
         }
 
         MIOPEN_LOG_FUNCTION(x1Desc, x2Desc, tDesc);
-        ss << " -N " << miopen::deref(x1Desc).GetLengths()[0];
-        ss << " -D " << miopen::deref(x1Desc).GetLengths()[1];
+        ss << " -D " << miopen::deref(x1Desc).GetLengths();
         ss << " -Si1 " << miopen::deref(x1Desc).GetStrides();
         ss << " -Si2 " << miopen::deref(x2Desc).GetStrides();
         ss << " -St " << miopen::deref(tDesc).GetStrides();

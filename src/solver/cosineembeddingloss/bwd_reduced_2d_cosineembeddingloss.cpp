@@ -104,14 +104,14 @@ ConvSolution CosineEmbeddingLossReducedBackward2d::GetSolution(
                    params.output_grad,
                    params.input1_grad,
                    params.input2_grad,
+                   params.margin,
+                   params.divisor,
                    input1_tv,
                    input2_tv,
                    target_tv,
                    output_grad_tv,
                    input1_grad_tv,
-                   input2_grad_tv,
-                   params.margin,
-                   params.divisor);
+                   input2_grad_tv);
         };
     };
 

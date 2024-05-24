@@ -101,16 +101,159 @@ LossSum(const D_TYPE* __restrict__ input, D_TYPE* __restrict__ output, size_t N)
     lossSum<D_TYPE>(input, output, N);
 }
 
-extern "C" __global__ void KLDivLossUnreducedForward5d(const INPUT_TYPE* __restrict__ input1,
-                                                       const INPUT_TYPE* __restrict__ input2,
-                                                       const int64_t* __restrict__ target,
-                                                       OUTPUT_TYPE* __restrict__ loss_sum,
-                                                       int32_t ignore_index,
-                                                       float divisor,
-                                                       tensor_view_5d_t input_tv,
-                                                       tensor_view_4d_t target_tv,
-                                                       tensor_view_1d_t weight_tv)
+template <typename TI, typename TO>
+__device__ void cosineembeddinglossUnreducedForward2d(const TI* __restrict__ input1,
+                                                      const TI* __restrict__ input2,
+                                                      const int32_t* __restrict__ target,
+                                                      TO* __restrict__ output,
+                                                      float margin,
+                                                      tensor_view_2d_t input1_tv,
+                                                      tensor_view_2d_t input2_tv,
+                                                      tensor_view_1d_t target_tv,
+                                                      tensor_view_1d_t output_tv)
 {
-    nlllossForward5d<INPUT_TYPE, OUTPUT_TYPE>(
-        input, target, weight, loss_sum, ignore_index, divisor, input_tv, target_tv, weight_tv);
+    uint64_t gid = threadIdx.x + blockIdx.x * blockDim.x;
+}
+
+extern "C" __global__ void
+CosineEmbeddingLossUnreducedForward2d(const INPUT_TYPE* __restrict__ input1,
+                                      const INPUT_TYPE* __restrict__ input2,
+                                      const int32_t* __restrict__ target,
+                                      OUTPUT_TYPE* __restrict__ output,
+                                      float margin,
+                                      tensor_view_2d_t input1_tv,
+                                      tensor_view_2d_t input2_tv,
+                                      tensor_view_1d_t target_tv,
+                                      tensor_view_1d_t output_tv)
+{
+    cosineembeddinglossUnreducedForward2d<INPUT_TYPE, OUTPUT_TYPE>(
+        input1, input2, target, output, margin, input1_tv, input2_tv, target_tv, output_tv);
+}
+
+template <typename TI, typename TO>
+__device__ void cosineembeddinglossReducedForward2d(const TI* __restrict__ input1,
+                                                    const TI* __restrict__ input2,
+                                                    const int32_t* __restrict__ target,
+                                                    TO* __restrict__ loss_sum,
+                                                    float margin,
+                                                    float divisor,
+                                                    tensor_view_2d_t input1_tv,
+                                                    tensor_view_2d_t input2_tv,
+                                                    tensor_view_1d_t target_tv)
+{
+    uint64_t gid = threadIdx.x + blockIdx.x * blockDim.x;
+}
+
+extern "C" __global__ void
+CosineEmbeddingLossReducedForward2d(const INPUT_TYPE* __restrict__ input1,
+                                    const INPUT_TYPE* __restrict__ input2,
+                                    const int32_t* __restrict__ target,
+                                    OUTPUT_TYPE* __restrict__ loss_sum,
+                                    float margin,
+                                    float divisor,
+                                    tensor_view_2d_t input1_tv,
+                                    tensor_view_2d_t input2_tv,
+                                    tensor_view_1d_t target_tv)
+{
+    cosineembeddinglossReducedForward2d<INPUT_TYPE, OUTPUT_TYPE>(
+        input1, input2, target, loss_sum, margin, divisor, input1_tv, input2_tv, target_tv);
+}
+
+template <typename TI, typename TO>
+__device__ void cosineembeddinglossUnreducedBackward2d(const TI* __restrict__ input1,
+                                                       const TI* __restrict__ input2,
+                                                       const int32_t* __restrict__ target,
+                                                       const TI* __restrict__ output_grad,
+                                                       TO* __restrict__ input1_grad,
+                                                       TO* __restrict__ input2_grad,
+                                                       float margin,
+                                                       tensor_view_2d_t input1_tv,
+                                                       tensor_view_2d_t input2_tv,
+                                                       tensor_view_1d_t target_tv,
+                                                       tensor_view_1d_t output_grad_tv,
+                                                       tensor_view_2d_t input1_grad_tv,
+                                                       tensor_view_2d_t input2_grad_tv)
+{
+    uint64_t gid = threadIdx.x + blockIdx.x * blockDim.x;
+}
+
+extern "C" __global__ void
+CosineEmbeddingLossUnreducedBackward2d(const INPUT_TYPE* __restrict__ input1,
+                                       const INPUT_TYPE* __restrict__ input2,
+                                       const int32_t* __restrict__ target,
+                                       const INPUT_TYPE* __restrict__ output_grad,
+                                       OUTPUT_TYPE* __restrict__ input1_grad,
+                                       OUTPUT_TYPE* __restrict__ input2_grad,
+                                       float margin,
+                                       tensor_view_2d_t input1_tv,
+                                       tensor_view_2d_t input2_tv,
+                                       tensor_view_1d_t target_tv,
+                                       tensor_view_1d_t output_grad_tv,
+                                       tensor_view_2d_t input1_grad_tv,
+                                       tensor_view_2d_t input2_grad_tv)
+{
+    cosineembeddinglossUnreducedBackward2d<INPUT_TYPE, OUTPUT_TYPE>(input1,
+                                                                    input2,
+                                                                    target,
+                                                                    output_grad,
+                                                                    input1_grad,
+                                                                    input2_grad,
+                                                                    margin,
+                                                                    input1_tv,
+                                                                    input2_tv,
+                                                                    target_tv,
+                                                                    output_grad_tv,
+                                                                    input1_grad_tv,
+                                                                    input2_grad_tv);
+}
+
+template <typename TI, typename TO>
+__device__ void cosineembeddinglossReducedBackward2d(const TI* __restrict__ input1,
+                                                     const TI* __restrict__ input2,
+                                                     const int32_t* __restrict__ target,
+                                                     const TI* __restrict__ output_grad,
+                                                     TO* __restrict__ input1_grad,
+                                                     TO* __restrict__ input2_grad,
+                                                     float margin,
+                                                     float divisor,
+                                                     tensor_view_2d_t input1_tv,
+                                                     tensor_view_2d_t input2_tv,
+                                                     tensor_view_1d_t target_tv,
+                                                     tensor_view_1d_t output_grad_tv,
+                                                     tensor_view_2d_t input1_grad_tv,
+                                                     tensor_view_2d_t input2_grad_tv)
+{
+    uint64_t gid = threadIdx.x + blockIdx.x * blockDim.x;
+}
+
+extern "C" __global__ void
+CosineEmbeddingLossReducedBackward2d(const INPUT_TYPE* __restrict__ input1,
+                                     const INPUT_TYPE* __restrict__ input2,
+                                     const int32_t* __restrict__ target,
+                                     const INPUT_TYPE* __restrict__ output_grad,
+                                     OUTPUT_TYPE* __restrict__ input1_grad,
+                                     OUTPUT_TYPE* __restrict__ input2_grad,
+                                     float margin,
+                                     float divisor,
+                                     tensor_view_2d_t input1_tv,
+                                     tensor_view_2d_t input2_tv,
+                                     tensor_view_1d_t target_tv,
+                                     tensor_view_1d_t output_grad_tv,
+                                     tensor_view_2d_t input1_grad_tv,
+                                     tensor_view_2d_t input2_grad_tv)
+{
+    cosineembeddinglossReducedBackward2d<INPUT_TYPE, OUTPUT_TYPE>(input1,
+                                                                  input2,
+                                                                  target,
+                                                                  output_grad,
+                                                                  input1_grad,
+                                                                  input2_grad,
+                                                                  margin,
+                                                                  divisor,
+                                                                  input1_tv,
+                                                                  input2_tv,
+                                                                  target_tv,
+                                                                  output_grad_tv,
+                                                                  input1_grad_tv,
+                                                                  input2_grad_tv);
 }

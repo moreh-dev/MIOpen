@@ -101,11 +101,11 @@ ConvSolution CosineEmbeddingLossUnreducedForward2d::GetSolution(
                    params.input2,
                    params.target,
                    params.output,
+                   params.margin,
                    input1_tv,
                    input2_tv,
                    target_tv,
-                   output_tv,
-                   params.margin);
+                   output_tv);
         };
     };
 

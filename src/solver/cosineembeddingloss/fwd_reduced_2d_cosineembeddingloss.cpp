@@ -110,11 +110,11 @@ ConvSolution CosineEmbeddingLossReducedForward2d::GetSolution(
                        params.input2,
                        params.target,
                        params.workspace,
+                       params.margin,
+                       params.divisor,
                        input1_tv,
                        input2_tv,
-                       target_tv,
-                       params.margin,
-                       params.divisor);
+                       target_tv);
             }
             if(handle_.IsProfilingEnabled())
             {
