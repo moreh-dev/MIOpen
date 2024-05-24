@@ -38,6 +38,96 @@ namespace solver {
 
 namespace tripletmarginloss {
 
+inline void ConstructDistParams(const ExecutionContext& context,
+                                const miopen::tripletmarginloss::ForwardProblemDescription& problem,
+                                ConvSolution& result,
+                                const KernelBuildParameters& build_params)
+{
+    auto input_size = problem.GetADesc().GetElementSize();
+    result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE},
+                                                         {input_size},
+                                                         "MIOpenTripletMarginLoss.cpp",
+                                                         "TripletMarginLossDist2d",
+                                                         build_params));
+
+    auto reduce_size        = problem.GetADesc().GetLengths()[1];
+    auto output_numel       = problem.GetADesc().GetLengths()[0] * 3;
+    auto reqd_work_item_cnt = get_reqd_work_item_cnt(context, LOCAL_SIZE);
+    if(is_parallelism(reqd_work_item_cnt, output_numel, reduce_size))
+    {
+        auto parallelism_size = get_parallelism_size(reqd_work_item_cnt, output_numel, reduce_size);
+        result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE},
+                                                             {parallelism_size * output_numel},
+                                                             "MIOpenSum.cpp",
+                                                             "SumParallelFwdContiguous",
+                                                             build_params));
+    }
+    result.construction_params.push_back(make_hip_kernel(
+        {LOCAL_SIZE}, {output_numel}, "MIOpenSum.cpp", "SumFwdContiguous", build_params));
+}
+
+inline void RunDistKernels(const std::vector<Kernel>& kernels,
+                           const Handle& handle_,
+                           const AnyInvokeParams& raw_params,
+                           float& elapsed,
+                           int& kernelCnt,
+                           Data_t& work_a,
+                           Data_t& work_b)
+{
+    auto params = raw_params.CastTo<miopen::tripletmarginloss::InvokeParams>();
+
+    {
+        auto A_tv   = get_inner_expanded_tv<2>(deref(params.aDesc));
+        auto P_tv   = get_inner_expanded_tv<2>(deref(params.pDesc));
+        auto N_tv   = get_inner_expanded_tv<2>(deref(params.nDesc));
+        auto kernel = handle_.Run(kernels[kernelCnt++]);
+        kernel(params.anchor,
+               params.positive,
+               params.negative,
+               work_a,
+               params.p,
+               params.eps,
+               A_tv,
+               P_tv,
+               N_tv);
+        if(handle_.IsProfilingEnabled())
+            elapsed += handle_.GetKernelTime();
+    }
+
+    auto reduce_size        = params.aDesc->GetSize() == 2 ? params.aDesc->GetLengths()[1] : 1;
+    auto output_numel       = params.aDesc->GetLengths()[0] * 3;
+    auto reqd_work_item_cnt = get_reqd_work_item_cnt(handle_, LOCAL_SIZE);
+
+    if(is_parallelism(reqd_work_item_cnt, output_numel, reduce_size))
+    {
+        auto parallelism_size = get_parallelism_size(reqd_work_item_cnt, output_numel, reduce_size);
+        auto parallel_kernel  = handle_.Run(kernels[kernelCnt++]);
+        parallel_kernel(work_a,
+                        work_b,
+                        (uint64_t)output_numel,
+                        (uint64_t)reduce_size,
+                        (uint64_t)parallelism_size,
+                        (uint64_t)1,
+                        false);
+        if(handle_.IsProfilingEnabled())
+            elapsed += handle_.GetKernelTime();
+
+        auto kernel = handle_.Run(kernels[kernelCnt++]);
+        kernel(
+            work_b, work_a, (uint64_t)output_numel, (uint64_t)parallelism_size, (uint64_t)1, false);
+        if(handle_.IsProfilingEnabled())
+            elapsed += handle_.GetKernelTime();
+    }
+    else
+    {
+        auto kernel = handle_.Run(kernels[kernelCnt++]);
+        kernel(work_a, work_b, (uint64_t)output_numel, (uint64_t)reduce_size, (uint64_t)1, false);
+        if(handle_.IsProfilingEnabled())
+            elapsed += handle_.GetKernelTime();
+        std::swap(work_a, work_b);
+    }
+}
+
 bool Forward2d::IsApplicable(
     const ExecutionContext& /*context*/,
     const miopen::tripletmarginloss::ForwardProblemDescription& problem) const
@@ -92,7 +182,6 @@ ConvSolution UnreducedForward2d::GetSolution(
     auto dtype        = problem.GetODesc().GetType();
     auto input_dtype  = miopen::GetDataType(problem.GetADesc().GetType());
     auto output_dtype = miopen::GetDataType(problem.GetODesc().GetType());
-    auto input_size   = problem.GetADesc().GetElementSize();
 
     auto build_params = KernelBuildParameters{
         {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
@@ -104,35 +193,18 @@ ConvSolution UnreducedForward2d::GetSolution(
         {"D_TYPE", output_dtype == "bfloat16" ? "ushort" : output_dtype},
     };
 
-    result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE},
-                                                         {input_size},
-                                                         "MIOpenTripletMarginLoss.cpp",
-                                                         "TripletMarginLossForward2d_1",
-                                                         build_params));
+    /* Phase 1: Calc distance for each vector. */
+    ConstructDistParams(context, problem, result, build_params);
 
-    auto reduce_size        = problem.GetADesc().GetLengths()[1];
-    auto output_numel       = problem.GetADesc().GetLengths()[0] * 3;
-    auto reqd_work_item_cnt = get_reqd_work_item_cnt(context, LOCAL_SIZE);
-
-    if(is_parallelism(reqd_work_item_cnt, output_numel, reduce_size))
+    /* Phase 2: Calc loss for each vector. */
     {
-        auto parallelism_size = get_parallelism_size(reqd_work_item_cnt, output_numel, reduce_size);
+        auto output_size = problem.GetADesc().GetLengths()[0];
         result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE},
-                                                             {parallelism_size * output_numel},
-                                                             "MIOpenSum.cpp",
-                                                             "SumParallelFwdContiguous",
+                                                             {output_size},
+                                                             "MIOpenTripletMarginLoss.cpp",
+                                                             "TripletMarginLossUnreducedForward2d",
                                                              build_params));
     }
-
-    result.construction_params.push_back(make_hip_kernel(
-        {LOCAL_SIZE}, {output_numel}, "MIOpenSum.cpp", "SumFwdContiguous", build_params));
-
-    auto output_size = problem.GetADesc().GetLengths()[0];
-    result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE},
-                                                         {output_size},
-                                                         "MIOpenTripletMarginLoss.cpp",
-                                                         "TripletMarginLossUnreducedForward2d_2",
-                                                         build_params));
 
     result.invoker_factory = [](const std::vector<Kernel>& kernels) {
         return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
@@ -146,67 +218,10 @@ ConvSolution UnreducedForward2d::GetSolution(
                                                    params.aDesc->GetElementSize() *
                                                        get_data_size(params.oDesc->GetType()) * 3);
 
-            {
-                auto A_tv   = get_inner_expanded_tv<2>(deref(params.aDesc));
-                auto P_tv   = get_inner_expanded_tv<2>(deref(params.pDesc));
-                auto N_tv   = get_inner_expanded_tv<2>(deref(params.nDesc));
-                auto kernel = handle_.Run(kernels[kernelCnt++]);
-                kernel(params.anchor,
-                       params.positive,
-                       params.negative,
-                       work_a,
-                       params.p,
-                       params.eps,
-                       A_tv,
-                       P_tv,
-                       N_tv);
-                if(handle_.IsProfilingEnabled())
-                    elapsed += handle_.GetKernelTime();
-            }
+            /* Phase 1: Calc distance for each vector. */
+            RunDistKernels(kernels, handle_, raw_params, elapsed, kernelCnt, work_a, work_b);
 
-            auto reduce_size  = params.aDesc->GetSize() == 2 ? params.aDesc->GetLengths()[1] : 1;
-            auto output_numel = params.aDesc->GetLengths()[0] * 3;
-            auto reqd_work_item_cnt = get_reqd_work_item_cnt(handle_, LOCAL_SIZE);
-
-            if(is_parallelism(reqd_work_item_cnt, output_numel, reduce_size))
-            {
-                auto parallelism_size =
-                    get_parallelism_size(reqd_work_item_cnt, output_numel, reduce_size);
-                auto parallel_kernel = handle_.Run(kernels[kernelCnt++]);
-                parallel_kernel(work_a,
-                                work_b,
-                                (uint64_t)output_numel,
-                                (uint64_t)reduce_size,
-                                (uint64_t)parallelism_size,
-                                (uint64_t)1,
-                                false);
-                if(handle_.IsProfilingEnabled())
-                    elapsed += handle_.GetKernelTime();
-
-                auto kernel = handle_.Run(kernels[kernelCnt++]);
-                kernel(work_b,
-                       work_a,
-                       (uint64_t)output_numel,
-                       (uint64_t)parallelism_size,
-                       (uint64_t)1,
-                       false);
-                if(handle_.IsProfilingEnabled())
-                    elapsed += handle_.GetKernelTime();
-            }
-            else
-            {
-                auto kernel = handle_.Run(kernels[kernelCnt++]);
-                kernel(work_a,
-                       work_b,
-                       (uint64_t)output_numel,
-                       (uint64_t)reduce_size,
-                       (uint64_t)1,
-                       false);
-                if(handle_.IsProfilingEnabled())
-                    elapsed += handle_.GetKernelTime();
-                std::swap(work_a, work_b);
-            }
-
+            /* Phase 2: Calc loss for each vector. */
             {
                 auto O_tv   = get_inner_expanded_tv<1>(deref(params.oDesc));
                 auto kernel = handle_.Run(kernels[kernelCnt++]);
@@ -246,7 +261,6 @@ ConvSolution ReducedForward2d::GetSolution(
     auto dtype        = problem.GetODesc().GetType();
     auto input_dtype  = miopen::GetDataType(problem.GetADesc().GetType());
     auto output_dtype = miopen::GetDataType(problem.GetODesc().GetType());
-    auto input_size   = problem.GetADesc().GetElementSize();
 
     auto build_params = KernelBuildParameters{
         {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
@@ -258,41 +272,20 @@ ConvSolution ReducedForward2d::GetSolution(
         {"D_TYPE", output_dtype == "bfloat16" ? "ushort" : output_dtype},
     };
 
-    /* Phase 1: Calc loss for each element. */
+    /* Phase 1: Calc distance for each vector. */
+    ConstructDistParams(context, problem, result, build_params);
+
+    /* Phase 2: Calc loss for each vector. */
     {
-        result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE},
-                                                             {input_size},
-                                                             "MIOpenTripletMarginLoss.cpp",
-                                                             "TripletMarginLossForward2d_1",
-                                                             build_params));
-
-        auto reduce_size        = problem.GetADesc().GetLengths()[1];
-        auto output_numel       = problem.GetADesc().GetLengths()[0] * 3;
-        auto reqd_work_item_cnt = get_reqd_work_item_cnt(context, LOCAL_SIZE);
-
-        if(is_parallelism(reqd_work_item_cnt, output_numel, reduce_size))
-        {
-            auto parallelism_size =
-                get_parallelism_size(reqd_work_item_cnt, output_numel, reduce_size);
-            result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE},
-                                                                 {parallelism_size * output_numel},
-                                                                 "MIOpenSum.cpp",
-                                                                 "SumParallelFwdContiguous",
-                                                                 build_params));
-        }
-
-        result.construction_params.push_back(make_hip_kernel(
-            {LOCAL_SIZE}, {output_numel}, "MIOpenSum.cpp", "SumFwdContiguous", build_params));
-
         auto output_size = problem.GetADesc().GetLengths()[0];
         result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE},
                                                              {output_size},
                                                              "MIOpenTripletMarginLoss.cpp",
-                                                             "TripletMarginLossForward2d_2",
+                                                             "TripletMarginLossForward2d",
                                                              build_params));
     }
 
-    /* Phase 2: Reduce */
+    /* Phase 3: Reduce */
     {
         auto size = problem.GetADesc().GetLengths()[0];
         do
@@ -305,7 +298,7 @@ ConvSolution ReducedForward2d::GetSolution(
 
     result.invoker_factory = [](const std::vector<Kernel>& kernels) {
         return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
-            decltype(auto) params = raw_params.CastTo<miopen::tripletmarginloss::InvokeParams>();
+            auto params = raw_params.CastTo<miopen::tripletmarginloss::InvokeParams>();
 
             float elapsed = 0.0f;
             int kernelCnt = 0;
@@ -315,85 +308,25 @@ ConvSolution ReducedForward2d::GetSolution(
                                                    params.aDesc->GetElementSize() *
                                                        get_data_size(params.oDesc->GetType()) * 3);
 
-            /* Phase 1: Calc loss for each element. */
+            /* Phase 1: Calc distance for each vector. */
+            RunDistKernels(kernels, handle_, raw_params, elapsed, kernelCnt, work_a, work_b);
+
+            /* Phase 2: Calc loss for each vector. */
             {
-                {
-                    auto A_tv   = get_inner_expanded_tv<2>(deref(params.aDesc));
-                    auto P_tv   = get_inner_expanded_tv<2>(deref(params.pDesc));
-                    auto N_tv   = get_inner_expanded_tv<2>(deref(params.nDesc));
-                    auto kernel = handle_.Run(kernels[kernelCnt++]);
-                    kernel(params.anchor,
-                           params.positive,
-                           params.negative,
-                           work_a,
-                           params.p,
-                           params.eps,
-                           A_tv,
-                           P_tv,
-                           N_tv);
-                    if(handle_.IsProfilingEnabled())
-                        elapsed += handle_.GetKernelTime();
-                }
-
-                auto reduce_size = params.aDesc->GetSize() == 2 ? params.aDesc->GetLengths()[1] : 1;
-                auto output_numel       = params.aDesc->GetLengths()[0] * 3;
-                auto reqd_work_item_cnt = get_reqd_work_item_cnt(handle_, LOCAL_SIZE);
-
-                if(is_parallelism(reqd_work_item_cnt, output_numel, reduce_size))
-                {
-                    auto parallelism_size =
-                        get_parallelism_size(reqd_work_item_cnt, output_numel, reduce_size);
-                    auto parallel_kernel = handle_.Run(kernels[kernelCnt++]);
-                    parallel_kernel(work_a,
-                                    work_b,
-                                    (uint64_t)output_numel,
-                                    (uint64_t)reduce_size,
-                                    (uint64_t)parallelism_size,
-                                    (uint64_t)1,
-                                    false);
-                    if(handle_.IsProfilingEnabled())
-                        elapsed += handle_.GetKernelTime();
-
-                    auto kernel = handle_.Run(kernels[kernelCnt++]);
-                    kernel(work_b,
-                           work_a,
-                           (uint64_t)output_numel,
-                           (uint64_t)parallelism_size,
-                           (uint64_t)1,
-                           false);
-                    if(handle_.IsProfilingEnabled())
-                        elapsed += handle_.GetKernelTime();
-                }
-                else
-                {
-                    auto kernel = handle_.Run(kernels[kernelCnt++]);
-                    kernel(work_a,
-                           work_b,
-                           (uint64_t)output_numel,
-                           (uint64_t)reduce_size,
-                           (uint64_t)1,
-                           false);
-                    if(handle_.IsProfilingEnabled())
-                        elapsed += handle_.GetKernelTime();
-                    std::swap(work_a, work_b);
-                }
-
-                {
-                    auto kernel = handle_.Run(kernels[kernelCnt++]);
-                    kernel(work_a,
-                           work_b,
-                           params.margin,
-                           params.p,
-                           params.swap,
-                           params.divisor,
-                           params.aDesc->GetLengths()[0]);
-                    if(handle_.IsProfilingEnabled())
-                        elapsed += handle_.GetKernelTime();
-                    std::swap(work_a, work_b);
-                }
+                auto kernel = handle_.Run(kernels[kernelCnt++]);
+                kernel(work_a,
+                       work_b,
+                       params.margin,
+                       params.p,
+                       params.swap,
+                       params.divisor,
+                       params.aDesc->GetLengths()[0]);
+                if(handle_.IsProfilingEnabled())
+                    elapsed += handle_.GetKernelTime();
+                std::swap(work_a, work_b);
             }
 
-            /* Phase 2: Reduce */
+            /* Phase 3: Reduce */
             {
                 size_t size = params.aDesc->GetLengths()[0];
                 while(kernelCnt < kernels.size())

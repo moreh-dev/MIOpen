@@ -61,15 +61,15 @@ inline __device__ void dist(const TI* I1,
 }
 
 template <typename TI, typename TO>
-__device__ void TripletMarginLossForward2d_1(const TI* A,
-                                             const TI* P,
-                                             const TI* N,
-                                             TO* ldist,
-                                             const int p,
-                                             const float eps,
-                                             const tensor_view_t<2> A_tv,
-                                             const tensor_view_t<2> P_tv,
-                                             const tensor_view_t<2> N_tv)
+__device__ void TripletMarginLossDist2d(const TI* A,
+                                        const TI* P,
+                                        const TI* N,
+                                        TO* ldist,
+                                        const int p,
+                                        const float eps,
+                                        const tensor_view_t<2> A_tv,
+                                        const tensor_view_t<2> P_tv,
+                                        const tensor_view_t<2> N_tv)
 {
     int gid = blockIdx.x * blockDim.x + threadIdx.x;
 
@@ -85,27 +85,27 @@ __device__ void TripletMarginLossForward2d_1(const TI* A,
     dist<TI, TO>(P, N, ldist + 2 * size, p, eps, P_tv, N_tv, n, c);
 }
 
-extern "C" __global__ void TripletMarginLossForward2d_1(const INPUT_TYPE* A,
-                                                        const INPUT_TYPE* P,
-                                                        const INPUT_TYPE* N,
-                                                        OUTPUT_TYPE* ldist,
-                                                        const int p,
-                                                        const float eps,
-                                                        const tensor_view_t<2> A_tv,
-                                                        const tensor_view_t<2> P_tv,
-                                                        const tensor_view_t<2> N_tv)
+extern "C" __global__ void TripletMarginLossDist2d(const INPUT_TYPE* A,
+                                                   const INPUT_TYPE* P,
+                                                   const INPUT_TYPE* N,
+                                                   OUTPUT_TYPE* ldist,
+                                                   const int p,
+                                                   const float eps,
+                                                   const tensor_view_t<2> A_tv,
+                                                   const tensor_view_t<2> P_tv,
+                                                   const tensor_view_t<2> N_tv)
 {
     // instantiate the kernel
-    TripletMarginLossForward2d_1<INPUT_TYPE, OUTPUT_TYPE>(A, P, N, ldist, p, eps, A_tv, P_tv, N_tv);
+    TripletMarginLossDist2d<INPUT_TYPE, OUTPUT_TYPE>(A, P, N, ldist, p, eps, A_tv, P_tv, N_tv);
 }
 
 template <typename T>
-__device__ void TripletMarginLossUnreducedForward2d_2(const T* ldist,
-                                                      T* O,
-                                                      const float margin,
-                                                      const int p,
-                                                      const bool swap,
-                                                      const tensor_view_t<1> O_tv)
+__device__ void TripletMarginLossUnreducedForward2d(const T* ldist,
+                                                    T* O,
+                                                    const float margin,
+                                                    const int p,
+                                                    const bool swap,
+                                                    const tensor_view_t<1> O_tv)
 {
     int gid = blockIdx.x * blockDim.x + threadIdx.x;
     if(gid >= O_tv.size[0])
@@ -123,25 +123,25 @@ __device__ void TripletMarginLossUnreducedForward2d_2(const T* ldist,
     O[O_tv.stride[0] * gid] = CVT_ACCUM2FLOAT(max(ap - an + margin, 0.0f));
 }
 
-extern "C" __global__ void TripletMarginLossUnreducedForward2d_2(const D_TYPE* ldist,
-                                                                 D_TYPE* O,
-                                                                 const float margin,
-                                                                 const int p,
-                                                                 const bool swap,
-                                                                 const tensor_view_t<1> O_tv)
+extern "C" __global__ void TripletMarginLossUnreducedForward2d(const D_TYPE* ldist,
+                                                               D_TYPE* O,
+                                                               const float margin,
+                                                               const int p,
+                                                               const bool swap,
+                                                               const tensor_view_t<1> O_tv)
 {
     // instantiate the kernel
-    TripletMarginLossUnreducedForward2d_2<D_TYPE>(ldist, O, margin, p, swap, O_tv);
+    TripletMarginLossUnreducedForward2d<D_TYPE>(ldist, O, margin, p, swap, O_tv);
 }
 
 template <typename T>
-__device__ void TripletMarginLossForward2d_2(const T* ldist,
-                                             T* lsum,
-                                             const float margin,
-                                             const int p,
-                                             const bool swap,
-                                             const float divisor,
-                                             const size_t size)
+__device__ void TripletMarginLossForward2d(const T* ldist,
+                                           T* lsum,
+                                           const float margin,
+                                           const int p,
+                                           const bool swap,
+                                           const float divisor,
+                                           const size_t size)
 {
     int gid = blockIdx.x * blockDim.x + threadIdx.x;
     if(gid >= size)
@@ -159,14 +159,14 @@ __device__ void TripletMarginLossForward2d_2(const T* ldist,
     lsum[gid] = CVT_ACCUM2FLOAT(max(ap - an + margin, 0.0f) / divisor);
 }
 
-extern "C" __global__ void TripletMarginLossForward2d_2(const D_TYPE* ldist,
-                                                        D_TYPE* lsum,
-                                                        const float margin,
-                                                        const int p,
-                                                        const bool swap,
-                                                        const float divisor,
-                                                        const size_t size)
+extern "C" __global__ void TripletMarginLossForward2d(const D_TYPE* ldist,
+                                                      D_TYPE* lsum,
+                                                      const float margin,
+                                                      const int p,
+                                                      const bool swap,
+                                                      const float divisor,
+                                                      const size_t size)
 {
     // instantiate the kernel
-    TripletMarginLossForward2d_2<D_TYPE>(ldist, lsum, margin, p, swap, divisor, size);
+    TripletMarginLossForward2d<D_TYPE>(ldist, lsum, margin, p, swap, divisor, size);
 }
