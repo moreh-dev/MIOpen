@@ -28,6 +28,7 @@
 
 #include <miopen/activ/solvers.hpp>
 #include <miopen/batchnorm/solvers.hpp>
+#include <miopen/cosineembeddingloss/solvers.hpp>
 #include <miopen/fusion/solvers.hpp>
 #include <miopen/groupnorm/solvers.hpp>
 #include <miopen/layernorm/solvers.hpp>
@@ -648,7 +649,22 @@ inline SolverRegistrar::SolverRegistrar(IdRegistryData& registry)
     Register(registry, ++id, Primitive::Mha, mha::Mha{}.SolverDbId());
     Register(registry, ++id, Primitive::Softmax, softmax::Softmax{}.SolverDbId());
     Register(registry, ++id, Primitive::Softmax, softmax::AttnSoftmax{}.SolverDbId());
-
+    Register(registry,
+             ++id,
+             Primitive::Loss,
+             cosineembeddingloss::CosineEmbeddingLossUnreducedForward2d{}.SolverDbId());
+    Register(registry,
+             ++id,
+             Primitive::Loss,
+             cosineembeddingloss::CosineEmbeddingLossReducedForward2d{}.SolverDbId());
+    Register(registry,
+             ++id,
+             Primitive::Loss,
+             cosineembeddingloss::CosineEmbeddingLossUnreducedBackward2d{}.SolverDbId());
+    Register(registry,
+             ++id,
+             Primitive::Loss,
+             cosineembeddingloss::CosineEmbeddingLossReducedBackward2d{}.SolverDbId());
     // IMPORTANT: New solvers should be added to the end of the function!
 }
 

@@ -104,6 +104,11 @@ struct CosineEmbeddingLossReducedForward2d final : CosineEmbeddingLossFwdReduced
     ConvSolution GetSolution(
         const ExecutionContext& context,
         const miopen::cosineembeddingloss::FwdReducedProblemDescription& problem) const override;
+
+    std::size_t GetWorkspaceSize(
+        const ExecutionContext& context,
+        const miopen::cosineembeddingloss::FwdReducedProblemDescription& problem) const override;
+    bool MayNeedWorkspace() const override { return true; }
 };
 
 // BACKWARD UNREDUCE

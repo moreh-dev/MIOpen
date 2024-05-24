@@ -35,7 +35,7 @@
 #include <miopen/target_properties.hpp>
 #include <miopen/tensor_view.hpp>
 
-#define LOCAL_SIZE_UNREDUCED_FWD 1024
+#define LOCAL_SIZE_REDUCED_BWD 1024
 
 namespace miopen {
 
@@ -43,9 +43,9 @@ namespace solver {
 
 namespace cosineembeddingloss {
 
-bool CosineEmbeddingLossUnreducedForward2d::IsApplicable(
+bool CosineEmbeddingLossReducedBackward2d::IsApplicable(
     const ExecutionContext&,
-    const miopen::cosineembeddingloss::FwdUnreducedProblemDescription& problem) const
+    const miopen::cosineembeddingloss::BwdReducedProblemDescription& problem) const
 {
     if(!problem.IsValidLength())
         return false;
@@ -53,9 +53,9 @@ bool CosineEmbeddingLossUnreducedForward2d::IsApplicable(
     return true;
 }
 
-ConvSolution CosineEmbeddingLossUnreducedForward2d::GetSolution(
+ConvSolution CosineEmbeddingLossReducedBackward2d::GetSolution(
     const ExecutionContext& context,
-    const miopen::cosineembeddingloss::FwdUnreducedProblemDescription& problem) const
+    const miopen::cosineembeddingloss::BwdReducedProblemDescription& problem) const
 {
     std::ignore = context;
 
@@ -78,34 +78,40 @@ ConvSolution CosineEmbeddingLossUnreducedForward2d::GetSolution(
             {"OUTPUT_TYPE", output_dtype == "bfloat16" ? "ushort" : output_dtype},
         };
 
-        result.construction_params.push_back(
-            make_hip_kernel({LOCAL_SIZE_UNREDUCED_FWD},
-                            {N_total},
-                            "MIOpenCosineEmbeddingLoss.cpp",
-                            "CosineEmbeddingLossUnreducedForward2d",
-                            build_params));
+        result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE_REDUCED_BWD},
+                                                             {N_total},
+                                                             "MIOpenCosineEmbeddingLoss.cpp",
+                                                             "CosineEmbeddingLossReducedBackward2d",
+                                                             build_params));
     }
 
     result.invoker_factory = [](const std::vector<Kernel>& kernels) {
         return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
             decltype(auto) kernel = handle_.Run(kernels.front());
             decltype(auto) params =
-                raw_params.CastTo<miopen::cosineembeddingloss::FwdInvokeParams>();
+                raw_params.CastTo<miopen::cosineembeddingloss::BwdInvokeParams>();
 
-            auto input1_tv = get_inner_expanded_tv_2d(deref(params.input1Desc));
-            auto input2_tv = get_inner_expanded_tv_2d(deref(params.input2Desc));
-            auto target_tv = get_inner_expanded_tv_1d(deref(params.targetDesc));
-            auto output_tv = get_inner_expanded_tv_1d(deref(params.outputDesc));
+            auto input1_tv      = get_inner_expanded_tv_2d(deref(params.input1Desc));
+            auto input2_tv      = get_inner_expanded_tv_2d(deref(params.input2Desc));
+            auto target_tv      = get_inner_expanded_tv_1d(deref(params.targetDesc));
+            auto output_grad_tv = get_inner_expanded_tv_1d(deref(params.outputGradDesc));
+            auto input1_grad_tv = get_inner_expanded_tv_2d(deref(params.input1GradDesc));
+            auto input2_grad_tv = get_inner_expanded_tv_2d(deref(params.input2GradDesc));
 
             kernel(params.input1,
                    params.input2,
                    params.target,
-                   params.output,
+                   params.output_grad,
+                   params.input1_grad,
+                   params.input2_grad,
                    input1_tv,
                    input2_tv,
                    target_tv,
-                   output_tv,
-                   params.margin);
+                   output_grad_tv,
+                   input1_grad_tv,
+                   input2_grad_tv,
+                   params.margin,
+                   params.divisor);
         };
     };
 

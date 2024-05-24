@@ -80,6 +80,17 @@ size_t GetCosineEmbeddingLossReducedForwardWorkspaceSize(Handle& handle,
                                                          const float margin,
                                                          const float divisor)
 {
+    auto ctx           = ExecutionContext{&handle};
+    const auto problem = cosineembeddingloss::FwdReducedProblemDescription{
+        input1Desc, input2Desc, targetDesc, outputDesc, margin, divisor};
+
+    const auto algo = AlgorithmName{"CosineEmbeddingLossReducedForward"};
+    const auto solvers =
+        solver::SolverContainer<solver::cosineembeddingloss::CosineEmbeddingLossReducedForward2d>{};
+
+    auto pair_size_vector = solvers.GetWorkspaceSizes(ctx, problem);
+
+    return pair_size_vector.empty() ? static_cast<size_t>(-1) : pair_size_vector.front().second;
 }
 
 miopenStatus_t CosineEmbeddingLossReducedForward(Handle& handle,
@@ -96,6 +107,34 @@ miopenStatus_t CosineEmbeddingLossReducedForward(Handle& handle,
                                                  const float margin,
                                                  const float divisor)
 {
+    const auto problem = cosineembeddingloss::FwdReducedProblemDescription{
+        input1Desc, input2Desc, targetDesc, outputDesc, margin, divisor};
+
+    const auto invoke_params = [&]() {
+        auto tmp       = cosineembeddingloss::FwdInvokeParams{};
+        tmp.input1Desc = &input1Desc;
+        tmp.input2Desc = &input2Desc;
+        tmp.targetDesc = &targetDesc;
+        tmp.outputDesc = &outputDesc;
+
+        tmp.input1               = input1;
+        tmp.input2               = input2;
+        tmp.target               = target;
+        tmp.output               = output;
+        tmp.workspace            = workspace;
+        tmp.workspaceSizeInBytes = workspaceSizeInBytes;
+        tmp.margin               = margin;
+        tmp.divisor              = divisor;
+        return tmp;
+    }();
+
+    const auto algo = AlgorithmName{"CosineEmbeddingLossReducedForward"};
+    const auto solvers =
+        solver::SolverContainer<solver::cosineembeddingloss::CosineEmbeddingLossReducedForward2d>{};
+
+    solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
+
+    return miopenStatusSuccess;
 }
 
 miopenStatus_t CosineEmbeddingLossUnreducedBackward(Handle& handle,
@@ -113,6 +152,36 @@ miopenStatus_t CosineEmbeddingLossUnreducedBackward(Handle& handle,
                                                     Data_t input2_grad,
                                                     const float margin)
 {
+    const auto problem = cosineembeddingloss::BwdUnreducedProblemDescription{
+        input1Desc, input2Desc, targetDesc, outputGradDesc, input1GradDesc, input2GradDesc, margin};
+
+    const auto invoke_params = [&]() {
+        auto tmp           = cosineembeddingloss::BwdInvokeParams{};
+        tmp.input1Desc     = &input1Desc;
+        tmp.input2Desc     = &input2Desc;
+        tmp.targetDesc     = &targetDesc;
+        tmp.outputGradDesc = &outputGradDesc;
+        tmp.input1GradDesc = &input1GradDesc;
+        tmp.input2GradDesc = &input2GradDesc;
+
+        tmp.input1      = input1;
+        tmp.input2      = input2;
+        tmp.target      = target;
+        tmp.output_grad = output_grad;
+        tmp.input1_grad = input1_grad;
+        tmp.input2_grad = input2_grad;
+
+        tmp.margin = margin;
+
+        return tmp;
+    }();
+    const auto algo    = AlgorithmName{"CosineEmbeddingLossUnreducedBackward"};
+    const auto solvers = solver::SolverContainer<
+        solver::cosineembeddingloss::CosineEmbeddingLossUnreducedBackward2d>{};
+
+    solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
+
+    return miopenStatusSuccess;
 }
 
 miopenStatus_t CosineEmbeddingLossReducedBackward(Handle& handle,
@@ -131,6 +200,43 @@ miopenStatus_t CosineEmbeddingLossReducedBackward(Handle& handle,
                                                   const float margin,
                                                   const float divisor)
 {
+    const auto problem = cosineembeddingloss::BwdReducedProblemDescription{input1Desc,
+                                                                           input2Desc,
+                                                                           targetDesc,
+                                                                           outputGradDesc,
+                                                                           input1GradDesc,
+                                                                           input2GradDesc,
+                                                                           margin,
+                                                                           divisor};
+
+    const auto invoke_params = [&]() {
+        auto tmp           = cosineembeddingloss::BwdInvokeParams{};
+        tmp.input1Desc     = &input1Desc;
+        tmp.input2Desc     = &input2Desc;
+        tmp.targetDesc     = &targetDesc;
+        tmp.outputGradDesc = &outputGradDesc;
+        tmp.input1GradDesc = &input1GradDesc;
+        tmp.input2GradDesc = &input2GradDesc;
+
+        tmp.input1      = input1;
+        tmp.input2      = input2;
+        tmp.target      = target;
+        tmp.output_grad = output_grad;
+        tmp.input1_grad = input1_grad;
+        tmp.input2_grad = input2_grad;
+
+        tmp.margin  = margin;
+        tmp.divisor = divisor;
+
+        return tmp;
+    }();
+    const auto algo    = AlgorithmName{"CosineEmbeddingLossReducedBackward"};
+    const auto solvers = solver::SolverContainer<
+        solver::cosineembeddingloss::CosineEmbeddingLossReducedBackward2d>{};
+
+    solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
+
+    return miopenStatusSuccess;
 }
 
 } // namespace miopen

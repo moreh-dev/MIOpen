@@ -59,7 +59,7 @@ struct ProblemDescription : ProblemDescriptionBase
     const TensorDescriptor& GetInput2Desc() const { return input2Desc; }
     const TensorDescriptor& GetTargetDesc() const { return targetDesc; }
     const TensorDescriptor& GetOutputDesc() const { return outputDesc; }
-    size_t GetNtotal() const { return input1Desc.GetElementSize(); }
+    size_t GetNtotal() const { return targetDesc.GetElementSize(); }
 
     bool IsValidLength() const
     {
@@ -211,15 +211,15 @@ struct BwdUnreducedProblemDescription : ProblemDescription
 
     bool IsValidLength() const
     {
-        if(input1Desc.GetSize() > 2 || input2Desc.GetSize() > 2)
+        if(input1GradDesc.GetSize() > 2 || input2GradDesc.GetSize() > 2)
         {
             MIOPEN_THROW(miopenStatusBadParm,
-                         "CosineEmbeddingLoss: Input tensor size > 2 is not valid.");
+                         "CosineEmbeddingLoss: Input grad tensors size > 2 are not valid.");
         }
 
         for(int i = 0; i < input1Desc.GetSize(); ++i)
         {
-            if(input1Desc.GetLengths()[i] != input2Desc.GetLengths()[i])
+            if(input1GradDesc.GetLengths()[i] != input2GradDesc.GetLengths()[i])
             {
                 MIOPEN_THROW(miopenStatusBadParm,
                              "CosineEmbeddingLoss: Tensor sizes do not match.");
@@ -271,15 +271,15 @@ struct BwdReducedProblemDescription : ProblemDescription
             MIOPEN_THROW(miopenStatusBadParm,
                          "CosineEmbeddingLoss: Output Tensor length must be (1).");
 
-        if(input1Desc.GetSize() > 2 || input2Desc.GetSize() > 2)
+        if(input1GradDesc.GetSize() > 2 || input2GradDesc.GetSize() > 2)
         {
             MIOPEN_THROW(miopenStatusBadParm,
-                         "CosineEmbeddingLoss: Input tensor size > 2 is not valid.");
+                         "CosineEmbeddingLoss: Input grad tensors size > 2 are not valid.");
         }
 
         for(int i = 0; i < input1Desc.GetSize(); ++i)
         {
-            if(input1Desc.GetLengths()[i] != input2Desc.GetLengths()[i])
+            if(input1GradDesc.GetLengths()[i] != input2GradDesc.GetLengths()[i])
             {
                 MIOPEN_THROW(miopenStatusBadParm,
                              "CosineEmbeddingLoss: Tensor sizes do not match.");

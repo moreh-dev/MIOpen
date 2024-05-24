@@ -106,6 +106,8 @@ set( MIOpen_Source
     conv_algo_name.cpp
     convolution.cpp
     convolution_api.cpp
+    cosineembeddingloss_api.cpp
+    cosineembeddingloss/problem_description.cpp
     ctc.cpp
     ctc_api.cpp
     db.cpp
@@ -255,6 +257,10 @@ set( MIOpen_Source
     solver/conv_wino_fury_RxS.cpp
     solver/conv_winoRxS.cpp
     solver/conv_winoRxS_fused.cpp
+    solver/cosineembeddingloss/fwd_unreduced_2d_cosineembeddingloss.cpp
+    solver/cosineembeddingloss/fwd_reduced_2d_cosineembeddingloss.cpp
+    solver/cosineembeddingloss/bwd_unreduced_2d_cosineembeddingloss.cpp
+    solver/cosineembeddingloss/bwd_reduced_2d_cosineembeddingloss.cpp
     solver/fft.cpp
     solver/gemm.cpp
     solver/gemm_bwd.cpp
@@ -421,6 +427,7 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         kernels/neuron.inc
         kernels/rocm_version.inc
         kernels/stride_array.hpp
+        kernels/tensor_view.hpp
         kernels/utilities.inc
         kernels/workaround_issue_1431.hpp
         kernels/xform_bidirect_winograd_code.inc
@@ -454,6 +461,7 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         kernels/MIOpenConvDirUni.cl
         kernels/MIOpenConvDirBatchNormActiv.cl
         kernels/MIOpenConvDirGenFwd.cl
+        kernels/MIOpenCosineEmbeddingLoss.cpp
         kernels/MIOpenGroupNorm.cpp
         kernels/MIOpenLayerNorm.cpp
         kernels/MIOpenLRNBwd.cl
@@ -578,6 +586,7 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         activ.cpp
         argmax.cpp
         cat.cpp
+        cosineembeddingloss.cpp
         groupnorm.cpp
         kernel_cache.cpp
         layer_norm.cpp
