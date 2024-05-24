@@ -308,18 +308,18 @@ __device__ void cosineembeddinglossUnreducedBackward2d(const TI* __restrict__ in
         }
     }
 
-    Dtype og = TV_1D_AT(dO, n);
+    FLOAT_ACCUM og = TV_1D_AT(dO, n);
     for(size_t d = 0; d < D; d++)
     {
         if(input1_grad)
         {
             size_t IG1idx = TV2D_IDX(input1_grad_tv, n, d);
-            TV_2D_AT(input1_grad, n, d) *= og;
+            input1_grad[IG1idx] *= og;
         }
         if(input2_grad)
         {
             size_t IG2idx = TV2D_IDX(input2_grad_tv, n, d);
-            TV_2D_AT(input2_grad, n, d) *= og;
+            input2_grad[IG2idx] *= og;
         }
     }
 }
