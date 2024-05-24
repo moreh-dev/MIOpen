@@ -83,11 +83,8 @@ ConvSolution HingeEmbeddingLossFwd::GetSolution(
     auto _size = size;
     do
     {
-        result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE_REDUCE_FWD},
-                                                             {_size},
-                                                             "MIOpenHingeEmbeddingLoss.cpp",
-                                                             "LossSum",
-                                                             build_params));
+        result.construction_params.push_back(make_hip_kernel(
+            {LOCAL_SIZE_REDUCE_FWD}, {_size}, "MIOpenLossSum.cpp", "LossSum", build_params));
         _size = AlignUp(_size, LOCAL_SIZE_REDUCE_FWD) / LOCAL_SIZE_REDUCE_FWD;
     } while(_size > 1);
 
