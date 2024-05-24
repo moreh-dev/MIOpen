@@ -113,6 +113,36 @@ __device__ void cosineembeddinglossUnreducedForward2d(const TI* __restrict__ inp
                                                       tensor_view_1d_t output_tv)
 {
     uint64_t gid = threadIdx.x + blockIdx.x * blockDim.x;
+
+    size_t N = input1_tv.size[0], D = input1_tv.size[1];
+    size_t n = gid;
+    if(!(n < input1_tv.size[0]))
+        return;
+
+    FLOAT_ACCUM loss     = 0.0f;
+    size_t Tidx          = TV1D_IDX(target_tv, n);
+    int32_t t            = target[Tidx];
+    FLOAT_ACCUM cos_term = 0.0f;
+    FLOAT_ACCUM norm1 = 0.0f, norm2 = 0.0f;
+    for(size_t d = 0; d < D; d++)
+    {
+        size_t I1idx = TV2D_IDX(input1_tv, n, d);
+        size_t I2idx = TV2D_IDX(input2_tv, n, d);
+        cos_term += CVT_FLOAT2ACCUM(input1[I1idx]) * CVT_FLOAT2ACCUM(input2[I2idx]);
+        norm1 += CVT_FLOAT2ACCUM(input1[I1idx]) * CVT_FLOAT2ACCUM(input1[I1idx]);
+        norm2 += CVT_FLOAT2ACCUM(input2[I2idx]) * CVT_FLOAT2ACCUM(input2[I2idx]);
+    }
+    norm1 = sqrt(norm1);
+    norm2 = sqrt(norm2);
+    cos_term /= norm1 * norm2;
+
+    if(t == 1)
+        loss = 1.0f - cos_term;
+    else
+        loss = max(0.0f, cos_term - margin);
+
+    size_t Oidx  = TV1D_IDX(output_tv, n);
+    output[Oidx] = CVT_ACCUM2FLOAT(loss);
 }
 
 extern "C" __global__ void
@@ -142,6 +172,35 @@ __device__ void cosineembeddinglossReducedForward2d(const TI* __restrict__ input
                                                     tensor_view_1d_t target_tv)
 {
     uint64_t gid = threadIdx.x + blockIdx.x * blockDim.x;
+
+    size_t N = input1_tv.size[0], D = input1_tv.size[1];
+    size_t n = gid;
+    if(!(n < input1_tv.size[0]))
+        return;
+
+    FLOAT_ACCUM loss     = 0.0f;
+    size_t Tidx          = TV1D_IDX(target_tv, n);
+    int32_t t            = target[Tidx];
+    FLOAT_ACCUM cos_term = 0.0f;
+    FLOAT_ACCUM norm1 = 0.0f, norm2 = 0.0f;
+    for(size_t d = 0; d < D; d++)
+    {
+        size_t I1idx = TV2D_IDX(input1_tv, n, d);
+        size_t I2idx = TV2D_IDX(input2_tv, n, d);
+        cos_term += CVT_FLOAT2ACCUM(input1[I1idx]) * CVT_FLOAT2ACCUM(input2[I2idx]);
+        norm1 += CVT_FLOAT2ACCUM(input1[I1idx]) * CVT_FLOAT2ACCUM(input1[I1idx]);
+        norm2 += CVT_FLOAT2ACCUM(input2[I2idx]) * CVT_FLOAT2ACCUM(input2[I2idx]);
+    }
+    norm1 = sqrt(norm1);
+    norm2 = sqrt(norm2);
+    cos_term /= norm1 * norm2;
+
+    if(t == 1)
+        loss = (1.0f - cos_term) / divisor;
+    else
+        loss = max(0.0f, cos_term - margin) / divisor;
+
+    loss_sum[gid] = CVT_ACCUM2FLOAT(loss);
 }
 
 extern "C" __global__ void
@@ -175,6 +234,94 @@ __device__ void cosineembeddinglossUnreducedBackward2d(const TI* __restrict__ in
                                                        tensor_view_2d_t input2_grad_tv)
 {
     uint64_t gid = threadIdx.x + blockIdx.x * blockDim.x;
+
+    size_t N = input1_tv.size[0], D = input1_tv.size[1];
+    size_t n = gid;
+
+    if(!(n < input1_tv.size[0]))
+        return;
+
+    for(size_t d = 0; d < D; d++)
+    {
+        if(input1_grad)
+            TV_2D_AT(input1_grad, n, d) = CVT_FP32_2FLOAT(0.0f);
+        if(input2_grad)
+            TV_2D_AT(input2_grad, n, d) = CVT_FP32_2FLOAT(0.0f);
+    }
+
+    size_t Tidx          = TV1D_IDX(target_tv, n);
+    int32_t t            = target[Tidx];
+    FLOAT_ACCUM cos_term = 0.0f;
+    FLOAT_ACCUM norm1 = 0.0f, norm2 = 0.0f;
+
+    for(size_t d = 0; d < D; d++)
+    {
+        size_t I1idx = TV2D_IDX(input1_tv, n, d);
+        size_t I2idx = TV2D_IDX(input2_tv, n, d);
+        cos_term += CVT_FLOAT2ACCUM(input1[I1idx]) * CVT_FLOAT2ACCUM(input2[I2idx]);
+        norm1 += CVT_FLOAT2ACCUM(input1[I1idx]) * CVT_FLOAT2ACCUM(input1[I1idx]);
+        norm2 += CVT_FLOAT2ACCUM(input2[I2idx]) * CVT_FLOAT2ACCUM(input2[I2idx]);
+    }
+    norm1 = sqrt(norm1);
+    norm2 = sqrt(norm2);
+    cos_term /= norm1 * norm2;
+
+    for(size_t d = 0; d < D; d++)
+    {
+        size_t I1idx = TV2D_IDX(input1_tv, n, d);
+        size_t I2idx = TV2D_IDX(input2_tv, n, d);
+
+        FLOAT_ACCUM i1 = CVT_FLOAT2ACCUM(input1[I1idx]);
+        FLOAT_ACCUM i2 = CVT_FLOAT2ACCUM(input2[I2idx]);
+
+        if(t == 1)
+        {
+            if(input1_grad)
+            {
+                size_t IG1idx = TV2D_IDX(input1_grad_tv, n, d);
+                input1_grad[IG1idx] +=
+                    CVT_ACCUM2FLOAT(-(i2 / (norm1 * norm2) - cos_term * i1 / (norm1 * norm1)));
+            }
+            if(input2_grad)
+            {
+                size_t IG2idx = TV2D_IDX(input2_grad_tv, n, d);
+                input2_grad[IG2idx] +=
+                    CVT_ACCUM2FLOAT(-(i1 / (norm1 * norm2) - cos_term * i2 / (norm2 * norm2)));
+            }
+        }
+        else
+        {
+            if(cos_term - margin < 0.0f)
+                continue;
+            if(input1_grad)
+            {
+                size_t IG1idx = TV2D_IDX(input1_grad_tv, n, d);
+                input1_grad[IG1idx] +=
+                    CVT_ACCUM2FLOAT(i2 / (norm1 * norm2) - cos_term * i1 / (norm1 * norm1));
+            }
+            if(input2_grad)
+            {
+                size_t IG2idx = TV2D_IDX(input2_grad_tv, n, d);
+                input2_grad[IG2idx] +=
+                    CVT_ACCUM2FLOAT(i1 / (norm1 * norm2) - cos_term * i2 / (norm2 * norm2));
+            }
+        }
+    }
+
+    Dtype og = TV_1D_AT(dO, n);
+    for(size_t d = 0; d < D; d++)
+    {
+        if(input1_grad)
+        {
+            size_t IG1idx = TV2D_IDX(input1_grad_tv, n, d);
+            TV_2D_AT(input1_grad, n, d) *= og;
+        }
+        if(input2_grad)
+        {
+            size_t IG2idx = TV2D_IDX(input2_grad_tv, n, d);
+            TV_2D_AT(input2_grad, n, d) *= og;
+        }
+    }
 }
 
 extern "C" __global__ void
