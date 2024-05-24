@@ -26,10 +26,7 @@
 
 #pragma once
 
-#include "miopen/errors.hpp"
-
 #include <../test/ford.hpp>
-#include <../test/tensor_holder.hpp>
 
 #include <miopen/miopen.h>
 #include <miopen/tensor.hpp>
@@ -98,6 +95,56 @@ int32_t mloTripletMarginLossUnreducedForwardRunHost(const miopenTensorDescriptor
 
         outputhost[O_tv.stride[0] * b] = static_cast<Tcheck>(loss);
     });
+
+    return miopenStatusSuccess;
+}
+
+template <typename Tgpu, typename Tcheck>
+int32_t mloTripletMarginLossReducedForwardRunHost(const miopenTensorDescriptor_t aDesc,
+                                                  const miopenTensorDescriptor_t pDesc,
+                                                  const miopenTensorDescriptor_t nDesc,
+                                                  const Tgpu* anchor,
+                                                  const Tgpu* positive,
+                                                  const Tgpu* negative,
+                                                  Tcheck* outputhost,
+                                                  const float margin,
+                                                  const int p,
+                                                  const float eps,
+                                                  const bool swap,
+                                                  const float divisor)
+{
+    auto A_tv = miopen::solver::tripletmarginloss::get_inner_expanded_tv<2>(miopen::deref(aDesc));
+    auto P_tv = miopen::solver::tripletmarginloss::get_inner_expanded_tv<2>(miopen::deref(pDesc));
+    auto N_tv = miopen::solver::tripletmarginloss::get_inner_expanded_tv<2>(miopen::deref(nDesc));
+
+    std::vector<float> buffer(A_tv.size[0]);
+
+    par_ford(A_tv.size[0])([&](int gid) {
+        size_t C = A_tv.size[1];
+        size_t b = gid;
+
+        if(b >= A_tv.size[0])
+            return;
+
+        float ap = dist<Tgpu>(anchor, positive, p, eps, A_tv, P_tv, b, C);
+        float an = dist<Tgpu>(anchor, negative, p, eps, A_tv, N_tv, b, C);
+        float pn = dist<Tgpu>(positive, negative, p, eps, P_tv, N_tv, b, C);
+
+        if(swap && pn < an)
+        {
+            an = pn;
+        }
+
+        auto loss = std::max(ap - an + margin, 0.0f);
+
+        buffer[gid] = loss;
+    });
+
+    double loss_sum = 0.0;
+    for(auto loss : buffer)
+        loss_sum += loss;
+
+    outputhost[0] = static_cast<Tcheck>(loss_sum / divisor);
 
     return miopenStatusSuccess;
 }

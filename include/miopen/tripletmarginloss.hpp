@@ -32,24 +32,25 @@ namespace miopen {
 struct Handle;
 struct TensorDescriptor;
 
-size_t GetTripletMarginLossUnreducedForwardWorkspaceSize(Handle& handle,
-                                                         const TensorDescriptor& aDesc,
-                                                         const TensorDescriptor& oDesc);
+size_t GetTripletMarginLossForwardWorkspaceSize(Handle& handle,
+                                                const TensorDescriptor& aDesc,
+                                                const TensorDescriptor& oDesc);
 
-miopenStatus_t TripletMarginLossUnreducedForward(Handle& handle,
-                                                 Data_t workspace,
-                                                 size_t workspaceSizeInBytes,
-                                                 const TensorDescriptor& aDesc,
-                                                 ConstData_t anchor,
-                                                 const TensorDescriptor& pDesc,
-                                                 ConstData_t positive,
-                                                 const TensorDescriptor& nDesc,
-                                                 ConstData_t negative,
-                                                 const TensorDescriptor& oDesc,
-                                                 Data_t o,
-                                                 float margin,
-                                                 int p,
-                                                 float eps,
-                                                 bool swap);
+miopenStatus_t TripletMarginLossForward(Handle& handle,
+                                        Data_t workspace,
+                                        size_t workspaceSizeInBytes,
+                                        const TensorDescriptor& aDesc,
+                                        ConstData_t anchor,
+                                        const TensorDescriptor& pDesc,
+                                        ConstData_t positive,
+                                        const TensorDescriptor& nDesc,
+                                        ConstData_t negative,
+                                        const TensorDescriptor& oDesc,
+                                        Data_t o,
+                                        float margin,
+                                        int p,
+                                        float eps,
+                                        bool swap,
+                                        float divisor);
 
 } // namespace miopen

@@ -25,12 +25,8 @@
  *******************************************************************************/
 #pragma once
 
-#include <miopen/activ.hpp>
 #include <miopen/problem_description_base.hpp>
 #include <miopen/tensor.hpp>
-
-#include <cassert>
-#include <string>
 
 namespace miopen {
 
@@ -42,13 +38,13 @@ bool checkSameType(const TensorDescriptor& x, const TensorDescriptor& y);
 bool checkSameLength(const TensorDescriptor& x, const TensorDescriptor& y);
 bool checkSameStride(const TensorDescriptor& x, const TensorDescriptor& y);
 
-struct ProblemDescription : ProblemDescriptionBase
+struct ForwardProblemDescription : ProblemDescriptionBase
 {
 
-    ProblemDescription(const TensorDescriptor& aDesc_,
-                       const TensorDescriptor& pDesc_,
-                       const TensorDescriptor& nDesc_,
-                       const TensorDescriptor& oDesc_)
+    ForwardProblemDescription(const TensorDescriptor& aDesc_,
+                              const TensorDescriptor& pDesc_,
+                              const TensorDescriptor& nDesc_,
+                              const TensorDescriptor& oDesc_)
         : aDesc(aDesc_), pDesc(pDesc_), nDesc(nDesc_), oDesc(oDesc_)
     {
     }
@@ -76,14 +72,24 @@ struct ProblemDescription : ProblemDescriptionBase
         if(oDesc.GetSize() != 1)
             MIOPEN_THROW(miopenStatusBadParm,
                          "Triplet Margin Loss: Output tensor must have 1 dimension.");
-        if(oDesc.GetLengths()[0] != aDesc.GetLengths()[0])
-            MIOPEN_THROW(miopenStatusBadParm,
-                         "Triplet Margin Loss: Output tensor size must be equal to the first dim "
-                         "of anchor tensor.");
         if(!checkSameLength(aDesc, pDesc) || !checkSameLength(aDesc, nDesc))
             MIOPEN_THROW(
                 miopenStatusBadParm,
                 "Triplet Margin Loss: Anchor, Positive, Negative tensor sizes do not match.");
+        return true;
+    }
+
+    bool IsReduced() const
+    {
+        if(oDesc.GetElementSize() != 1)
+            return false;
+        return true;
+    }
+
+    bool IsUnreduced() const
+    {
+        if(oDesc.GetLengths()[0] != aDesc.GetLengths()[0])
+            return false;
         return true;
     }
 

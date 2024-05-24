@@ -34,22 +34,42 @@ namespace solver {
 
 namespace tripletmarginloss {
 
-using UnreducedForwardSolverBase =
-    NonTunableSolverBase<ExecutionContext, miopen::tripletmarginloss::ProblemDescription>;
+using ForwardSolverBase =
+    NonTunableSolverBase<ExecutionContext, miopen::tripletmarginloss::ForwardProblemDescription>;
 
-struct UnreducedForward2d final : UnreducedForwardSolverBase
+struct Forward2d : ForwardSolverBase
+{
+    bool IsApplicable(
+        const ExecutionContext& context,
+        const miopen::tripletmarginloss::ForwardProblemDescription& problem) const override;
+    std::size_t GetWorkspaceSize(
+        const ExecutionContext& context,
+        const miopen::tripletmarginloss::ForwardProblemDescription& problem) const override;
+    bool MayNeedWorkspace() const override { return true; }
+};
+
+struct UnreducedForward2d final : Forward2d
 {
     const std::string& SolverDbId() const override { return GetSolverDbId<UnreducedForward2d>(); }
 
-    bool IsApplicable(const ExecutionContext& context,
-                      const miopen::tripletmarginloss::ProblemDescription& problem) const override;
+    bool IsApplicable(
+        const ExecutionContext& context,
+        const miopen::tripletmarginloss::ForwardProblemDescription& problem) const override;
     ConvSolution
     GetSolution(const ExecutionContext& context,
-                const miopen::tripletmarginloss::ProblemDescription& problem) const override;
-    std::size_t
-    GetWorkspaceSize(const ExecutionContext& context,
-                     const miopen::tripletmarginloss::ProblemDescription& problem) const override;
-    bool MayNeedWorkspace() const override { return true; }
+                const miopen::tripletmarginloss::ForwardProblemDescription& problem) const override;
+};
+
+struct ReducedForward2d final : Forward2d
+{
+    const std::string& SolverDbId() const override { return GetSolverDbId<ReducedForward2d>(); }
+
+    bool IsApplicable(
+        const ExecutionContext& context,
+        const miopen::tripletmarginloss::ForwardProblemDescription& problem) const override;
+    ConvSolution
+    GetSolution(const ExecutionContext& context,
+                const miopen::tripletmarginloss::ForwardProblemDescription& problem) const override;
 };
 
 } // namespace tripletmarginloss

@@ -24,12 +24,12 @@
  *
  *******************************************************************************/
 
-#include "../driver/tensor_driver.hpp"
 #include "cpu_tripletmarginloss.hpp"
 #include "get_handle.hpp"
 #include "random.hpp"
 #include "tensor_holder.hpp"
 #include "verify.hpp"
+
 #include <gtest/gtest.h>
 #include <miopen/miopen.h>
 #include <miopen/tripletmarginloss.hpp>
@@ -82,6 +82,21 @@ inline std::vector<TripletMarginLossTestCase> TripletMarginLossTestConfigs()
     tcs.push_back({{1, 65536}, 1, 2, 1e-7, false, std::numeric_limits<float>::quiet_NaN(), false});
     tcs.push_back({{993, 80}, 1, 2, 1e-7, false, std::numeric_limits<float>::quiet_NaN(), false});
     tcs.push_back({{80, 993}, 1, 2, 1e-7, false, std::numeric_limits<float>::quiet_NaN(), false});
+
+    tcs.push_back({{65536, 1}, 1, 2, 1e-7, false, 1, true});
+    tcs.push_back({{1, 2}, 1, 2, 1e-7, false, 1, true});
+    tcs.push_back({{1, 1024}, 1, 2, 1e-7, false, 1, true});
+    tcs.push_back({{1, 65536}, 1, 2, 1e-7, false, 1, true});
+    tcs.push_back({{993, 80}, 1, 2, 1e-7, false, 1, true});
+    tcs.push_back({{80, 993}, 1, 2, 1e-7, false, 1, true});
+
+    tcs.push_back({{65536, 1}, 1, 2, 1e-7, false, 1, false});
+    tcs.push_back({{1, 2}, 1, 2, 1e-7, false, 1, false});
+    tcs.push_back({{1, 1024}, 1, 2, 1e-7, false, 1, false});
+    tcs.push_back({{1, 65536}, 1, 2, 1e-7, false, 1, false});
+    tcs.push_back({{993, 80}, 1, 2, 1e-7, false, 1, false});
+    tcs.push_back({{80, 993}, 1, 2, 1e-7, false, 1, false});
+
     return tcs;
 }
 
@@ -138,8 +153,8 @@ protected:
         std::fill(ref_output.begin(), ref_output.end(), std::numeric_limits<T>::quiet_NaN());
 
         std::vector<size_t> workspace_lengths;
-        ws_sizeInBytes = miopen::GetTripletMarginLossUnreducedForwardWorkspaceSize(
-            handle, anchor.desc, output.desc);
+        ws_sizeInBytes =
+            miopen::GetTripletMarginLossForwardWorkspaceSize(handle, anchor.desc, output.desc);
         if(ws_sizeInBytes == static_cast<size_t>(-1))
             GTEST_SKIP();
 
@@ -167,25 +182,27 @@ protected:
         miopenStatus_t status;
 
         if(std::isnan(divisor))
-        {
             cpu_tripletmarginloss_unreduced_forward<T>(
                 anchor, positive, negative, ref_output, margin, p, eps, swap);
-            status = miopen::TripletMarginLossUnreducedForward(handle,
-                                                               workspace_dev.get(),
-                                                               ws_sizeInBytes,
-                                                               anchor.desc,
-                                                               anchor_dev.get(),
-                                                               positive.desc,
-                                                               positive_dev.get(),
-                                                               negative.desc,
-                                                               negative_dev.get(),
-                                                               output.desc,
-                                                               output_dev.get(),
-                                                               margin,
-                                                               p,
-                                                               eps,
-                                                               swap);
-        }
+        else
+            cpu_tripletmarginloss_reduced_forward<T>(
+                anchor, positive, negative, ref_output, margin, p, eps, swap, divisor);
+        status = miopen::TripletMarginLossForward(handle,
+                                                  workspace_dev.get(),
+                                                  ws_sizeInBytes,
+                                                  anchor.desc,
+                                                  anchor_dev.get(),
+                                                  positive.desc,
+                                                  positive_dev.get(),
+                                                  negative.desc,
+                                                  negative_dev.get(),
+                                                  output.desc,
+                                                  output_dev.get(),
+                                                  margin,
+                                                  p,
+                                                  eps,
+                                                  swap,
+                                                  divisor);
 
         EXPECT_EQ(status, miopenStatusSuccess);
 

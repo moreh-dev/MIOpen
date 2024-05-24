@@ -26,20 +26,15 @@
 
 #pragma once
 
-#include "InputFlags.hpp"
 #include "driver.hpp"
-#include "miopen/errors.hpp"
 #include "mloTripletMarginLossHost.hpp"
 #include "tensor_driver.hpp"
 #include "timer.hpp"
 
 #include <../test/ford.hpp>
-#include <../test/tensor_holder.hpp>
 #include <../test/verify.hpp>
 
 #include <miopen/miopen.h>
-
-#include <vector>
 
 inline std::vector<int> GetStrides(std::vector<int> lengths, int contiguous)
 {
@@ -248,11 +243,9 @@ int TripletMarginLossDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     size_t negative_sz = GetTensorSize(negativeDesc);
     size_t out_sz      = GetTensorSize(outputDesc);
 
-    if(std::isnan(divisor))
-    {
-        miopenGetTripletMarginLossUnreducedForwardWorkspaceSize(
-            GetHandle(), anchorDesc, outputDesc, &ws_sizeInBytes);
-    }
+    miopenGetTripletMarginLossForwardWorkspaceSize(
+        GetHandle(), anchorDesc, outputDesc, &ws_sizeInBytes);
+
     if(ws_sizeInBytes == static_cast<size_t>(-1))
         return miopenStatusAllocFailed;
 
@@ -281,10 +274,10 @@ int TripletMarginLossDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
         anchor[i] = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.0), static_cast<Tgpu>(0.2));
 
     for(int i = 0; i < positive_sz; i++)
-        positive[i] = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.01), static_cast<Tgpu>(0.21));
+        positive[i] = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.1), static_cast<Tgpu>(0.3));
 
     for(int i = 0; i < negative_sz; i++)
-        negative[i] = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.01), static_cast<Tgpu>(0.21));
+        negative[i] = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.2), static_cast<Tgpu>(0.4));
 
     fill(out.begin(), out.end(), static_cast<Tgpu>(0));
 
@@ -318,24 +311,22 @@ int TripletMarginLossDriver<Tgpu, Tref>::RunForwardGPU()
 
     for(int i = 0; i < inflags.GetValueInt("iter"); i++)
     {
-        if(std::isnan(divisor))
-        {
-            miopenTripletMarginLossUnreducedForward(GetHandle(),
-                                                    workspace_dev->GetMem(),
-                                                    ws_sizeInBytes,
-                                                    anchorDesc,
-                                                    anchor_dev->GetMem(),
-                                                    positiveDesc,
-                                                    positive_dev->GetMem(),
-                                                    negativeDesc,
-                                                    negative_dev->GetMem(),
-                                                    outputDesc,
-                                                    out_dev->GetMem(),
-                                                    margin,
-                                                    p,
-                                                    eps,
-                                                    swap);
-        }
+        miopenTripletMarginLossForward(GetHandle(),
+                                       workspace_dev->GetMem(),
+                                       ws_sizeInBytes,
+                                       anchorDesc,
+                                       anchor_dev->GetMem(),
+                                       positiveDesc,
+                                       positive_dev->GetMem(),
+                                       negativeDesc,
+                                       negative_dev->GetMem(),
+                                       outputDesc,
+                                       out_dev->GetMem(),
+                                       margin,
+                                       p,
+                                       eps,
+                                       swap,
+                                       divisor);
 
         float time = 0.0;
         miopenGetKernelTime(GetHandle(), &time);
@@ -381,6 +372,21 @@ int TripletMarginLossDriver<Tgpu, Tref>::RunForwardCPU()
                                                                 p,
                                                                 eps,
                                                                 swap);
+    }
+    else
+    {
+        mloTripletMarginLossReducedForwardRunHost<Tgpu, Tref>(anchorDesc,
+                                                              positiveDesc,
+                                                              negativeDesc,
+                                                              anchor.data(),
+                                                              positive.data(),
+                                                              negative.data(),
+                                                              outhost.data(),
+                                                              margin,
+                                                              p,
+                                                              eps,
+                                                              swap,
+                                                              divisor);
     }
 
     return miopenStatusSuccess;

@@ -64,7 +64,7 @@ bool checkSameStride(const TensorDescriptor& x, const TensorDescriptor& y)
     return true;
 }
 
-NetworkConfig ProblemDescription::MakeNetworkConfig() const
+NetworkConfig ForwardProblemDescription::MakeNetworkConfig() const
 {
     auto anchor_dtype = aDesc.GetType();
     auto output_dtype = oDesc.GetType();
@@ -73,7 +73,7 @@ NetworkConfig ProblemDescription::MakeNetworkConfig() const
 
     std::ostringstream ss;
 
-    ss << "tripletmarginloss_unreduced_fwd";
+    ss << "tripletmarginloss_fwd" << IsUnreduced() << IsReduced();
     ss << "a_dtype" << anchor_dtype;
     ss << "o_dtype" << output_dtype;
     ss << "size0" << size0;

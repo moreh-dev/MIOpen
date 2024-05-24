@@ -6598,10 +6598,10 @@ MIOPEN_EXPORT miopenStatus_t miopenBackendInitialize(miopenBackendDescriptor_t d
  * @return                         miopenStatus_t
  */
 MIOPEN_EXPORT miopenStatus_t
-miopenGetTripletMarginLossUnreducedForwardWorkspaceSize(miopenHandle_t handle,
-                                                        miopenTensorDescriptor_t aDesc,
-                                                        miopenTensorDescriptor_t oDesc,
-                                                        size_t* sizeInBytes);
+miopenGetTripletMarginLossForwardWorkspaceSize(miopenHandle_t handle,
+                                               miopenTensorDescriptor_t aDesc,
+                                               miopenTensorDescriptor_t oDesc,
+                                               size_t* sizeInBytes);
 
 /*! @brief Execute a Triplet Margin Loss forward layer
  *
@@ -6620,23 +6620,25 @@ miopenGetTripletMarginLossUnreducedForwardWorkspaceSize(miopenHandle_t handle,
  * @param p                        The norm degree for pairwise distance (input)
  * @param eps                      Small constant for numerical stability (input)
  * @param swap                     The distance swap (input)
+ * @param divisor                  Divisor, unused in unreduced case (input)
  * @return                         miopenStatus_t
  */
-MIOPEN_EXPORT miopenStatus_t miopenTripletMarginLossUnreducedForward(miopenHandle_t handle,
-                                                                     void* workspace,
-                                                                     size_t workspaceSizeInBytes,
-                                                                     miopenTensorDescriptor_t aDesc,
-                                                                     const void* anchor,
-                                                                     miopenTensorDescriptor_t pDesc,
-                                                                     const void* positive,
-                                                                     miopenTensorDescriptor_t nDesc,
-                                                                     const void* negative,
-                                                                     miopenTensorDescriptor_t oDesc,
-                                                                     void* o,
-                                                                     float margin,
-                                                                     int p,
-                                                                     float eps,
-                                                                     bool swap);
+MIOPEN_EXPORT miopenStatus_t miopenTripletMarginLossForward(miopenHandle_t handle,
+                                                            void* workspace,
+                                                            size_t workspaceSizeInBytes,
+                                                            miopenTensorDescriptor_t aDesc,
+                                                            const void* anchor,
+                                                            miopenTensorDescriptor_t pDesc,
+                                                            const void* positive,
+                                                            miopenTensorDescriptor_t nDesc,
+                                                            const void* negative,
+                                                            miopenTensorDescriptor_t oDesc,
+                                                            void* o,
+                                                            float margin,
+                                                            int p,
+                                                            float eps,
+                                                            bool swap,
+                                                            float divisor);
 
 /** @} */
 // CLOSEOUT LossFunction DOXYGEN GROUP

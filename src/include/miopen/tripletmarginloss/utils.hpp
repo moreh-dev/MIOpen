@@ -26,7 +26,11 @@
 #pragma once
 
 #include "../src/kernels/tensor_view.hpp"
-#include <miopen/tripletmarginloss/solvers.hpp>
+
+#include <miopen/kernel_build_params.hpp>
+#include <miopen/problem_description_base.hpp>
+#include <miopen/tensor.hpp>
+#include <miopen/solver.hpp>
 
 namespace miopen {
 namespace solver {
@@ -44,12 +48,6 @@ inline tensor_view_t<N> get_inner_expanded_tv(const TensorDescriptor Desc)
         tensor_view.stride[i] = strides[i];
         tensor_view.size[i]   = dims[i];
     }
-    // auto rest = strides.size();
-    // for(size_t j = rest; j < 5; ++j)
-    // {
-    //     tensor_view.stride[j] = (rest == 0 ? 1 : strides[rest - 1]);
-    //     tensor_view.size[j]   = 1;
-    // }
     return tensor_view;
 }
 
@@ -72,6 +70,20 @@ inline void slice_tv(tensor_view_t<N>& tensor_view, int32_t sliceCount, const in
         tensor_view.stride[dim] *= step;
     }
 }
+
+KernelInfo make_hip_kernel(std::vector<size_t> localsize,
+                           std::vector<size_t> gridsize,
+                           std::string kernel_file,
+                           std::string kernel_name,
+                           KernelBuildParameters build_params);
+
+size_t get_reqd_work_item_cnt(const ExecutionContext& context, size_t local_size);
+
+size_t get_reqd_work_item_cnt(const Handle& handle, size_t local_size);
+
+size_t get_parallelism_size(size_t reqd_work_item_cnt, size_t output_numel, size_t reduce_size);
+
+bool is_parallelism(size_t reqd_work_item_cnt, size_t output_numel, size_t reduce_size);
 
 } // namespace tripletmarginloss
 } // namespace solver

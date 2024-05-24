@@ -24,9 +24,7 @@
  *
  *******************************************************************************/
 
-#include <miopen/errors.hpp>
 #include <miopen/handle.hpp>
-#include <miopen/logger.hpp>
 #include <miopen/tensor_ops.hpp>
 #include <miopen/tripletmarginloss.hpp>
 
@@ -74,36 +72,36 @@ static void LogCmdTripletMarginLoss(const miopenTensorDescriptor_t aDesc,
 }
 
 extern "C" miopenStatus_t
-miopenGetTripletMarginLossUnreducedForwardWorkspaceSize(miopenHandle_t handle,
-                                                        const miopenTensorDescriptor_t aDesc,
-                                                        const miopenTensorDescriptor_t oDesc,
-                                                        size_t* sizeInBytes)
+miopenGetTripletMarginLossForwardWorkspaceSize(miopenHandle_t handle,
+                                               const miopenTensorDescriptor_t aDesc,
+                                               const miopenTensorDescriptor_t oDesc,
+                                               size_t* sizeInBytes)
 {
 
     MIOPEN_LOG_FUNCTION(handle, aDesc, oDesc, sizeInBytes);
 
     return miopen::try_([&] {
-        miopen::deref(sizeInBytes) = miopen::GetTripletMarginLossUnreducedForwardWorkspaceSize(
+        miopen::deref(sizeInBytes) = miopen::GetTripletMarginLossForwardWorkspaceSize(
             miopen::deref(handle), miopen::deref(aDesc), miopen::deref(oDesc));
     });
 }
 
-extern "C" miopenStatus_t
-miopenTripletMarginLossUnreducedForward(miopenHandle_t handle,
-                                        void* workspace,
-                                        const size_t workspaceSizeInBytes,
-                                        const miopenTensorDescriptor_t aDesc,
-                                        const void* anchor,
-                                        const miopenTensorDescriptor_t pDesc,
-                                        const void* positive,
-                                        const miopenTensorDescriptor_t nDesc,
-                                        const void* negative,
-                                        const miopenTensorDescriptor_t oDesc,
-                                        void* o,
-                                        const float margin,
-                                        const int p,
-                                        const float eps,
-                                        const bool swap)
+extern "C" miopenStatus_t miopenTripletMarginLossForward(miopenHandle_t handle,
+                                                         void* workspace,
+                                                         const size_t workspaceSizeInBytes,
+                                                         const miopenTensorDescriptor_t aDesc,
+                                                         const void* anchor,
+                                                         const miopenTensorDescriptor_t pDesc,
+                                                         const void* positive,
+                                                         const miopenTensorDescriptor_t nDesc,
+                                                         const void* negative,
+                                                         const miopenTensorDescriptor_t oDesc,
+                                                         void* o,
+                                                         const float margin,
+                                                         const int p,
+                                                         const float eps,
+                                                         const bool swap,
+                                                         const float divisor)
 {
     MIOPEN_LOG_FUNCTION(handle,
                         workspace,
@@ -119,24 +117,26 @@ miopenTripletMarginLossUnreducedForward(miopenHandle_t handle,
                         margin,
                         p,
                         eps,
-                        swap);
+                        swap,
+                        divisor);
 
     LogCmdTripletMarginLoss(aDesc, oDesc, true);
     return miopen::try_([&] {
-        miopen::TripletMarginLossUnreducedForward(miopen::deref(handle),
-                                                  DataCast(workspace),
-                                                  workspaceSizeInBytes,
-                                                  miopen::deref(aDesc),
-                                                  DataCast(anchor),
-                                                  miopen::deref(pDesc),
-                                                  DataCast(positive),
-                                                  miopen::deref(nDesc),
-                                                  DataCast(negative),
-                                                  miopen::deref(oDesc),
-                                                  DataCast(o),
-                                                  margin,
-                                                  p,
-                                                  eps,
-                                                  swap);
+        miopen::TripletMarginLossForward(miopen::deref(handle),
+                                         DataCast(workspace),
+                                         workspaceSizeInBytes,
+                                         miopen::deref(aDesc),
+                                         DataCast(anchor),
+                                         miopen::deref(pDesc),
+                                         DataCast(positive),
+                                         miopen::deref(nDesc),
+                                         DataCast(negative),
+                                         miopen::deref(oDesc),
+                                         DataCast(o),
+                                         margin,
+                                         p,
+                                         eps,
+                                         swap,
+                                         divisor);
     });
 }

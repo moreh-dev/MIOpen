@@ -27,7 +27,6 @@
 #pragma once
 
 #include "tensor_holder.hpp"
-#include "tensor_view.hpp"
 #include <miopen/tripletmarginloss/utils.hpp>
 
 template <class T>
@@ -69,7 +68,7 @@ void cpu_tripletmarginloss_unreduced_forward(tensor<T> anchor,
     auto N_tv = miopen::solver::tripletmarginloss::get_inner_expanded_tv<2>(negative.desc);
     auto O_tv = miopen::solver::tripletmarginloss::get_inner_expanded_tv<1>(ref_output.desc);
 
-    par_ford(ref_output.desc.GetElementSize())([&](int gid) {
+    par_ford(A_tv.size[0])([&](int gid) {
         size_t C = A_tv.size[1];
         size_t b = gid;
 
@@ -89,4 +88,49 @@ void cpu_tripletmarginloss_unreduced_forward(tensor<T> anchor,
 
         ref_output[O_tv.stride[0] * b] = static_cast<T>(loss);
     });
+}
+
+template <class T>
+void cpu_tripletmarginloss_reduced_forward(tensor<T> anchor,
+                                           tensor<T> positive,
+                                           tensor<T> negative,
+                                           tensor<T>& ref_output,
+                                           float margin,
+                                           int p,
+                                           int eps,
+                                           bool swap,
+                                           float divisor)
+{
+    auto A_tv = miopen::solver::tripletmarginloss::get_inner_expanded_tv<2>(anchor.desc);
+    auto P_tv = miopen::solver::tripletmarginloss::get_inner_expanded_tv<2>(positive.desc);
+    auto N_tv = miopen::solver::tripletmarginloss::get_inner_expanded_tv<2>(negative.desc);
+
+    std::vector<float> buffer(A_tv.size[0]);
+
+    par_ford(A_tv.size[0])([&](int gid) {
+        size_t C = A_tv.size[1];
+        size_t b = gid;
+
+        if(b >= A_tv.size[0])
+            return;
+
+        float ap = dist<T>(anchor, positive, p, eps, A_tv, P_tv, b, C);
+        float an = dist<T>(anchor, negative, p, eps, A_tv, N_tv, b, C);
+        float pn = dist<T>(positive, negative, p, eps, P_tv, N_tv, b, C);
+
+        if(swap && pn < an)
+        {
+            an = pn;
+        }
+
+        auto loss = std::max(ap - an + margin, 0.0f);
+
+        buffer[gid] = loss;
+    });
+
+    double loss_sum = 0.0;
+    for(auto loss : buffer)
+        loss_sum += loss;
+
+    ref_output[0] = static_cast<T>(loss_sum / divisor);
 }

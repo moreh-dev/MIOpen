@@ -274,6 +274,7 @@ set( MIOpen_Source
     solver/softmax/attn_softmax.cpp
     solver/softmax/softmax.cpp
     solver/tripletmarginloss/forward_tripletmarginloss.cpp
+    solver/tripletmarginloss/utils.cpp
     subbuffers.cpp
     sum_api.cpp
     target_properties.cpp
@@ -460,6 +461,7 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         kernels/MIOpenConvDirGenFwd.cl
         kernels/MIOpenGroupNorm.cpp
         kernels/MIOpenLayerNorm.cpp
+        kernels/MIOpenLossReduce.cpp
         kernels/MIOpenLRNBwd.cl
         kernels/MIOpenLRNFwd.cl
         kernels/MIOpenNeuron.cl

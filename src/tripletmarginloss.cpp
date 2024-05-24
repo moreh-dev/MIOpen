@@ -24,10 +24,7 @@
  *
  *******************************************************************************/
 
-#include <miopen/datatype.hpp>
 #include <miopen/find_solution.hpp>
-#include <miopen/float_equal.hpp>
-#include <miopen/kernel_cache.hpp>
 #include <miopen/tensor.hpp>
 #include <miopen/tripletmarginloss.hpp>
 #include <miopen/tripletmarginloss/invoke_params.hpp>
@@ -35,37 +32,39 @@
 
 namespace miopen {
 
-size_t GetTripletMarginLossUnreducedForwardWorkspaceSize(Handle& handle,
-                                                         const TensorDescriptor& aDesc,
-                                                         const TensorDescriptor& oDesc)
+size_t GetTripletMarginLossForwardWorkspaceSize(Handle& handle,
+                                                const TensorDescriptor& aDesc,
+                                                const TensorDescriptor& oDesc)
 {
     auto ctx           = ExecutionContext{&handle};
-    const auto problem = tripletmarginloss::ProblemDescription{aDesc, aDesc, aDesc, oDesc};
+    const auto problem = tripletmarginloss::ForwardProblemDescription{aDesc, aDesc, aDesc, oDesc};
 
-    const auto solvers = solver::SolverContainer<solver::tripletmarginloss::UnreducedForward2d>{};
+    const auto solvers = solver::SolverContainer<solver::tripletmarginloss::UnreducedForward2d,
+                                                 solver::tripletmarginloss::ReducedForward2d>{};
 
     auto pair_size_vector = solvers.GetWorkspaceSizes(ctx, problem);
 
     return pair_size_vector.empty() ? static_cast<size_t>(-1) : pair_size_vector.front().second;
 }
 
-miopenStatus_t TripletMarginLossUnreducedForward(Handle& handle,
-                                                 Data_t workspace,
-                                                 size_t workspaceSizeInBytes,
-                                                 const TensorDescriptor& aDesc,
-                                                 ConstData_t anchor,
-                                                 const TensorDescriptor& pDesc,
-                                                 ConstData_t positive,
-                                                 const TensorDescriptor& nDesc,
-                                                 ConstData_t negative,
-                                                 const TensorDescriptor& oDesc,
-                                                 Data_t o,
-                                                 float margin,
-                                                 int p,
-                                                 float eps,
-                                                 bool swap)
+miopenStatus_t TripletMarginLossForward(Handle& handle,
+                                        Data_t workspace,
+                                        const size_t workspaceSizeInBytes,
+                                        const TensorDescriptor& aDesc,
+                                        ConstData_t anchor,
+                                        const TensorDescriptor& pDesc,
+                                        ConstData_t positive,
+                                        const TensorDescriptor& nDesc,
+                                        ConstData_t negative,
+                                        const TensorDescriptor& oDesc,
+                                        Data_t o,
+                                        const float margin,
+                                        const int p,
+                                        const float eps,
+                                        const bool swap,
+                                        const float divisor)
 {
-    const auto problem = tripletmarginloss::ProblemDescription{aDesc, pDesc, nDesc, oDesc};
+    const auto problem = tripletmarginloss::ForwardProblemDescription{aDesc, pDesc, nDesc, oDesc};
 
     const auto invoke_params = [&]() {
         auto tmp           = tripletmarginloss::InvokeParams{};
@@ -84,11 +83,13 @@ miopenStatus_t TripletMarginLossUnreducedForward(Handle& handle,
         tmp.p              = p;
         tmp.eps            = eps;
         tmp.swap           = swap;
+        tmp.divisor        = divisor;
         return tmp;
     }();
 
-    const auto algo    = AlgorithmName{"SmoothL1LossUnreducedForward"};
-    const auto solvers = solver::SolverContainer<solver::tripletmarginloss::UnreducedForward2d>{};
+    const auto algo    = AlgorithmName{"TripletMarginLossForward"};
+    const auto solvers = solver::SolverContainer<solver::tripletmarginloss::UnreducedForward2d,
+                                                 solver::tripletmarginloss::ReducedForward2d>{};
 
     solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
 

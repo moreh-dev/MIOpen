@@ -60,7 +60,7 @@ using namespace smoothl1loss;
 
 TEST_P(TripletMarginLossTestForwardFloat, TripletMarginLossTestFw)
 {
-    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && (GetFloatArg() == "--float"))
+    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) || (GetFloatArg() == "--float"))
     {
         RunTest();
         Verify();
@@ -73,7 +73,7 @@ TEST_P(TripletMarginLossTestForwardFloat, TripletMarginLossTestFw)
 
 TEST_P(TripletMarginLossTestForwardHalf, TripletMarginLossTestFw)
 {
-    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && (GetFloatArg() == "--half"))
+    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) || (GetFloatArg() == "--half"))
     {
         RunTest();
         Verify();
@@ -86,7 +86,7 @@ TEST_P(TripletMarginLossTestForwardHalf, TripletMarginLossTestFw)
 
 TEST_P(TripletMarginLossTestForwardBfloat16, TripletMarginLossTestFw)
 {
-    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && (GetFloatArg() == "--bfloat16"))
+    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) || (GetFloatArg() == "--bfloat16"))
     {
         RunTest();
         Verify();
