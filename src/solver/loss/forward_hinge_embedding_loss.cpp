@@ -72,14 +72,14 @@ ConvSolution HingeEmbeddingLossFwd::GetSolution(
         {"LOCAL_SIZE", LOCAL_SIZE},
     };
 
-    /* Phase 1: Add loss kernel */
+    /* Prepare params for loss kernel */
     result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE},
                                                          {size},
                                                          "MIOpenHingeEmbeddingLoss.cpp",
                                                          "HingeEmbeddingLossFwd",
                                                          build_params));
 
-    /* Phase 2: Add reduce kernels */
+    /* Prepare params for reduce kernels */
     auto _size = size;
     do
     {
@@ -91,9 +91,19 @@ ConvSolution HingeEmbeddingLossFwd::GetSolution(
     result.invoker_factory = [](const std::vector<Kernel>& kernels) {
         return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
             decltype(auto) params = raw_params.CastTo<miopen::loss::FwdInvokeParams>();
-            auto elapsed          = 0.f;
 
-            /* Phase 1: Calc loss for each element. */
+            auto elapsed = 0.f;
+            HipEventPtr start;
+            HipEventPtr stop;
+
+            if(handle_.IsProfilingEnabled())
+            {
+                start = miopen::make_hip_event();
+                stop  = miopen::make_hip_event();
+                hipEventRecord(start.get(), handle_.GetStream());
+            }
+
+            /* Execute loss kernel */
             {
                 decltype(auto) kernel = handle_.Run(kernels.front());
                 auto input_tv         = get_inner_expanded_tv(deref(params.inputDesc));
@@ -106,12 +116,8 @@ ConvSolution HingeEmbeddingLossFwd::GetSolution(
                        input_tv,
                        target_tv);
             }
-            if(handle_.IsProfilingEnabled())
-            {
-                elapsed = handle_.GetKernelTime();
-            }
 
-            /* Phase 2: Reduce */
+            /* Execute reduce kernels */
             auto reduce_in = params.workspace;
             auto reduce_out =
                 static_cast<Data_t>(static_cast<char*>(params.workspace) +
@@ -135,6 +141,9 @@ ConvSolution HingeEmbeddingLossFwd::GetSolution(
 
             if(handle_.IsProfilingEnabled())
             {
+                hipEventRecord(stop.get(), handle_.GetStream());
+                hipEventSynchronize(stop.get());
+                hipEventElapsedTime(&elapsed, start.get(), stop.get());
                 handle_.ResetKernelTime();
                 handle_.AccumKernelTime(elapsed);
             };

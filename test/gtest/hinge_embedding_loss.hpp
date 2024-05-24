@@ -50,7 +50,8 @@ struct HingeEmbeddingLossTestCase
     friend std::ostream& operator<<(std::ostream& os, const HingeEmbeddingLossTestCase& tc)
     {
         return os << " N:" << tc.N << " C:" << tc.C << " D:" << tc.D << " H:" << tc.H
-                  << " W:" << tc.W << " margin: " << tc.margin;
+                  << " W:" << tc.W << " margin:" << tc.margin << " divisor:" << tc.divisor
+                  << " reduction:" << tc.reduction;
     }
 
     std::vector<size_t> GetInput()
