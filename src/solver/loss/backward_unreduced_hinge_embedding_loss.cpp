@@ -41,18 +41,18 @@ namespace solver {
 
 namespace loss {
 
-bool HingeEmbeddingLossBwd::IsApplicable(
+bool HingeEmbeddingLossUnreducedBwd::IsApplicable(
     const ExecutionContext& /*context*/,
-    const miopen::loss::HingeEmbeddingLossBwdProblemDescription& problem) const
+    const miopen::loss::HingeEmbeddingLossUnreducedBwdProblemDescription& problem) const
 {
     if(problem.GetInputDesc().GetSize() > 5)
         return false;
     return true;
 }
 
-ConvSolution HingeEmbeddingLossBwd::GetSolution(
+ConvSolution HingeEmbeddingLossUnreducedBwd::GetSolution(
     const ExecutionContext& context,
-    const miopen::loss::HingeEmbeddingLossBwdProblemDescription& problem) const
+    const miopen::loss::HingeEmbeddingLossUnreducedBwdProblemDescription& problem) const
 {
     std::ignore = context;
 
@@ -74,13 +74,13 @@ ConvSolution HingeEmbeddingLossBwd::GetSolution(
     result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE},
                                                          {problem.GetInputDesc().GetElementSize()},
                                                          "MIOpenHingeEmbeddingLoss.cpp",
-                                                         "HingeEmbeddingLossBwd",
+                                                         "HingeEmbeddingLossUnreducedBwd",
                                                          build_params));
 
     result.invoker_factory = [](const std::vector<Kernel>& kernels) {
         return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
             decltype(auto) kernel = handle_.Run(kernels.front());
-            decltype(auto) params = raw_params.CastTo<miopen::loss::BwdInvokeParams>();
+            decltype(auto) params = raw_params.CastTo<miopen::loss::UnreducedBwdInvokeParams>();
             auto input_tv         = get_inner_expanded_tv(deref(params.inputDesc));
             auto target_tv        = get_inner_expanded_tv(deref(params.targetDesc));
             auto doutput_tv       = get_inner_expanded_tv(deref(params.doutputDesc));
@@ -90,7 +90,6 @@ ConvSolution HingeEmbeddingLossBwd::GetSolution(
                    params.doutput,
                    params.dinput,
                    params.margin,
-                   params.divisor,
                    input_tv,
                    target_tv,
                    doutput_tv);

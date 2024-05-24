@@ -31,6 +31,7 @@
 #include <miopen/loss/solvers.hpp>
 #include <miopen/hinge_embedding_loss.hpp>
 #include <miopen/target_properties.hpp>
+#include <miopen/loss/utils.hpp>
 
 #define LOCAL_SIZE 256
 #define LOCAL_SIZE_REDUCE_FWD 256
@@ -40,47 +41,6 @@ namespace miopen {
 namespace solver {
 
 namespace loss {
-
-using tensor_view_5d_t = struct
-{
-    uint64_t stride[5];
-    uint64_t size[5];
-};
-
-inline tensor_view_5d_t get_inner_expanded_tv(const miopen::TensorDescriptor Desc)
-{
-    auto dims    = Desc.GetLengths();
-    auto strides = Desc.GetStrides();
-
-    tensor_view_5d_t tv_5d;
-    for(size_t i = 0; i < strides.size(); ++i)
-    {
-        tv_5d.stride[i] = strides[i];
-        tv_5d.size[i]   = dims[i];
-    }
-    auto rest = strides.size();
-    for(size_t j = rest; j < 5; ++j)
-    {
-        tv_5d.stride[j] = (rest == 0 ? 1 : strides[rest - 1]);
-        tv_5d.size[j]   = 1;
-    }
-    return tv_5d;
-}
-
-const auto make_hip_kernel = [](std::vector<size_t> localsize,
-                                std::vector<size_t> gridsize,
-                                std::string kernel_file,
-                                std::string kernel_name,
-                                KernelBuildParameters build_params) {
-    while(localsize.size() < 3)
-        localsize.push_back(1);
-    while(gridsize.size() < 3)
-        gridsize.push_back(1);
-    for(int i = 0; i < localsize.size(); ++i)
-        gridsize[i] = AlignUp(gridsize[i], localsize[i]);
-    return KernelInfo{
-        build_params.GenerateFor(kbp::HIP{}), localsize, gridsize, kernel_file, kernel_name};
-};
 
 bool HingeEmbeddingLossFwd::IsApplicable(
     const ExecutionContext& /*context*/,
@@ -197,56 +157,6 @@ std::size_t HingeEmbeddingLossFwd::GetWorkspaceSize(
         (inputElements + reduceElements) * get_data_size(problem.GetOutputDesc().GetType());
 
     return res;
-}
-
-bool HingeEmbeddingLossUnreducedFwd::IsApplicable(
-    const ExecutionContext& /*context*/,
-    const miopen::loss::HingeEmbeddingLossUnreducedFwdProblemDescription& problem) const
-{
-    if(problem.GetInputDesc().GetSize() > 5)
-        return false;
-    return true;
-}
-
-ConvSolution HingeEmbeddingLossUnreducedFwd::GetSolution(
-    const ExecutionContext& context,
-    const miopen::loss::HingeEmbeddingLossUnreducedFwdProblemDescription& problem) const
-{
-    std::ignore = context;
-
-    auto result = ConvSolution{miopenStatusSuccess};
-
-    auto in_dtype     = miopen::GetDataType(problem.GetInputDesc().GetType());
-    auto dtype        = problem.GetOutputDesc().GetType();
-    auto target_dtype = miopen::GetDataType(problem.GetTargetDesc().GetType());
-
-    const auto build_params = KernelBuildParameters{
-        {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
-        {"MIOPEN_USE_FP32", static_cast<int>(dtype == miopenFloat)},
-        {"MIOPEN_USE_BFP16", static_cast<int>(dtype == miopenBFloat16)},
-        {"IN_OUT_TYPE", in_dtype == "bfloat16" ? "ushort" : in_dtype},
-        {"TARGET_TYPE", target_dtype},
-        {"LOCAL_SIZE", LOCAL_SIZE},
-    };
-
-    result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE},
-                                                         {problem.GetInputDesc().GetElementSize()},
-                                                         "MIOpenHingeEmbeddingLoss.cpp",
-                                                         "HingeEmbeddingLossUnreducedFwd",
-                                                         build_params));
-
-    result.invoker_factory = [](const std::vector<Kernel>& kernels) {
-        return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
-            decltype(auto) kernel = handle_.Run(kernels.front());
-            decltype(auto) params = raw_params.CastTo<miopen::loss::UnreducedFwdInvokeParams>();
-            auto input_tv         = get_inner_expanded_tv(deref(params.inputDesc));
-            auto target_tv        = get_inner_expanded_tv(deref(params.targetDesc));
-
-            kernel(params.input, params.target, params.output, params.margin, input_tv, target_tv);
-        };
-    };
-
-    return result;
 }
 
 } // namespace loss

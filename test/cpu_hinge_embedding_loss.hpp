@@ -27,30 +27,11 @@
 #define GUARD_CPU_HINGE_EMBEDDING_LOSS_HPP
 
 #include "miopen/tensor.hpp"
+#include "miopen/loss/utils.hpp"
 #include "tensor_holder.hpp"
 #include "tensor_view_5d.hpp"
 #include <algorithm>
 #include <cstddef>
-
-inline tensor_view_5d_t get_inner_expanded_tv(const miopen::TensorDescriptor Desc)
-{
-    auto dims    = Desc.GetLengths();
-    auto strides = Desc.GetStrides();
-
-    tensor_view_5d_t tv_5d;
-    for(size_t i = 0; i < strides.size(); ++i)
-    {
-        tv_5d.stride[i] = strides[i];
-        tv_5d.size[i]   = dims[i];
-    }
-    auto rest = strides.size();
-    for(size_t j = rest; j < 5; ++j)
-    {
-        tv_5d.stride[j] = (rest == 0 ? 1 : strides[rest - 1]);
-        tv_5d.size[j]   = 1;
-    }
-    return tv_5d;
-}
 
 template <class TIO, class TT>
 void cpu_hinge_embedding_loss_unreduced_forward(tensor<TIO> input,

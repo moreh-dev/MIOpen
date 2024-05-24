@@ -652,6 +652,7 @@ inline SolverRegistrar::SolverRegistrar(IdRegistryData& registry)
     Register(registry, ++id, Primitive::Loss, loss::HingeEmbeddingLossUnreducedFwd{}.SolverDbId());
     Register(registry, ++id, Primitive::Loss, loss::HingeEmbeddingLossUnreducedBwd{}.SolverDbId());
     Register(registry, ++id, Primitive::Loss, loss::HingeEmbeddingLossFwd{}.SolverDbId());
+    Register(registry, ++id, Primitive::Loss, loss::HingeEmbeddingLossBwd{}.SolverDbId());
 
     // IMPORTANT: New solvers should be added to the end of the function!
 }
