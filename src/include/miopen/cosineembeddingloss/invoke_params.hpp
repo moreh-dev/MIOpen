@@ -50,8 +50,8 @@ struct FwdInvokeParams : public miopen::InvokeParams
     ConstData_t target = nullptr;
     Data_t output      = nullptr;
 
-    const float margin          = 0.0f;
-    const float divisor         = std::numeric_limits<float>::quiet_NaN();
+    float margin                = 0.0f;
+    float divisor               = std::numeric_limits<float>::quiet_NaN();
     size_t workspaceSizeInBytes = 0;
     Data_t workspace            = nullptr;
 
@@ -78,8 +78,8 @@ struct BwdInvokeParams : public miopen::InvokeParams
     Data_t input1_grad      = nullptr;
     Data_t input2_grad      = nullptr;
 
-    const float margin  = 0.0f;
-    const float divisor = std::numeric_limits<float>::quiet_NaN();
+    float margin  = 0.0f;
+    float divisor = std::numeric_limits<float>::quiet_NaN();
 
     std::size_t GetWorkspaceSize() const { return 0; }
     Data_t GetWorkspace() const { return nullptr; }
