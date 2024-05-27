@@ -61,7 +61,10 @@ public:
         miopenCreateTensorDescriptor(&positiveDesc);
         miopenCreateTensorDescriptor(&negativeDesc);
         miopenCreateTensorDescriptor(&outputDesc);
-        miopenCreateTensorDescriptor(&doDesc);
+        miopenCreateTensorDescriptor(&dODesc);
+        miopenCreateTensorDescriptor(&dADesc);
+        miopenCreateTensorDescriptor(&dPDesc);
+        miopenCreateTensorDescriptor(&dNDesc);
 
         data_type = miopen_type<Tgpu>{};
     }
@@ -90,7 +93,10 @@ public:
         miopenDestroyTensorDescriptor(positiveDesc);
         miopenDestroyTensorDescriptor(negativeDesc);
         miopenDestroyTensorDescriptor(outputDesc);
-        miopenDestroyTensorDescriptor(doDesc);
+        miopenDestroyTensorDescriptor(dODesc);
+        miopenDestroyTensorDescriptor(dADesc);
+        miopenDestroyTensorDescriptor(dPDesc);
+        miopenDestroyTensorDescriptor(dNDesc);
     }
 
 private:
@@ -102,24 +108,34 @@ private:
     miopenTensorDescriptor_t positiveDesc;
     miopenTensorDescriptor_t negativeDesc;
     miopenTensorDescriptor_t outputDesc;
-    miopenTensorDescriptor_t doDesc;
+    miopenTensorDescriptor_t dODesc;
+    miopenTensorDescriptor_t dADesc;
+    miopenTensorDescriptor_t dPDesc;
+    miopenTensorDescriptor_t dNDesc;
 
     std::unique_ptr<GPUMem> anchor_dev;
     std::unique_ptr<GPUMem> positive_dev;
     std::unique_ptr<GPUMem> negative_dev;
     std::unique_ptr<GPUMem> out_dev;
-    std::unique_ptr<GPUMem> workspace_dev;
     std::unique_ptr<GPUMem> dO_dev;
+    std::unique_ptr<GPUMem> dA_dev;
+    std::unique_ptr<GPUMem> dP_dev;
+    std::unique_ptr<GPUMem> dN_dev;
+    std::unique_ptr<GPUMem> workspace_dev;
 
     std::vector<Tgpu> anchor;
     std::vector<Tgpu> positive;
     std::vector<Tgpu> negative;
     std::vector<Tgpu> out;
-    std::vector<Tgpu> workspace;
     std::vector<Tgpu> dO;
+    std::vector<Tgpu> dA;
+    std::vector<Tgpu> dP;
+    std::vector<Tgpu> dN;
 
     std::vector<Tref> outhost;
-    std::vector<Tref> workspacehost;
+    std::vector<Tref> dAhost;
+    std::vector<Tref> dPhost;
+    std::vector<Tref> dNhost;
 
     size_t ws_sizeInBytes;
 
@@ -147,7 +163,10 @@ int TripletMarginLossDriver<Tgpu, Tref>::GetandSetData()
 {
     auto reduction = inflags.GetValueStr("Reduction");
     if(reduction != "none" && reduction != "mean" && reduction != "sum")
+    {
+        std::cout << R"(Reduction must be "none"|"mean"|"sum")";
         return miopenStatusInvalidValue;
+    }
 
     margin = inflags.GetValueDouble("Margin");
     p      = inflags.GetValueInt("P");
@@ -162,19 +181,22 @@ int TripletMarginLossDriver<Tgpu, Tref>::GetandSetData()
     SetTensorNd(anchorDesc, length, anchor_strides, data_type);
     SetTensorNd(positiveDesc, length, positive_strides, data_type);
     SetTensorNd(negativeDesc, length, negative_strides, data_type);
+    SetTensorNd(dADesc, length, anchor_strides, data_type);
+    SetTensorNd(dPDesc, length, positive_strides, data_type);
+    SetTensorNd(dNDesc, length, negative_strides, data_type);
 
     if(reduction == "none")
     {
         std::vector<int> out_lens = {length[0]};
         SetTensorNd(outputDesc, out_lens, data_type);
-        SetTensorNd(doDesc, out_lens, data_type);
+        SetTensorNd(dODesc, out_lens, data_type);
         divisor = std::numeric_limits<float>::quiet_NaN();
     }
     else
     {
         std::vector<int> out_lens = {1};
         SetTensorNd(outputDesc, out_lens, data_type);
-        SetTensorNd(doDesc, out_lens, data_type);
+        SetTensorNd(dODesc, out_lens, data_type);
         if(reduction == "sum")
             divisor = 1;
         if(reduction == "mean")
@@ -249,8 +271,6 @@ int TripletMarginLossDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     if(ws_sizeInBytes == static_cast<size_t>(-1))
         return miopenStatusAllocFailed;
 
-    size_t ws_sz = ws_sizeInBytes / sizeof(Tgpu);
-
     uint32_t ctx = 0;
 
     anchor_dev    = std::unique_ptr<GPUMem>(new GPUMem(ctx, anchor_sz, sizeof(Tgpu)));
@@ -258,17 +278,24 @@ int TripletMarginLossDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     negative_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, negative_sz, sizeof(Tgpu)));
     out_dev       = std::unique_ptr<GPUMem>(new GPUMem(ctx, out_sz, sizeof(Tgpu)));
     dO_dev        = std::unique_ptr<GPUMem>(new GPUMem(ctx, out_sz, sizeof(Tgpu)));
+    dA_dev        = std::unique_ptr<GPUMem>(new GPUMem(ctx, anchor_sz, sizeof(Tgpu)));
+    dP_dev        = std::unique_ptr<GPUMem>(new GPUMem(ctx, positive_sz, sizeof(Tgpu)));
+    dN_dev        = std::unique_ptr<GPUMem>(new GPUMem(ctx, negative_sz, sizeof(Tgpu)));
     workspace_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, ws_sizeInBytes, sizeof(std::byte)));
 
-    anchor    = std::vector<Tgpu>(anchor_sz, static_cast<Tgpu>(0));
-    positive  = std::vector<Tgpu>(positive_sz, static_cast<Tgpu>(0));
-    negative  = std::vector<Tgpu>(negative_sz, static_cast<Tgpu>(0));
-    out       = std::vector<Tgpu>(out_sz, static_cast<Tgpu>(0));
-    dO        = std::vector<Tgpu>(out_sz, static_cast<Tgpu>(0));
-    workspace = std::vector<Tgpu>(ws_sz, static_cast<Tgpu>(0));
+    anchor   = std::vector<Tgpu>(anchor_sz, static_cast<Tgpu>(0));
+    positive = std::vector<Tgpu>(positive_sz, static_cast<Tgpu>(0));
+    negative = std::vector<Tgpu>(negative_sz, static_cast<Tgpu>(0));
+    out      = std::vector<Tgpu>(out_sz, static_cast<Tgpu>(0));
+    dO       = std::vector<Tgpu>(out_sz, static_cast<Tgpu>(0));
+    dA       = std::vector<Tgpu>(anchor_sz, static_cast<Tgpu>(0));
+    dP       = std::vector<Tgpu>(positive_sz, static_cast<Tgpu>(0));
+    dN       = std::vector<Tgpu>(negative_sz, static_cast<Tgpu>(0));
 
-    outhost       = std::vector<Tref>(out_sz, static_cast<Tref>(0));
-    workspacehost = std::vector<Tref>(ws_sz, static_cast<Tref>(0));
+    outhost = std::vector<Tref>(out_sz, static_cast<Tref>(0));
+    dAhost  = std::vector<Tref>(anchor_sz, static_cast<Tref>(0));
+    dPhost  = std::vector<Tref>(positive_sz, static_cast<Tref>(0));
+    dNhost  = std::vector<Tref>(negative_sz, static_cast<Tref>(0));
 
     for(int i = 0; i < anchor_sz; i++)
         anchor[i] = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.0), static_cast<Tgpu>(0.2));
@@ -294,8 +321,22 @@ int TripletMarginLossDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
         std::cerr << "Error copying (negative) to GPU, size: " << negative_dev->GetSize()
                   << std::endl;
 
+    if(out_dev->ToGPU(GetStream(), out.data()) != 0)
+        std::cerr << "Error copying (out) to GPU, size: " << out_dev->GetSize() << std::endl;
+
     if(dO_dev->ToGPU(GetStream(), dO.data()) != 0)
         std::cerr << "Error copying (out grad) to GPU, size: " << dO_dev->GetSize() << std::endl;
+
+    if(dA_dev->ToGPU(GetStream(), dA.data()) != 0)
+        std::cerr << "Error copying (anchor grad) to GPU, size: " << dA_dev->GetSize() << std::endl;
+
+    if(dP_dev->ToGPU(GetStream(), dP.data()) != 0)
+        std::cerr << "Error copying (positive grad) to GPU, size: " << dP_dev->GetSize()
+                  << std::endl;
+
+    if(dN_dev->ToGPU(GetStream(), dN.data()) != 0)
+        std::cerr << "Error copying (negative grad) to GPU, size: " << dN_dev->GetSize()
+                  << std::endl;
 
     return miopenStatusSuccess;
 }
@@ -375,18 +416,18 @@ int TripletMarginLossDriver<Tgpu, Tref>::RunForwardCPU()
     }
     else
     {
-        mloTripletMarginLossReducedForwardRunHost<Tgpu, Tref>(anchorDesc,
-                                                              positiveDesc,
-                                                              negativeDesc,
-                                                              anchor.data(),
-                                                              positive.data(),
-                                                              negative.data(),
-                                                              outhost.data(),
-                                                              margin,
-                                                              p,
-                                                              eps,
-                                                              swap,
-                                                              divisor);
+        mloTripletMarginLossForwardRunHost<Tgpu, Tref>(anchorDesc,
+                                                       positiveDesc,
+                                                       negativeDesc,
+                                                       anchor.data(),
+                                                       positive.data(),
+                                                       negative.data(),
+                                                       outhost.data(),
+                                                       margin,
+                                                       p,
+                                                       eps,
+                                                       swap,
+                                                       divisor);
     }
 
     return miopenStatusSuccess;
@@ -395,12 +436,114 @@ int TripletMarginLossDriver<Tgpu, Tref>::RunForwardCPU()
 template <typename Tgpu, typename Tref>
 int TripletMarginLossDriver<Tgpu, Tref>::RunBackwardGPU()
 {
+    float kernel_total_time = 0;
+    float kernel_first_time = 0;
+
+    Timer t;
+    START_TIME
+
+    for(int i = 0; i < inflags.GetValueInt("iter"); i++)
+    {
+        miopenTripletMarginLossBackward(GetHandle(),
+                                        workspace_dev->GetMem(),
+                                        ws_sizeInBytes,
+                                        anchorDesc,
+                                        anchor_dev->GetMem(),
+                                        positiveDesc,
+                                        positive_dev->GetMem(),
+                                        negativeDesc,
+                                        negative_dev->GetMem(),
+                                        dODesc,
+                                        dO_dev->GetMem(),
+                                        dADesc,
+                                        dA_dev->GetMem(),
+                                        dPDesc,
+                                        dP_dev->GetMem(),
+                                        dNDesc,
+                                        dN_dev->GetMem(),
+                                        margin,
+                                        p,
+                                        eps,
+                                        swap,
+                                        divisor);
+
+        float time = 0.0;
+        miopenGetKernelTime(GetHandle(), &time);
+        kernel_total_time += time;
+        if(i == 0)
+            kernel_first_time = time;
+    }
+
+    if(inflags.GetValueInt("time") == 1)
+    {
+        STOP_TIME
+        int iter = inflags.GetValueInt("iter");
+        if(WALL_CLOCK)
+            std::cout << "Wall-clock Time Forward TripletMarginLoss Elapsed: "
+                      << t.gettime_ms() / iter << " ms\n";
+
+        float kernel_average_time =
+            iter > 1 ? (kernel_total_time - kernel_first_time) / (iter - 1) : kernel_first_time;
+        std::cout << "GPU Kernel Time Forward TripletMarginLoss Elapsed: " << kernel_average_time
+                  << " ms\n";
+    }
+
+    if(dA_dev->FromGPU(GetStream(), dA.data()) != 0)
+        std::cerr << "Error copying (dA_dev) from GPU, size: " << dA_dev->GetSize() << std::endl;
+    if(dP_dev->FromGPU(GetStream(), dP.data()) != 0)
+        std::cerr << "Error copying (dP_dev) from GPU, size: " << dP_dev->GetSize() << std::endl;
+    if(dN_dev->FromGPU(GetStream(), dN.data()) != 0)
+        std::cerr << "Error copying (dN_dev) from GPU, size: " << dN_dev->GetSize() << std::endl;
+
     return miopenStatusSuccess;
 }
 
 template <typename Tgpu, typename Tref>
 int TripletMarginLossDriver<Tgpu, Tref>::RunBackwardCPU()
 {
+    if(std::isnan(divisor))
+    {
+        mloTripletMarginLossUnreducedBackwardRunHost<Tgpu, Tref>(anchorDesc,
+                                                                 positiveDesc,
+                                                                 negativeDesc,
+                                                                 dODesc,
+                                                                 dADesc,
+                                                                 dPDesc,
+                                                                 dNDesc,
+                                                                 anchor.data(),
+                                                                 positive.data(),
+                                                                 negative.data(),
+                                                                 dO.data(),
+                                                                 dAhost.data(),
+                                                                 dPhost.data(),
+                                                                 dNhost.data(),
+                                                                 margin,
+                                                                 p,
+                                                                 eps,
+                                                                 swap);
+    }
+    else
+    {
+        mloTripletMarginLossBackwardRunHost<Tgpu, Tref>(anchorDesc,
+                                                        positiveDesc,
+                                                        negativeDesc,
+                                                        dADesc,
+                                                        dPDesc,
+                                                        dNDesc,
+                                                        anchor.data(),
+                                                        positive.data(),
+                                                        negative.data(),
+                                                        dO.data(),
+                                                        dAhost.data(),
+                                                        dPhost.data(),
+                                                        dNhost.data(),
+                                                        margin,
+                                                        p,
+                                                        eps,
+                                                        swap,
+                                                        divisor);
+    }
+
     return miopenStatusSuccess;
 }
 
@@ -442,5 +585,24 @@ int TripletMarginLossDriver<Tgpu, Tref>::VerifyForward()
 template <typename Tgpu, typename Tref>
 int TripletMarginLossDriver<Tgpu, Tref>::VerifyBackward()
 {
+    RunBackwardCPU();
+    const Tref tolerance = GetTolerance();
+    auto error_dA        = miopen::rms_range(dAhost, dA);
+    auto error_dP        = miopen::rms_range(dPhost, dP);
+    auto error_dN        = miopen::rms_range(dNhost, dN);
+
+    if(!std::isfinite(error_dA) || error_dA > tolerance || !std::isfinite(error_dP) ||
+       error_dP > tolerance || !std::isfinite(error_dN) || error_dN > tolerance)
+    {
+        std::cout << "Backward TripletMarginLoss FAILED: {" << error_dA << "," << error_dP << ","
+                  << error_dN << "} > " << tolerance << std::endl;
+        return EC_VerifyFwd;
+    }
+    else
+    {
+        std::cout << "Backward TripletMarginLoss Verifies OK on CPU reference ({" << error_dA << ","
+                  << error_dP << "," << error_dN << "} < " << tolerance << ')' << std::endl;
+    }
+
     return miopenStatusSuccess;
 }
