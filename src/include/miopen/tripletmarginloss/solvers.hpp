@@ -72,6 +72,44 @@ struct ReducedForward2d final : Forward2d
                 const miopen::tripletmarginloss::ForwardProblemDescription& problem) const override;
 };
 
+using BackwardSolverBase =
+    NonTunableSolverBase<ExecutionContext, miopen::tripletmarginloss::BackwardProblemDescription>;
+
+struct Backward2d : BackwardSolverBase
+{
+    bool IsApplicable(
+        const ExecutionContext& context,
+        const miopen::tripletmarginloss::BackwardProblemDescription& problem) const override;
+    std::size_t GetWorkspaceSize(
+        const ExecutionContext& context,
+        const miopen::tripletmarginloss::BackwardProblemDescription& problem) const override;
+    bool MayNeedWorkspace() const override { return true; }
+};
+
+struct UnreducedBackward2d final : Backward2d
+{
+    const std::string& SolverDbId() const override { return GetSolverDbId<UnreducedBackward2d>(); }
+
+    bool IsApplicable(
+        const ExecutionContext& context,
+        const miopen::tripletmarginloss::BackwardProblemDescription& problem) const override;
+    ConvSolution GetSolution(
+        const ExecutionContext& context,
+        const miopen::tripletmarginloss::BackwardProblemDescription& problem) const override;
+};
+
+struct ReducedBackward2d final : Backward2d
+{
+    const std::string& SolverDbId() const override { return GetSolverDbId<ReducedBackward2d>(); }
+
+    bool IsApplicable(
+        const ExecutionContext& context,
+        const miopen::tripletmarginloss::BackwardProblemDescription& problem) const override;
+    ConvSolution GetSolution(
+        const ExecutionContext& context,
+        const miopen::tripletmarginloss::BackwardProblemDescription& problem) const override;
+};
+
 } // namespace tripletmarginloss
 
 } // namespace solver

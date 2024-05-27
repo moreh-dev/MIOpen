@@ -66,7 +66,7 @@ bool checkSameStride(const TensorDescriptor& x, const TensorDescriptor& y)
 
 NetworkConfig ForwardProblemDescription::MakeNetworkConfig() const
 {
-    auto anchor_dtype = aDesc.GetType();
+    auto input_dtype  = aDesc.GetType();
     auto output_dtype = oDesc.GetType();
     auto size0        = aDesc.GetLengths()[0];
     auto size1        = aDesc.GetLengths()[1];
@@ -74,10 +74,28 @@ NetworkConfig ForwardProblemDescription::MakeNetworkConfig() const
     std::ostringstream ss;
 
     ss << "tripletmarginloss_fwd" << IsUnreduced() << IsReduced();
-    ss << "a_dtype" << anchor_dtype;
-    ss << "o_dtype" << output_dtype;
-    ss << "size0" << size0;
-    ss << "size1" << size1;
+    ss << "idtype" << input_dtype;
+    ss << "odtype" << output_dtype;
+    ss << "size[0]" << size0;
+    ss << "size[1]" << size1;
+
+    return NetworkConfig{ss.str()};
+}
+
+NetworkConfig BackwardProblemDescription::MakeNetworkConfig() const
+{
+    auto input_dtype  = aDesc.GetType();
+    auto output_dtype = dODesc.GetType();
+    auto size0        = aDesc.GetLengths()[0];
+    auto size1        = aDesc.GetLengths()[1];
+
+    std::ostringstream ss;
+
+    ss << "tripletmarginloss_bwd" << IsUnreduced() << IsReduced();
+    ss << "idtype" << input_dtype;
+    ss << "odtype" << output_dtype;
+    ss << "size[0]" << size0;
+    ss << "size[1]" << size1;
 
     return NetworkConfig{ss.str()};
 }

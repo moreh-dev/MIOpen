@@ -53,4 +53,31 @@ miopenStatus_t TripletMarginLossForward(Handle& handle,
                                         bool swap,
                                         float divisor);
 
+size_t GetTripletMarginLossBackwardWorkspaceSize(Handle& handle,
+                                                 const TensorDescriptor& aDesc,
+                                                 const TensorDescriptor& dODesc);
+
+miopenStatus_t TripletMarginLossBackward(Handle& handle,
+                                         Data_t workspace,
+                                         size_t workspaceSizeInBytes,
+                                         const TensorDescriptor& aDesc,
+                                         ConstData_t anchor,
+                                         const TensorDescriptor& pDesc,
+                                         ConstData_t positive,
+                                         const TensorDescriptor& nDesc,
+                                         ConstData_t negative,
+                                         const TensorDescriptor& dODesc,
+                                         ConstData_t dO,
+                                         const TensorDescriptor& dADesc,
+                                         Data_t dA,
+                                         const TensorDescriptor& dPDesc,
+                                         Data_t dP,
+                                         const TensorDescriptor& dNDesc,
+                                         Data_t dN,
+                                         float margin,
+                                         int p,
+                                         float eps,
+                                         bool swap,
+                                         float divisor);
+
 } // namespace miopen

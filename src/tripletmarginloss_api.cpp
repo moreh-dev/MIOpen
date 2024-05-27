@@ -140,3 +140,91 @@ extern "C" miopenStatus_t miopenTripletMarginLossForward(miopenHandle_t handle,
                                          divisor);
     });
 }
+
+extern "C" miopenStatus_t
+miopenGetTripletMarginLossBackwardWorkspaceSize(miopenHandle_t handle,
+                                                const miopenTensorDescriptor_t aDesc,
+                                                const miopenTensorDescriptor_t dODesc,
+                                                size_t* sizeInBytes)
+{
+
+    MIOPEN_LOG_FUNCTION(handle, aDesc, dODesc, sizeInBytes);
+
+    return miopen::try_([&] {
+        miopen::deref(sizeInBytes) = miopen::GetTripletMarginLossBackwardWorkspaceSize(
+            miopen::deref(handle), miopen::deref(aDesc), miopen::deref(dODesc));
+    });
+}
+
+extern "C" miopenStatus_t miopenTripletMarginLossBackward(miopenHandle_t handle,
+                                                          void* workspace,
+                                                          size_t workspaceSizeInBytes,
+                                                          miopenTensorDescriptor_t aDesc,
+                                                          const void* anchor,
+                                                          miopenTensorDescriptor_t pDesc,
+                                                          const void* positive,
+                                                          miopenTensorDescriptor_t nDesc,
+                                                          const void* negative,
+                                                          miopenTensorDescriptor_t dODesc,
+                                                          const void* dO,
+                                                          miopenTensorDescriptor_t dADesc,
+                                                          void* dA,
+                                                          miopenTensorDescriptor_t dPDesc,
+                                                          void* dP,
+                                                          miopenTensorDescriptor_t dNDesc,
+                                                          void* dN,
+                                                          float margin,
+                                                          int p,
+                                                          float eps,
+                                                          bool swap,
+                                                          float divisor)
+{
+    MIOPEN_LOG_FUNCTION(handle,
+                        workspace,
+                        workspaceSizeInBytes,
+                        aDesc,
+                        anchor,
+                        pDesc,
+                        positive,
+                        nDesc,
+                        negative,
+                        dODesc,
+                        dO,
+                        dADesc,
+                        dA,
+                        dPDesc,
+                        dP,
+                        dNDesc,
+                        dN,
+                        margin,
+                        p,
+                        eps,
+                        swap,
+                        divisor);
+
+    LogCmdTripletMarginLoss(aDesc, dODesc, false);
+    return miopen::try_([&] {
+        miopen::TripletMarginLossBackward(miopen::deref(handle),
+                                          DataCast(workspace),
+                                          workspaceSizeInBytes,
+                                          miopen::deref(aDesc),
+                                          DataCast(anchor),
+                                          miopen::deref(pDesc),
+                                          DataCast(positive),
+                                          miopen::deref(nDesc),
+                                          DataCast(negative),
+                                          miopen::deref(dODesc),
+                                          DataCast(dO),
+                                          miopen::deref(dADesc),
+                                          DataCast(dA),
+                                          miopen::deref(dPDesc),
+                                          DataCast(dP),
+                                          miopen::deref(dNDesc),
+                                          DataCast(dN),
+                                          margin,
+                                          p,
+                                          eps,
+                                          swap,
+                                          divisor);
+    });
+}

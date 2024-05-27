@@ -38,10 +38,11 @@ namespace solver {
 
 namespace tripletmarginloss {
 
-inline void ConstructDistParams(const ExecutionContext& context,
-                                const miopen::tripletmarginloss::ForwardProblemDescription& problem,
-                                ConvSolution& result,
-                                const KernelBuildParameters& build_params)
+inline void
+ConstructDistParams(const ExecutionContext& context,
+                    const miopen::tripletmarginloss::BackwardProblemDescription& problem,
+                    ConvSolution& result,
+                    const KernelBuildParameters& build_params)
 {
     auto input_size = problem.GetADesc().GetElementSize();
     result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE},
@@ -128,9 +129,9 @@ inline void RunDistKernels(const std::vector<Kernel>& kernels,
     }
 }
 
-bool Forward2d::IsApplicable(
+bool Backward2d::IsApplicable(
     const ExecutionContext& /*context*/,
-    const miopen::tripletmarginloss::ForwardProblemDescription& problem) const
+    const miopen::tripletmarginloss::BackwardProblemDescription& problem) const
 {
     if(!problem.IsSameType())
         return false;
@@ -139,12 +140,12 @@ bool Forward2d::IsApplicable(
     return true;
 }
 
-std::size_t Forward2d::GetWorkspaceSize(
+std::size_t Backward2d::GetWorkspaceSize(
     const ExecutionContext& context,
-    const miopen::tripletmarginloss::ForwardProblemDescription& problem) const
+    const miopen::tripletmarginloss::BackwardProblemDescription& problem) const
 {
     std::size_t size =
-        problem.GetADesc().GetElementSize() * get_data_size(problem.GetODesc().GetType()) * 3;
+        problem.GetADesc().GetElementSize() * get_data_size(problem.GetdADesc().GetType()) * 3;
 
     auto reduce_size        = problem.GetADesc().GetLengths()[1];
     auto output_numel       = problem.GetADesc().GetLengths()[0] * 3;
@@ -152,36 +153,36 @@ std::size_t Forward2d::GetWorkspaceSize(
     if(is_parallelism(reqd_work_item_cnt, output_numel, reduce_size))
     {
         auto parallelism_size = get_parallelism_size(reqd_work_item_cnt, output_numel, reduce_size);
-        size += parallelism_size * output_numel * get_data_size(problem.GetODesc().GetType());
+        size += parallelism_size * output_numel * get_data_size(problem.GetdADesc().GetType());
     }
     else
     {
-        size += output_numel * get_data_size(problem.GetODesc().GetType());
+        size += output_numel * get_data_size(problem.GetdADesc().GetType());
     }
 
     return size;
 }
 
-bool UnreducedForward2d::IsApplicable(
+bool UnreducedBackward2d::IsApplicable(
     const ExecutionContext& context,
-    const miopen::tripletmarginloss::ForwardProblemDescription& problem) const
+    const miopen::tripletmarginloss::BackwardProblemDescription& problem) const
 {
     if(!problem.IsUnreduced())
         return false;
-    if(!Forward2d::IsApplicable(context, problem))
+    if(!Backward2d::IsApplicable(context, problem))
         return false;
     return true;
 }
 
-ConvSolution UnreducedForward2d::GetSolution(
+ConvSolution UnreducedBackward2d::GetSolution(
     const ExecutionContext& context,
-    const miopen::tripletmarginloss::ForwardProblemDescription& problem) const
+    const miopen::tripletmarginloss::BackwardProblemDescription& problem) const
 {
     auto result = ConvSolution{miopenStatusSuccess};
 
-    auto dtype        = problem.GetODesc().GetType();
-    auto input_dtype  = miopen::GetDataType(problem.GetADesc().GetType());
-    auto output_dtype = miopen::GetDataType(problem.GetODesc().GetType());
+    auto dtype        = problem.GetdADesc().GetType();
+    auto input_dtype  = miopen::GetDataType(problem.GetdADesc().GetType());
+    auto output_dtype = miopen::GetDataType(problem.GetdODesc().GetType());
 
     auto build_params = KernelBuildParameters{
         {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
@@ -190,25 +191,25 @@ ConvSolution UnreducedForward2d::GetSolution(
         {"MIOPEN_USE_BFP16", static_cast<int>(dtype == miopenBFloat16)},
         {"INPUT_TYPE", input_dtype == "bfloat16" ? "ushort" : input_dtype},
         {"OUTPUT_TYPE", output_dtype == "bfloat16" ? "ushort" : output_dtype},
-        {"D_TYPE", output_dtype == "bfloat16" ? "ushort" : output_dtype},
+        {"D_TYPE", input_dtype == "bfloat16" ? "ushort" : input_dtype},
     };
 
     /* Phase 1: Calc distance for each vector. */
     ConstructDistParams(context, problem, result, build_params);
 
-    /* Phase 2: Calc loss for each vector. */
+    /* Phase 2: Calc gradient for each vector. */
     {
-        auto output_size = problem.GetADesc().GetLengths()[0];
+        auto size = problem.GetdADesc().GetElementSize();
         result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE},
-                                                             {output_size},
+                                                             {size},
                                                              "MIOpenTripletMarginLoss.cpp",
-                                                             "TripletMarginLossUnreducedForward2d",
+                                                             "TripletMarginLossUnreducedBackward2d",
                                                              build_params));
     }
 
     result.invoker_factory = [](const std::vector<Kernel>& kernels) {
         return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
-            decltype(auto) params = raw_params.CastTo<miopen::tripletmarginloss::InvokeParams>();
+            auto params = raw_params.CastTo<miopen::tripletmarginloss::InvokeParams>();
 
             float elapsed = 0.0f;
             int kernelCnt = 0;
@@ -216,16 +217,41 @@ ConvSolution UnreducedForward2d::GetSolution(
             auto work_a = params.workspace;
             auto work_b = reinterpret_cast<Data_t>(reinterpret_cast<char*>(params.workspace) +
                                                    params.aDesc->GetElementSize() *
-                                                       get_data_size(params.oDesc->GetType()) * 3);
+                                                       get_data_size(params.dADesc->GetType()) * 3);
 
             /* Phase 1: Calc distance for each vector. */
             RunDistKernels(kernels, handle_, raw_params, elapsed, kernelCnt, work_a, work_b);
 
-            /* Phase 2: Calc loss for each vector. */
+            /* Phase 2: Calc gradient for each vector. */
             {
-                auto O_tv   = get_inner_expanded_tv<1>(deref(params.oDesc));
+                auto A_tv  = get_inner_expanded_tv<2>(deref(params.aDesc));
+                auto P_tv  = get_inner_expanded_tv<2>(deref(params.pDesc));
+                auto N_tv  = get_inner_expanded_tv<2>(deref(params.nDesc));
+                auto dO_tv = get_inner_expanded_tv<1>(deref(params.dODesc));
+                auto dA_tv = get_inner_expanded_tv<2>(deref(params.dADesc));
+                auto dP_tv = get_inner_expanded_tv<2>(deref(params.dPDesc));
+                auto dN_tv = get_inner_expanded_tv<2>(deref(params.dNDesc));
+
                 auto kernel = handle_.Run(kernels[kernelCnt++]);
-                kernel(work_a, params.o, params.margin, params.p, params.eps, params.swap, O_tv);
+                kernel(work_a,
+                       params.anchor,
+                       params.positive,
+                       params.negative,
+                       params.dO,
+                       params.dA,
+                       params.dP,
+                       params.dN,
+                       params.margin,
+                       params.p,
+                       params.eps,
+                       params.swap,
+                       A_tv,
+                       P_tv,
+                       N_tv,
+                       dO_tv,
+                       dA_tv,
+                       dP_tv,
+                       dN_tv);
                 if(handle_.IsProfilingEnabled())
                     elapsed += handle_.GetKernelTime();
             }
@@ -241,26 +267,26 @@ ConvSolution UnreducedForward2d::GetSolution(
     return result;
 }
 
-bool ReducedForward2d::IsApplicable(
+bool ReducedBackward2d::IsApplicable(
     const ExecutionContext& context,
-    const miopen::tripletmarginloss::ForwardProblemDescription& problem) const
+    const miopen::tripletmarginloss::BackwardProblemDescription& problem) const
 {
     if(!problem.IsReduced())
         return false;
-    if(!Forward2d::IsApplicable(context, problem))
+    if(!Backward2d::IsApplicable(context, problem))
         return false;
     return true;
 }
 
-ConvSolution ReducedForward2d::GetSolution(
+ConvSolution ReducedBackward2d::GetSolution(
     const ExecutionContext& context,
-    const miopen::tripletmarginloss::ForwardProblemDescription& problem) const
+    const miopen::tripletmarginloss::BackwardProblemDescription& problem) const
 {
     auto result = ConvSolution{miopenStatusSuccess};
 
-    auto dtype        = problem.GetODesc().GetType();
-    auto input_dtype  = miopen::GetDataType(problem.GetADesc().GetType());
-    auto output_dtype = miopen::GetDataType(problem.GetODesc().GetType());
+    auto dtype        = problem.GetdADesc().GetType();
+    auto input_dtype  = miopen::GetDataType(problem.GetdADesc().GetType());
+    auto output_dtype = miopen::GetDataType(problem.GetdODesc().GetType());
 
     auto build_params = KernelBuildParameters{
         {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
@@ -269,31 +295,20 @@ ConvSolution ReducedForward2d::GetSolution(
         {"MIOPEN_USE_BFP16", static_cast<int>(dtype == miopenBFloat16)},
         {"INPUT_TYPE", input_dtype == "bfloat16" ? "ushort" : input_dtype},
         {"OUTPUT_TYPE", output_dtype == "bfloat16" ? "ushort" : output_dtype},
-        {"D_TYPE", output_dtype == "bfloat16" ? "ushort" : output_dtype},
+        {"D_TYPE", input_dtype == "bfloat16" ? "ushort" : input_dtype},
     };
 
     /* Phase 1: Calc distance for each vector. */
     ConstructDistParams(context, problem, result, build_params);
 
-    /* Phase 2: Calc loss for each vector. */
+    /* Phase 2: Calc gradient for each vector. */
     {
-        auto output_size = problem.GetADesc().GetLengths()[0];
+        auto output_size = problem.GetdADesc().GetElementSize();
         result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE},
                                                              {output_size},
                                                              "MIOpenTripletMarginLoss.cpp",
-                                                             "TripletMarginLossForward2d",
+                                                             "TripletMarginLossBackward2d",
                                                              build_params));
-    }
-
-    /* Phase 3: Reduce */
-    {
-        auto size = problem.GetADesc().GetLengths()[0];
-        do
-        {
-            result.construction_params.push_back(make_hip_kernel(
-                {LOCAL_SIZE}, {size}, "MIOpenLossReduce.cpp", "LossSum", build_params));
-            size = AlignUp(size, LOCAL_SIZE) / LOCAL_SIZE;
-        } while(size > 1);
     }
 
     result.invoker_factory = [](const std::vector<Kernel>& kernels) {
@@ -306,46 +321,42 @@ ConvSolution ReducedForward2d::GetSolution(
             auto work_a = params.workspace;
             auto work_b = reinterpret_cast<Data_t>(reinterpret_cast<char*>(params.workspace) +
                                                    params.aDesc->GetElementSize() *
-                                                       get_data_size(params.oDesc->GetType()) * 3);
+                                                       get_data_size(params.dADesc->GetType()) * 3);
 
             /* Phase 1: Calc distance for each vector. */
             RunDistKernels(kernels, handle_, raw_params, elapsed, kernelCnt, work_a, work_b);
 
-            /* Phase 2: Calc loss for each vector. */
+            /* Phase 2: Calc gradient for each vector. */
             {
+                auto A_tv  = get_inner_expanded_tv<2>(deref(params.aDesc));
+                auto P_tv  = get_inner_expanded_tv<2>(deref(params.pDesc));
+                auto N_tv  = get_inner_expanded_tv<2>(deref(params.nDesc));
+                auto dA_tv = get_inner_expanded_tv<2>(deref(params.dADesc));
+                auto dP_tv = get_inner_expanded_tv<2>(deref(params.dPDesc));
+                auto dN_tv = get_inner_expanded_tv<2>(deref(params.dNDesc));
+
                 auto kernel = handle_.Run(kernels[kernelCnt++]);
                 kernel(work_a,
-                       work_b,
+                       params.anchor,
+                       params.positive,
+                       params.negative,
+                       params.dO,
+                       params.dA,
+                       params.dP,
+                       params.dN,
                        params.margin,
                        params.p,
                        params.eps,
                        params.swap,
                        params.divisor,
-                       params.aDesc->GetLengths()[0]);
+                       A_tv,
+                       P_tv,
+                       N_tv,
+                       dA_tv,
+                       dP_tv,
+                       dN_tv);
                 if(handle_.IsProfilingEnabled())
                     elapsed += handle_.GetKernelTime();
-                std::swap(work_a, work_b);
-            }
-
-            /* Phase 3: Reduce */
-            {
-                size_t size = params.aDesc->GetLengths()[0];
-                while(kernelCnt < kernels.size())
-                {
-                    auto kernel = handle_.Run(kernels[kernelCnt++]);
-                    if(kernelCnt < kernels.size())
-                    {
-                        kernel(work_a, work_b, size);
-                        std::swap(work_a, work_b);
-                    }
-                    else
-                    {
-                        kernel(work_a, params.o, size);
-                    }
-                    size = AlignUp(size, LOCAL_SIZE) / LOCAL_SIZE;
-                    if(handle_.IsProfilingEnabled())
-                        elapsed += handle_.GetKernelTime();
-                }
             }
 
             if(handle_.IsProfilingEnabled())

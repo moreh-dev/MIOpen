@@ -96,4 +96,82 @@ miopenStatus_t TripletMarginLossForward(Handle& handle,
     return miopenStatusSuccess;
 }
 
+size_t GetTripletMarginLossBackwardWorkspaceSize(Handle& handle,
+                                                 const TensorDescriptor& aDesc,
+                                                 const TensorDescriptor& dODesc)
+{
+    auto ctx           = ExecutionContext{&handle};
+    const auto problem = tripletmarginloss::BackwardProblemDescription{
+        aDesc, aDesc, aDesc, dODesc, aDesc, aDesc, aDesc};
+
+    const auto solvers = solver::SolverContainer<solver::tripletmarginloss::UnreducedBackward2d,
+                                                 solver::tripletmarginloss::ReducedBackward2d>{};
+
+    auto pair_size_vector = solvers.GetWorkspaceSizes(ctx, problem);
+
+    return pair_size_vector.empty() ? static_cast<size_t>(-1) : pair_size_vector.front().second;
+}
+
+miopenStatus_t TripletMarginLossBackward(Handle& handle,
+                                         Data_t workspace,
+                                         const size_t workspaceSizeInBytes,
+                                         const TensorDescriptor& aDesc,
+                                         ConstData_t anchor,
+                                         const TensorDescriptor& pDesc,
+                                         ConstData_t positive,
+                                         const TensorDescriptor& nDesc,
+                                         ConstData_t negative,
+                                         const TensorDescriptor& dODesc,
+                                         ConstData_t dO,
+                                         const TensorDescriptor& dADesc,
+                                         Data_t dA,
+                                         const TensorDescriptor& dPDesc,
+                                         Data_t dP,
+                                         const TensorDescriptor& dNDesc,
+                                         Data_t dN,
+                                         const float margin,
+                                         const int p,
+                                         const float eps,
+                                         const bool swap,
+                                         const float divisor)
+{
+    const auto problem = tripletmarginloss::BackwardProblemDescription{
+        aDesc, pDesc, nDesc, dODesc, dADesc, dPDesc, dNDesc};
+
+    const auto invoke_params = [&]() {
+        auto tmp           = tripletmarginloss::InvokeParams{};
+        tmp.type           = InvokeType::Run;
+        tmp.aDesc          = &aDesc;
+        tmp.pDesc          = &pDesc;
+        tmp.nDesc          = &nDesc;
+        tmp.dODesc         = &dODesc;
+        tmp.dADesc         = &dADesc;
+        tmp.dPDesc         = &dPDesc;
+        tmp.dNDesc         = &dNDesc;
+        tmp.anchor         = anchor;
+        tmp.positive       = positive;
+        tmp.negative       = negative;
+        tmp.dO             = dO;
+        tmp.dA             = dA;
+        tmp.dP             = dP;
+        tmp.dN             = dN;
+        tmp.workspace      = workspace;
+        tmp.workspace_size = workspaceSizeInBytes;
+        tmp.margin         = margin;
+        tmp.p              = p;
+        tmp.eps            = eps;
+        tmp.swap           = swap;
+        tmp.divisor        = divisor;
+        return tmp;
+    }();
+
+    const auto algo    = AlgorithmName{"TripletMarginLossBackward"};
+    const auto solvers = solver::SolverContainer<solver::tripletmarginloss::UnreducedBackward2d,
+                                                 solver::tripletmarginloss::ReducedBackward2d>{};
+
+    solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
+
+    return miopenStatusSuccess;
+}
+
 } // namespace miopen

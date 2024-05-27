@@ -6640,6 +6640,69 @@ MIOPEN_EXPORT miopenStatus_t miopenTripletMarginLossForward(miopenHandle_t handl
                                                             bool swap,
                                                             float divisor);
 
+/*! @brief Helper function to query the minimum workspace size required by the smooth L1Loss call
+ *
+ * @param handle                   MIOpen Handle (input)
+ * @param aDesc                    Tensor descriptor for anchor tensor (input)
+ * @param dODesc                   Tensor descriptor for output gradient (input)
+ * @param sizeInBytes              Pointer to data to return the minimum workspace size
+ * @return                         miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t
+miopenGetTripletMarginLossBackwardWorkspaceSize(miopenHandle_t handle,
+                                                miopenTensorDescriptor_t aDesc,
+                                                miopenTensorDescriptor_t dODesc,
+                                                size_t* sizeInBytes);
+
+/*! @brief Execute a Triplet Margin Loss forward layer
+ *
+ * @param handle                   MIOpen handle (input)
+ * @param workspace                Address of the allocated workspace data (input)
+ * @param workspaceSizeInBytes     Size in bytes of the allocated workspace data (input)
+ * @param aDesc                    Tensor descriptor for anchor tensor (input)
+ * @param anchor                   Data tensor anchor (input)
+ * @param pDesc                    Tensor descriptor for positive tensor (input)
+ * @param positive                 Data tensor positive (input)
+ * @param nDesc                    Tensor descriptor for negative tensor (input)
+ * @param negative                 Data tensor negative (input)
+ * @param dODesc                   Tensor descriptor for output gradient (input)
+ * @param dO                       Gradient of output (input)
+ * @param dADesc                   Tensor descriptor for anchor gradient (input)
+ * @param dA                       Gradient of anchor (output)
+ * @param dPDesc                   Tensor descriptor for positive gradient (input)
+ * @param dP                       Gradient of positive (output)
+ * @param dNDesc                   Tensor descriptor for negative gradient (input)
+ * @param dN                       Gradient of negative (output)
+ * @param margin                   Margin (input)
+ * @param p                        The norm degree for pairwise distance (input)
+ * @param eps                      Small constant for numerical stability (input)
+ * @param swap                     The distance swap (input)
+ * @param divisor                  Divisor, unused in unreduced case (input)
+ * @return                         miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t miopenTripletMarginLossBackward(miopenHandle_t handle,
+                                                             void* workspace,
+                                                             size_t workspaceSizeInBytes,
+                                                             miopenTensorDescriptor_t aDesc,
+                                                             const void* anchor,
+                                                             miopenTensorDescriptor_t pDesc,
+                                                             const void* positive,
+                                                             miopenTensorDescriptor_t nDesc,
+                                                             const void* negative,
+                                                             miopenTensorDescriptor_t dODesc,
+                                                             const void* dO,
+                                                             miopenTensorDescriptor_t dADesc,
+                                                             void* dA,
+                                                             miopenTensorDescriptor_t dPDesc,
+                                                             void* dP,
+                                                             miopenTensorDescriptor_t dNDesc,
+                                                             void* dN,
+                                                             float margin,
+                                                             int p,
+                                                             float eps,
+                                                             bool swap,
+                                                             float divisor);
+
 /** @} */
 // CLOSEOUT LossFunction DOXYGEN GROUP
 #endif // MIOPEN_BETA_API

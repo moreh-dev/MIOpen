@@ -273,6 +273,7 @@ set( MIOpen_Source
     solver/reduce/forward_sum.cpp
     solver/softmax/attn_softmax.cpp
     solver/softmax/softmax.cpp
+    solver/tripletmarginloss/backward_tripletmarginloss.cpp
     solver/tripletmarginloss/forward_tripletmarginloss.cpp
     solver/tripletmarginloss/utils.cpp
     subbuffers.cpp

@@ -43,22 +43,22 @@ std::string GetFloatArg()
     return tmp;
 }
 
-struct TripletMarginLossTestForwardFloat : TripletMarginLossTestForward<float>
+struct TripletMarginLossTestFloat : TripletMarginLossTest<float>
 {
 };
 
-struct TripletMarginLossTestForwardHalf : TripletMarginLossTestForward<half>
+struct TripletMarginLossTestHalf : TripletMarginLossTest<half>
 {
 };
 
-struct TripletMarginLossTestForwardBfloat16 : TripletMarginLossTestForward<bfloat16>
+struct TripletMarginLossTestBfloat16 : TripletMarginLossTest<bfloat16>
 {
 };
 
 } // namespace smoothl1loss
 using namespace smoothl1loss;
 
-TEST_P(TripletMarginLossTestForwardFloat, TripletMarginLossTestFw)
+TEST_P(TripletMarginLossTestFloat, TripletMarginLossTestFw)
 {
     if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) || (GetFloatArg() == "--float"))
     {
@@ -71,7 +71,7 @@ TEST_P(TripletMarginLossTestForwardFloat, TripletMarginLossTestFw)
     }
 };
 
-TEST_P(TripletMarginLossTestForwardHalf, TripletMarginLossTestFw)
+TEST_P(TripletMarginLossTestHalf, TripletMarginLossTestFw)
 {
     if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) || (GetFloatArg() == "--half"))
     {
@@ -84,7 +84,7 @@ TEST_P(TripletMarginLossTestForwardHalf, TripletMarginLossTestFw)
     }
 };
 
-TEST_P(TripletMarginLossTestForwardBfloat16, TripletMarginLossTestFw)
+TEST_P(TripletMarginLossTestBfloat16, TripletMarginLossTestFw)
 {
     if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) || (GetFloatArg() == "--bfloat16"))
     {
@@ -98,11 +98,11 @@ TEST_P(TripletMarginLossTestForwardBfloat16, TripletMarginLossTestFw)
 };
 
 INSTANTIATE_TEST_SUITE_P(TripletMarginLossTestSet,
-                         TripletMarginLossTestForwardFloat,
+                         TripletMarginLossTestFloat,
                          testing::ValuesIn(TripletMarginLossTestConfigs()));
 INSTANTIATE_TEST_SUITE_P(TripletMarginLossTestSet,
-                         TripletMarginLossTestForwardHalf,
+                         TripletMarginLossTestHalf,
                          testing::ValuesIn(TripletMarginLossTestConfigs()));
 INSTANTIATE_TEST_SUITE_P(TripletMarginLossTestSet,
-                         TripletMarginLossTestForwardBfloat16,
+                         TripletMarginLossTestBfloat16,
                          testing::ValuesIn(TripletMarginLossTestConfigs()));

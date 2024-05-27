@@ -51,13 +51,13 @@ inline __device__ void dist(const TI* I1,
                             const float eps,
                             const tensor_view_t<2> I1_tv,
                             const tensor_view_t<2> I2_tv,
-                            const int n,
+                            const int b,
                             const int c)
 {
     int gid        = blockIdx.x * blockDim.x + threadIdx.x;
-    FLOAT_ACCUM i1 = CVT_FLOAT2ACCUM(I1[I1_tv.stride[0] * n + I1_tv.stride[1] * c]);
-    FLOAT_ACCUM i2 = CVT_FLOAT2ACCUM(I2[I2_tv.stride[0] * n + I2_tv.stride[1] * c]);
-    Dis[gid]       = CVT_ACCUM2FLOAT(pow(fabs(i1 - i2 + eps), p));
+    FLOAT_ACCUM i1 = CVT_FLOAT2ACCUM(I1[I1_tv.stride[0] * b + I1_tv.stride[1] * c]);
+    FLOAT_ACCUM i2 = CVT_FLOAT2ACCUM(I2[I2_tv.stride[0] * b + I2_tv.stride[1] * c]);
+    Dis[gid]       = CVT_ACCUM2FLOAT(pow(fabs(i1 - i2) + eps, p));
 }
 
 template <typename TI, typename TO>
@@ -74,21 +74,21 @@ __device__ void TripletMarginLossDist2d(const TI* A,
     int gid = blockIdx.x * blockDim.x + threadIdx.x;
 
     int c = gid % A_tv.size[1];
-    int n = gid / A_tv.size[1];
+    int b = gid / A_tv.size[1];
 
-    if(n >= A_tv.size[0])
+    if(b >= A_tv.size[0])
         return;
 
     int size = A_tv.size[0] * A_tv.size[1];
-    dist<TI, TO>(A, P, ldist + 0 * size, p, eps, A_tv, P_tv, n, c);
-    dist<TI, TO>(A, N, ldist + 1 * size, p, eps, A_tv, N_tv, n, c);
-    dist<TI, TO>(P, N, ldist + 2 * size, p, eps, P_tv, N_tv, n, c);
+    dist<TI, TO>(A, P, ldist + 0 * size, p, eps, A_tv, P_tv, b, c);
+    dist<TI, TO>(A, N, ldist + 1 * size, p, eps, A_tv, N_tv, b, c);
+    dist<TI, TO>(P, N, ldist + 2 * size, p, eps, P_tv, N_tv, b, c);
 }
 
 extern "C" __global__ void TripletMarginLossDist2d(const INPUT_TYPE* A,
                                                    const INPUT_TYPE* P,
                                                    const INPUT_TYPE* N,
-                                                   OUTPUT_TYPE* ldist,
+                                                   D_TYPE* ldist,
                                                    const int p,
                                                    const float eps,
                                                    const tensor_view_t<2> A_tv,
@@ -96,14 +96,15 @@ extern "C" __global__ void TripletMarginLossDist2d(const INPUT_TYPE* A,
                                                    const tensor_view_t<2> N_tv)
 {
     // instantiate the kernel
-    TripletMarginLossDist2d<INPUT_TYPE, OUTPUT_TYPE>(A, P, N, ldist, p, eps, A_tv, P_tv, N_tv);
+    TripletMarginLossDist2d<INPUT_TYPE, D_TYPE>(A, P, N, ldist, p, eps, A_tv, P_tv, N_tv);
 }
 
-template <typename T>
-__device__ void TripletMarginLossUnreducedForward2d(const T* ldist,
-                                                    T* O,
+template <typename TI, typename TO>
+__device__ void TripletMarginLossUnreducedForward2d(const TI* ldist,
+                                                    TO* O,
                                                     const float margin,
                                                     const int p,
+                                                    const float eps,
                                                     const bool swap,
                                                     const tensor_view_t<1> O_tv)
 {
@@ -111,34 +112,37 @@ __device__ void TripletMarginLossUnreducedForward2d(const T* ldist,
     if(gid >= O_tv.size[0])
         return;
 
-    FLOAT_ACCUM ap = pow(CVT_FLOAT2ACCUM(ldist[0 * O_tv.size[0] + gid]), 1.0f / p);
-    FLOAT_ACCUM an = pow(CVT_FLOAT2ACCUM(ldist[1 * O_tv.size[0] + gid]), 1.0f / p);
-    FLOAT_ACCUM pn = pow(CVT_FLOAT2ACCUM(ldist[2 * O_tv.size[0] + gid]), 1.0f / p);
+    int b          = gid;
+    FLOAT_ACCUM ap = pow(CVT_FLOAT2ACCUM(ldist[0 * O_tv.size[0] + b]) + eps, 1.0f / p);
+    FLOAT_ACCUM an = pow(CVT_FLOAT2ACCUM(ldist[1 * O_tv.size[0] + b]) + eps, 1.0f / p);
+    FLOAT_ACCUM pn = pow(CVT_FLOAT2ACCUM(ldist[2 * O_tv.size[0] + b]) + eps, 1.0f / p);
 
     if(swap && pn < an)
     {
         an = pn;
     }
 
-    O[O_tv.stride[0] * gid] = CVT_ACCUM2FLOAT(max(ap - an + margin, 0.0f));
+    O[O_tv.stride[0] * b] = CVT_ACCUM2FLOAT(max(ap - an + margin, 0.0f));
 }
 
 extern "C" __global__ void TripletMarginLossUnreducedForward2d(const D_TYPE* ldist,
-                                                               D_TYPE* O,
+                                                               OUTPUT_TYPE* O,
                                                                const float margin,
                                                                const int p,
+                                                               const float eps,
                                                                const bool swap,
                                                                const tensor_view_t<1> O_tv)
 {
     // instantiate the kernel
-    TripletMarginLossUnreducedForward2d<D_TYPE>(ldist, O, margin, p, swap, O_tv);
+    TripletMarginLossUnreducedForward2d<D_TYPE, OUTPUT_TYPE>(ldist, O, margin, p, eps, swap, O_tv);
 }
 
-template <typename T>
-__device__ void TripletMarginLossForward2d(const T* ldist,
-                                           T* lsum,
+template <typename TI, typename TO>
+__device__ void TripletMarginLossForward2d(const TI* ldist,
+                                           TO* lsum,
                                            const float margin,
                                            const int p,
+                                           const float eps,
                                            const bool swap,
                                            const float divisor,
                                            const size_t size)
@@ -147,26 +151,330 @@ __device__ void TripletMarginLossForward2d(const T* ldist,
     if(gid >= size)
         return;
 
-    FLOAT_ACCUM ap = pow(CVT_FLOAT2ACCUM(ldist[0 * size + gid]), 1.0f / p);
-    FLOAT_ACCUM an = pow(CVT_FLOAT2ACCUM(ldist[1 * size + gid]), 1.0f / p);
-    FLOAT_ACCUM pn = pow(CVT_FLOAT2ACCUM(ldist[2 * size + gid]), 1.0f / p);
+    int b          = gid;
+    FLOAT_ACCUM ap = pow(CVT_FLOAT2ACCUM(ldist[0 * size + b]) + eps, 1.0f / p);
+    FLOAT_ACCUM an = pow(CVT_FLOAT2ACCUM(ldist[1 * size + b]) + eps, 1.0f / p);
+    FLOAT_ACCUM pn = pow(CVT_FLOAT2ACCUM(ldist[2 * size + b]) + eps, 1.0f / p);
 
     if(swap && pn < an)
     {
         an = pn;
     }
 
-    lsum[gid] = CVT_ACCUM2FLOAT(max(ap - an + margin, 0.0f) / divisor);
+    lsum[b] = CVT_ACCUM2FLOAT(max(ap - an + margin, 0.0f) / divisor);
 }
 
 extern "C" __global__ void TripletMarginLossForward2d(const D_TYPE* ldist,
-                                                      D_TYPE* lsum,
+                                                      OUTPUT_TYPE* lsum,
                                                       const float margin,
                                                       const int p,
+                                                      const float eps,
                                                       const bool swap,
                                                       const float divisor,
                                                       const size_t size)
 {
     // instantiate the kernel
-    TripletMarginLossForward2d<D_TYPE>(ldist, lsum, margin, p, swap, divisor, size);
+    TripletMarginLossForward2d<D_TYPE, OUTPUT_TYPE>(
+        ldist, lsum, margin, p, eps, swap, divisor, size);
+}
+
+template <typename TI, typename TO, typename T>
+__device__ void TripletMarginLossUnreducedBackward2d(const T* ldist,
+                                                     const TI* A,
+                                                     const TI* P,
+                                                     const TI* N,
+                                                     const TO* dO,
+                                                     TI* dA,
+                                                     TI* dP,
+                                                     TI* dN,
+                                                     const float margin,
+                                                     const int p,
+                                                     const float eps,
+                                                     const bool swap,
+                                                     const tensor_view_t<2> A_tv,
+                                                     const tensor_view_t<2> P_tv,
+                                                     const tensor_view_t<2> N_tv,
+                                                     const tensor_view_t<1> dO_tv,
+                                                     const tensor_view_t<2> dA_tv,
+                                                     const tensor_view_t<2> dP_tv,
+                                                     const tensor_view_t<2> dN_tv)
+{
+    int gid = blockIdx.x * blockDim.x + threadIdx.x;
+
+    int c = gid % dA_tv.size[1];
+    int b = gid / dA_tv.size[1];
+
+    if(b >= dA_tv.size[0])
+        return;
+
+    FLOAT_ACCUM ap = pow(CVT_FLOAT2ACCUM(ldist[0 * dA_tv.size[0] + b]) + eps, 1.0f / p);
+    FLOAT_ACCUM an = pow(CVT_FLOAT2ACCUM(ldist[1 * dA_tv.size[0] + b]) + eps, 1.0f / p);
+    FLOAT_ACCUM pn = pow(CVT_FLOAT2ACCUM(ldist[2 * dA_tv.size[0] + b]) + eps, 1.0f / p);
+
+    bool swapped = true;
+    if(swap && pn < an)
+    {
+        an      = pn;
+        swapped = true;
+    }
+
+    FLOAT_ACCUM grad_output = CVT_FLOAT2ACCUM(dO[dO_tv.stride[0] * b]);
+
+    if(ap - an + margin > 0)
+    {
+        FLOAT_ACCUM a   = CVT_FLOAT2ACCUM(A[A_tv.stride[0] * b + A_tv.stride[1] * c]);
+        FLOAT_ACCUM pos = CVT_FLOAT2ACCUM(P[P_tv.stride[0] * b + P_tv.stride[1] * c]);
+        FLOAT_ACCUM neg = CVT_FLOAT2ACCUM(N[N_tv.stride[0] * b + N_tv.stride[1] * c]);
+        FLOAT_ACCUM l, grad;
+        if(dA)
+        {
+            grad = CVT_FP32_2ACCUM(0.0f);
+            l    = pow(fabs(a - pos) + eps, (p - 1)) * pow(ap, (1 - p));
+            if(a < pos)
+                l = -l;
+            grad += l * grad_output;
+            if(!swapped)
+            {
+                l = -pow(fabs(a - neg) + eps, (p - 1)) * pow(an, (1 - p));
+                if(a < neg)
+                    l = -l;
+                grad += l * grad_output;
+            }
+            dA[dA_tv.stride[0] * b + dA_tv.stride[1] * c] = CVT_ACCUM2FLOAT(grad);
+        }
+        if(dP)
+        {
+            grad = CVT_FP32_2ACCUM(0.0f);
+            l    = -pow(fabs(a - pos) + eps, (p - 1)) * pow(ap, (1 - p));
+            if(a < pos)
+                l = -l;
+            grad += l * grad_output;
+            if(swapped)
+            {
+                l = -pow(fabs(pos - neg) + eps, (p - 1)) * pow(pn, (1 - p));
+                if(pos < neg)
+                    l = -l;
+                grad += l * grad_output;
+            }
+            dP[dP_tv.stride[0] * b + dP_tv.stride[1] * c] = CVT_ACCUM2FLOAT(grad);
+        }
+        if(dN)
+        {
+            if(swapped)
+            {
+                l = pow(fabs(pos - neg) + eps, (p - 1)) * pow(pn, (1 - p));
+                if(pos < neg)
+                    l = -l;
+            }
+            else
+            {
+                l = pow(fabs(a - neg) + eps, (p - 1)) * pow(an, (1 - p));
+                if(a < neg)
+                    l = -l;
+            }
+            dN[dN_tv.stride[0] * b + dN_tv.stride[1] * c] = CVT_ACCUM2FLOAT(l * grad_output);
+        }
+    }
+    else
+    {
+        if(dA)
+            dA[dA_tv.stride[0] * b + dA_tv.stride[1] * c] = CVT_FP32_2FLOAT(0.0f);
+        if(dP)
+            dP[dP_tv.stride[0] * b + dP_tv.stride[1] * c] = CVT_FP32_2FLOAT(0.0f);
+        if(dN)
+            dN[dN_tv.stride[0] * b + dN_tv.stride[1] * c] = CVT_FP32_2FLOAT(0.0f);
+    }
+}
+
+extern "C" __global__ void TripletMarginLossUnreducedBackward2d(const D_TYPE* ldist,
+                                                                const INPUT_TYPE* A,
+                                                                const INPUT_TYPE* P,
+                                                                const INPUT_TYPE* N,
+                                                                const OUTPUT_TYPE* dO,
+                                                                INPUT_TYPE* dA,
+                                                                INPUT_TYPE* dP,
+                                                                INPUT_TYPE* dN,
+                                                                const float margin,
+                                                                const int p,
+                                                                const float eps,
+                                                                const bool swap,
+                                                                const tensor_view_t<2> A_tv,
+                                                                const tensor_view_t<2> P_tv,
+                                                                const tensor_view_t<2> N_tv,
+                                                                const tensor_view_t<1> dO_tv,
+                                                                const tensor_view_t<2> dA_tv,
+                                                                const tensor_view_t<2> dP_tv,
+                                                                const tensor_view_t<2> dN_tv)
+{
+    // instantiate the kernel
+    TripletMarginLossUnreducedBackward2d<INPUT_TYPE, OUTPUT_TYPE, D_TYPE>(ldist,
+                                                                          A,
+                                                                          P,
+                                                                          N,
+                                                                          dO,
+                                                                          dA,
+                                                                          dP,
+                                                                          dN,
+                                                                          margin,
+                                                                          p,
+                                                                          eps,
+                                                                          swap,
+                                                                          A_tv,
+                                                                          P_tv,
+                                                                          N_tv,
+                                                                          dO_tv,
+                                                                          dA_tv,
+                                                                          dP_tv,
+                                                                          dN_tv);
+}
+
+template <typename TI, typename TO, typename T>
+__device__ void TripletMarginLossBackward2d(const T* ldist,
+                                            const TI* A,
+                                            const TI* P,
+                                            const TI* N,
+                                            const TO* dO,
+                                            TI* dA,
+                                            TI* dP,
+                                            TI* dN,
+                                            const float margin,
+                                            const int p,
+                                            const float eps,
+                                            const bool swap,
+                                            const float divisor,
+                                            const tensor_view_t<2> A_tv,
+                                            const tensor_view_t<2> P_tv,
+                                            const tensor_view_t<2> N_tv,
+                                            const tensor_view_t<2> dA_tv,
+                                            const tensor_view_t<2> dP_tv,
+                                            const tensor_view_t<2> dN_tv)
+{
+    int gid = blockIdx.x * blockDim.x + threadIdx.x;
+
+    int c = gid % dA_tv.size[1];
+    int b = gid / dA_tv.size[1];
+
+    if(b >= dA_tv.size[0])
+        return;
+
+    FLOAT_ACCUM ap = pow(CVT_FLOAT2ACCUM(ldist[0 * dA_tv.size[0] + b]) + eps, 1.0f / p);
+    FLOAT_ACCUM an = pow(CVT_FLOAT2ACCUM(ldist[1 * dA_tv.size[0] + b]) + eps, 1.0f / p);
+    FLOAT_ACCUM pn = pow(CVT_FLOAT2ACCUM(ldist[2 * dA_tv.size[0] + b]) + eps, 1.0f / p);
+
+    bool swapped = true;
+    if(swap && pn < an)
+    {
+        an      = pn;
+        swapped = true;
+    }
+
+    FLOAT_ACCUM grad_output = CVT_FLOAT2ACCUM(dO[0]);
+
+    if(ap - an + margin > 0)
+    {
+        FLOAT_ACCUM a   = CVT_FLOAT2ACCUM(A[A_tv.stride[0] * b + A_tv.stride[1] * c]);
+        FLOAT_ACCUM pos = CVT_FLOAT2ACCUM(P[P_tv.stride[0] * b + P_tv.stride[1] * c]);
+        FLOAT_ACCUM neg = CVT_FLOAT2ACCUM(N[N_tv.stride[0] * b + N_tv.stride[1] * c]);
+        FLOAT_ACCUM l, grad;
+        if(dA)
+        {
+            grad = CVT_FP32_2ACCUM(0);
+            l    = pow(fabs(a - pos) + eps, (p - 1)) * pow(ap, (1 - p));
+            if(a < pos)
+                l = -l;
+            grad += l * grad_output;
+            if(!swapped)
+            {
+                l = -pow(fabs(a - neg) + eps, (p - 1)) * pow(an, (1 - p));
+                if(a < neg)
+                    l = -l;
+                grad += l * grad_output;
+            }
+            dA[dA_tv.stride[0] * b + dA_tv.stride[1] * c] = CVT_ACCUM2FLOAT(grad / divisor);
+        }
+        if(dP)
+        {
+            grad = CVT_FP32_2ACCUM(0);
+            l    = -pow(fabs(a - pos) + eps, (p - 1)) * pow(ap, (1 - p));
+            if(a < pos)
+                l = -l;
+            grad += l * grad_output;
+            if(swapped)
+            {
+                l = -pow(fabs(pos - neg) + eps, (p - 1)) * pow(pn, (1 - p));
+                if(pos < neg)
+                    l = -l;
+                grad += l * grad_output;
+            }
+            dP[dP_tv.stride[0] * b + dP_tv.stride[1] * c] = CVT_ACCUM2FLOAT(grad / divisor);
+        }
+        if(dN)
+        {
+            if(swapped)
+            {
+                l = pow(fabs(pos - neg) + eps, (p - 1)) * pow(pn, (1 - p));
+                if(pos < neg)
+                    l = -l;
+            }
+            else
+            {
+                l = pow(fabs(a - neg) + eps, (p - 1)) * pow(an, (1 - p));
+                if(a < neg)
+                    l = -l;
+            }
+            dN[dN_tv.stride[0] * b + dN_tv.stride[1] * c] =
+                CVT_ACCUM2FLOAT(l * grad_output / divisor);
+        }
+    }
+    else
+    {
+        if(dA)
+            dA[dA_tv.stride[0] * b + dA_tv.stride[1] * c] = CVT_FP32_2FLOAT(0.0f);
+        if(dP)
+            dP[dP_tv.stride[0] * b + dP_tv.stride[1] * c] = CVT_FP32_2FLOAT(0.0f);
+        if(dN)
+            dN[dN_tv.stride[0] * b + dN_tv.stride[1] * c] = CVT_FP32_2FLOAT(0.0f);
+    }
+}
+
+extern "C" __global__ void TripletMarginLossBackward2d(const D_TYPE* ldist,
+                                                       const INPUT_TYPE* A,
+                                                       const INPUT_TYPE* P,
+                                                       const INPUT_TYPE* N,
+                                                       const OUTPUT_TYPE* dO,
+                                                       INPUT_TYPE* dA,
+                                                       INPUT_TYPE* dP,
+                                                       INPUT_TYPE* dN,
+                                                       const float margin,
+                                                       const int p,
+                                                       const float eps,
+                                                       const bool swap,
+                                                       const float divisor,
+                                                       const tensor_view_t<2> A_tv,
+                                                       const tensor_view_t<2> P_tv,
+                                                       const tensor_view_t<2> N_tv,
+                                                       const tensor_view_t<2> dA_tv,
+                                                       const tensor_view_t<2> dP_tv,
+                                                       const tensor_view_t<2> dN_tv)
+{
+    // instantiate the kernel
+    TripletMarginLossBackward2d<INPUT_TYPE, OUTPUT_TYPE, D_TYPE>(ldist,
+                                                                 A,
+                                                                 P,
+                                                                 N,
+                                                                 dO,
+                                                                 dA,
+                                                                 dP,
+                                                                 dN,
+                                                                 margin,
+                                                                 p,
+                                                                 eps,
+                                                                 swap,
+                                                                 divisor,
+                                                                 A_tv,
+                                                                 P_tv,
+                                                                 N_tv,
+                                                                 dA_tv,
+                                                                 dP_tv,
+                                                                 dN_tv);
 }
