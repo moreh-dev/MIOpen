@@ -105,4 +105,10 @@ using tensor_view_5d_t = struct
         c        = nc % tv.size[1];    \
     }
 
+#define GET_ND(n, d, idx, tv)   \
+    {                           \
+        n = (idx) / tv.size[1]; \
+        d = (idx) % tv.size[1]; \
+    }
+
 #endif // GUARD_TENSOR_VIEW_H
