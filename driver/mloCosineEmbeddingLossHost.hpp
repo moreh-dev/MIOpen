@@ -23,24 +23,30 @@
  * SOFTWARE.
  *
  *******************************************************************************/
-#ifndef GUARD_CPU_COSINEEMBEDDINGLOSS_HPP
-#define GUARD_CPU_COSINEEMBEDDINGLOSS_HPP
+#ifndef MLO_COSINEEMBEDDINGLOSSHOST_H_
+#define MLO_COSINEEMBEDDINGLOSSHOST_H_
 
-#include "tensor_holder.hpp"
-#include <cstddef>
-#include <cstdint>
+#include <miopen/tensor.hpp>
 #include <miopen/tensor_view.hpp>
 
-template <class T>
-void cpu_cosineembeddingloss_unreduced_forward_2d(
-    tensor<T> input1, tensor<T> input2, tensor<int32_t> target, tensor<T>& output, float margin)
+template <typename Tgpu, typename Tcheck>
+int32_t mloCosineEmbeddingLossUnreducedForwardRunHost2d(const miopenTensorDescriptor_t input1Desc,
+                                                        const miopenTensorDescriptor_t input2Desc,
+                                                        const miopenTensorDescriptor_t targetDesc,
+                                                        const miopenTensorDescriptor_t outputDesc,
+                                                        const Tgpu* input1,
+                                                        const Tgpu* input2,
+                                                        const int32_t* target,
+                                                        Tcheck* output,
+                                                        const float margin)
 {
-    auto I1_tv = get_inner_expanded_tv_2d(input1.desc);
-    auto I2_tv = get_inner_expanded_tv_2d(input2.desc);
-    auto T_tv  = get_inner_expanded_tv_1d(target.desc);
-    auto O_tv  = get_inner_expanded_tv_1d(output.desc);
+    auto I1_tv = get_inner_expanded_tv_2d(miopen::deref(input1Desc));
+    auto I2_tv = get_inner_expanded_tv_2d(miopen::deref(input2Desc));
+    auto T_tv  = get_inner_expanded_tv_1d(miopen::deref(targetDesc));
+    auto O_tv  = get_inner_expanded_tv_1d(miopen::deref(outputDesc));
 
-    size_t N = input1.desc.GetLengths()[0], D = input1.desc.GetLengths()[1];
+    size_t N = miopen::deref(input1Desc).GetLengths()[0],
+           D = miopen::deref(input1Desc).GetLengths()[1];
     for(size_t n = 0; n < N; ++n)
     {
         size_t Tidx = TV1D_IDX(T_tv, n);
@@ -65,29 +71,33 @@ void cpu_cosineembeddingloss_unreduced_forward_2d(
 
         if(t == 1)
         {
-            output[Oidx] = static_cast<T>(1.0f - cos_term);
+            output[Oidx] = static_cast<Tcheck>(1.0f - cos_term);
         }
         else
         {
-            output[Oidx] = static_cast<T>(std::max(0.0f, cos_term - margin));
+            output[Oidx] = static_cast<Tcheck>(std::max(0.0f, cos_term - margin));
         }
     }
 }
 
-template <class T>
-void cpu_cosineembeddingloss_reduced_forward_2d(tensor<T> input1,
-                                                tensor<T> input2,
-                                                tensor<int32_t> target,
-                                                tensor<T>& output,
-                                                tensor<T>& workspace,
-                                                float margin,
-                                                float divisor)
+template <typename Tgpu, typename Tcheck>
+int32_t mloCosineEmbeddingLossReducedForwardRunHost2d(const miopenTensorDescriptor_t input1Desc,
+                                                      const miopenTensorDescriptor_t input2Desc,
+                                                      const miopenTensorDescriptor_t targetDesc,
+                                                      const Tgpu* input1,
+                                                      const Tgpu* input2,
+                                                      const int32_t* target,
+                                                      Tcheck* output,
+                                                      Tcheck* workspace,
+                                                      const float margin,
+                                                      const float divisor)
 {
-    auto I1_tv = get_inner_expanded_tv_2d(input1.desc);
-    auto I2_tv = get_inner_expanded_tv_2d(input2.desc);
-    auto T_tv  = get_inner_expanded_tv_1d(target.desc);
+    auto I1_tv = get_inner_expanded_tv_2d(miopen::deref(input1Desc));
+    auto I2_tv = get_inner_expanded_tv_2d(miopen::deref(input2Desc));
+    auto T_tv  = get_inner_expanded_tv_1d(miopen::deref(targetDesc));
 
-    size_t N = input1.desc.GetLengths()[0], D = input1.desc.GetLengths()[1];
+    size_t N = miopen::deref(input1Desc).GetLengths()[0],
+           D = miopen::deref(input1Desc).GetLengths()[1];
     for(size_t n = 0; n < N; ++n)
     {
         size_t Tidx    = TV1D_IDX(T_tv, n);
@@ -110,9 +120,9 @@ void cpu_cosineembeddingloss_reduced_forward_2d(tensor<T> input1,
         if(t == 1)
             loss = 1.0f - cos_term;
         else
-            loss = std::max(0.0f, cos_term - margin);
+            loss = std::max(0.1f, cos_term - margin);
 
-        workspace[n] = static_cast<T>(loss / divisor);
+        workspace[n] = static_cast<Tcheck>(loss / divisor);
     }
 
     auto reduce_size     = N;
@@ -132,34 +142,42 @@ void cpu_cosineembeddingloss_reduced_forward_2d(tensor<T> input1,
                     if(j < offset)
                         shared[j] += shared[j + offset];
             if(_size <= local_size)
-                output[0] = static_cast<T>(shared[0]);
+                output[0] = static_cast<Tcheck>(shared[0]);
             else
-                workspace[offset_b + i / local_size] = static_cast<T>(shared[0]);
+                workspace[offset_b + i / local_size] = static_cast<Tcheck>(shared[0]);
         }
         std::swap(offset_a, offset_b);
         _size = (_size + local_size - 1) / local_size;
     } while(_size > 1);
 }
 
-template <class T>
-void cpu_cosineembeddingloss_unreduced_backward_2d(tensor<T> input1,
-                                                   tensor<T> input2,
-                                                   tensor<int32_t> target,
-                                                   tensor<T> output_grad,
-                                                   tensor<T>& input1_grad,
-                                                   tensor<T>& input2_grad,
-                                                   float margin,
-                                                   bool input1_grad_out,
-                                                   bool input2_grad_out)
+template <typename Tgpu, typename Tcheck>
+int32_t
+mloCosineEmbeddingLossUnreducedBackwardRunHost2d(const miopenTensorDescriptor_t input1Desc,
+                                                 const miopenTensorDescriptor_t input2Desc,
+                                                 const miopenTensorDescriptor_t targetDesc,
+                                                 const miopenTensorDescriptor_t outputGradDesc,
+                                                 const miopenTensorDescriptor_t input1GradDesc,
+                                                 const miopenTensorDescriptor_t input2GradDesc,
+                                                 const Tgpu* input1,
+                                                 const Tgpu* input2,
+                                                 const int32_t* target,
+                                                 const Tgpu* output_grad,
+                                                 Tcheck* input1_grad,
+                                                 Tcheck* input2_grad,
+                                                 const float margin,
+                                                 bool input1_grad_out,
+                                                 bool input2_grad_out)
 {
-    auto I1_tv  = get_inner_expanded_tv_2d(input1.desc);
-    auto I2_tv  = get_inner_expanded_tv_2d(input2.desc);
-    auto T_tv   = get_inner_expanded_tv_1d(target.desc);
-    auto dO_tv  = get_inner_expanded_tv_1d(output_grad.desc);
-    auto dI1_tv = get_inner_expanded_tv_2d(input1_grad.desc);
-    auto dI2_tv = get_inner_expanded_tv_2d(input2_grad.desc);
+    auto I1_tv  = get_inner_expanded_tv_2d(miopen::deref(input1Desc));
+    auto I2_tv  = get_inner_expanded_tv_2d(miopen::deref(input2Desc));
+    auto T_tv   = get_inner_expanded_tv_1d(miopen::deref(targetDesc));
+    auto dO_tv  = get_inner_expanded_tv_1d(miopen::deref(outputGradDesc));
+    auto dI1_tv = get_inner_expanded_tv_2d(miopen::deref(input1GradDesc));
+    auto dI2_tv = get_inner_expanded_tv_2d(miopen::deref(input2GradDesc));
 
-    size_t N = input1.desc.GetLengths()[0], D = input1.desc.GetLengths()[1];
+    size_t N = miopen::deref(input1Desc).GetLengths()[0],
+           D = miopen::deref(input1Desc).GetLengths()[1];
     for(size_t n = 0; n < N; ++n)
     {
         for(size_t d = 0; d < D; ++d)
@@ -167,12 +185,12 @@ void cpu_cosineembeddingloss_unreduced_backward_2d(tensor<T> input1,
             if(input1_grad_out)
             {
                 size_t dI1idx       = TV2D_IDX(dI1_tv, n, d);
-                input1_grad[dI1idx] = static_cast<T>(0.0f);
+                input1_grad[dI1idx] = static_cast<Tcheck>(0.0f);
             }
             if(input2_grad_out)
             {
                 size_t dI2idx       = TV2D_IDX(dI2_tv, n, d);
-                input2_grad[dI2idx] = static_cast<T>(0.0f);
+                input2_grad[dI2idx] = static_cast<Tcheck>(0.0f);
             }
         }
 
@@ -210,13 +228,13 @@ void cpu_cosineembeddingloss_unreduced_backward_2d(tensor<T> input1,
                 {
                     float input1_grad_value =
                         -(i2 / (norm1 * norm2) - cos_term * i1 / (norm1 * norm1));
-                    input1_grad[dI1idx] = static_cast<T>(input1_grad_value * og);
+                    input1_grad[dI1idx] = static_cast<Tcheck>(input1_grad_value * og);
                 }
                 if(input2_grad_out)
                 {
                     float input2_grad_value =
                         -(i1 / (norm1 * norm2) - cos_term * i2 / (norm2 * norm2));
-                    input2_grad[dI2idx] = static_cast<T>(input2_grad_value * og);
+                    input2_grad[dI2idx] = static_cast<Tcheck>(input2_grad_value * og);
                 }
             }
             else
@@ -227,39 +245,47 @@ void cpu_cosineembeddingloss_unreduced_backward_2d(tensor<T> input1,
                 {
                     float input1_grad_value =
                         i2 / (norm1 * norm2) - cos_term * i1 / (norm1 * norm1);
-                    input1_grad[dI1idx] = static_cast<T>(input1_grad_value * og);
+                    input1_grad[dI1idx] = static_cast<Tcheck>(input1_grad_value * og);
                 }
                 if(input2_grad_out)
                 {
                     float input2_grad_value =
                         i1 / (norm1 * norm2) - cos_term * i2 / (norm2 * norm2);
-                    input2_grad[dI2idx] = static_cast<T>(input2_grad_value * og);
+                    input2_grad[dI2idx] = static_cast<Tcheck>(input2_grad_value * og);
                 }
             }
         }
     }
 }
 
-template <class T>
-void cpu_cosineembeddingloss_reduced_backward_2d(tensor<T> input1,
-                                                 tensor<T> input2,
-                                                 tensor<int32_t> target,
-                                                 tensor<T> output_grad,
-                                                 tensor<T>& input1_grad,
-                                                 tensor<T>& input2_grad,
-                                                 float margin,
-                                                 float divisor,
-                                                 bool input1_grad_out,
-                                                 bool input2_grad_out)
+template <typename Tgpu, typename Tcheck>
+int32_t
+mloCosineEmbeddingLossReducedBackwardRunHost2d(const miopenTensorDescriptor_t input1Desc,
+                                               const miopenTensorDescriptor_t input2Desc,
+                                               const miopenTensorDescriptor_t targetDesc,
+                                               const miopenTensorDescriptor_t outputGradDesc,
+                                               const miopenTensorDescriptor_t input1GradDesc,
+                                               const miopenTensorDescriptor_t input2GradDesc,
+                                               const Tgpu* input1,
+                                               const Tgpu* input2,
+                                               const int32_t* target,
+                                               const Tgpu* output_grad,
+                                               Tcheck* input1_grad,
+                                               Tcheck* input2_grad,
+                                               const float margin,
+                                               const float divisor,
+                                               bool input1_grad_out,
+                                               bool input2_grad_out)
 {
-    auto I1_tv  = get_inner_expanded_tv_2d(input1.desc);
-    auto I2_tv  = get_inner_expanded_tv_2d(input2.desc);
-    auto T_tv   = get_inner_expanded_tv_1d(target.desc);
-    auto dO_tv  = get_inner_expanded_tv_1d(output_grad.desc);
-    auto dI1_tv = get_inner_expanded_tv_2d(input1_grad.desc);
-    auto dI2_tv = get_inner_expanded_tv_2d(input2_grad.desc);
+    auto I1_tv  = get_inner_expanded_tv_2d(miopen::deref(input1Desc));
+    auto I2_tv  = get_inner_expanded_tv_2d(miopen::deref(input2Desc));
+    auto T_tv   = get_inner_expanded_tv_1d(miopen::deref(targetDesc));
+    auto dO_tv  = get_inner_expanded_tv_1d(miopen::deref(outputGradDesc));
+    auto dI1_tv = get_inner_expanded_tv_2d(miopen::deref(input1GradDesc));
+    auto dI2_tv = get_inner_expanded_tv_2d(miopen::deref(input2GradDesc));
 
-    size_t N = input1.desc.GetLengths()[0], D = input1.desc.GetLengths()[1];
+    size_t N = miopen::deref(input1Desc).GetLengths()[0],
+           D = miopen::deref(input1Desc).GetLengths()[1];
     for(size_t n = 0; n < N; ++n)
     {
         for(size_t d = 0; d < D; ++d)
@@ -267,12 +293,12 @@ void cpu_cosineembeddingloss_reduced_backward_2d(tensor<T> input1,
             if(input1_grad_out)
             {
                 size_t dI1idx       = TV2D_IDX(dI1_tv, n, d);
-                input1_grad[dI1idx] = static_cast<T>(0.0f);
+                input1_grad[dI1idx] = static_cast<Tcheck>(0.0f);
             }
             if(input2_grad_out)
             {
                 size_t dI2idx       = TV2D_IDX(dI2_tv, n, d);
-                input2_grad[dI2idx] = static_cast<T>(0.0f);
+                input2_grad[dI2idx] = static_cast<Tcheck>(0.0f);
             }
         }
 
@@ -333,15 +359,15 @@ void cpu_cosineembeddingloss_reduced_backward_2d(tensor<T> input1,
             size_t dI1idx = TV2D_IDX(dI1_tv, n, d);
             if(input1_grad_out)
             {
-                input1_grad[dI1idx] = static_cast<T>(input1_grad_val * og / divisor);
+                input1_grad[dI1idx] = static_cast<Tcheck>(input1_grad_val * og / divisor);
             }
             size_t dI2idx = TV2D_IDX(dI2_tv, n, d);
             if(input2_grad_out)
             {
-                input2_grad[dI2idx] = static_cast<T>(input2_grad_val * og / divisor);
+                input2_grad[dI2idx] = static_cast<Tcheck>(input2_grad_val * og / divisor);
             }
         }
     }
 }
 
-#endif // GUARD_CPU_COSINEEMBEDDINGLOSS_HPP
+#endif // MLO_COSINEEMBEDDINGLOSSHOST_H_

@@ -35,8 +35,8 @@
 #include <miopen/target_properties.hpp>
 #include <miopen/tensor_view.hpp>
 
-#define LOCAL_SIZE_REDUCED_FWD 1024
-#define LOCAL_SIZE_REDUCED 1024
+#define LOCAL_SIZE_FWD 1024
+#define LOCAL_SIZE_REDUCED 256
 
 namespace miopen {
 
@@ -74,9 +74,10 @@ ConvSolution CosineEmbeddingLossReducedForward2d::GetSolution(
         {"MIOPEN_USE_BFP16", static_cast<int>(dtype == miopenBFloat16)},
         {"INPUT_TYPE", input_dtype == "bfloat16" ? "ushort" : input_dtype},
         {"OUTPUT_TYPE", output_dtype == "bfloat16" ? "ushort" : output_dtype},
+        {"D_TYPE", output_dtype == "bfloat16" ? "ushort" : output_dtype},
     };
 
-    result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE_REDUCED_FWD},
+    result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE_FWD},
                                                          {N_total},
                                                          "MIOpenCosineEmbeddingLoss.cpp",
                                                          "CosineEmbeddingLossReducedForward2d",
@@ -158,6 +159,9 @@ std::size_t CosineEmbeddingLossReducedForward2d::GetWorkspaceSize(
     const ExecutionContext&,
     const miopen::cosineembeddingloss::FwdReducedProblemDescription& problem) const
 {
+    if(problem.GetTargetDesc().GetElementSize() <= LOCAL_SIZE_REDUCED)
+        return problem.GetTargetDesc().GetElementSize() *
+               get_data_size(problem.GetOutputDesc().GetType());
     return (problem.GetTargetDesc().GetElementSize() +
             AlignUp(problem.GetTargetDesc().GetElementSize(), LOCAL_SIZE_REDUCED) /
                 LOCAL_SIZE_REDUCED) *

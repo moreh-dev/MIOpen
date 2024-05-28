@@ -64,7 +64,7 @@ struct CosineEmbeddingLossTestCase
 
 inline std::vector<CosineEmbeddingLossTestCase> CosineEmbeddingLossTestConfigs()
 {
-    return {{{100, 20}, 0.5f, 1.0f}};
+    return {{{100, 20}, 0.5f, 1.0f}, {{32, 64}, 0.5f, 1.0f}, {{32, 128}, 0.5f, 0.0f}};
 }
 
 inline std::vector<size_t> GetStrides(std::vector<size_t> input, bool contiguous)
@@ -97,7 +97,7 @@ protected:
         auto target_dim = std::vector<size_t>({in_dim[0]});
 
         auto gen_input1_value = [](auto...) {
-            return prng::gen_A_to_B<T>(static_cast<T>(-10.0f), static_cast<T>(1.0f));
+            return prng::gen_A_to_B<T>(static_cast<T>(-5.0f), static_cast<T>(1.0f));
         };
 
         auto gen_input2_value = [](auto...) {

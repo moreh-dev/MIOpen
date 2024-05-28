@@ -92,7 +92,9 @@ __device__ void lossSum(const DTYPE* input, DTYPE* output, size_t N)
     val             = blockReduceSum(val);
 
     if(threadIdx.x == 0)
+    {
         output[blockIdx.x] = CVT_ACCUM2FLOAT(val);
+    }
 }
 
 extern "C" __global__ void
@@ -200,9 +202,7 @@ __device__ void cosineembeddinglossReducedForward2d(const TI* __restrict__ input
     else
         loss = max(0.0f, cos_term - margin);
 
-    loss_sum[gid] = CVT_ACCUM2FLOAT(loss / divisor);
-    // if(gid < 10)
-    printf("loss_sum[%zu]: %f\n", gid, CVT_FLOAT2ACCUM(loss_sum[gid]));
+    loss_sum[n] = CVT_ACCUM2FLOAT(loss / divisor);
 }
 
 extern "C" __global__ void
