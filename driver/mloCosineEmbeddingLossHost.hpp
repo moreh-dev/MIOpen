@@ -78,6 +78,7 @@ int32_t mloCosineEmbeddingLossUnreducedForwardRunHost2d(const miopenTensorDescri
             output[Oidx] = static_cast<Tcheck>(std::max(0.0f, cos_term - margin));
         }
     }
+    return 0;
 }
 
 template <typename Tgpu, typename Tcheck>
@@ -149,6 +150,7 @@ int32_t mloCosineEmbeddingLossReducedForwardRunHost2d(const miopenTensorDescript
         std::swap(offset_a, offset_b);
         _size = (_size + local_size - 1) / local_size;
     } while(_size > 1);
+    return 0;
 }
 
 template <typename Tgpu, typename Tcheck>
@@ -256,6 +258,7 @@ mloCosineEmbeddingLossUnreducedBackwardRunHost2d(const miopenTensorDescriptor_t 
             }
         }
     }
+    return 0;
 }
 
 template <typename Tgpu, typename Tcheck>
@@ -368,6 +371,7 @@ mloCosineEmbeddingLossReducedBackwardRunHost2d(const miopenTensorDescriptor_t in
             }
         }
     }
+    return 0;
 }
 
 #endif // MLO_COSINEEMBEDDINGLOSSHOST_H_

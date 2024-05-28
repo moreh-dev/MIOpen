@@ -541,7 +541,9 @@ int CosineEmbeddingLossDriver<Tgpu, Tref>::RunBackwardCPU()
                                                                    in1_grad_host.data(),
                                                                    in2_grad_host.data(),
                                                                    margin,
-                                                                   divisor);
+                                                                   divisor,
+                                                                   true,
+                                                                   true);
     }
     else
     {
@@ -557,7 +559,9 @@ int CosineEmbeddingLossDriver<Tgpu, Tref>::RunBackwardCPU()
                                                                      out_grad.data(),
                                                                      in1_grad_host.data(),
                                                                      in2_grad_host.data(),
-                                                                     margin);
+                                                                     margin,
+                                                                     true,
+                                                                     true);
     }
     return miopenStatusSuccess;
 }
