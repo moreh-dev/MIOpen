@@ -25,6 +25,7 @@
  *******************************************************************************/
 
 #include "miopen/loss/problem_description.hpp"
+#include "miopen/miopen.h"
 #include <miopen/datatype.hpp>
 #include <miopen/kernel_build_params.hpp>
 #include <miopen/loss/invoke_params.hpp>
@@ -84,13 +85,18 @@ ConvSolution HingeEmbeddingLossBwd::GetSolution(
             auto input_tv         = get_inner_expanded_tv(deref(params.inputDesc));
             auto target_tv        = get_inner_expanded_tv(deref(params.targetDesc));
             auto doutput_tv       = get_inner_expanded_tv(deref(params.doutputDesc));
+            float divisor         = 1;
+            if(params.reduction == MIOPEN_LOSS_REDUCTION_MEAN)
+            {
+                divisor = deref(params.inputDesc).GetElementSize();
+            }
 
             kernel(params.input,
                    params.target,
                    params.doutput,
                    params.dinput,
                    params.margin,
-                   params.divisor,
+                   divisor,
                    input_tv,
                    target_tv,
                    doutput_tv);

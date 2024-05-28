@@ -61,7 +61,7 @@ miopenStatus_t HingeEmbeddingLossBackward(Handle& handle,
                                           const TensorDescriptor& dinputDesc,
                                           Data_t dinput,
                                           float margin,
-                                          float divisor);
+                                          miopenLossReductionMode_t reduction);
 
 miopenStatus_t HingeEmbeddingLossUnreducedForward(Handle& handle,
                                                   const TensorDescriptor& inputDesc,

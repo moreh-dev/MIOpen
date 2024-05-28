@@ -5032,34 +5032,6 @@ MIOPEN_EXPORT miopenStatus_t miopenHingeEmbeddingLossBackward(miopenHandle_t han
                                                               float margin,
                                                               miopenLossReductionMode_t reduction);
 
-/*! @brief Execute a HingeEmbeddingLoss unreduced backward layer
- *
- * @param handle                   MIOpen handle (input)
- * @param inputDesc                Tensor descriptor for input tensor (input)
- * @param input                    Data tensor input (input)
- * @param targetDesc               Tensor descriptor for target tensor (input)
- * @param target                   Data tensor target (input)
- * @param doutputDesc              Tensor descriptor for output gradient (input)
- * @param doutput                  Gradient of output (input)
- * @param dinputDesc               Tensor descriptor for input gradient (input)
- * @param dinput                   Gradient of input (output)
- * @param dtargetDesc              Tensor descriptor for target gradient (input)
- * @param dtarget                  Gradient of target (output)
- * @param margin                   Margin (input)
- * @return                         miopenStatus_t
- */
-MIOPEN_EXPORT miopenStatus_t
-miopenHingeEmbeddingLossUnreducedBackward(miopenHandle_t handle,
-                                          miopenTensorDescriptor_t inputDesc,
-                                          const void* input,
-                                          miopenTensorDescriptor_t targetDesc,
-                                          const void* target,
-                                          miopenTensorDescriptor_t doutputDesc,
-                                          const void* doutput,
-                                          miopenTensorDescriptor_t dinputDesc,
-                                          void* dinput,
-                                          float margin);
-
 /** @} */
 // CLOSEOUT LossFunction DOXYGEN GROUP
 

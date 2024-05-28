@@ -152,17 +152,18 @@ extern "C" miopenStatus_t miopenHingeEmbeddingLossForward(miopenHandle_t handle,
     });
 }
 
-extern "C" miopenStatus_t miopenHingeEmbeddingLossBackward(miopenHandle_t handle,
-                                                           miopenTensorDescriptor_t inputDesc,
-                                                           const void* input,
-                                                           miopenTensorDescriptor_t targetDesc,
-                                                           const void* target,
-                                                           miopenTensorDescriptor_t doutputDesc,
-                                                           const void* doutput,
-                                                           miopenTensorDescriptor_t dinputDesc,
-                                                           void* dinput,
-                                                           float margin,
-                                                           float divisor)
+extern "C" miopenStatus_t
+miopenHingeEmbeddingLossBackward(miopenHandle_t handle,
+                                 miopenTensorDescriptor_t inputDesc,
+                                 const void* input,
+                                 miopenTensorDescriptor_t targetDesc,
+                                 const void* target,
+                                 miopenTensorDescriptor_t doutputDesc,
+                                 const void* doutput,
+                                 miopenTensorDescriptor_t dinputDesc,
+                                 void* dinput,
+                                 float margin,
+                                 const miopenLossReductionMode_t reduction)
 {
     MIOPEN_LOG_FUNCTION(handle,
                         inputDesc,
@@ -174,9 +175,26 @@ extern "C" miopenStatus_t miopenHingeEmbeddingLossBackward(miopenHandle_t handle
                         dinputDesc,
                         dinput,
                         margin,
-                        divisor);
+                        reduction);
 
     LogCmdHingeEmbeddingLoss(inputDesc, targetDesc, false);
+
+    if(reduction == MIOPEN_LOSS_REDUCTION_NONE)
+    {
+        return miopen::try_([&] {
+            miopen::HingeEmbeddingLossUnreducedBackward(miopen::deref(handle),
+                                                        miopen::deref(inputDesc),
+                                                        DataCast(input),
+                                                        miopen::deref(targetDesc),
+                                                        DataCast(target),
+                                                        miopen::deref(doutputDesc),
+                                                        DataCast(doutput),
+                                                        miopen::deref(dinputDesc),
+                                                        DataCast(dinput),
+                                                        margin);
+        });
+    }
+
     return miopen::try_([&] {
         miopen::HingeEmbeddingLossBackward(miopen::deref(handle),
                                            miopen::deref(inputDesc),
@@ -188,44 +206,6 @@ extern "C" miopenStatus_t miopenHingeEmbeddingLossBackward(miopenHandle_t handle
                                            miopen::deref(dinputDesc),
                                            DataCast(dinput),
                                            margin,
-                                           divisor);
-    });
-}
-
-extern "C" miopenStatus_t
-miopenHingeEmbeddingLossUnreducedBackward(miopenHandle_t handle,
-                                          miopenTensorDescriptor_t inputDesc,
-                                          const void* input,
-                                          miopenTensorDescriptor_t targetDesc,
-                                          const void* target,
-                                          miopenTensorDescriptor_t doutputDesc,
-                                          const void* doutput,
-                                          miopenTensorDescriptor_t dinputDesc,
-                                          void* dinput,
-                                          float margin)
-{
-    MIOPEN_LOG_FUNCTION(handle,
-                        inputDesc,
-                        input,
-                        targetDesc,
-                        target,
-                        doutputDesc,
-                        doutput,
-                        dinputDesc,
-                        dinput,
-                        margin);
-
-    LogCmdHingeEmbeddingLoss(inputDesc, targetDesc, false);
-    return miopen::try_([&] {
-        miopen::HingeEmbeddingLossUnreducedBackward(miopen::deref(handle),
-                                                    miopen::deref(inputDesc),
-                                                    DataCast(input),
-                                                    miopen::deref(targetDesc),
-                                                    DataCast(target),
-                                                    miopen::deref(doutputDesc),
-                                                    DataCast(doutput),
-                                                    miopen::deref(dinputDesc),
-                                                    DataCast(dinput),
-                                                    margin);
+                                           reduction);
     });
 }

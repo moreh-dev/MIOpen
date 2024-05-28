@@ -106,7 +106,7 @@ miopenStatus_t HingeEmbeddingLossBackward(Handle& handle,
                                           const TensorDescriptor& dinputDesc,
                                           Data_t dinput,
                                           float margin,
-                                          float divisor)
+                                          const miopenLossReductionMode_t reduction)
 {
     const auto problem = loss::HingeEmbeddingLossBwdProblemDescription{
         inputDesc, targetDesc, doutputDesc, dinputDesc};
@@ -122,7 +122,7 @@ miopenStatus_t HingeEmbeddingLossBackward(Handle& handle,
         tmp.doutput     = doutput;
         tmp.dinput      = dinput;
         tmp.margin      = margin;
-        tmp.divisor     = divisor;
+        tmp.reduction   = reduction;
         return tmp;
     }();
 

@@ -551,33 +551,17 @@ int HingeEmbeddingLossDriver<TIO, TT>::RunBackwardGPU()
     for(int i = 0; i < inflags.GetValueInt("iter"); i++)
     {
 
-        if(reduction == MIOPEN_LOSS_REDUCTION_NONE)
-        {
-            miopenHingeEmbeddingLossUnreducedBackward(GetHandle(),
-                                                      inputDesc,
-                                                      input_dev->GetMem(),
-                                                      targetDesc,
-                                                      target_dev->GetMem(),
-                                                      doutputDesc,
-                                                      doutput_dev->GetMem(),
-                                                      dinputDesc,
-                                                      dinput_dev->GetMem(),
-                                                      margin);
-        }
-        else
-        {
-            miopenHingeEmbeddingLossBackward(GetHandle(),
-                                             inputDesc,
-                                             input_dev->GetMem(),
-                                             targetDesc,
-                                             target_dev->GetMem(),
-                                             doutputDesc,
-                                             doutput_dev->GetMem(),
-                                             dinputDesc,
-                                             dinput_dev->GetMem(),
-                                             margin,
-                                             divisor);
-        }
+        miopenHingeEmbeddingLossBackward(GetHandle(),
+                                         inputDesc,
+                                         input_dev->GetMem(),
+                                         targetDesc,
+                                         target_dev->GetMem(),
+                                         doutputDesc,
+                                         doutput_dev->GetMem(),
+                                         dinputDesc,
+                                         dinput_dev->GetMem(),
+                                         margin,
+                                         reduction);
 
         float time = 0.0;
         miopenGetKernelTime(GetHandle(), &time);

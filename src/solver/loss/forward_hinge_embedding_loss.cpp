@@ -113,8 +113,9 @@ ConvSolution HingeEmbeddingLossFwd::GetSolution(
                 float divisor         = 1;
                 if(params.reduction == MIOPEN_LOSS_REDUCTION_MEAN)
                 {
-                    divisor *= size;
+                    divisor = size;
                 }
+
                 kernel(params.input,
                        params.target,
                        params.workspace,

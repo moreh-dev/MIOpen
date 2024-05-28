@@ -71,7 +71,7 @@ struct BwdInvokeParams : HingeEmbeddingLossInvokeParams
     ConstData_t doutput = nullptr;
     ConstData_t dinput  = nullptr;
 
-    float divisor = 1.0f;
+    miopenLossReductionMode_t reduction;
 };
 
 struct UnreducedFwdInvokeParams : HingeEmbeddingLossInvokeParams

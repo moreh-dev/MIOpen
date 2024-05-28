@@ -396,7 +396,7 @@ protected:
                                                     dInput.desc,
                                                     dInput_dev.get(),
                                                     config.margin,
-                                                    divisor);
+                                                    config.reduction);
         cpu_hinge_embedding_loss_backward<TIO, TT>(
             input, target, dOutput, ref_dInput, config.margin, divisor);
 
