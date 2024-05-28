@@ -515,12 +515,12 @@ int HingeEmbeddingLossDriver<TIO, TT>::RunForwardGPU()
         int iter = inflags.GetValueInt("iter");
         if(WALL_CLOCK)
             std::cout << "Wall-clock Time Hinge Embedding Loss Unreduced Fwd Elapsed: "
-                      << t.gettime_ms() / iter << " ms\n";
+                      << t.gettime_ms() / iter << " ms" << std::endl;
 
         float kernel_average_time =
             iter > 1 ? (kernel_total_time - kernel_first_time) / (iter - 1) : kernel_first_time;
         std::cout << "GPU Kernel Time Hinge Embedding Loss Unreduced Fwd Elapsed: "
-                  << kernel_average_time << " ms\n";
+                  << kernel_average_time << " ms" << std::endl;
     }
 
     if(output_dev->FromGPU(GetStream(), output.data()) != 0)
@@ -606,12 +606,12 @@ int HingeEmbeddingLossDriver<TIO, TT>::RunBackwardGPU()
         int iter = inflags.GetValueInt("iter");
         if(WALL_CLOCK)
             std::cout << "Wall-clock Time Hinge Embedding Loss Unreduced Bwd Elapsed: "
-                      << t.gettime_ms() / iter << " ms\n";
+                      << t.gettime_ms() / iter << " ms" << std::endl;
 
         float kernel_average_time =
             iter > 1 ? (kernel_total_time - kernel_first_time) / (iter - 1) : kernel_first_time;
         std::cout << "GPU Kernel Time Hinge Embedding Loss Unreduced Bwd Elapsed: "
-                  << kernel_average_time << " ms\n";
+                  << kernel_average_time << " ms" << std::endl;
     }
 
     if(dinput_dev->FromGPU(GetStream(), dinput.data()) != 0)
