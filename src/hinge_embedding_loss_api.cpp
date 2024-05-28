@@ -104,7 +104,7 @@ extern "C" miopenStatus_t miopenHingeEmbeddingLossForward(miopenHandle_t handle,
                                                           const miopenTensorDescriptor_t outputDesc,
                                                           void* output,
                                                           const float margin,
-                                                          const float divisor)
+                                                          const miopenLossReductionMode_t reduction)
 {
     MIOPEN_LOG_FUNCTION(handle,
                         workspace,
@@ -115,7 +115,8 @@ extern "C" miopenStatus_t miopenHingeEmbeddingLossForward(miopenHandle_t handle,
                         target,
                         outputDesc,
                         output,
-                        margin);
+                        margin,
+                        reduction);
 
     LogCmdHingeEmbeddingLoss(inputDesc, targetDesc, true);
     return miopen::try_([&] {
@@ -129,7 +130,7 @@ extern "C" miopenStatus_t miopenHingeEmbeddingLossForward(miopenHandle_t handle,
                                           miopen::deref(outputDesc),
                                           DataCast(output),
                                           margin,
-                                          divisor);
+                                          reduction);
     });
 }
 

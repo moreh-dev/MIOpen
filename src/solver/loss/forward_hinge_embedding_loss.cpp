@@ -25,6 +25,7 @@
  *******************************************************************************/
 
 #include "miopen/loss/problem_description.hpp"
+#include "miopen/miopen.h"
 #include <miopen/datatype.hpp>
 #include <miopen/kernel_build_params.hpp>
 #include <miopen/loss/invoke_params.hpp>
@@ -91,6 +92,7 @@ ConvSolution HingeEmbeddingLossFwd::GetSolution(
     result.invoker_factory = [](const std::vector<Kernel>& kernels) {
         return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
             decltype(auto) params = raw_params.CastTo<miopen::loss::FwdInvokeParams>();
+            auto size             = deref(params.inputDesc).GetElementSize();
 
             auto elapsed = 0.f;
             HipEventPtr start;
@@ -108,11 +110,16 @@ ConvSolution HingeEmbeddingLossFwd::GetSolution(
                 decltype(auto) kernel = handle_.Run(kernels.front());
                 auto input_tv         = get_inner_expanded_tv(deref(params.inputDesc));
                 auto target_tv        = get_inner_expanded_tv(deref(params.targetDesc));
+                float divisor         = 1;
+                if(params.reduction == MIOPEN_LOSS_REDUCTION_MEAN)
+                {
+                    divisor *= size;
+                }
                 kernel(params.input,
                        params.target,
                        params.workspace,
                        params.margin,
-                       params.divisor,
+                       divisor,
                        input_tv,
                        target_tv);
             }
@@ -123,7 +130,6 @@ ConvSolution HingeEmbeddingLossFwd::GetSolution(
                 static_cast<Data_t>(static_cast<char*>(params.workspace) +
                                     deref(params.inputDesc).GetElementSize() *
                                         get_data_size(deref(params.outputDesc).GetType()));
-            auto size = deref(params.inputDesc).GetElementSize();
             for(int i = 1; i < kernels.size(); ++i)
             {
                 decltype(auto) kernel = handle_.Run(kernels[i]);

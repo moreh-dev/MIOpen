@@ -63,7 +63,7 @@ miopenStatus_t HingeEmbeddingLossForward(Handle& handle,
                                          const TensorDescriptor& outputDesc,
                                          Data_t output,
                                          float margin,
-                                         float divisor)
+                                         const miopenLossReductionMode_t reduction)
 {
     const auto problem =
         loss::HingeEmbeddingLossFwdProblemDescription{inputDesc, targetDesc, outputDesc};
@@ -79,7 +79,7 @@ miopenStatus_t HingeEmbeddingLossForward(Handle& handle,
         tmp.workspace      = workspace;
         tmp.workspace_size = workspaceSizeInBytes;
         tmp.margin         = margin;
-        tmp.divisor        = divisor;
+        tmp.reduction      = reduction;
         return tmp;
     }();
 

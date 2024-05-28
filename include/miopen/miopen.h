@@ -512,7 +512,7 @@ typedef enum
     miopenActivationABS      = 5, /*!< Absolute value \f$abs(x)\f$ */
     miopenActivationPOWER = 6, /*!< Scaled and shifted power \f$(\alpha + \beta * x)^{gamma}\f$ */
     miopenActivationCLIPPEDRELU =
-        7, /*!< Clipped Rectified Linear Unit \f$ min(\alpha, max(0,x)) \f$ */
+        7,                     /*!< Clipped Rectified Linear Unit \f$ min(\alpha, max(0,x)) \f$ */
     miopenActivationLEAKYRELU =
         8, /*!< Leaky Rectified Linear Unit \f$ \alpha * x | x <= 0; x | x > 0 \f$ */
     miopenActivationELU =
@@ -4950,6 +4950,13 @@ MIOPEN_EXPORT miopenStatus_t miopenCTCLoss(miopenHandle_t handle,
                                            void* workSpace,
                                            size_t workSpaceSize);
 
+typedef enum
+{
+    MIOPEN_LOSS_REDUCTION_NONE = 0,
+    MIOPEN_LOSS_REDUCTION_SUM  = 1,
+    MIOPEN_LOSS_REDUCTION_MEAN = 2,
+} miopenLossReductionMode_t;
+
 /*! @brief Helper function to query the minimum workspace size required by the hinge embedding loss
  * call
  *
@@ -4979,7 +4986,7 @@ miopenGetHingeEmbeddingLossForwardWorkspaceSize(miopenHandle_t handle,
  * @param outputDesc               Tensor descriptor for output tensor (input)
  * @param output                   Data tensor output (output)
  * @param margin                   Margin (input)
- * @param divisor                  Divisor (input)
+ * @param reduction                Reduction (input)
  * @return                         miopenStatus_t
  */
 MIOPEN_EXPORT miopenStatus_t miopenHingeEmbeddingLossForward(miopenHandle_t handle,
@@ -4992,7 +4999,7 @@ MIOPEN_EXPORT miopenStatus_t miopenHingeEmbeddingLossForward(miopenHandle_t hand
                                                              miopenTensorDescriptor_t outputDesc,
                                                              void* output,
                                                              float margin,
-                                                             float divisor);
+                                                             miopenLossReductionMode_t reduction);
 
 /*! @brief Execute a HingeEmbeddingLoss backward layer
  *

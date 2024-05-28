@@ -276,7 +276,7 @@ private:
     float margin;
     float divisor;
     bool isContiguous;
-    std::string reduction;
+    miopenLossReductionMode_t reduction;
 
     size_t workSpaceSizeInBytes;
 };
@@ -299,7 +299,7 @@ int HingeEmbeddingLossDriver<TIO, TT>::GetandSetData()
     std::vector<int> inDim = GetInputTensorLengthsFromCmdLine();
     margin                 = inflags.GetValueDouble("margin");
     isContiguous           = inflags.GetValueInt("is-contiguous") == 1 ? true : false;
-    reduction              = inflags.GetValueStr("reduction");
+    reduction = static_cast<miopenLossReductionMode_t>(inflags.GetValueInt("reduction"));
 
     std::vector<int> inStride = GetTensorStride(inDim);
     if(!isContiguous)
@@ -312,7 +312,7 @@ int HingeEmbeddingLossDriver<TIO, TT>::GetandSetData()
     SetTensorNd(doutputDesc, inDim, data_type);
     SetTensorNd(dinputDesc, inDim, data_type);
 
-    if(reduction == "none")
+    if(reduction == MIOPEN_LOSS_REDUCTION_NONE)
     {
         SetTensorNd(outputDesc, inDim, data_type);
     }
@@ -322,7 +322,7 @@ int HingeEmbeddingLossDriver<TIO, TT>::GetandSetData()
         outDim[0] = 1;
         SetTensorNd(outputDesc, outDim, data_type);
         divisor = 1;
-        if(reduction == "mean")
+        if(reduction == MIOPEN_LOSS_REDUCTION_MEAN)
         {
             divisor = miopen::deref(inputDesc).GetElementSize();
         }
@@ -358,7 +358,7 @@ int HingeEmbeddingLossDriver<TIO, TT>::AddCmdLineArgs()
                          "The dimensional lengths of the input tensor",
                          "string");
     inflags.AddInputFlag("is-contiguous", 'c', "1", "is-contiguous (Default=1)", "int");
-    inflags.AddInputFlag("reduction", 'R', "none", "reduction (Default='none')", "string");
+    inflags.AddInputFlag("reduction", 'R', "none", "reduction (Default=0)", "int");
     inflags.AddInputFlag("margin", 'M', "1", "Margin (Default=1)", "float");
     inflags.AddInputFlag("iter", 'i', "10", "Number of Iterations (Default=10)", "int");
     inflags.AddInputFlag("verify", 'V', "1", "Verify Each Layer (Default=1)", "int");
@@ -477,7 +477,7 @@ int HingeEmbeddingLossDriver<TIO, TT>::RunForwardGPU()
 
     for(int i = 0; i < inflags.GetValueInt("iter"); i++)
     {
-        if(reduction == "none")
+        if(reduction == MIOPEN_LOSS_REDUCTION_NONE)
         {
             miopenHingeEmbeddingLossUnreducedForward(GetHandle(),
                                                      inputDesc,
@@ -500,7 +500,7 @@ int HingeEmbeddingLossDriver<TIO, TT>::RunForwardGPU()
                                             outputDesc,
                                             output_dev->GetMem(),
                                             margin,
-                                            divisor);
+                                            miopenLossReductionMode_t(reduction));
         }
         float time = 0.0;
         miopenGetKernelTime(GetHandle(), &time);
@@ -533,7 +533,7 @@ int HingeEmbeddingLossDriver<TIO, TT>::RunForwardGPU()
 template <typename TIO, typename TT>
 int HingeEmbeddingLossDriver<TIO, TT>::RunForwardCPU()
 {
-    if(reduction == "none")
+    if(reduction == MIOPEN_LOSS_REDUCTION_NONE)
     {
         mloHingeEmbeddingLossUnreducedFwdRunHost<TIO, TT>(
             input.data(), inputDesc, target.data(), targetDesc, outputHost.data(), margin);
@@ -565,7 +565,7 @@ int HingeEmbeddingLossDriver<TIO, TT>::RunBackwardGPU()
     for(int i = 0; i < inflags.GetValueInt("iter"); i++)
     {
 
-        if(reduction == "none")
+        if(reduction == MIOPEN_LOSS_REDUCTION_NONE)
         {
             miopenHingeEmbeddingLossUnreducedBackward(GetHandle(),
                                                       inputDesc,
@@ -624,7 +624,7 @@ int HingeEmbeddingLossDriver<TIO, TT>::RunBackwardGPU()
 template <typename TIO, typename TT>
 int HingeEmbeddingLossDriver<TIO, TT>::RunBackwardCPU()
 {
-    if(reduction == "none")
+    if(reduction == MIOPEN_LOSS_REDUCTION_NONE)
     {
 
         mloHingeEmbeddingLossUnreducedBwdRunHost<TIO, TT>(input.data(),

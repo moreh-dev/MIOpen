@@ -25,6 +25,7 @@
  *******************************************************************************/
 #pragma once
 
+#include "miopen/miopen.h"
 #include <miopen/invoke_params.hpp>
 #include <miopen/tensor.hpp>
 
@@ -57,7 +58,7 @@ struct FwdInvokeParams : HingeEmbeddingLossInvokeParams
 
     const TensorDescriptor* outputDesc = nullptr;
     Data_t output                      = nullptr;
-    float divisor                      = 1.0f;
+    miopenLossReductionMode_t reduction;
 };
 
 struct BwdInvokeParams : HingeEmbeddingLossInvokeParams
