@@ -358,7 +358,8 @@ int HingeEmbeddingLossDriver<TIO, TT>::AddCmdLineArgs()
                          "The dimensional lengths of the input tensor",
                          "string");
     inflags.AddInputFlag("is-contiguous", 'c', "1", "is-contiguous (Default=1)", "int");
-    inflags.AddInputFlag("reduction", 'R', "none", "reduction (Default=0)", "int");
+    inflags.AddInputFlag(
+        "reduction", 'R', "0", "reduction mode: 0(default) - unreduced, 1 - sum, 2 -mean", "int");
     inflags.AddInputFlag("margin", 'M', "1", "Margin (Default=1)", "float");
     inflags.AddInputFlag("iter", 'i', "10", "Number of Iterations (Default=10)", "int");
     inflags.AddInputFlag("verify", 'V', "1", "Verify Each Layer (Default=1)", "int");

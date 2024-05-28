@@ -23,7 +23,6 @@
  * SOFTWARE.
  *
  *******************************************************************************/
-
 #ifndef GUARD_TENSOR_VIEW_H
 #define GUARD_TENSOR_VIEW_H
 
@@ -69,5 +68,4 @@ using tensor_view_5d_t = struct
         n          = nc / tv.size[1];     \
         c          = nc % tv.size[1];     \
     }
-
-#endif // GUARD_TENSOR_VIEW_H
+#endif

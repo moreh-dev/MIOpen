@@ -24,55 +24,14 @@
  *
  *******************************************************************************/
 
-#ifndef GUARD_TENSOR_VIEW_H
-#define GUARD_TENSOR_VIEW_H
+#ifndef GUARD_LOSS_UTIL_H
+#define GUARD_LOSS_UTIL_H
+
 #include "miopen/mlo_internal.hpp"
 #include "miopen/kernel_info.hpp"
 #include "miopen/tensor.hpp"
 #include "miopen/kernel_build_params.hpp"
-
-using tensor_view_5d_t = struct
-{
-    uint64_t stride[5];
-    uint64_t size[5];
-};
-
-#define TV_IDX(tv, d, n) (tv.stride[d] * (n))
-
-#define TV1D_IDX(tv, n0) (TV_IDX(tv, 0, n0))
-
-#define TV2D_IDX(tv, n0, n1) (TV_IDX(tv, 1, n1) + TV1D_IDX(tv, n0))
-
-#define TV3D_IDX(tv, n0, n1, n2) (TV_IDX(tv, 2, n2) + TV2D_IDX(tv, n0, n1))
-
-#define TV4D_IDX(tv, n0, n1, n2, n3) (TV_IDX(tv, 3, n3) + TV3D_IDX(tv, n0, n1, n2))
-
-#define TV5D_IDX(tv, n0, n1, n2, n3, n4) (TV_IDX(tv, 4, n4) + TV4D_IDX(tv, n0, n1, n2, n3))
-
-#define IDX_TO_TV5D_IDX(tv, idx)                                                              \
-    (tv.stride[0] * (uint64_t)((idx) / tv.size[4] / tv.size[3] / tv.size[2] / tv.size[1]) +   \
-     tv.stride[1] * ((uint64_t)((idx) / tv.size[4] / tv.size[3] / tv.size[2]) % tv.size[1]) + \
-     tv.stride[2] * ((uint64_t)((idx) / tv.size[4] / tv.size[3]) % tv.size[2]) +              \
-     tv.stride[3] * ((uint64_t)((idx) / tv.size[4]) % tv.size[3]) +                           \
-     tv.stride[4] * ((idx) % tv.size[4]) + tv.offset)
-
-#define TV_1D_AT(x, idx) (x[IDX_TO_TV1D_IDX(x##_tv, idx)])
-#define TV_2D_AT(x, n0, n1) (x[TV2D_IDX(x##_tv, n0, n1)])
-#define TV_3D_AT(x, n0, n1, n2) (x[TV3D_IDX(x##_tv, n0, n1, n2)])
-#define TV_4D_AT(x, n0, n1, n2, n3) (x[TV4D_IDX(x##_tv, n0, n1, n2, n3)])
-#define TV_5D_AT(x, n0, n1, n2, n3, n4) (x[TV5D_IDX(x##_tv, n0, n1, n2, n3, n4)])
-
-#define GET_NCDHW(n, c, d, h, w, idx, tv) \
-    {                                     \
-        ulong ncdh = (idx) / tv.size[4];  \
-        w          = (idx) % tv.size[4];  \
-        ulong ncd  = ncdh / tv.size[3];   \
-        h          = ncdh % tv.size[3];   \
-        ulong nc   = ncd / tv.size[2];    \
-        d          = ncd % tv.size[2];    \
-        n          = nc / tv.size[1];     \
-        c          = nc % tv.size[1];     \
-    }
+#include "../../../kernels/tensor_view_5d.hpp"
 
 inline tensor_view_5d_t get_inner_expanded_tv(const miopen::TensorDescriptor desc)
 {
@@ -112,4 +71,4 @@ const auto make_hip_kernel = [](std::vector<size_t> localsize,
                                       kernel_name};
 };
 
-#endif // GUARD_TENSOR_VIEW_H
+#endif // GUARD_LOSS_UTIL_H
