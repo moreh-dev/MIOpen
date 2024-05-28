@@ -39,8 +39,13 @@ namespace miopen {
 size_t GetHingeEmbeddingLossForwardWorkspaceSize(Handle& handle,
                                                  const TensorDescriptor& inputDesc,
                                                  const TensorDescriptor& targetDesc,
-                                                 const TensorDescriptor& outputDesc)
+                                                 const TensorDescriptor& outputDesc,
+                                                 miopenLossReductionMode_t reduction)
 {
+    if(reduction == MIOPEN_LOSS_REDUCTION_NONE)
+    {
+        return 0;
+    }
     auto ctx = ExecutionContext{&handle};
     const auto problem =
         loss::HingeEmbeddingLossFwdProblemDescription{inputDesc, targetDesc, outputDesc};

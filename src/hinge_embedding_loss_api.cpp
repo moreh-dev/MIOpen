@@ -24,6 +24,7 @@
  *
  *******************************************************************************/
 
+#include "miopen/miopen.h"
 #include <miopen/hinge_embedding_loss.hpp>
 #include <miopen/errors.hpp>
 #include <miopen/handle.hpp>
@@ -80,6 +81,7 @@ miopenGetHingeEmbeddingLossForwardWorkspaceSize(miopenHandle_t handle,
                                                 const miopenTensorDescriptor_t inputDesc,
                                                 const miopenTensorDescriptor_t targetDesc,
                                                 const miopenTensorDescriptor_t outputDesc,
+                                                miopenLossReductionMode_t reduction,
                                                 size_t* sizeInBytes)
 {
 
@@ -90,7 +92,8 @@ miopenGetHingeEmbeddingLossForwardWorkspaceSize(miopenHandle_t handle,
             miopen::GetHingeEmbeddingLossForwardWorkspaceSize(miopen::deref(handle),
                                                               miopen::deref(inputDesc),
                                                               miopen::deref(targetDesc),
-                                                              miopen::deref(outputDesc));
+                                                              miopen::deref(outputDesc),
+                                                              reduction);
     });
 }
 
@@ -119,6 +122,21 @@ extern "C" miopenStatus_t miopenHingeEmbeddingLossForward(miopenHandle_t handle,
                         reduction);
 
     LogCmdHingeEmbeddingLoss(inputDesc, targetDesc, true);
+
+    if(reduction == MIOPEN_LOSS_REDUCTION_NONE)
+    {
+        return miopen::try_([&] {
+            miopen::HingeEmbeddingLossUnreducedForward(miopen::deref(handle),
+                                                       miopen::deref(inputDesc),
+                                                       DataCast(input),
+                                                       miopen::deref(targetDesc),
+                                                       DataCast(target),
+                                                       miopen::deref(outputDesc),
+                                                       DataCast(output),
+                                                       margin);
+        });
+    }
+
     return miopen::try_([&] {
         miopen::HingeEmbeddingLossForward(miopen::deref(handle),
                                           DataCast(workspace),
@@ -171,31 +189,6 @@ extern "C" miopenStatus_t miopenHingeEmbeddingLossBackward(miopenHandle_t handle
                                            DataCast(dinput),
                                            margin,
                                            divisor);
-    });
-}
-
-extern "C" miopenStatus_t
-miopenHingeEmbeddingLossUnreducedForward(miopenHandle_t handle,
-                                         const miopenTensorDescriptor_t inputDesc,
-                                         const void* input,
-                                         const miopenTensorDescriptor_t targetDesc,
-                                         const void* target,
-                                         const miopenTensorDescriptor_t outputDesc,
-                                         void* output,
-                                         const float margin)
-{
-    MIOPEN_LOG_FUNCTION(handle, inputDesc, input, targetDesc, target, outputDesc, output, margin);
-
-    LogCmdHingeEmbeddingLoss(inputDesc, targetDesc, true);
-    return miopen::try_([&] {
-        miopen::HingeEmbeddingLossUnreducedForward(miopen::deref(handle),
-                                                   miopen::deref(inputDesc),
-                                                   DataCast(input),
-                                                   miopen::deref(targetDesc),
-                                                   DataCast(target),
-                                                   miopen::deref(outputDesc),
-                                                   DataCast(output),
-                                                   margin);
     });
 }
 

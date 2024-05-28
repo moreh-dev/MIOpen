@@ -45,13 +45,11 @@ struct HingeEmbeddingLossTestCase
     size_t H;
     size_t W;
     float margin;
-    float divisor;
     miopenLossReductionMode_t reduction;
     friend std::ostream& operator<<(std::ostream& os, const HingeEmbeddingLossTestCase& tc)
     {
         return os << " N:" << tc.N << " C:" << tc.C << " D:" << tc.D << " H:" << tc.H
-                  << " W:" << tc.W << " margin:" << tc.margin << " divisor:" << tc.divisor
-                  << " reduction:" << tc.reduction;
+                  << " W:" << tc.W << " margin:" << tc.margin << " reduction:" << tc.reduction;
     }
 
     std::vector<size_t> GetInput()
@@ -87,15 +85,15 @@ struct HingeEmbeddingLossTestCase
 std::vector<HingeEmbeddingLossTestCase> HingeEmbeddingLossTestConfigs()
 { // n c d h w margin
     return {
-        {1, 1, 1, 1, 10, 1, 1, MIOPEN_LOSS_REDUCTION_MEAN},
-        {2, 1, 1, 10, 10, 1, 1, MIOPEN_LOSS_REDUCTION_MEAN},
-        {1, 1, 1, 20, 30, 1, 1, MIOPEN_LOSS_REDUCTION_SUM},
-        {4, 1, 1, 100, 100, 1, 1, MIOPEN_LOSS_REDUCTION_SUM},
-        {8, 3, 1, 20, 100, 1, 1, MIOPEN_LOSS_REDUCTION_MEAN},
-        {8, 3, 1, 50, 50, 1, 1, MIOPEN_LOSS_REDUCTION_SUM},
-        {4, 3, 1, 60, 50, 1, 1, MIOPEN_LOSS_REDUCTION_MEAN},
-        {1, 1, 1, 1, 5000, 2, 1, MIOPEN_LOSS_REDUCTION_SUM},
-        {3, 2, 4, 3, 100, 2, 1, MIOPEN_LOSS_REDUCTION_MEAN},
+        {1, 1, 1, 1, 10, 1, MIOPEN_LOSS_REDUCTION_MEAN},
+        {2, 1, 1, 10, 10, 1, MIOPEN_LOSS_REDUCTION_MEAN},
+        {1, 1, 1, 20, 30, 1, MIOPEN_LOSS_REDUCTION_SUM},
+        {4, 1, 1, 100, 100, 1, MIOPEN_LOSS_REDUCTION_SUM},
+        {8, 3, 1, 20, 100, 1, MIOPEN_LOSS_REDUCTION_MEAN},
+        {8, 3, 1, 50, 50, 1, MIOPEN_LOSS_REDUCTION_SUM},
+        {4, 3, 1, 60, 50, 1, MIOPEN_LOSS_REDUCTION_MEAN},
+        {1, 1, 1, 1, 5000, 2, MIOPEN_LOSS_REDUCTION_SUM},
+        {3, 2, 4, 3, 100, 2, MIOPEN_LOSS_REDUCTION_MEAN},
     };
 }
 
@@ -168,9 +166,6 @@ protected:
     miopen::Allocator::ManageDataPtr input_dev;
     miopen::Allocator::ManageDataPtr target_dev;
     miopen::Allocator::ManageDataPtr output_dev;
-
-    float margin;
-    float divisor;
 };
 
 template <typename TIO, typename TT>
@@ -273,7 +268,7 @@ protected:
         target             = tensor<TT>{in_dims}.generate(tar_gen_value);
 
         size_t workspaceSizeBytes = miopen::GetHingeEmbeddingLossForwardWorkspaceSize(
-            handle, input.desc, target.desc, output.desc);
+            handle, input.desc, target.desc, output.desc, config.reduction);
         size_t workspaceElements = workspaceSizeBytes / sizeof(TIO);
 
         workspace = tensor<TIO>(workspaceElements);
@@ -285,10 +280,10 @@ protected:
         ref_output = tensor<TIO>(1);
         std::fill(ref_output.begin(), ref_output.end(), 0);
 
-        config.divisor = 1;
+        divisor = 1;
         if(config.reduction == MIOPEN_LOSS_REDUCTION_MEAN)
         {
-            config.divisor *= input.desc.GetElementSize();
+            divisor *= input.desc.GetElementSize();
         }
         input_dev     = handle.Write(input.data);
         target_dev    = handle.Write(target.data);
@@ -314,7 +309,7 @@ protected:
                                                    config.margin,
                                                    config.reduction);
         cpu_hinge_embedding_loss_forward<TIO, TT>(
-            input, target, workspace, ref_output, config.margin, config.divisor);
+            input, target, workspace, ref_output, config.margin, divisor);
 
         EXPECT_EQ(status, miopenStatusSuccess);
 
@@ -346,6 +341,7 @@ protected:
     miopen::Allocator::ManageDataPtr output_dev;
 
     float margin;
+    float divisor;
 };
 
 template <typename TIO, typename TT>
@@ -373,10 +369,10 @@ protected:
         ref_dInput = tensor<TIO>{in_dims};
         std::fill(ref_dInput.begin(), ref_dInput.end(), 0);
 
-        config.divisor = 1;
+        divisor = 1;
         if(config.reduction == MIOPEN_LOSS_REDUCTION_MEAN)
         {
-            config.divisor *= input.desc.GetElementSize();
+            divisor *= input.desc.GetElementSize();
         }
         input_dev   = handle.Write(input.data);
         target_dev  = handle.Write(target.data);
@@ -400,9 +396,9 @@ protected:
                                                     dInput.desc,
                                                     dInput_dev.get(),
                                                     config.margin,
-                                                    config.divisor);
+                                                    divisor);
         cpu_hinge_embedding_loss_backward<TIO, TT>(
-            input, target, dOutput, ref_dInput, config.margin, config.divisor);
+            input, target, dOutput, ref_dInput, config.margin, divisor);
 
         EXPECT_EQ(status, miopenStatusSuccess);
 

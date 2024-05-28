@@ -4964,6 +4964,7 @@ typedef enum
  * @param inputDesc                Tensor descriptor for input tensor (input)
  * @param targetDesc               Tensor descriptor for target tensor (input)
  * @param outputDesc               Tensor descriptor for output tensor (input)
+ * @param reduction                Reduction (input)
  * @param sizeInBytes              Pointer to data to return the minimum workspace size
  * @return                         miopenStatus_t
  */
@@ -4972,6 +4973,7 @@ miopenGetHingeEmbeddingLossForwardWorkspaceSize(miopenHandle_t handle,
                                                 miopenTensorDescriptor_t inputDesc,
                                                 miopenTensorDescriptor_t targetDesc,
                                                 miopenTensorDescriptor_t outputDesc,
+                                                miopenLossReductionMode_t reduction,
                                                 size_t* sizeInBytes);
 
 /*! @brief Execute a HingeEmbeddingLoss reduced forward layer
@@ -5015,7 +5017,7 @@ MIOPEN_EXPORT miopenStatus_t miopenHingeEmbeddingLossForward(miopenHandle_t hand
  * @param dtargetDesc              Tensor descriptor for target gradient (input)
  * @param dtarget                  Gradient of target (output)
  * @param margin                   Margin (input)
- * @param divisor                  Divisor (input)
+ * @param reduction                Reduction (input)
  * @return                         miopenStatus_t
  */
 MIOPEN_EXPORT miopenStatus_t miopenHingeEmbeddingLossBackward(miopenHandle_t handle,
@@ -5028,29 +5030,7 @@ MIOPEN_EXPORT miopenStatus_t miopenHingeEmbeddingLossBackward(miopenHandle_t han
                                                               miopenTensorDescriptor_t dinputDesc,
                                                               void* dinput,
                                                               float margin,
-                                                              float divisor);
-
-/*! @brief Execute a HingeEmbeddingLoss unreduced forward layer
- *
- * @param handle                   MIOpen handle (input)
- * @param inputDesc                Tensor descriptor for input tensor (input)
- * @param input                    Data tensor input (input)
- * @param targetDesc               Tensor descriptor for target tensor (input)
- * @param target                   Data tensor target (input)
- * @param outputDesc               Tensor descriptor for output tensor (input)
- * @param output                   Data tensor output (output)
- * @param margin                   Margin (input)
- * @return                         miopenStatus_t
- */
-MIOPEN_EXPORT miopenStatus_t
-miopenHingeEmbeddingLossUnreducedForward(miopenHandle_t handle,
-                                         miopenTensorDescriptor_t inputDesc,
-                                         const void* input,
-                                         miopenTensorDescriptor_t targetDesc,
-                                         const void* target,
-                                         miopenTensorDescriptor_t outputDesc,
-                                         void* output,
-                                         float margin);
+                                                              miopenLossReductionMode_t reduction);
 
 /*! @brief Execute a HingeEmbeddingLoss unreduced backward layer
  *

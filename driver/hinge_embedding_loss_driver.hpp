@@ -417,7 +417,7 @@ int HingeEmbeddingLossDriver<TIO, TT>::AllocateBuffersAndCopy()
     dinput_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, dI_sz, sizeof(TIO)));
 
     miopenGetHingeEmbeddingLossForwardWorkspaceSize(
-        handle, inputDesc, targetDesc, outputDesc, &workSpaceSizeInBytes);
+        handle, inputDesc, targetDesc, outputDesc, reduction, &workSpaceSizeInBytes);
     workspace_dev =
         std::unique_ptr<GPUMem>(new GPUMem(ctx, workSpaceSizeInBytes / sizeof(TIO), sizeof(TIO)));
 
@@ -477,31 +477,17 @@ int HingeEmbeddingLossDriver<TIO, TT>::RunForwardGPU()
 
     for(int i = 0; i < inflags.GetValueInt("iter"); i++)
     {
-        if(reduction == MIOPEN_LOSS_REDUCTION_NONE)
-        {
-            miopenHingeEmbeddingLossUnreducedForward(GetHandle(),
-                                                     inputDesc,
-                                                     input_dev->GetMem(),
-                                                     targetDesc,
-                                                     target_dev->GetMem(),
-                                                     outputDesc,
-                                                     output_dev->GetMem(),
-                                                     margin);
-        }
-        else
-        {
-            miopenHingeEmbeddingLossForward(GetHandle(),
-                                            workspace_dev->GetMem(),
-                                            workSpaceSizeInBytes,
-                                            inputDesc,
-                                            input_dev->GetMem(),
-                                            targetDesc,
-                                            target_dev->GetMem(),
-                                            outputDesc,
-                                            output_dev->GetMem(),
-                                            margin,
-                                            miopenLossReductionMode_t(reduction));
-        }
+        miopenHingeEmbeddingLossForward(GetHandle(),
+                                        workspace_dev->GetMem(),
+                                        workSpaceSizeInBytes,
+                                        inputDesc,
+                                        input_dev->GetMem(),
+                                        targetDesc,
+                                        target_dev->GetMem(),
+                                        outputDesc,
+                                        output_dev->GetMem(),
+                                        margin,
+                                        reduction);
         float time = 0.0;
         miopenGetKernelTime(GetHandle(), &time);
         kernel_total_time += time;

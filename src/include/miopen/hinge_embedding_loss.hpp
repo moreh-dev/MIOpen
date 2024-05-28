@@ -36,7 +36,8 @@ struct TensorDescriptor;
 size_t GetHingeEmbeddingLossForwardWorkspaceSize(Handle& handle,
                                                  const TensorDescriptor& inputDesc,
                                                  const TensorDescriptor& targetDesc,
-                                                 const TensorDescriptor& outputDesc);
+                                                 const TensorDescriptor& outputDesc,
+                                                 miopenLossReductionMode_t reduction);
 
 miopenStatus_t HingeEmbeddingLossForward(Handle& handle,
                                          Data_t workspace,
