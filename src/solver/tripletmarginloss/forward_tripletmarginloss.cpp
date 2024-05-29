@@ -134,13 +134,23 @@ inline void RunDistKernels(const std::vector<Kernel>& kernels,
     }
 }
 
+bool IsImprovementOverROCm(const ExecutionContext& /*context*/,
+                           const miopen::tripletmarginloss::ForwardProblemDescription& problem)
+{
+    if(problem.GetADesc().GetLengths()[1] > LOCAL_SIZE_DIST_REDUCE)
+        return false;
+    return true;
+}
+
 bool Forward2d::IsApplicable(
-    const ExecutionContext& /*context*/,
+    const ExecutionContext& context,
     const miopen::tripletmarginloss::ForwardProblemDescription& problem) const
 {
     if(!problem.IsSameType())
         return false;
     if(!problem.IsRightLength())
+        return false;
+    if(!IsImprovementOverROCm(context, problem))
         return false;
     return true;
 }

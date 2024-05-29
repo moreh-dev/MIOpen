@@ -134,13 +134,26 @@ inline void RunDistKernels(const std::vector<Kernel>& kernels,
     }
 }
 
+bool IsImprovementOverROCm(const ExecutionContext& /*context*/,
+                           const miopen::tripletmarginloss::BackwardProblemDescription& problem)
+{
+    if(problem.GetADesc().GetLengths()[1] > 2ul * LOCAL_SIZE_DIST_REDUCE)
+        return false;
+    // 2^17 is just an emtimated number, based on performance benchmark observation.
+    if(problem.GetADesc().GetElementSize() > (1ul << 17))
+        return false;
+    return true;
+}
+
 bool Backward2d::IsApplicable(
-    const ExecutionContext& /*context*/,
+    const ExecutionContext& context,
     const miopen::tripletmarginloss::BackwardProblemDescription& problem) const
 {
     if(!problem.IsSameType())
         return false;
     if(!problem.IsRightLength())
+        return false;
+    if(!IsImprovementOverROCm(context, problem))
         return false;
     return true;
 }

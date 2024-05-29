@@ -137,16 +137,22 @@ protected:
         anchor              = tensor<T>{lengths, anchor_strides}.generate(gen_value1);
         dA                  = tensor<T>{lengths, anchor_strides};
         ref_dA              = tensor<T>{lengths, anchor_strides};
+        std::fill(dA.begin(), dA.end(), static_cast<T>(0.0f));
+        std::fill(ref_dA.begin(), ref_dA.end(), static_cast<T>(0.0f));
 
         auto positive_strides = GetStrides(lengths, true);
         positive              = tensor<T>{lengths, positive_strides}.generate(gen_value2);
         dP                    = tensor<T>{lengths, positive_strides};
         ref_dP                = tensor<T>{lengths, positive_strides};
+        std::fill(dP.begin(), dP.end(), static_cast<T>(0.0f));
+        std::fill(ref_dP.begin(), ref_dP.end(), static_cast<T>(0.0f));
 
         auto negative_strides = GetStrides(lengths, true);
         negative              = tensor<T>{lengths, negative_strides}.generate(gen_value3);
         dN                    = tensor<T>{lengths, negative_strides};
         ref_dN                = tensor<T>{lengths, negative_strides};
+        std::fill(dN.begin(), dN.end(), static_cast<T>(0.0f));
+        std::fill(ref_dN.begin(), ref_dN.end(), static_cast<T>(0.0f));
 
         auto out_lengths =
             std::isnan(divisor) ? std::vector<size_t>{lengths[0]} : std::vector<size_t>{1};
@@ -155,14 +161,19 @@ protected:
         output     = tensor<T>{out_lengths, out_strides};
         ref_output = tensor<T>{out_lengths, out_strides};
         dO         = tensor<T>{out_lengths, out_strides};
-        std::fill(output.begin(), output.end(), std::numeric_limits<T>::quiet_NaN());
-        std::fill(ref_output.begin(), ref_output.end(), std::numeric_limits<T>::quiet_NaN());
+        std::fill(output.begin(), output.end(), static_cast<T>(0.0f));
+        std::fill(ref_output.begin(), ref_output.end(), static_cast<T>(0.0f));
         std::fill(dO.begin(), dO.end(), static_cast<T>(0.5f));
 
+        auto ws_sizeFwd =
+            miopen::GetTripletMarginLossForwardWorkspaceSize(handle, anchor.desc, output.desc);
+        hasFwd = (ws_sizeFwd != static_cast<size_t>(-1));
+        auto ws_sizeBwd =
+            miopen::GetTripletMarginLossBackwardWorkspaceSize(handle, anchor.desc, output.desc);
+        hasBwd = (ws_sizeFwd != static_cast<size_t>(-1));
+
         std::vector<size_t> workspace_lengths;
-        ws_sizeInBytes = max(
-            miopen::GetTripletMarginLossForwardWorkspaceSize(handle, anchor.desc, output.desc),
-            miopen::GetTripletMarginLossBackwardWorkspaceSize(handle, anchor.desc, output.desc));
+        ws_sizeInBytes = max(ws_sizeFwd, ws_sizeBwd);
         if(ws_sizeInBytes == static_cast<size_t>(-1))
             GTEST_SKIP();
 
@@ -191,27 +202,39 @@ protected:
     {
         if(std::isnan(divisor))
         {
-            cpu_tripletmarginloss_unreduced_forward<T>(
-                anchor, positive, negative, ref_output, margin, p, eps, swap);
-            cpu_tripletmarginloss_unreduced_backward<T>(
-                anchor, positive, negative, dO, ref_dA, ref_dP, ref_dN, margin, p, eps, swap);
+            if(hasFwd)
+            {
+                cpu_tripletmarginloss_unreduced_forward<T>(
+                    anchor, positive, negative, ref_output, margin, p, eps, swap);
+            }
+            if(hasBwd)
+            {
+                cpu_tripletmarginloss_unreduced_backward<T>(
+                    anchor, positive, negative, dO, ref_dA, ref_dP, ref_dN, margin, p, eps, swap);
+            }
         }
         else
         {
-            cpu_tripletmarginloss_forward<T>(
-                anchor, positive, negative, ref_output, margin, p, eps, swap, divisor);
-            cpu_tripletmarginloss_backward<T>(anchor,
-                                              positive,
-                                              negative,
-                                              dO,
-                                              ref_dA,
-                                              ref_dP,
-                                              ref_dN,
-                                              margin,
-                                              p,
-                                              eps,
-                                              swap,
-                                              divisor);
+            if(hasFwd)
+            {
+                cpu_tripletmarginloss_forward<T>(
+                    anchor, positive, negative, ref_output, margin, p, eps, swap, divisor);
+            }
+            if(hasBwd)
+            {
+                cpu_tripletmarginloss_backward<T>(anchor,
+                                                  positive,
+                                                  negative,
+                                                  dO,
+                                                  ref_dA,
+                                                  ref_dP,
+                                                  ref_dN,
+                                                  margin,
+                                                  p,
+                                                  eps,
+                                                  swap,
+                                                  divisor);
+            }
         }
 
         auto&& handle = get_handle();
@@ -318,6 +341,8 @@ protected:
     miopen::Allocator::ManageDataPtr workspace_dev;
 
     size_t ws_sizeInBytes;
+    bool hasFwd;
+    bool hasBwd;
 
     float margin;
     int p;
