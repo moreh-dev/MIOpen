@@ -31,18 +31,6 @@
 #include "float_types.h"
 #include "tensor_view.hpp"
 
-#ifndef INPUT_TYPE
-#define INPUT_TYPE float
-#endif
-
-#ifndef OUTPUT_TYPE
-#define OUTPUT_TYPE float
-#endif
-
-#ifndef D_TYPE
-#define D_TYPE float
-#endif
-
 template <typename TI, typename TO>
 inline __device__ void dist(const TI* I1,
                             const TI* I2,
@@ -99,11 +87,38 @@ extern "C" __global__ void TripletMarginLossDist2d(const INPUT_TYPE* A,
     TripletMarginLossDist2d<INPUT_TYPE, D_TYPE>(A, P, N, ldist, p, eps, A_tv, P_tv, N_tv);
 }
 
+template <typename T>
+__device__ void TripletMarginLossDistSumPow2d(const T* ldist_a,
+                                              T* ldist_b,
+                                              const size_t size,
+                                              const size_t reduce_size,
+                                              const int p,
+                                              const float eps)
+{
+    const int gid = threadIdx.x + blockIdx.x * blockDim.x;
+    if(gid >= size)
+        return;
+    FLOAT_ACCUM dist = 0.0;
+    for(size_t i = 0; i < reduce_size; ++i)
+        dist += CVT_FLOAT2ACCUM(ldist_a[gid * reduce_size + i]);
+    ldist_b[gid] = CVT_ACCUM2FLOAT(pow(dist + eps, 1.0f / p));
+}
+
+extern "C" __global__ void TripletMarginLossDistSumPow2d(const D_TYPE* ldist_a,
+                                                         D_TYPE* ldist_b,
+                                                         const size_t size,
+                                                         const size_t reduce_size,
+                                                         const int p,
+                                                         const float eps)
+{
+    // instantiate the kernel
+    TripletMarginLossDistSumPow2d<D_TYPE>(ldist_a, ldist_b, size, reduce_size, p, eps);
+}
+
 template <typename TI, typename TO>
 __device__ void TripletMarginLossUnreducedForward2d(const TI* ldist,
                                                     TO* O,
                                                     const float margin,
-                                                    const int p,
                                                     const float eps,
                                                     const bool swap,
                                                     const tensor_view_t<1> O_tv)
@@ -113,9 +128,9 @@ __device__ void TripletMarginLossUnreducedForward2d(const TI* ldist,
         return;
 
     int b          = gid;
-    FLOAT_ACCUM ap = pow(CVT_FLOAT2ACCUM(ldist[0 * O_tv.size[0] + b]) + eps, 1.0f / p);
-    FLOAT_ACCUM an = pow(CVT_FLOAT2ACCUM(ldist[1 * O_tv.size[0] + b]) + eps, 1.0f / p);
-    FLOAT_ACCUM pn = pow(CVT_FLOAT2ACCUM(ldist[2 * O_tv.size[0] + b]) + eps, 1.0f / p);
+    FLOAT_ACCUM ap = CVT_FLOAT2ACCUM(ldist[0 * O_tv.size[0] + b]) + eps;
+    FLOAT_ACCUM an = CVT_FLOAT2ACCUM(ldist[1 * O_tv.size[0] + b]) + eps;
+    FLOAT_ACCUM pn = CVT_FLOAT2ACCUM(ldist[2 * O_tv.size[0] + b]) + eps;
 
     if(swap && pn < an)
     {
@@ -128,20 +143,18 @@ __device__ void TripletMarginLossUnreducedForward2d(const TI* ldist,
 extern "C" __global__ void TripletMarginLossUnreducedForward2d(const D_TYPE* ldist,
                                                                OUTPUT_TYPE* O,
                                                                const float margin,
-                                                               const int p,
                                                                const float eps,
                                                                const bool swap,
                                                                const tensor_view_t<1> O_tv)
 {
     // instantiate the kernel
-    TripletMarginLossUnreducedForward2d<D_TYPE, OUTPUT_TYPE>(ldist, O, margin, p, eps, swap, O_tv);
+    TripletMarginLossUnreducedForward2d<D_TYPE, OUTPUT_TYPE>(ldist, O, margin, eps, swap, O_tv);
 }
 
 template <typename TI, typename TO>
 __device__ void TripletMarginLossForward2d(const TI* ldist,
                                            TO* lsum,
                                            const float margin,
-                                           const int p,
                                            const float eps,
                                            const bool swap,
                                            const float divisor,
@@ -152,9 +165,9 @@ __device__ void TripletMarginLossForward2d(const TI* ldist,
         return;
 
     int b          = gid;
-    FLOAT_ACCUM ap = pow(CVT_FLOAT2ACCUM(ldist[0 * size + b]) + eps, 1.0f / p);
-    FLOAT_ACCUM an = pow(CVT_FLOAT2ACCUM(ldist[1 * size + b]) + eps, 1.0f / p);
-    FLOAT_ACCUM pn = pow(CVT_FLOAT2ACCUM(ldist[2 * size + b]) + eps, 1.0f / p);
+    FLOAT_ACCUM ap = CVT_FLOAT2ACCUM(ldist[0 * size + b]) + eps;
+    FLOAT_ACCUM an = CVT_FLOAT2ACCUM(ldist[1 * size + b]) + eps;
+    FLOAT_ACCUM pn = CVT_FLOAT2ACCUM(ldist[2 * size + b]) + eps;
 
     if(swap && pn < an)
     {
@@ -167,15 +180,13 @@ __device__ void TripletMarginLossForward2d(const TI* ldist,
 extern "C" __global__ void TripletMarginLossForward2d(const D_TYPE* ldist,
                                                       OUTPUT_TYPE* lsum,
                                                       const float margin,
-                                                      const int p,
                                                       const float eps,
                                                       const bool swap,
                                                       const float divisor,
                                                       const size_t size)
 {
     // instantiate the kernel
-    TripletMarginLossForward2d<D_TYPE, OUTPUT_TYPE>(
-        ldist, lsum, margin, p, eps, swap, divisor, size);
+    TripletMarginLossForward2d<D_TYPE, OUTPUT_TYPE>(ldist, lsum, margin, eps, swap, divisor, size);
 }
 
 template <typename TI, typename TO, typename T>
@@ -207,9 +218,9 @@ __device__ void TripletMarginLossUnreducedBackward2d(const T* ldist,
     if(b >= dA_tv.size[0])
         return;
 
-    FLOAT_ACCUM ap = pow(CVT_FLOAT2ACCUM(ldist[0 * dA_tv.size[0] + b]) + eps, 1.0f / p);
-    FLOAT_ACCUM an = pow(CVT_FLOAT2ACCUM(ldist[1 * dA_tv.size[0] + b]) + eps, 1.0f / p);
-    FLOAT_ACCUM pn = pow(CVT_FLOAT2ACCUM(ldist[2 * dA_tv.size[0] + b]) + eps, 1.0f / p);
+    FLOAT_ACCUM ap = CVT_FLOAT2ACCUM(ldist[0 * dA_tv.size[0] + b]);
+    FLOAT_ACCUM an = CVT_FLOAT2ACCUM(ldist[1 * dA_tv.size[0] + b]);
+    FLOAT_ACCUM pn = CVT_FLOAT2ACCUM(ldist[2 * dA_tv.size[0] + b]);
 
     bool swapped = true;
     if(swap && pn < an)
@@ -357,9 +368,9 @@ __device__ void TripletMarginLossBackward2d(const T* ldist,
     if(b >= dA_tv.size[0])
         return;
 
-    FLOAT_ACCUM ap = pow(CVT_FLOAT2ACCUM(ldist[0 * dA_tv.size[0] + b]) + eps, 1.0f / p);
-    FLOAT_ACCUM an = pow(CVT_FLOAT2ACCUM(ldist[1 * dA_tv.size[0] + b]) + eps, 1.0f / p);
-    FLOAT_ACCUM pn = pow(CVT_FLOAT2ACCUM(ldist[2 * dA_tv.size[0] + b]) + eps, 1.0f / p);
+    FLOAT_ACCUM ap = CVT_FLOAT2ACCUM(ldist[0 * dA_tv.size[0] + b]);
+    FLOAT_ACCUM an = CVT_FLOAT2ACCUM(ldist[1 * dA_tv.size[0] + b]);
+    FLOAT_ACCUM pn = CVT_FLOAT2ACCUM(ldist[2 * dA_tv.size[0] + b]);
 
     bool swapped = true;
     if(swap && pn < an)

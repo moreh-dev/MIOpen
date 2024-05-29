@@ -30,7 +30,9 @@
 #include <miopen/tripletmarginloss/solvers.hpp>
 #include <miopen/tripletmarginloss/utils.hpp>
 
-#define LOCAL_SIZE 256
+#define LOCAL_SIZE_DIST 256
+#define LOCAL_SIZE_DIST_REDUCE 256
+#define LOCAL_SIZE_LOSS_BWD 256
 
 namespace miopen {
 
@@ -45,7 +47,7 @@ ConstructDistParams(const ExecutionContext& context,
                     const KernelBuildParameters& build_params)
 {
     auto input_size = problem.GetADesc().GetElementSize();
-    result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE},
+    result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE_DIST},
                                                          {input_size},
                                                          "MIOpenTripletMarginLoss.cpp",
                                                          "TripletMarginLossDist2d",
@@ -53,18 +55,21 @@ ConstructDistParams(const ExecutionContext& context,
 
     auto reduce_size        = problem.GetADesc().GetLengths()[1];
     auto output_numel       = problem.GetADesc().GetLengths()[0] * 3;
-    auto reqd_work_item_cnt = get_reqd_work_item_cnt(context, LOCAL_SIZE);
+    auto reqd_work_item_cnt = get_reqd_work_item_cnt(context, LOCAL_SIZE_DIST_REDUCE);
     if(is_parallelism(reqd_work_item_cnt, output_numel, reduce_size))
     {
         auto parallelism_size = get_parallelism_size(reqd_work_item_cnt, output_numel, reduce_size);
-        result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE},
+        result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE_DIST_REDUCE},
                                                              {parallelism_size * output_numel},
                                                              "MIOpenSum.cpp",
                                                              "SumParallelFwdContiguous",
                                                              build_params));
     }
-    result.construction_params.push_back(make_hip_kernel(
-        {LOCAL_SIZE}, {output_numel}, "MIOpenSum.cpp", "SumFwdContiguous", build_params));
+    result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE_DIST_REDUCE},
+                                                         {output_numel},
+                                                         "MIOpenTripletMarginLoss.cpp",
+                                                         "TripletMarginLossDistSumPow2d",
+                                                         build_params));
 }
 
 inline void RunDistKernels(const std::vector<Kernel>& kernels,
@@ -97,7 +102,7 @@ inline void RunDistKernels(const std::vector<Kernel>& kernels,
 
     auto reduce_size        = params.aDesc->GetSize() == 2 ? params.aDesc->GetLengths()[1] : 1;
     auto output_numel       = params.aDesc->GetLengths()[0] * 3;
-    auto reqd_work_item_cnt = get_reqd_work_item_cnt(handle_, LOCAL_SIZE);
+    auto reqd_work_item_cnt = get_reqd_work_item_cnt(handle_, LOCAL_SIZE_DIST_REDUCE);
 
     if(is_parallelism(reqd_work_item_cnt, output_numel, reduce_size))
     {
@@ -115,14 +120,14 @@ inline void RunDistKernels(const std::vector<Kernel>& kernels,
 
         auto kernel = handle_.Run(kernels[kernelCnt++]);
         kernel(
-            work_b, work_a, (uint64_t)output_numel, (uint64_t)parallelism_size, (uint64_t)1, false);
+            work_b, work_a, (size_t)output_numel, (size_t)parallelism_size, params.p, params.eps);
         if(handle_.IsProfilingEnabled())
             elapsed += handle_.GetKernelTime();
     }
     else
     {
         auto kernel = handle_.Run(kernels[kernelCnt++]);
-        kernel(work_a, work_b, (uint64_t)output_numel, (uint64_t)reduce_size, (uint64_t)1, false);
+        kernel(work_a, work_b, (size_t)output_numel, (size_t)reduce_size, params.p, params.eps);
         if(handle_.IsProfilingEnabled())
             elapsed += handle_.GetKernelTime();
         std::swap(work_a, work_b);
@@ -149,7 +154,7 @@ std::size_t Backward2d::GetWorkspaceSize(
 
     auto reduce_size        = problem.GetADesc().GetLengths()[1];
     auto output_numel       = problem.GetADesc().GetLengths()[0] * 3;
-    auto reqd_work_item_cnt = get_reqd_work_item_cnt(context, LOCAL_SIZE);
+    auto reqd_work_item_cnt = get_reqd_work_item_cnt(context, LOCAL_SIZE_DIST_REDUCE);
     if(is_parallelism(reqd_work_item_cnt, output_numel, reduce_size))
     {
         auto parallelism_size = get_parallelism_size(reqd_work_item_cnt, output_numel, reduce_size);
@@ -200,7 +205,7 @@ ConvSolution UnreducedBackward2d::GetSolution(
     /* Phase 2: Calc gradient for each vector. */
     {
         auto size = problem.GetdADesc().GetElementSize();
-        result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE},
+        result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE_LOSS_BWD},
                                                              {size},
                                                              "MIOpenTripletMarginLoss.cpp",
                                                              "TripletMarginLossUnreducedBackward2d",
@@ -304,7 +309,7 @@ ConvSolution ReducedBackward2d::GetSolution(
     /* Phase 2: Calc gradient for each vector. */
     {
         auto output_size = problem.GetdADesc().GetElementSize();
-        result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE},
+        result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE_LOSS_BWD},
                                                              {output_size},
                                                              "MIOpenTripletMarginLoss.cpp",
                                                              "TripletMarginLossBackward2d",
