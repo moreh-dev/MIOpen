@@ -47,7 +47,7 @@ namespace solver {
 namespace cosineembeddingloss {
 
 inline void
-ConstructNormParamsKernel(const ExecutionContext& context,
+ConstructNormParamsKernels(const ExecutionContext& context,
                           const miopen::cosineembeddingloss::FwdReducedProblemDescription& problem,
                           ConvSolution& result,
                           const KernelBuildParameters& build_params)
@@ -82,7 +82,7 @@ inline void RunNormKernels(const std::vector<Kernel>& kernels,
                            const Handle& handle_,
                            const AnyInvokeParams& raw_params,
                            float& elapsed,
-                           int& kernelCnt,
+                           int& kernel_cnt,
                            Data_t& work_a,
                            Data_t& work_b)
 {
@@ -91,7 +91,7 @@ inline void RunNormKernels(const std::vector<Kernel>& kernels,
     {
         auto I1_tv  = get_inner_expanded_tv_2d(deref(params.input1Desc));
         auto I2_tv  = get_inner_expanded_tv_2d(deref(params.input2Desc));
-        auto kernel = handle_.Run(kernels[kernelCnt++]);
+        auto kernel = handle_.Run(kernels[kernel_cnt++]);
 
         kernel(params.input1, params.input2, work_a, I1_tv, I2_tv);
         if(handle_.IsProfilingEnabled())
@@ -105,7 +105,7 @@ inline void RunNormKernels(const std::vector<Kernel>& kernels,
     if(is_parallelism(reqd_work_item_cnt, output_numel, reduce_size))
     {
         auto parallelism_size = get_parallelism_size(reqd_work_item_cnt, output_numel, reduce_size);
-        auto parallel_kernel  = handle_.Run(kernels[kernelCnt++]);
+        auto parallel_kernel  = handle_.Run(kernels[kernel_cnt++]);
         parallel_kernel(work_a,
                         work_b,
                         (uint64_t)output_numel,
@@ -116,7 +116,7 @@ inline void RunNormKernels(const std::vector<Kernel>& kernels,
         if(handle_.IsProfilingEnabled())
             elapsed += handle_.GetKernelTime();
 
-        auto kernel = handle_.Run(kernels[kernelCnt++]);
+        auto kernel = handle_.Run(kernels[kernel_cnt++]);
         kernel(
             work_b, work_a, (uint64_t)output_numel, (uint64_t)parallelism_size, (uint64_t)1, false);
 
@@ -125,7 +125,7 @@ inline void RunNormKernels(const std::vector<Kernel>& kernels,
     }
     else
     {
-        auto kernel = handle_.Run(kernels[kernelCnt++]);
+        auto kernel = handle_.Run(kernels[kernel_cnt++]);
         kernel(work_a, work_b, (uint64_t)output_numel, (uint64_t)reduce_size, (uint64_t)1, false);
         if(handle_.IsProfilingEnabled())
             elapsed += handle_.GetKernelTime();
@@ -137,9 +137,8 @@ bool CosineEmbeddingLossReducedForward2d::IsApplicable(
     const ExecutionContext&,
     const miopen::cosineembeddingloss::FwdReducedProblemDescription& problem) const
 {
-    if(!problem.IsValidLength())
+    if(problem.GetInput1Desc().GetLengths()[1] > LOCAL_SIZE_REDUCED_SUM)
         return false;
-
     return true;
 }
 
@@ -165,7 +164,7 @@ ConvSolution CosineEmbeddingLossReducedForward2d::GetSolution(
         {"REDUCE_SIZE", LOCAL_SIZE_REDUCED},
     };
 
-    ConstructNormParamsKernel(context, problem, result, build_params);
+    ConstructNormParamsKernels(context, problem, result, build_params);
 
     result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE_FWD},
                                                          {N_total},
@@ -189,7 +188,7 @@ ConvSolution CosineEmbeddingLossReducedForward2d::GetSolution(
             decltype(auto) params =
                 raw_params.CastTo<miopen::cosineembeddingloss::FwdInvokeParams>();
             auto elapsed  = 0.f;
-            int kernelCnt = 0;
+            int kernel_cnt = 0;
 
             auto work_a = params.workspace;
             auto work_b =
@@ -197,36 +196,40 @@ ConvSolution CosineEmbeddingLossReducedForward2d::GetSolution(
                                          params.input1Desc->GetElementSize() *
                                              get_data_size(params.outputDesc->GetType()) * 3);
 
-            RunNormKernels(kernels, handle_, raw_params, elapsed, kernelCnt, work_a, work_b);
-
-            auto target_tv = get_inner_expanded_tv_1d(deref(params.targetDesc));
-
-            auto kernel = handle_.Run(kernels[kernelCnt++]);
-            kernel(work_a, params.target, work_b, params.margin, params.divisor, target_tv);
-            if(handle_.IsProfilingEnabled())
             {
-                elapsed += handle_.GetKernelTime();
+                RunNormKernels(kernels, handle_, raw_params, elapsed, kernel_cnt, work_a, work_b);
             }
-            std::swap(work_a, work_b);
 
-            auto size = deref(params.targetDesc).GetElementSize();
-
-            for(int i = 1; i < kernels.size(); ++i)
             {
-                kernel = handle_.Run(kernels[kernelCnt++]);
+                auto target_tv = get_inner_expanded_tv_1d(deref(params.targetDesc));
 
-                if(i + 1 != kernels.size())
-                {
-                    kernel(work_a, work_b, size);
-                    std::swap(work_a, work_b);
-                }
-                else
-                    kernel(work_a, params.output, size);
-                hipDeviceSynchronize();
-                printf("DONE kernel %d\n", i);
+                auto kernel = handle_.Run(kernels[kernel_cnt++]);
+                kernel(work_a, params.target, work_b, params.margin, params.divisor, target_tv);
                 if(handle_.IsProfilingEnabled())
+                {
                     elapsed += handle_.GetKernelTime();
-                size = (size + LOCAL_SIZE_REDUCED - 1) / LOCAL_SIZE_REDUCED;
+                }
+                std::swap(work_a, work_b);
+            }
+
+            {
+                auto size = deref(params.targetDesc).GetElementSize();
+
+                while(kernel_cnt < kernels.size())
+                {
+                    auto kernel = handle_.Run(kernels[kernel_cnt++]);
+
+                    if(kernel_cnt < kernels.size())
+                    {
+                        kernel(work_a, work_b, size);
+                        std::swap(work_a, work_b);
+                    }
+                    else
+                        kernel(work_a, params.output, size);
+                    if(handle_.IsProfilingEnabled())
+                        elapsed += handle_.GetKernelTime();
+                    size = (size + LOCAL_SIZE_REDUCED - 1) / LOCAL_SIZE_REDUCED;
+                }
             }
             if(handle_.IsProfilingEnabled())
             {

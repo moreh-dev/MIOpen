@@ -52,6 +52,7 @@ struct FwdInvokeParams : public miopen::InvokeParams
 
     float margin                = 0.0f;
     float divisor               = std::numeric_limits<float>::quiet_NaN();
+    
     size_t workspaceSizeInBytes = 0;
     Data_t workspace            = nullptr;
 
@@ -81,8 +82,11 @@ struct BwdInvokeParams : public miopen::InvokeParams
     float margin  = 0.0f;
     float divisor = std::numeric_limits<float>::quiet_NaN();
 
-    std::size_t GetWorkspaceSize() const { return 0; }
-    Data_t GetWorkspace() const { return nullptr; }
+    size_t workspaceSizeInBytes = 0;
+    Data_t workspace            = nullptr;
+
+    std::size_t GetWorkspaceSize() const { return workspaceSizeInBytes; }
+    Data_t GetWorkspace() const { return workspace; }
 };
 
 } // namespace cosineembeddingloss

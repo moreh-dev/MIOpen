@@ -64,7 +64,7 @@ struct CosineEmbeddingLossTestCase
 
 inline std::vector<CosineEmbeddingLossTestCase> CosineEmbeddingLossTestConfigs()
 {
-    return {{{10, 768}, 0.5f, 0.0f}, {{32, 64}, 0.5f, 1.0f}, {{32, 128}, 0.5f, 0.0f}};
+    return {{{10, 768}, 0.5f, 1.0f}, {{32, 64}, 0.5f, 1.0f}, {{32, 128}, 0.5f, 0.0f}};
 }
 
 inline std::vector<size_t> GetStrides(std::vector<size_t> input, bool contiguous)
@@ -203,13 +203,6 @@ protected:
     {
         double threshold = std::numeric_limits<T>::epsilon();
 
-        // auto error_ws = miopen::rms_range(ref_workspace, workspace);
-
-        // EXPECT_TRUE(miopen::range_distance(ref_workspace) == miopen::range_distance(workspace));
-        // EXPECT_TRUE(error_ws < threshold * 10)
-        //     << "Error workspace beyond tolerance Error:" << error_ws
-        //     << ",  Thresholdx10: " << threshold * 10;
-
         auto error = miopen::rms_range(ref_output, output);
 
         EXPECT_TRUE(miopen::range_distance(ref_output) == miopen::range_distance(output));
@@ -292,6 +285,26 @@ protected:
         ref_input2_grad = tensor<T>{in_dim, in_strides};
         std::fill(
             ref_input2_grad.begin(), ref_input2_grad.end(), std::numeric_limits<T>::quiet_NaN());
+        
+        ws_sizeInBytes = miopen::GetCosineEmbeddingLossBackwardWorkspaceSize(
+            handle, input1.desc, input2.desc, target.desc, output_grad.desc, input1_grad.desc, input2_grad.desc, margin);
+        if(ws_sizeInBytes == static_cast<size_t>(-1))
+            GTEST_SKIP();
+
+        if(ws_sizeInBytes != 0)
+        {
+            std::vector<size_t> workspace_dims;
+            workspace_dims.push_back(ws_sizeInBytes / sizeof(T));
+
+            workspace = tensor<T>{workspace_dims};
+            std::fill(workspace.begin(), workspace.end(), std::numeric_limits<T>::quiet_NaN());
+
+            ref_workspace = tensor<T>{workspace_dims};
+            std::fill(
+                ref_workspace.begin(), ref_workspace.end(), std::numeric_limits<T>::quiet_NaN());
+
+            workspace_dev = handle.Write(workspace.data);
+        }
 
         input1_dev      = handle.Write(input1.data);
         input2_dev      = handle.Write(input2.data);
@@ -320,6 +333,8 @@ protected:
                                                              true);
 
             status = miopen::CosineEmbeddingLossUnreducedBackward(handle,
+                                                                  workspace_dev.get(),
+                                                                  ws_sizeInBytes,
                                                                   input1.desc,
                                                                   input1_dev.get(),
                                                                   input2.desc,
@@ -348,6 +363,8 @@ protected:
                                                            true);
 
             status = miopen::CosineEmbeddingLossReducedBackward(handle,
+                                                                workspace_dev.get(),
+                                                                ws_sizeInBytes,
                                                                 input1.desc,
                                                                 input1_dev.get(),
                                                                 input2.desc,
@@ -399,6 +416,8 @@ protected:
     tensor<T> input2_grad;
     tensor<T> ref_input1_grad;
     tensor<T> ref_input2_grad;
+    tensor<T> workspace;
+    tensor<T> ref_workspace;
 
     float margin;
     float divisor;
@@ -409,4 +428,7 @@ protected:
     miopen::Allocator::ManageDataPtr output_grad_dev;
     miopen::Allocator::ManageDataPtr input1_grad_dev;
     miopen::Allocator::ManageDataPtr input2_grad_dev;
+    miopen::Allocator::ManageDataPtr workspace_dev;
+
+    size_t ws_sizeInBytes;
 };

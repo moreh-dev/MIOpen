@@ -60,6 +60,7 @@ struct ProblemDescription : ProblemDescriptionBase
     const TensorDescriptor& GetTargetDesc() const { return targetDesc; }
     const TensorDescriptor& GetOutputDesc() const { return outputDesc; }
     size_t GetNtotal() const { return targetDesc.GetElementSize(); }
+    size_t GetInputTotal() const { return input1Desc.GetElementSize(); }
 
     bool IsValidLength() const
     {
@@ -201,6 +202,7 @@ struct BwdUnreducedProblemDescription : ProblemDescription
         IsValidLength();
         IsAllValidStride();
     }
+    const TensorDescriptor& GetInput1GradDesc() const { return input1GradDesc; }
 
     bool IsAllValidStride() const
     {
@@ -257,6 +259,7 @@ struct BwdReducedProblemDescription : ProblemDescription
         IsValidLength();
         IsAllValidStride();
     }
+    const TensorDescriptor& GetInput1GradDesc() const { return input1GradDesc; }
 
     bool IsAllValidStride() const
     {

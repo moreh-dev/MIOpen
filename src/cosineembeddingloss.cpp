@@ -33,6 +33,26 @@
 
 namespace miopen {
 
+size_t GetCosineEmbeddingLossForwardWorkspaceSize(Handle& handle,
+                                                  const TensorDescriptor input1Desc,
+                                                  const TensorDescriptor input2Desc,
+                                                  const TensorDescriptor targetDesc,
+                                                  const TensorDescriptor outputDesc,
+                                                  const float margin)
+{
+    auto ctx           = ExecutionContext{&handle};
+    const auto problem = cosineembeddingloss::FwdUnreducedProblemDescription{
+        input1Desc, input2Desc, targetDesc, outputDesc, margin};
+
+    const auto algo    = AlgorithmName{"CosineEmbeddingLossUnreducedForward"};
+    const auto solvers = solver::SolverContainer<
+        solver::cosineembeddingloss::CosineEmbeddingLossUnreducedForward2d>{};
+
+    auto pair_size_vector = solvers.GetWorkspaceSizes(ctx, problem);
+
+    return pair_size_vector.empty() ? static_cast<size_t>(-1) : pair_size_vector.front().second;
+}
+
 miopenStatus_t CosineEmbeddingLossUnreducedForward(Handle& handle,
                                                    Data_t workspace,
                                                    size_t workspaceSizeInBytes,
@@ -75,26 +95,6 @@ miopenStatus_t CosineEmbeddingLossUnreducedForward(Handle& handle,
     solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
 
     return miopenStatusSuccess;
-}
-
-size_t GetCosineEmbeddingLossForwardWorkspaceSize(Handle& handle,
-                                                  const TensorDescriptor input1Desc,
-                                                  const TensorDescriptor input2Desc,
-                                                  const TensorDescriptor targetDesc,
-                                                  const TensorDescriptor outputDesc,
-                                                  const float margin)
-{
-    auto ctx           = ExecutionContext{&handle};
-    const auto problem = cosineembeddingloss::FwdUnreducedProblemDescription{
-        input1Desc, input2Desc, targetDesc, outputDesc, margin};
-
-    const auto algo    = AlgorithmName{"CosineEmbeddingLossUnreducedForward"};
-    const auto solvers = solver::SolverContainer<
-        solver::cosineembeddingloss::CosineEmbeddingLossUnreducedForward2d>{};
-
-    auto pair_size_vector = solvers.GetWorkspaceSizes(ctx, problem);
-
-    return pair_size_vector.empty() ? static_cast<size_t>(-1) : pair_size_vector.front().second;
 }
 
 miopenStatus_t CosineEmbeddingLossReducedForward(Handle& handle,
@@ -141,7 +141,31 @@ miopenStatus_t CosineEmbeddingLossReducedForward(Handle& handle,
     return miopenStatusSuccess;
 }
 
+size_t GetCosineEmbeddingLossBackwardWorkspaceSize(Handle& handle,
+                                                  const TensorDescriptor input1Desc,
+                                                  const TensorDescriptor input2Desc,
+                                                  const TensorDescriptor targetDesc,
+                                                  const TensorDescriptor outputGradDesc,
+                                                  const TensorDescriptor input1GradDesc,
+                                                  const TensorDescriptor input2GradDesc,
+                                                  const float margin)
+{
+    auto ctx           = ExecutionContext{&handle};
+    const auto problem = cosineembeddingloss::BwdUnreducedProblemDescription{
+        input1Desc, input2Desc, targetDesc, outputGradDesc, input1GradDesc, input2GradDesc, margin};
+
+    const auto algo    = AlgorithmName{"CosineEmbeddingLossUnreducedBackward"};
+    const auto solvers = solver::SolverContainer<
+        solver::cosineembeddingloss::CosineEmbeddingLossUnreducedBackward2d>{};
+
+    auto pair_size_vector = solvers.GetWorkspaceSizes(ctx, problem);
+
+    return pair_size_vector.empty() ? static_cast<size_t>(-1) : pair_size_vector.front().second;
+}
+
 miopenStatus_t CosineEmbeddingLossUnreducedBackward(Handle& handle,
+                                                    Data_t workspace,
+                                                    size_t workspaceSizeInBytes,
                                                     const TensorDescriptor& input1Desc,
                                                     ConstData_t input1,
                                                     const TensorDescriptor& input2Desc,
@@ -175,6 +199,8 @@ miopenStatus_t CosineEmbeddingLossUnreducedBackward(Handle& handle,
         tmp.input1_grad = input1_grad;
         tmp.input2_grad = input2_grad;
 
+        tmp.workspace            = workspace;
+        tmp.workspaceSizeInBytes = workspaceSizeInBytes;
         tmp.margin = margin;
 
         return tmp;
@@ -189,6 +215,8 @@ miopenStatus_t CosineEmbeddingLossUnreducedBackward(Handle& handle,
 }
 
 miopenStatus_t CosineEmbeddingLossReducedBackward(Handle& handle,
+                                                  Data_t workspace,
+                                                  size_t workspaceSizeInBytes,
                                                   const TensorDescriptor& input1Desc,
                                                   ConstData_t input1,
                                                   const TensorDescriptor& input2Desc,
@@ -229,6 +257,8 @@ miopenStatus_t CosineEmbeddingLossReducedBackward(Handle& handle,
         tmp.input1_grad = input1_grad;
         tmp.input2_grad = input2_grad;
 
+        tmp.workspace            = workspace;
+        tmp.workspaceSizeInBytes = workspaceSizeInBytes;
         tmp.margin  = margin;
         tmp.divisor = divisor;
 

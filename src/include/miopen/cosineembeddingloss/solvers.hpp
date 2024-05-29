@@ -131,6 +131,11 @@ struct CosineEmbeddingLossUnreducedBackward2d final : CosineEmbeddingLossBwdUnre
     ConvSolution GetSolution(
         const ExecutionContext& context,
         const miopen::cosineembeddingloss::BwdUnreducedProblemDescription& problem) const override;
+
+    std::size_t GetWorkspaceSize(
+        const ExecutionContext& context,
+        const miopen::cosineembeddingloss::BwdUnreducedProblemDescription& problem) const override;
+    bool MayNeedWorkspace() const override { return true; }
 };
 
 // BACKWARD REDUCE
@@ -148,6 +153,11 @@ struct CosineEmbeddingLossReducedBackward2d final : CosineEmbeddingLossBwdReduce
     ConvSolution GetSolution(
         const ExecutionContext& context,
         const miopen::cosineembeddingloss::BwdReducedProblemDescription& problem) const override;
+
+    std::size_t GetWorkspaceSize(
+        const ExecutionContext& context,
+        const miopen::cosineembeddingloss::BwdReducedProblemDescription& problem) const override;
+    bool MayNeedWorkspace() const override { return true; }
 };
 
 } // namespace cosineembeddingloss

@@ -45,7 +45,7 @@ namespace solver {
 
 namespace cosineembeddingloss {
 
-inline void ConstructNormParamsKernel(
+inline void ConstructNormParamsKernels(
     const ExecutionContext& context,
     const miopen::cosineembeddingloss::FwdUnreducedProblemDescription& problem,
     ConvSolution& result,
@@ -136,32 +136,10 @@ bool CosineEmbeddingLossUnreducedForward2d::IsApplicable(
     const ExecutionContext&,
     const miopen::cosineembeddingloss::FwdUnreducedProblemDescription& problem) const
 {
-    if(!problem.IsValidLength())
+    if(problem.GetInput1Desc().GetLengths()[1] > LOCAL_SIZE_REDUCED_SUM)
         return false;
 
     return true;
-}
-
-std::size_t CosineEmbeddingLossUnreducedForward2d::GetWorkspaceSize(
-    const ExecutionContext& context,
-    const miopen::cosineembeddingloss::FwdUnreducedProblemDescription& problem) const
-{
-    std::size_t size = problem.GetInput1Desc().GetElementSize() *
-                       get_data_size(problem.GetOutputDesc().GetType()) * 3;
-
-    auto reduce_size        = problem.GetInput1Desc().GetLengths()[1];
-    auto output_numel       = problem.GetInput1Desc().GetLengths()[0] * 3;
-    auto reqd_work_item_cnt = get_reqd_work_item_cnt(context, LOCAL_SIZE_REDUCED_SUM);
-    if(is_parallelism(reqd_work_item_cnt, output_numel, reduce_size))
-    {
-        auto parallelism_size = get_parallelism_size(reqd_work_item_cnt, output_numel, reduce_size);
-        size += parallelism_size * output_numel * get_data_size(problem.GetOutputDesc().GetType());
-    }
-    else
-    {
-        size += output_numel * get_data_size(problem.GetOutputDesc().GetType());
-    }
-    return size;
 }
 
 ConvSolution CosineEmbeddingLossUnreducedForward2d::GetSolution(
@@ -185,7 +163,7 @@ ConvSolution CosineEmbeddingLossUnreducedForward2d::GetSolution(
         {"D_TYPE", output_dtype == "bfloat16" ? "ushort" : output_dtype},
     };
 
-    ConstructNormParamsKernel(context, problem, result, build_params);
+    ConstructNormParamsKernels(context, problem, result, build_params);
 
     result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE_UNREDUCED_FWD},
                                                          {N_total},
@@ -225,6 +203,28 @@ ConvSolution CosineEmbeddingLossUnreducedForward2d::GetSolution(
     };
 
     return result;
+}
+
+std::size_t CosineEmbeddingLossUnreducedForward2d::GetWorkspaceSize(
+    const ExecutionContext& context,
+    const miopen::cosineembeddingloss::FwdUnreducedProblemDescription& problem) const
+{
+    std::size_t size = problem.GetInput1Desc().GetElementSize() *
+                       get_data_size(problem.GetOutputDesc().GetType()) * 3;
+
+    auto reduce_size        = problem.GetInput1Desc().GetLengths()[1];
+    auto output_numel       = problem.GetInput1Desc().GetLengths()[0] * 3;
+    auto reqd_work_item_cnt = get_reqd_work_item_cnt(context, LOCAL_SIZE_REDUCED_SUM);
+    if(is_parallelism(reqd_work_item_cnt, output_numel, reduce_size))
+    {
+        auto parallelism_size = get_parallelism_size(reqd_work_item_cnt, output_numel, reduce_size);
+        size += parallelism_size * output_numel * get_data_size(problem.GetOutputDesc().GetType());
+    }
+    else
+    {
+        size += output_numel * get_data_size(problem.GetOutputDesc().GetType());
+    }
+    return size;
 }
 
 } // namespace cosineembeddingloss

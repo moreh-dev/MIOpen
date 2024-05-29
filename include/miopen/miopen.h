@@ -6689,6 +6689,8 @@ miopenCosineEmbeddingLossReducedForward(miopenHandle_t handle,
  */
 MIOPEN_EXPORT miopenStatus_t
 miopenCosineEmbeddingLossUnreducedBackward(miopenHandle_t handle,
+                                           void* workspace,
+                                           size_t workspaceSizeInBytes,
                                            const miopenTensorDescriptor_t input1Desc,
                                            const void* input1,
                                            const miopenTensorDescriptor_t input2Desc,
@@ -6702,6 +6704,29 @@ miopenCosineEmbeddingLossUnreducedBackward(miopenHandle_t handle,
                                            const miopenTensorDescriptor_t input2GradDesc,
                                            void* input2_grad,
                                            const float margin);
+
+/*! @brief Helper function to query the minimum workspace size required by the CosineEmbeddingLoss
+ * call
+ *
+ * @param handle                   MIOpen Handle (input)
+ * @param input1Desc               Tensor descriptor for input 1 tensor (input)
+ * @param input2Desc               Tensor descriptor for input 2 tensor (input)
+ * @param targetDesc               Tensor descriptor for target tensor (input)
+ * @param outputDesc               Tensor descriptor for output tensor (input)
+ * @param margin                   If margin is missing, the default value is 0 (input)
+ * @param sizeInBytes              Pointer to data to return the minimum workspace size (output)
+ * @return                         miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t
+miopenGetCosineEmbeddingLossBackwardWorkspaceSize(miopenHandle_t handle,
+                                                 const miopenTensorDescriptor_t input1Desc,
+                                                 const miopenTensorDescriptor_t input2Desc,
+                                                 const miopenTensorDescriptor_t targetDesc,
+                                                 const miopenTensorDescriptor_t outputGradDesc,
+                                                 const miopenTensorDescriptor_t input1GradDesc,
+                                                 const miopenTensorDescriptor_t input2GradDesc,
+                                                 const float margin,
+                                                 size_t* sizeInBytes);
 
 /*! @brief Execute a cosineembeddingloss reduced backward layer
  *
@@ -6724,6 +6749,8 @@ miopenCosineEmbeddingLossUnreducedBackward(miopenHandle_t handle,
  */
 MIOPEN_EXPORT miopenStatus_t
 miopenCosineEmbeddingLossReducedBackward(miopenHandle_t handle,
+                                         void* workspace,
+                                         size_t workspaceSizeInBytes,    
                                          const miopenTensorDescriptor_t input1Desc,
                                          const void* input1,
                                          const miopenTensorDescriptor_t input2Desc,
