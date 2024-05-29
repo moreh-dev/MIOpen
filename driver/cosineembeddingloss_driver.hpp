@@ -373,8 +373,8 @@ int CosineEmbeddingLossDriver<Tgpu, Tref>::RunForwardGPU()
         else
         {
             miopenCosineEmbeddingLossUnreducedForward(GetHandle(),
-                                                        workspace_dev->GetMem(),
-                                                        ws_sizeInBytes,
+                                                      workspace_dev->GetMem(),
+                                                      ws_sizeInBytes,
                                                       input1Desc,
                                                       in1_dev->GetMem(),
                                                       input2Desc,
@@ -455,8 +455,8 @@ int CosineEmbeddingLossDriver<Tgpu, Tref>::RunBackwardGPU()
         if(!std::isnan(divisor))
         {
             miopenCosineEmbeddingLossReducedBackward(GetHandle(),
-                                                        workspace_dev->GetMem(),
-                                                    ws_sizeInBytes,
+                                                     workspace_dev->GetMem(),
+                                                     ws_sizeInBytes,
                                                      input1Desc,
                                                      in1_dev->GetMem(),
                                                      input2Desc,
@@ -475,8 +475,8 @@ int CosineEmbeddingLossDriver<Tgpu, Tref>::RunBackwardGPU()
         else
         {
             miopenCosineEmbeddingLossUnreducedBackward(GetHandle(),
-                                            workspace_dev->GetMem(),
-                                                    ws_sizeInBytes,
+                                                       workspace_dev->GetMem(),
+                                                       ws_sizeInBytes,
                                                        input1Desc,
                                                        in1_dev->GetMem(),
                                                        input2Desc,
@@ -609,7 +609,8 @@ int CosineEmbeddingLossDriver<Tgpu, Tref>::VerifyBackward()
     }
     else
     {
-        printf("Backward CosineEmbeddingLoss Verifies in Input Grad 1 on CPU and GPU (err=%f)\n", error1);
+        printf("Backward CosineEmbeddingLoss Verifies in Input Grad 1 on CPU and GPU (err=%f)\n",
+               error1);
     }
 
     auto error2 = miopen::rms_range(in2_grad_host, in2_grad);
