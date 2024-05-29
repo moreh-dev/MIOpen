@@ -258,15 +258,15 @@ __device__ void cosineembeddinglossUnreducedBackward2d(const T* __restrict__ wor
     FLOAT_ACCUM cos_term = CVT_FLOAT2ACCUM(workspace[0 * N + n[0]]);
     FLOAT_ACCUM norm1    = CVT_FLOAT2ACCUM(workspace[1 * N + n[0]]);
     FLOAT_ACCUM norm2    = CVT_FLOAT2ACCUM(workspace[2 * N + n[0]]);
-    norm1 = sqrt(norm1);
-    norm2 = sqrt(norm2);
+    norm1                = sqrt(norm1);
+    norm2                = sqrt(norm2);
     cos_term /= norm1 * norm2;
 
     size_t dOidx   = TV1D_IDX(output_grad_tv, n[0]);
     FLOAT_ACCUM og = CVT_FLOAT2ACCUM(output_grad[dOidx]);
 
-    size_t Tidx          = TV1D_IDX(target_tv, n[0]);
-    int32_t t            = target[Tidx];
+    size_t Tidx = TV1D_IDX(target_tv, n[0]);
+    int32_t t   = target[Tidx];
 
     size_t I1idx = TV2D_IDX(input1_tv, n[0], n[1]);
     size_t I2idx = TV2D_IDX(input2_tv, n[0], n[1]);
@@ -373,15 +373,15 @@ __device__ void cosineembeddinglossReducedBackward2d(const T* __restrict__ works
     FLOAT_ACCUM cos_term = CVT_FLOAT2ACCUM(workspace[0 * N + n[0]]);
     FLOAT_ACCUM norm1    = CVT_FLOAT2ACCUM(workspace[1 * N + n[0]]);
     FLOAT_ACCUM norm2    = CVT_FLOAT2ACCUM(workspace[2 * N + n[0]]);
-    norm1 = sqrt(norm1);
-    norm2 = sqrt(norm2);
+    norm1                = sqrt(norm1);
+    norm2                = sqrt(norm2);
     cos_term /= norm1 * norm2;
 
     size_t dOidx   = TV1D_IDX(output_grad_tv, 0);
     FLOAT_ACCUM og = CVT_FLOAT2ACCUM(output_grad[dOidx]);
 
-    size_t Tidx          = TV1D_IDX(target_tv, n[0]);
-    int32_t t            = target[Tidx];
+    size_t Tidx = TV1D_IDX(target_tv, n[0]);
+    int32_t t   = target[Tidx];
 
     size_t I1idx = TV2D_IDX(input1_tv, n[0], n[1]);
     size_t I2idx = TV2D_IDX(input2_tv, n[0], n[1]);

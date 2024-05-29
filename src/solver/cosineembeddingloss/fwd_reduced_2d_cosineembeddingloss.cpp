@@ -48,9 +48,9 @@ namespace cosineembeddingloss {
 
 inline void
 ConstructNormParamsKernels(const ExecutionContext& context,
-                          const miopen::cosineembeddingloss::FwdReducedProblemDescription& problem,
-                          ConvSolution& result,
-                          const KernelBuildParameters& build_params)
+                           const miopen::cosineembeddingloss::FwdReducedProblemDescription& problem,
+                           ConvSolution& result,
+                           const KernelBuildParameters& build_params)
 {
     auto input_size = problem.GetInput1Desc().GetElementSize();
     result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE_REDUCED_SUM},
@@ -187,7 +187,7 @@ ConvSolution CosineEmbeddingLossReducedForward2d::GetSolution(
         return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
             decltype(auto) params =
                 raw_params.CastTo<miopen::cosineembeddingloss::FwdInvokeParams>();
-            auto elapsed  = 0.f;
+            auto elapsed   = 0.f;
             int kernel_cnt = 0;
 
             auto work_a = params.workspace;

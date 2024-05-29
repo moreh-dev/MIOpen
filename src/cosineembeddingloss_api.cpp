@@ -123,12 +123,12 @@ miopenCosineEmbeddingLossUnreducedForward(miopenHandle_t handle,
 
 extern "C" miopenStatus_t
 miopenGetCosineEmbeddingLossForwardWorkspaceSize(miopenHandle_t handle,
-                                                        const miopenTensorDescriptor_t input1Desc,
-                                                        const miopenTensorDescriptor_t input2Desc,
-                                                        const miopenTensorDescriptor_t targetDesc,
-                                                        const miopenTensorDescriptor_t outputDesc,
-                                                        const float margin,
-                                                        size_t* sizeInBytes)
+                                                 const miopenTensorDescriptor_t input1Desc,
+                                                 const miopenTensorDescriptor_t input2Desc,
+                                                 const miopenTensorDescriptor_t targetDesc,
+                                                 const miopenTensorDescriptor_t outputDesc,
+                                                 const float margin,
+                                                 size_t* sizeInBytes)
 {
 
     MIOPEN_LOG_FUNCTION(
@@ -194,29 +194,36 @@ miopenCosineEmbeddingLossReducedForward(miopenHandle_t handle,
 
 extern "C" miopenStatus_t
 miopenGetCosineEmbeddingLossBackwardWorkspaceSize(miopenHandle_t handle,
-                                                        const miopenTensorDescriptor_t input1Desc,
-                                                        const miopenTensorDescriptor_t input2Desc,
-                                                        const miopenTensorDescriptor_t targetDesc,
-                                                        const miopenTensorDescriptor_t outputGradDesc,
-                                                        const miopenTensorDescriptor_t input1GradDesc,
-                                                        const miopenTensorDescriptor_t input2GradDesc,
-                                                        const float margin,
-                                                        size_t* sizeInBytes)
+                                                  const miopenTensorDescriptor_t input1Desc,
+                                                  const miopenTensorDescriptor_t input2Desc,
+                                                  const miopenTensorDescriptor_t targetDesc,
+                                                  const miopenTensorDescriptor_t outputGradDesc,
+                                                  const miopenTensorDescriptor_t input1GradDesc,
+                                                  const miopenTensorDescriptor_t input2GradDesc,
+                                                  const float margin,
+                                                  size_t* sizeInBytes)
 {
 
-    MIOPEN_LOG_FUNCTION(
-        handle, input1Desc, input2Desc, targetDesc, outputGradDesc, input1GradDesc, input2GradDesc , margin, sizeInBytes);
+    MIOPEN_LOG_FUNCTION(handle,
+                        input1Desc,
+                        input2Desc,
+                        targetDesc,
+                        outputGradDesc,
+                        input1GradDesc,
+                        input2GradDesc,
+                        margin,
+                        sizeInBytes);
 
     return miopen::try_([&] {
         miopen::deref(sizeInBytes) =
             miopen::GetCosineEmbeddingLossBackwardWorkspaceSize(miopen::deref(handle),
-                                                               miopen::deref(input1Desc),
-                                                               miopen::deref(input2Desc),
-                                                               miopen::deref(targetDesc),
-                                                               miopen::deref(outputGradDesc),
-                                                               miopen::deref(input1GradDesc),
-                                                               miopen::deref(input2GradDesc),
-                                                               margin);
+                                                                miopen::deref(input1Desc),
+                                                                miopen::deref(input2Desc),
+                                                                miopen::deref(targetDesc),
+                                                                miopen::deref(outputGradDesc),
+                                                                miopen::deref(input1GradDesc),
+                                                                miopen::deref(input2GradDesc),
+                                                                margin);
     });
 }
 

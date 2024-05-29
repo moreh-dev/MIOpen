@@ -285,9 +285,15 @@ protected:
         ref_input2_grad = tensor<T>{in_dim, in_strides};
         std::fill(
             ref_input2_grad.begin(), ref_input2_grad.end(), std::numeric_limits<T>::quiet_NaN());
-        
-        ws_sizeInBytes = miopen::GetCosineEmbeddingLossBackwardWorkspaceSize(
-            handle, input1.desc, input2.desc, target.desc, output_grad.desc, input1_grad.desc, input2_grad.desc, margin);
+
+        ws_sizeInBytes = miopen::GetCosineEmbeddingLossBackwardWorkspaceSize(handle,
+                                                                             input1.desc,
+                                                                             input2.desc,
+                                                                             target.desc,
+                                                                             output_grad.desc,
+                                                                             input1_grad.desc,
+                                                                             input2_grad.desc,
+                                                                             margin);
         if(ws_sizeInBytes == static_cast<size_t>(-1))
             GTEST_SKIP();
 

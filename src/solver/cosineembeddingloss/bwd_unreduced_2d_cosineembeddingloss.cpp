@@ -46,11 +46,11 @@ namespace solver {
 
 namespace cosineembeddingloss {
 
-inline void
-ConstructNormParamsKernelsBwd(const ExecutionContext& context,
-                          const miopen::cosineembeddingloss::BwdUnreducedProblemDescription& problem,
-                          ConvSolution& result,
-                          const KernelBuildParameters& build_params)
+inline void ConstructNormParamsKernelsBwd(
+    const ExecutionContext& context,
+    const miopen::cosineembeddingloss::BwdUnreducedProblemDescription& problem,
+    ConvSolution& result,
+    const KernelBuildParameters& build_params)
 {
     auto input_size = problem.GetInput1Desc().GetElementSize();
     result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE_REDUCED_SUM},
@@ -79,12 +79,12 @@ ConstructNormParamsKernelsBwd(const ExecutionContext& context,
 }
 
 inline void RunNormKernelsBwd(const std::vector<Kernel>& kernels,
-                           const Handle& handle_,
-                           const AnyInvokeParams& raw_params,
-                           float& elapsed,
-                           int& kernel_cnt,
-                           Data_t& work_a,
-                           Data_t& work_b)
+                              const Handle& handle_,
+                              const AnyInvokeParams& raw_params,
+                              float& elapsed,
+                              int& kernel_cnt,
+                              Data_t& work_a,
+                              Data_t& work_b)
 {
     auto params = raw_params.CastTo<miopen::cosineembeddingloss::BwdInvokeParams>();
 
@@ -152,7 +152,7 @@ ConvSolution CosineEmbeddingLossUnreducedBackward2d::GetSolution(
     auto output_dtype = miopen::GetDataType(problem.GetInput1GradDesc().GetType());
 
     {
-        auto dtype     = problem.GetInput1GradDesc().GetType();
+        auto dtype         = problem.GetInput1GradDesc().GetType();
         size_t Input_total = problem.GetInputTotal();
 
         const auto build_params = KernelBuildParameters{
@@ -232,7 +232,8 @@ std::size_t CosineEmbeddingLossUnreducedBackward2d::GetWorkspaceSize(
     if(is_parallelism(reqd_work_item_cnt, output_numel, reduce_size))
     {
         auto parallelism_size = get_parallelism_size(reqd_work_item_cnt, output_numel, reduce_size);
-        size += parallelism_size * output_numel * get_data_size(problem.GetInput1GradDesc().GetType());
+        size +=
+            parallelism_size * output_numel * get_data_size(problem.GetInput1GradDesc().GetType());
     }
     else
     {

@@ -50,9 +50,9 @@ struct FwdInvokeParams : public miopen::InvokeParams
     ConstData_t target = nullptr;
     Data_t output      = nullptr;
 
-    float margin                = 0.0f;
-    float divisor               = std::numeric_limits<float>::quiet_NaN();
-    
+    float margin  = 0.0f;
+    float divisor = std::numeric_limits<float>::quiet_NaN();
+
     size_t workspaceSizeInBytes = 0;
     Data_t workspace            = nullptr;
 

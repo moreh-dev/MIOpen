@@ -69,13 +69,13 @@ miopenStatus_t CosineEmbeddingLossReducedForward(Handle& handle,
                                                  const float divisor);
 
 size_t GetCosineEmbeddingLossBackwardWorkspaceSize(Handle& handle,
-                                                  const TensorDescriptor input1Desc,
-                                                  const TensorDescriptor input2Desc,
-                                                  const TensorDescriptor targetDesc,
-                                                  const TensorDescriptor outputGradDesc,
-                                                  const TensorDescriptor input1GradDesc,
-                                                  const TensorDescriptor input2GradDesc,
-                                                  const float margin);
+                                                   const TensorDescriptor input1Desc,
+                                                   const TensorDescriptor input2Desc,
+                                                   const TensorDescriptor targetDesc,
+                                                   const TensorDescriptor outputGradDesc,
+                                                   const TensorDescriptor input1GradDesc,
+                                                   const TensorDescriptor input2GradDesc,
+                                                   const float margin);
 
 miopenStatus_t CosineEmbeddingLossUnreducedBackward(Handle& handle,
                                                     Data_t workspace,

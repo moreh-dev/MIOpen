@@ -142,13 +142,13 @@ miopenStatus_t CosineEmbeddingLossReducedForward(Handle& handle,
 }
 
 size_t GetCosineEmbeddingLossBackwardWorkspaceSize(Handle& handle,
-                                                  const TensorDescriptor input1Desc,
-                                                  const TensorDescriptor input2Desc,
-                                                  const TensorDescriptor targetDesc,
-                                                  const TensorDescriptor outputGradDesc,
-                                                  const TensorDescriptor input1GradDesc,
-                                                  const TensorDescriptor input2GradDesc,
-                                                  const float margin)
+                                                   const TensorDescriptor input1Desc,
+                                                   const TensorDescriptor input2Desc,
+                                                   const TensorDescriptor targetDesc,
+                                                   const TensorDescriptor outputGradDesc,
+                                                   const TensorDescriptor input1GradDesc,
+                                                   const TensorDescriptor input2GradDesc,
+                                                   const float margin)
 {
     auto ctx           = ExecutionContext{&handle};
     const auto problem = cosineembeddingloss::BwdUnreducedProblemDescription{
@@ -201,7 +201,7 @@ miopenStatus_t CosineEmbeddingLossUnreducedBackward(Handle& handle,
 
         tmp.workspace            = workspace;
         tmp.workspaceSizeInBytes = workspaceSizeInBytes;
-        tmp.margin = margin;
+        tmp.margin               = margin;
 
         return tmp;
     }();
@@ -259,8 +259,8 @@ miopenStatus_t CosineEmbeddingLossReducedBackward(Handle& handle,
 
         tmp.workspace            = workspace;
         tmp.workspaceSizeInBytes = workspaceSizeInBytes;
-        tmp.margin  = margin;
-        tmp.divisor = divisor;
+        tmp.margin               = margin;
+        tmp.divisor              = divisor;
 
         return tmp;
     }();
