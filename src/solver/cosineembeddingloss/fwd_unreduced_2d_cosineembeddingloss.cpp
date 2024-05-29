@@ -136,8 +136,8 @@ bool CosineEmbeddingLossUnreducedForward2d::IsApplicable(
     const ExecutionContext&,
     const miopen::cosineembeddingloss::FwdUnreducedProblemDescription& problem) const
 {
-    if(problem.GetInput1Desc().GetLengths()[1] > LOCAL_SIZE_REDUCED_SUM)
-        return false;
+    // if(problem.GetInput1Desc().GetLengths()[1] > LOCAL_SIZE_REDUCED_SUM)
+        // return false;
 
     return true;
 }

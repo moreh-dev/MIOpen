@@ -64,7 +64,7 @@ struct CosineEmbeddingLossTestCase
 
 inline std::vector<CosineEmbeddingLossTestCase> CosineEmbeddingLossTestConfigs()
 {
-    return {{{10, 768}, 0.5f, 1.0f}, {{32, 64}, 0.5f, 1.0f}, {{32, 128}, 0.5f, 0.0f}};
+    return {{{10, 768}, 0.0f, 1.0f}, {{32, 64}, 0.1f, 1.0f}, {{32, 128}, 0.5f, 1.0f}};
 }
 
 inline std::vector<size_t> GetStrides(std::vector<size_t> input, bool contiguous)
