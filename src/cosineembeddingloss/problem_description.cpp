@@ -57,7 +57,7 @@ NetworkConfig FwdUnreducedProblemDescription::MakeNetworkConfig() const
     auto So          = outputDesc.GetStrides();
 
     std::ostringstream ss;
-    ss << "cosineembeddingloss_unreduce";
+    ss << "cosineembeddingloss_unreduced";
     ss << "is_fwd" << is_fwd;
     ss << "input_dtype" << input_dtype;
     ss << "input_dims" << input_dims;
@@ -79,7 +79,7 @@ NetworkConfig FwdReducedProblemDescription::MakeNetworkConfig() const
     auto So          = outputDesc.GetStrides();
 
     std::ostringstream ss;
-    ss << "cosineembeddingloss_reduce";
+    ss << "cosineembeddingloss_reduced";
     ss << "is_fwd" << is_fwd;
     ss << "input_dtype" << input_dtype;
     ss << "input_dims" << input_dims;

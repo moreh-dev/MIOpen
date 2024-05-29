@@ -35,6 +35,8 @@ struct Handle;
 struct TensorDescriptor;
 
 miopenStatus_t CosineEmbeddingLossUnreducedForward(Handle& handle,
+                                                   Data_t workspace,
+                                                   size_t workspaceSizeInBytes,
                                                    const TensorDescriptor& input1Desc,
                                                    ConstData_t input1,
                                                    const TensorDescriptor& input2Desc,
@@ -45,13 +47,12 @@ miopenStatus_t CosineEmbeddingLossUnreducedForward(Handle& handle,
                                                    Data_t output,
                                                    const float margin);
 
-size_t GetCosineEmbeddingLossReducedForwardWorkspaceSize(Handle& handle,
-                                                         const TensorDescriptor input1Desc,
-                                                         const TensorDescriptor input2Desc,
-                                                         const TensorDescriptor targetDesc,
-                                                         const TensorDescriptor outputDesc,
-                                                         const float margin,
-                                                         const float divisor);
+size_t GetCosineEmbeddingLossForwardWorkspaceSize(Handle& handle,
+                                                  const TensorDescriptor input1Desc,
+                                                  const TensorDescriptor input2Desc,
+                                                  const TensorDescriptor targetDesc,
+                                                  const TensorDescriptor outputDesc,
+                                                  const float margin);
 
 miopenStatus_t CosineEmbeddingLossReducedForward(Handle& handle,
                                                  Data_t workspace,

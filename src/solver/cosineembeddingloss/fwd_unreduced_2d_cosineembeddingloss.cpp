@@ -36,8 +36,8 @@
 #include <miopen/target_properties.hpp>
 #include <miopen/tensor_view.hpp>
 
-#define LOCAL_SIZE_UNREDUCED_FWD 1024
-#define LOCAL_SIZE_REDUCED_SUM 1024
+#define LOCAL_SIZE_UNREDUCED_FWD 256
+#define LOCAL_SIZE_REDUCED_SUM 256
 
 namespace miopen {
 
@@ -45,11 +45,11 @@ namespace solver {
 
 namespace cosineembeddingloss {
 
-inline void
-ConstructNormParams(const ExecutionContext& context,
-                    const miopen::cosineembeddingloss::FwdUnreducedProblemDescription& problem,
-                    ConvSolution& result,
-                    const KernelBuildParameters& build_params)
+inline void ConstructNormParamsKernel(
+    const ExecutionContext& context,
+    const miopen::cosineembeddingloss::FwdUnreducedProblemDescription& problem,
+    ConvSolution& result,
+    const KernelBuildParameters& build_params)
 {
     auto input_size = problem.GetInput1Desc().GetElementSize();
     result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE_REDUCED_SUM},
@@ -93,13 +93,12 @@ inline void RunNormKernels(const std::vector<Kernel>& kernels,
         auto kernel = handle_.Run(kernels[kernelCnt++]);
 
         kernel(params.input1, params.input2, work_a, I1_tv, I2_tv);
-
         if(handle_.IsProfilingEnabled())
             elapsed += handle_.GetKernelTime();
     }
 
-    auto reduce_size  = params.input1Desc->GetSize() == 2 ? params.input1Desc->GetLengths()[1] : 1;
-    auto output_numel = params.input1Desc->GetLengths()[0] * 3;
+    auto reduce_size        = params.input1Desc->GetLengths()[1];
+    auto output_numel       = params.input1Desc->GetLengths()[0] * 3;
     auto reqd_work_item_cnt = get_reqd_work_item_cnt(handle_, LOCAL_SIZE_REDUCED_SUM);
 
     if(is_parallelism(reqd_work_item_cnt, output_numel, reduce_size))
@@ -119,6 +118,7 @@ inline void RunNormKernels(const std::vector<Kernel>& kernels,
         auto kernel = handle_.Run(kernels[kernelCnt++]);
         kernel(
             work_b, work_a, (uint64_t)output_numel, (uint64_t)parallelism_size, (uint64_t)1, false);
+
         if(handle_.IsProfilingEnabled())
             elapsed += handle_.GetKernelTime();
     }
@@ -161,7 +161,6 @@ std::size_t CosineEmbeddingLossUnreducedForward2d::GetWorkspaceSize(
     {
         size += output_numel * get_data_size(problem.GetOutputDesc().GetType());
     }
-
     return size;
 }
 
@@ -183,9 +182,10 @@ ConvSolution CosineEmbeddingLossUnreducedForward2d::GetSolution(
         {"MIOPEN_USE_BFP16", static_cast<int>(dtype == miopenBFloat16)},
         {"INPUT_TYPE", input_dtype == "bfloat16" ? "ushort" : input_dtype},
         {"OUTPUT_TYPE", output_dtype == "bfloat16" ? "ushort" : output_dtype},
+        {"D_TYPE", output_dtype == "bfloat16" ? "ushort" : output_dtype},
     };
 
-    ConstructNormParams(context, problem, result, build_params);
+    ConstructNormParamsKernel(context, problem, result, build_params);
 
     result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE_UNREDUCED_FWD},
                                                          {N_total},
@@ -195,7 +195,6 @@ ConvSolution CosineEmbeddingLossUnreducedForward2d::GetSolution(
 
     result.invoker_factory = [](const std::vector<Kernel>& kernels) {
         return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
-            decltype(auto) kernel = handle_.Run(kernels.front());
             decltype(auto) params =
                 raw_params.CastTo<miopen::cosineembeddingloss::FwdInvokeParams>();
 
@@ -207,21 +206,14 @@ ConvSolution CosineEmbeddingLossUnreducedForward2d::GetSolution(
                 reinterpret_cast<Data_t>(reinterpret_cast<char*>(params.workspace) +
                                          params.input1Desc->GetElementSize() *
                                              get_data_size(params.outputDesc->GetType()) * 3);
+
             RunNormKernels(kernels, handle_, raw_params, elapsed, kernelCnt, work_a, work_b);
 
-            auto input1_tv = get_inner_expanded_tv_2d(deref(params.input1Desc));
-            auto input2_tv = get_inner_expanded_tv_2d(deref(params.input2Desc));
             auto target_tv = get_inner_expanded_tv_1d(deref(params.targetDesc));
             auto output_tv = get_inner_expanded_tv_1d(deref(params.outputDesc));
 
-            kernel(work_a,
-                   params.target,
-                   params.output,
-                   params.margin,
-                   input1_tv,
-                   input2_tv,
-                   target_tv,
-                   output_tv);
+            auto kernel = handle_.Run(kernels[kernelCnt++]);
+            kernel(work_a, params.target, params.output, params.margin, target_tv, output_tv);
 
             if(handle_.IsProfilingEnabled())
             {

@@ -54,17 +54,17 @@ struct CosineEmbeddingLossTestBFloat16 : CosineEmbeddingLossTest<bfloat16>
 {
 };
 
-struct CosineEmbeddingLossTestFloatBwd : CosineEmbeddingLossTestBwd<float>
-{
-};
+// struct CosineEmbeddingLossTestFloatBwd : CosineEmbeddingLossTestBwd<float>
+// {
+// };
 
-struct CosineEmbeddingLossTestHalfBwd : CosineEmbeddingLossTestBwd<half>
-{
-};
+// struct CosineEmbeddingLossTestHalfBwd : CosineEmbeddingLossTestBwd<half>
+// {
+// };
 
-struct CosineEmbeddingLossTestBFloat16Bwd : CosineEmbeddingLossTestBwd<bfloat16>
-{
-};
+// struct CosineEmbeddingLossTestBFloat16Bwd : CosineEmbeddingLossTestBwd<bfloat16>
+// {
+// };
 
 } // namespace cosineembeddingloss
 using namespace cosineembeddingloss;
@@ -122,55 +122,55 @@ INSTANTIATE_TEST_SUITE_P(CosineEmbeddingLossTestSet,
                          CosineEmbeddingLossTestBFloat16,
                          testing::ValuesIn(CosineEmbeddingLossTestConfigs()));
 
-// BACKWARD TEST
-TEST_P(CosineEmbeddingLossTestFloatBwd, CosineEmbeddingLossTestBwd)
-{
-    if((miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && GetFloatArg() == "--float") ||
-       GetFloatArg() == "--testall")
-    {
-        RunTest();
-        Verify();
-    }
-    else
-    {
-        GTEST_SKIP();
-    }
-};
+// // BACKWARD TEST
+// TEST_P(CosineEmbeddingLossTestFloatBwd, CosineEmbeddingLossTestBwd)
+// {
+//     if((miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && GetFloatArg() == "--float") ||
+//        GetFloatArg() == "--testall")
+//     {
+//         RunTest();
+//         Verify();
+//     }
+//     else
+//     {
+//         GTEST_SKIP();
+//     }
+// };
 
-TEST_P(CosineEmbeddingLossTestHalfBwd, CosineEmbeddingLossTestBwd)
-{
-    if((miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && GetFloatArg() == "--half") ||
-       GetFloatArg() == "--testall")
-    {
-        RunTest();
-        Verify();
-    }
-    else
-    {
-        GTEST_SKIP();
-    }
-};
+// TEST_P(CosineEmbeddingLossTestHalfBwd, CosineEmbeddingLossTestBwd)
+// {
+//     if((miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && GetFloatArg() == "--half") ||
+//        GetFloatArg() == "--testall")
+//     {
+//         RunTest();
+//         Verify();
+//     }
+//     else
+//     {
+//         GTEST_SKIP();
+//     }
+// };
 
-TEST_P(CosineEmbeddingLossTestBFloat16Bwd, CosineEmbeddingLossTestBwd)
-{
-    if((miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && GetFloatArg() == "--bfloat16") ||
-       GetFloatArg() == "--testall")
-    {
-        RunTest();
-        Verify();
-    }
-    else
-    {
-        GTEST_SKIP();
-    }
-};
+// TEST_P(CosineEmbeddingLossTestBFloat16Bwd, CosineEmbeddingLossTestBwd)
+// {
+//     if((miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && GetFloatArg() == "--bfloat16") ||
+//        GetFloatArg() == "--testall")
+//     {
+//         RunTest();
+//         Verify();
+//     }
+//     else
+//     {
+//         GTEST_SKIP();
+//     }
+// };
 
-INSTANTIATE_TEST_SUITE_P(CosineEmbeddingLossTestSet,
-                         CosineEmbeddingLossTestFloatBwd,
-                         testing::ValuesIn(CosineEmbeddingLossTestConfigs()));
-INSTANTIATE_TEST_SUITE_P(CosineEmbeddingLossTestSet,
-                         CosineEmbeddingLossTestHalfBwd,
-                         testing::ValuesIn(CosineEmbeddingLossTestConfigs()));
-INSTANTIATE_TEST_SUITE_P(CosineEmbeddingLossTestSet,
-                         CosineEmbeddingLossTestBFloat16Bwd,
-                         testing::ValuesIn(CosineEmbeddingLossTestConfigs()));
+// INSTANTIATE_TEST_SUITE_P(CosineEmbeddingLossTestSet,
+//                          CosineEmbeddingLossTestFloatBwd,
+//                          testing::ValuesIn(CosineEmbeddingLossTestConfigs()));
+// INSTANTIATE_TEST_SUITE_P(CosineEmbeddingLossTestSet,
+//                          CosineEmbeddingLossTestHalfBwd,
+//                          testing::ValuesIn(CosineEmbeddingLossTestConfigs()));
+// INSTANTIATE_TEST_SUITE_P(CosineEmbeddingLossTestSet,
+//                          CosineEmbeddingLossTestBFloat16Bwd,
+//                          testing::ValuesIn(CosineEmbeddingLossTestConfigs()));

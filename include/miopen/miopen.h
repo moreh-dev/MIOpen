@@ -6606,6 +6606,8 @@ MIOPEN_EXPORT miopenStatus_t miopenBackendInitialize(miopenBackendDescriptor_t d
  */
 MIOPEN_EXPORT miopenStatus_t
 miopenCosineEmbeddingLossUnreducedForward(miopenHandle_t handle,
+                                          void* workspace,
+                                          size_t workspaceSizeInBytes,
                                           const miopenTensorDescriptor_t input1Desc,
                                           const void* input1,
                                           const miopenTensorDescriptor_t input2Desc,
@@ -6625,19 +6627,17 @@ miopenCosineEmbeddingLossUnreducedForward(miopenHandle_t handle,
  * @param targetDesc               Tensor descriptor for target tensor (input)
  * @param outputDesc               Tensor descriptor for output tensor (input)
  * @param margin                   If margin is missing, the default value is 0 (input)
- * @param divisor                  Divisor (input)
  * @param sizeInBytes              Pointer to data to return the minimum workspace size (output)
  * @return                         miopenStatus_t
  */
 MIOPEN_EXPORT miopenStatus_t
-miopenGetCosineEmbeddingLossReducedForwardWorkspaceSize(miopenHandle_t handle,
-                                                        const miopenTensorDescriptor_t input1Desc,
-                                                        const miopenTensorDescriptor_t input2Desc,
-                                                        const miopenTensorDescriptor_t targetDesc,
-                                                        const miopenTensorDescriptor_t outputDesc,
-                                                        const float margin,
-                                                        const float divisor,
-                                                        size_t* sizeInBytes);
+miopenGetCosineEmbeddingLossForwardWorkspaceSize(miopenHandle_t handle,
+                                                 const miopenTensorDescriptor_t input1Desc,
+                                                 const miopenTensorDescriptor_t input2Desc,
+                                                 const miopenTensorDescriptor_t targetDesc,
+                                                 const miopenTensorDescriptor_t outputDesc,
+                                                 const float margin,
+                                                 size_t* sizeInBytes);
 
 /*! @brief Execute a cosineembeddingloss reduced forward layer
  *

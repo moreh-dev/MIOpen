@@ -79,6 +79,8 @@ static void LogCmdCosineEmbeddingLoss(const miopenTensorDescriptor_t x1Desc,
 
 extern "C" miopenStatus_t
 miopenCosineEmbeddingLossUnreducedForward(miopenHandle_t handle,
+                                          void* workspace,
+                                          size_t workspaceSizeInBytes,
                                           const miopenTensorDescriptor_t input1Desc,
                                           const void* input1,
                                           const miopenTensorDescriptor_t input2Desc,
@@ -90,6 +92,8 @@ miopenCosineEmbeddingLossUnreducedForward(miopenHandle_t handle,
                                           const float margin)
 {
     MIOPEN_LOG_FUNCTION(handle,
+                        workspace,
+                        workspaceSizeInBytes,
                         input1Desc,
                         input1,
                         input2Desc,
@@ -103,6 +107,8 @@ miopenCosineEmbeddingLossUnreducedForward(miopenHandle_t handle,
     LogCmdCosineEmbeddingLoss(input1Desc, input2Desc, targetDesc, true);
     return miopen::try_([&] {
         miopen::CosineEmbeddingLossUnreducedForward(miopen::deref(handle),
+                                                    DataCast(workspace),
+                                                    workspaceSizeInBytes,
                                                     miopen::deref(input1Desc),
                                                     DataCast(input1),
                                                     miopen::deref(input2Desc),
@@ -122,22 +128,20 @@ miopenGetCosineEmbeddingLossReducedForwardWorkspaceSize(miopenHandle_t handle,
                                                         const miopenTensorDescriptor_t targetDesc,
                                                         const miopenTensorDescriptor_t outputDesc,
                                                         const float margin,
-                                                        const float divisor,
                                                         size_t* sizeInBytes)
 {
 
     MIOPEN_LOG_FUNCTION(
-        handle, input1Desc, input2Desc, targetDesc, outputDesc, margin, divisor, sizeInBytes);
+        handle, input1Desc, input2Desc, targetDesc, outputDesc, margin, sizeInBytes);
 
     return miopen::try_([&] {
         miopen::deref(sizeInBytes) =
-            miopen::GetCosineEmbeddingLossReducedForwardWorkspaceSize(miopen::deref(handle),
-                                                                      miopen::deref(input1Desc),
-                                                                      miopen::deref(input2Desc),
-                                                                      miopen::deref(targetDesc),
-                                                                      miopen::deref(outputDesc),
-                                                                      margin,
-                                                                      divisor);
+            miopen::GetCosineEmbeddingLossForwardWorkspaceSize(miopen::deref(handle),
+                                                               miopen::deref(input1Desc),
+                                                               miopen::deref(input2Desc),
+                                                               miopen::deref(targetDesc),
+                                                               miopen::deref(outputDesc),
+                                                               margin);
     });
 }
 

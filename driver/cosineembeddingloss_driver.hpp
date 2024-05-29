@@ -274,21 +274,11 @@ int CosineEmbeddingLossDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     size_t target_sz = GetTensorSize(targetDesc);
     size_t out_sz    = GetTensorSize(outputDesc);
 
-    if(!std::isnan(divisor))
-    {
-        miopenGetCosineEmbeddingLossReducedForwardWorkspaceSize(GetHandle(),
-                                                                input1Desc,
-                                                                input2Desc,
-                                                                targetDesc,
-                                                                outputDesc,
-                                                                margin,
-                                                                divisor,
-                                                                &ws_sizeInBytes);
-        if(ws_sizeInBytes == static_cast<size_t>(-1))
-            return miopenStatusAllocFailed;
-    }
-    else
-        ws_sizeInBytes = 0;
+    miopenGetCosineEmbeddingLossForwardWorkspaceSize(
+        GetHandle(), input1Desc, input2Desc, targetDesc, outputDesc, margin, &ws_sizeInBytes);
+    if(ws_sizeInBytes == static_cast<size_t>(-1))
+        return miopenStatusAllocFailed;
+
     size_t ws_sz = ws_sizeInBytes / sizeof(Tgpu);
 
     uint32_t ctx = 0;

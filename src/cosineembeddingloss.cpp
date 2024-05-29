@@ -34,6 +34,8 @@
 namespace miopen {
 
 miopenStatus_t CosineEmbeddingLossUnreducedForward(Handle& handle,
+                                                   Data_t workspace,
+                                                   size_t workspaceSizeInBytes,
                                                    const TensorDescriptor& input1Desc,
                                                    ConstData_t input1,
                                                    const TensorDescriptor& input2Desc,
@@ -59,6 +61,9 @@ miopenStatus_t CosineEmbeddingLossUnreducedForward(Handle& handle,
         tmp.target = target;
         tmp.output = output;
 
+        tmp.workspace            = workspace;
+        tmp.workspaceSizeInBytes = workspaceSizeInBytes;
+
         tmp.margin = margin;
 
         return tmp;
@@ -72,21 +77,20 @@ miopenStatus_t CosineEmbeddingLossUnreducedForward(Handle& handle,
     return miopenStatusSuccess;
 }
 
-size_t GetCosineEmbeddingLossReducedForwardWorkspaceSize(Handle& handle,
-                                                         const TensorDescriptor input1Desc,
-                                                         const TensorDescriptor input2Desc,
-                                                         const TensorDescriptor targetDesc,
-                                                         const TensorDescriptor outputDesc,
-                                                         const float margin,
-                                                         const float divisor)
+size_t GetCosineEmbeddingLossForwardWorkspaceSize(Handle& handle,
+                                                  const TensorDescriptor input1Desc,
+                                                  const TensorDescriptor input2Desc,
+                                                  const TensorDescriptor targetDesc,
+                                                  const TensorDescriptor outputDesc,
+                                                  const float margin)
 {
     auto ctx           = ExecutionContext{&handle};
-    const auto problem = cosineembeddingloss::FwdReducedProblemDescription{
-        input1Desc, input2Desc, targetDesc, outputDesc, margin, divisor};
+    const auto problem = cosineembeddingloss::FwdUnreducedProblemDescription{
+        input1Desc, input2Desc, targetDesc, outputDesc, margin};
 
-    const auto algo = AlgorithmName{"CosineEmbeddingLossReducedForward"};
-    const auto solvers =
-        solver::SolverContainer<solver::cosineembeddingloss::CosineEmbeddingLossReducedForward2d>{};
+    const auto algo    = AlgorithmName{"CosineEmbeddingLossUnreducedForward"};
+    const auto solvers = solver::SolverContainer<
+        solver::cosineembeddingloss::CosineEmbeddingLossUnreducedForward2d>{};
 
     auto pair_size_vector = solvers.GetWorkspaceSizes(ctx, problem);
 

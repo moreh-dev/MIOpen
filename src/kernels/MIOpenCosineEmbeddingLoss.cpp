@@ -115,7 +115,6 @@ __device__ void cosineembeddinglossNorm2d(const TI* __restrict__ input1,
     size_t N = input1_tv.size[0], D = input1_tv.size[1];
     size_t n[2];
     GET_ND(n[0], n[1], gid, input1_tv)
-
     if(!(n[0] < N))
         return;
 
@@ -126,19 +125,19 @@ __device__ void cosineembeddinglossNorm2d(const TI* __restrict__ input1,
     FLOAT_ACCUM norm1    = CVT_FLOAT2ACCUM(input1[I1idx]) * CVT_FLOAT2ACCUM(input1[I1idx]);
     FLOAT_ACCUM norm2    = CVT_FLOAT2ACCUM(input2[I2idx]) * CVT_FLOAT2ACCUM(input2[I2idx]);
 
-    size_t sum_size               = N * D;
-    workspace[gid + 0 * sum_size] = CVT_ACCUM2FLOAT(cos_term);
-    workspace[gid + 1 * sum_size] = CVT_ACCUM2FLOAT(norm1);
-    workspace[gid + 2 * sum_size] = CVT_ACCUM2FLOAT(norm2);
+    size_t sum_size = N * D;
+
+    workspace[0 * sum_size + gid] = CVT_ACCUM2FLOAT(cos_term);
+    workspace[1 * sum_size + gid] = CVT_ACCUM2FLOAT(norm1);
+    workspace[2 * sum_size + gid] = CVT_ACCUM2FLOAT(norm2);
 }
 extern "C" __global__ void CosineEmbeddingLossNorm2d(const INPUT_TYPE* __restrict__ input1,
                                                      const INPUT_TYPE* __restrict__ input2,
-                                                     OUTPUT_TYPE* __restrict__ workspace,
+                                                     D_TYPE* __restrict__ workspace,
                                                      tensor_view_2d_t input1_tv,
                                                      tensor_view_2d_t input2_tv)
 {
-    cosineembeddinglossNorm2d<INPUT_TYPE, OUTPUT_TYPE>(
-        input1, input2, workspace, input1_tv, input2_tv);
+    cosineembeddinglossNorm2d<INPUT_TYPE, D_TYPE>(input1, input2, workspace, input1_tv, input2_tv);
 }
 
 template <typename TI, typename TO>
@@ -176,54 +175,41 @@ __device__ void cosineembeddinglossUnreducedForward2d(const TI* __restrict__ wor
 }
 
 extern "C" __global__ void
-CosineEmbeddingLossUnreducedForward2d(const INPUT_TYPE* __restrict__ input1,
-                                      const INPUT_TYPE* __restrict__ input2,
+CosineEmbeddingLossUnreducedForward2d(const D_TYPE* __restrict__ workspace,
                                       const int32_t* __restrict__ target,
                                       OUTPUT_TYPE* __restrict__ output,
                                       float margin,
-                                      tensor_view_2d_t input1_tv,
-                                      tensor_view_2d_t input2_tv,
                                       tensor_view_1d_t target_tv,
                                       tensor_view_1d_t output_tv)
 {
-    cosineembeddinglossUnreducedForward2d<INPUT_TYPE, OUTPUT_TYPE>(
-        input1, input2, target, output, margin, input1_tv, input2_tv, target_tv, output_tv);
+    cosineembeddinglossUnreducedForward2d<D_TYPE, OUTPUT_TYPE>(
+        workspace, target, output, margin, target_tv, output_tv);
 }
 
 template <typename TI, typename TO>
-__device__ void cosineembeddinglossReducedForward2d(const TI* __restrict__ input1,
-                                                    const TI* __restrict__ input2,
+__device__ void cosineembeddinglossReducedForward2d(const TI* __restrict__ workspace,
                                                     const int32_t* __restrict__ target,
                                                     TO* __restrict__ loss_sum,
                                                     float margin,
                                                     float divisor,
-                                                    tensor_view_2d_t input1_tv,
-                                                    tensor_view_2d_t input2_tv,
                                                     tensor_view_1d_t target_tv)
 {
     uint64_t gid = threadIdx.x + blockIdx.x * blockDim.x;
 
-    size_t N = input1_tv.size[0], D = input1_tv.size[1];
+    size_t N = target_tv.size[0];
     size_t n = gid;
     if(!(n < N))
         return;
 
-    size_t Tidx          = TV1D_IDX(target_tv, n);
-    int32_t t            = target[Tidx];
-    FLOAT_ACCUM cos_term = 0.0f;
-    FLOAT_ACCUM norm1 = 0.0f, norm2 = 0.0f;
-    for(size_t d = 0; d < D; d++)
-    {
-        size_t I1idx = TV2D_IDX(input1_tv, n, d);
-        size_t I2idx = TV2D_IDX(input2_tv, n, d);
-        cos_term += CVT_FLOAT2ACCUM(input1[I1idx]) * CVT_FLOAT2ACCUM(input2[I2idx]);
-        norm1 += CVT_FLOAT2ACCUM(input1[I1idx]) * CVT_FLOAT2ACCUM(input1[I1idx]);
-        norm2 += CVT_FLOAT2ACCUM(input2[I2idx]) * CVT_FLOAT2ACCUM(input2[I2idx]);
-    }
-    norm1 = sqrt(norm1);
-    norm2 = sqrt(norm2);
+    FLOAT_ACCUM cos_term = workspace[n + 0 * N];
+    FLOAT_ACCUM norm1    = workspace[n + 1 * N];
+    FLOAT_ACCUM norm2    = workspace[n + 2 * N];
+    norm1                = sqrt(norm1);
+    norm2                = sqrt(norm2);
     cos_term /= norm1 * norm2;
 
+    size_t Tidx      = TV1D_IDX(target_tv, n);
+    int32_t t        = target[Tidx];
     FLOAT_ACCUM loss = 0.0f;
     if(t == 1)
         loss = 1.0f - cos_term;
@@ -233,19 +219,15 @@ __device__ void cosineembeddinglossReducedForward2d(const TI* __restrict__ input
     loss_sum[n] = CVT_ACCUM2FLOAT(loss / divisor);
 }
 
-extern "C" __global__ void
-CosineEmbeddingLossReducedForward2d(const INPUT_TYPE* __restrict__ input1,
-                                    const INPUT_TYPE* __restrict__ input2,
-                                    const int32_t* __restrict__ target,
-                                    OUTPUT_TYPE* __restrict__ loss_sum,
-                                    float margin,
-                                    float divisor,
-                                    tensor_view_2d_t input1_tv,
-                                    tensor_view_2d_t input2_tv,
-                                    tensor_view_1d_t target_tv)
+extern "C" __global__ void CosineEmbeddingLossReducedForward2d(const D_TYPE* __restrict__ workspace,
+                                                               const int32_t* __restrict__ target,
+                                                               OUTPUT_TYPE* __restrict__ loss_sum,
+                                                               float margin,
+                                                               float divisor,
+                                                               tensor_view_1d_t target_tv)
 {
-    cosineembeddinglossReducedForward2d<INPUT_TYPE, OUTPUT_TYPE>(
-        input1, input2, target, loss_sum, margin, divisor, input1_tv, input2_tv, target_tv);
+    cosineembeddinglossReducedForward2d<D_TYPE, OUTPUT_TYPE>(
+        workspace, target, loss_sum, margin, divisor, target_tv);
 }
 
 template <typename TI, typename TO>
