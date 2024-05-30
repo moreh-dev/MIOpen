@@ -512,7 +512,7 @@ typedef enum
     miopenActivationABS      = 5, /*!< Absolute value \f$abs(x)\f$ */
     miopenActivationPOWER = 6, /*!< Scaled and shifted power \f$(\alpha + \beta * x)^{gamma}\f$ */
     miopenActivationCLIPPEDRELU =
-        7, /*!< Clipped Rectified Linear Unit \f$ min(\alpha, max(0,x)) \f$ */
+        7,                     /*!< Clipped Rectified Linear Unit \f$ min(\alpha, max(0,x)) \f$ */
     miopenActivationLEAKYRELU =
         8, /*!< Leaky Rectified Linear Unit \f$ \alpha * x | x <= 0; x | x > 0 \f$ */
     miopenActivationELU =
@@ -4949,6 +4949,62 @@ MIOPEN_EXPORT miopenStatus_t miopenCTCLoss(miopenHandle_t handle,
                                            const miopenCTCLossDescriptor_t ctcLossDesc,
                                            void* workSpace,
                                            size_t workSpaceSize);
+
+typedef enum
+{
+    MIOPEN_LOSS_REDUCTION_NONE = 0, /*!< output tensor elements are not reduced */
+    MIOPEN_LOSS_REDUCTION_SUM  = 1, /*!< output tensor elements are summed up */
+    MIOPEN_LOSS_REDUCTION_MEAN = 2, /*!< output tensor elements are summed up and divided with total
+                                       number of elements to get mean value */
+} miopenLossReductionMode_t;
+
+/*! @brief Helper function to query the minimum workspace size required by the sigmoid focal loss
+ * call
+ *
+ * @param handle                   MIOpen Handle (input)
+ * @param inputDesc                Tensor descriptor for input tensor (input)
+ * @param targetDesc               Tensor descriptor for target tensor (input)
+ * @param outputDesc               Tensor descriptor for output tensor (input)
+ * @param reduction                Reduction (input)
+ * @param sizeInBytes              Pointer to data to return the minimum workspace size
+ * @return                         miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t
+miopenGetSigmoidFocalLossForwardWorkspaceSize(miopenHandle_t handle,
+                                              miopenTensorDescriptor_t inputDesc,
+                                              miopenTensorDescriptor_t targetDesc,
+                                              miopenTensorDescriptor_t outputDesc,
+                                              miopenLossReductionMode_t reduction,
+                                              size_t* sizeInBytes);
+
+/*! @brief Execute a SigmoidFocalLoss reduced forward layer
+ *
+ * @param handle                   MIOpen handle (input)
+ * @param workspace                Address of the allocated workspace data (input)
+ * @param workspaceSizeInBytes     Size in bytes of the allocated workspace data (input)
+ * @param inputDesc                Tensor descriptor for input tensor (input)
+ * @param input                    Data tensor input (input)
+ * @param targetDesc               Tensor descriptor for target tensor (input)
+ * @param target                   Data tensor target (input)
+ * @param outputDesc               Tensor descriptor for output tensor (input)
+ * @param output                   Data tensor output (output)
+ * @param alpha                    Alpha (input)
+ * @param gamma                    Gamma (input)
+ * @param reduction                Reduction (input)
+ * @return                         miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t miopenSigmoidFocalLossForward(miopenHandle_t handle,
+                                                           void* workspace,
+                                                           size_t workspaceSizeInBytes,
+                                                           miopenTensorDescriptor_t inputDesc,
+                                                           const void* input,
+                                                           miopenTensorDescriptor_t targetDesc,
+                                                           const void* target,
+                                                           miopenTensorDescriptor_t outputDesc,
+                                                           void* output,
+                                                           float alpha,
+                                                           float gamma,
+                                                           miopenLossReductionMode_t reduction);
 
 /** @} */
 // CLOSEOUT LossFunction DOXYGEN GROUP
