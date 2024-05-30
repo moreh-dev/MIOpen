@@ -95,9 +95,9 @@ __device__ void cosineembeddinglossUnreducedForward2d(const TI* __restrict__ wor
     if(!(n < N))
         return;
 
-    FLOAT_ACCUM cos_term = workspace[n + 0 * N];
-    FLOAT_ACCUM norm1    = workspace[n + 1 * N];
-    FLOAT_ACCUM norm2    = workspace[n + 2 * N];
+    FLOAT_ACCUM cos_term = CVT_FLOAT2ACCUM(workspace[n + 0 * N]);
+    FLOAT_ACCUM norm1    = CVT_FLOAT2ACCUM(workspace[n + 1 * N]);
+    FLOAT_ACCUM norm2    = CVT_FLOAT2ACCUM(workspace[n + 2 * N]);
     norm1                = sqrt(norm1);
     norm2                = sqrt(norm2);
     cos_term /= norm1 * norm2;
@@ -135,19 +135,17 @@ __device__ void cosineembeddinglossReducedForward2d(const TI* __restrict__ works
                                                     tensor_view_1d_t target_tv)
 {
     uint64_t gid = threadIdx.x + blockIdx.x * blockDim.x;
-
-    size_t N = target_tv.size[0];
-    size_t n = gid;
+    size_t N     = target_tv.size[0];
+    size_t n     = gid;
     if(!(n < N))
         return;
 
-    FLOAT_ACCUM cos_term = workspace[n + 0 * N];
-    FLOAT_ACCUM norm1    = workspace[n + 1 * N];
-    FLOAT_ACCUM norm2    = workspace[n + 2 * N];
+    FLOAT_ACCUM cos_term = CVT_FLOAT2ACCUM(workspace[n + 0 * N]);
+    FLOAT_ACCUM norm1    = CVT_FLOAT2ACCUM(workspace[n + 1 * N]);
+    FLOAT_ACCUM norm2    = CVT_FLOAT2ACCUM(workspace[n + 2 * N]);
     norm1                = sqrt(norm1);
     norm2                = sqrt(norm2);
     cos_term /= norm1 * norm2;
-
     size_t Tidx      = TV1D_IDX(target_tv, n);
     int32_t t        = target[Tidx];
     FLOAT_ACCUM loss = 0.0f;

@@ -23,6 +23,8 @@
  * SOFTWARE.
  *
  *******************************************************************************/
+
+#include "miopen/miopen.h"
 #include <miopen/cosineembeddingloss.hpp>
 #include <miopen/kernel_cache.hpp>
 #include <miopen/float_equal.hpp>
@@ -109,10 +111,10 @@ miopenStatus_t CosineEmbeddingLossReducedForward(Handle& handle,
                                                  const TensorDescriptor& outputDesc,
                                                  Data_t output,
                                                  const float margin,
-                                                 const float divisor)
+                                                 const miopenLossReductionMode_t reduction)
 {
     const auto problem = cosineembeddingloss::FwdReducedProblemDescription{
-        input1Desc, input2Desc, targetDesc, outputDesc, margin, divisor};
+        input1Desc, input2Desc, targetDesc, outputDesc, margin};
 
     const auto invoke_params = [&]() {
         auto tmp       = cosineembeddingloss::FwdInvokeParams{};
@@ -128,7 +130,7 @@ miopenStatus_t CosineEmbeddingLossReducedForward(Handle& handle,
         tmp.workspace            = workspace;
         tmp.workspaceSizeInBytes = workspaceSizeInBytes;
         tmp.margin               = margin;
-        tmp.divisor              = divisor;
+        tmp.reduction            = reduction;
         return tmp;
     }();
 
@@ -230,16 +232,10 @@ miopenStatus_t CosineEmbeddingLossReducedBackward(Handle& handle,
                                                   const TensorDescriptor& input2GradDesc,
                                                   Data_t input2_grad,
                                                   const float margin,
-                                                  const float divisor)
+                                                  const miopenLossReductionMode_t reduction)
 {
-    const auto problem = cosineembeddingloss::BwdReducedProblemDescription{input1Desc,
-                                                                           input2Desc,
-                                                                           targetDesc,
-                                                                           outputGradDesc,
-                                                                           input1GradDesc,
-                                                                           input2GradDesc,
-                                                                           margin,
-                                                                           divisor};
+    const auto problem = cosineembeddingloss::BwdReducedProblemDescription{
+        input1Desc, input2Desc, targetDesc, outputGradDesc, input1GradDesc, input2GradDesc, margin};
 
     const auto invoke_params = [&]() {
         auto tmp           = cosineembeddingloss::BwdInvokeParams{};
@@ -260,7 +256,7 @@ miopenStatus_t CosineEmbeddingLossReducedBackward(Handle& handle,
         tmp.workspace            = workspace;
         tmp.workspaceSizeInBytes = workspaceSizeInBytes;
         tmp.margin               = margin;
-        tmp.divisor              = divisor;
+        tmp.reduction            = reduction;
 
         return tmp;
     }();

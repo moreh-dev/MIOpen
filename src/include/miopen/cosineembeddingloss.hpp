@@ -23,7 +23,6 @@
  * SOFTWARE.
  *
  *******************************************************************************/
-#include <miopen/miopen.h>
 #ifndef MIOPEN_COSINEEMBEDDINGLOSS_HPP_
 #define MIOPEN_COSINEEMBEDDINGLOSS_HPP_
 
@@ -66,7 +65,7 @@ miopenStatus_t CosineEmbeddingLossReducedForward(Handle& handle,
                                                  const TensorDescriptor& outputDesc,
                                                  Data_t output,
                                                  const float margin,
-                                                 const float divisor);
+                                                 const miopenLossReductionMode_t reduction);
 
 size_t GetCosineEmbeddingLossBackwardWorkspaceSize(Handle& handle,
                                                    const TensorDescriptor input1Desc,
@@ -110,7 +109,7 @@ miopenStatus_t CosineEmbeddingLossReducedBackward(Handle& handle,
                                                   const TensorDescriptor& input2GradDesc,
                                                   Data_t input2_grad,
                                                   const float margin,
-                                                  const float divisor);
+                                                  const miopenLossReductionMode_t reduction);
 
 } // namespace miopen
 #endif // _MIOPEN_COSINEEMBEDDINGLOSS_HPP_

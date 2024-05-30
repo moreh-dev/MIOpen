@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "miopen/miopen.h"
 #include "miopen/common.hpp"
 #include <miopen/invoke_params.hpp>
 #include <miopen/tensor.hpp>
@@ -50,8 +51,8 @@ struct FwdInvokeParams : public miopen::InvokeParams
     ConstData_t target = nullptr;
     Data_t output      = nullptr;
 
-    float margin  = 0.0f;
-    float divisor = std::numeric_limits<float>::quiet_NaN();
+    float margin = 0.0f;
+    miopenLossReductionMode_t reduction;
 
     size_t workspaceSizeInBytes = 0;
     Data_t workspace            = nullptr;
@@ -79,8 +80,8 @@ struct BwdInvokeParams : public miopen::InvokeParams
     Data_t input1_grad      = nullptr;
     Data_t input2_grad      = nullptr;
 
-    float margin  = 0.0f;
-    float divisor = std::numeric_limits<float>::quiet_NaN();
+    float margin = 0.0f;
+    miopenLossReductionMode_t reduction;
 
     size_t workspaceSizeInBytes = 0;
     Data_t workspace            = nullptr;

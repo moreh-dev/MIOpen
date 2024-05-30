@@ -52,11 +52,12 @@ struct CosineEmbeddingLossTestCase
 {
     std::vector<size_t> input;
     float margin;
-    float divisor;
+    miopenLossReductionMode_t reduction;
 
     friend std::ostream& operator<<(std::ostream& os, const CosineEmbeddingLossTestCase& tc)
     {
-        return os << " input:" << tc.input << " margin:" << tc.margin << " divisor:" << tc.divisor;
+        return os << " input:" << tc.input << " margin:" << tc.margin
+                  << " reduction:" << tc.reduction;
     }
 
     std::vector<size_t> GetInput() const { return input; }
@@ -64,7 +65,9 @@ struct CosineEmbeddingLossTestCase
 
 inline std::vector<CosineEmbeddingLossTestCase> CosineEmbeddingLossTestConfigs()
 {
-    return {{{10, 768}, 0.0f, 1.0f}, {{32, 64}, 0.1f, 1.0f}, {{32, 128}, 0.5f, 1.0f}};
+    return {{{10, 768}, 0.0f, MIOPEN_LOSS_REDUCTION_NONE},
+            {{32, 64}, 0.1f, MIOPEN_LOSS_REDUCTION_MEAN},
+            {{32, 128}, 0.5f, MIOPEN_LOSS_REDUCTION_SUM}};
 }
 
 inline std::vector<size_t> GetStrides(std::vector<size_t> input, bool contiguous)
@@ -90,11 +93,23 @@ protected:
         auto&& handle              = get_handle();
         cosineembeddingloss_config = GetParam();
 
-        margin  = cosineembeddingloss_config.margin;
-        divisor = cosineembeddingloss_config.divisor;
+        margin    = cosineembeddingloss_config.margin;
+        reduction = cosineembeddingloss_config.reduction;
 
         auto in_dim     = cosineembeddingloss_config.GetInput();
         auto target_dim = std::vector<size_t>({in_dim[0]});
+
+        if(reduction == MIOPEN_LOSS_REDUCTION_NONE)
+        {
+            divisor = 0.f;
+        }
+        else
+        {
+            if(reduction == MIOPEN_LOSS_REDUCTION_SUM)
+                divisor = 1.0f;
+            if(reduction == MIOPEN_LOSS_REDUCTION_MEAN)
+                divisor = in_dim[0];
+        }
 
         auto gen_input1_value = [](auto...) {
             return prng::gen_A_to_B<T>(static_cast<T>(-5.0f), static_cast<T>(1.0f));
@@ -189,7 +204,7 @@ protected:
                                                                output.desc,
                                                                output_dev.get(),
                                                                margin,
-                                                               divisor);
+                                                               reduction);
             workspace.data = handle.Read<T>(workspace_dev, workspace.data.size());
         }
         fflush(stdout);
@@ -221,6 +236,7 @@ protected:
 
     float margin;
     float divisor;
+    miopenLossReductionMode_t reduction;
 
     miopen::Allocator::ManageDataPtr input1_dev;
     miopen::Allocator::ManageDataPtr input2_dev;
@@ -241,11 +257,23 @@ protected:
         auto&& handle              = get_handle();
         cosineembeddingloss_config = GetParam();
 
-        margin  = cosineembeddingloss_config.margin;
-        divisor = cosineembeddingloss_config.divisor;
+        margin    = cosineembeddingloss_config.margin;
+        reduction = cosineembeddingloss_config.reduction;
 
         auto in_dim     = cosineembeddingloss_config.GetInput();
         auto target_dim = std::vector<size_t>{in_dim[0]};
+
+        if(reduction == MIOPEN_LOSS_REDUCTION_NONE)
+        {
+            divisor = 0.f;
+        }
+        else
+        {
+            if(reduction == MIOPEN_LOSS_REDUCTION_SUM)
+                divisor = 1.0f;
+            if(reduction == MIOPEN_LOSS_REDUCTION_MEAN)
+                divisor = in_dim[0];
+        }
 
         auto gen_input1_value = [](auto...) {
             return prng::gen_A_to_B<T>(static_cast<T>(-2.0f), static_cast<T>(1.0f));
@@ -384,7 +412,7 @@ protected:
                                                                 input2_grad.desc,
                                                                 input2_grad_dev.get(),
                                                                 margin,
-                                                                divisor);
+                                                                reduction);
         }
         fflush(stdout);
 
@@ -427,6 +455,7 @@ protected:
 
     float margin;
     float divisor;
+    miopenLossReductionMode_t reduction;
 
     miopen::Allocator::ManageDataPtr input1_dev;
     miopen::Allocator::ManageDataPtr input2_dev;

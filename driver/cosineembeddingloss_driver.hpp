@@ -145,6 +145,7 @@ private:
     std::vector<int> input_sizes;
     float margin;
     float divisor;
+    miopenLossReductionMode_t reduction;
 };
 
 template <typename Tgpu, typename Tref>
@@ -192,9 +193,22 @@ std::vector<int> CosineEmbeddingLossDriver<Tgpu, Tref>::GetInputTensorDimsFromCm
 template <typename Tgpu, typename Tref>
 int CosineEmbeddingLossDriver<Tgpu, Tref>::GetandSetData()
 {
-    auto reduction = inflags.GetValueStr("reduce");
-    if(reduction != "none" && reduction != "mean" && reduction != "sum")
+    auto reduce = inflags.GetValueStr("reduce");
+
+    if(reduce != "none" && reduce != "mean" && reduce != "sum")
         return miopenStatusInvalidValue;
+    if(reduce == "none")
+    {
+        reduction = MIOPEN_LOSS_REDUCTION_NONE;
+    }
+    else if(reduce == "sum")
+    {
+        reduction = MIOPEN_LOSS_REDUCTION_SUM;
+    }
+    else if(reduce == "mean")
+    {
+        reduction = MIOPEN_LOSS_REDUCTION_MEAN;
+    }
 
     input_sizes = GetInputTensorDimsFromCmd();
     margin      = static_cast<float>(inflags.GetValueDouble("margin"));
@@ -210,7 +224,7 @@ int CosineEmbeddingLossDriver<Tgpu, Tref>::GetandSetData()
     SetTensorNd(input2Desc, in_len, in_strides, data_type);
     SetTensorNd(targetDesc, target_len, tar_strides, data_type);
 
-    if(reduction == "none")
+    if(reduce == "none")
     {
         divisor             = std::numeric_limits<float>::quiet_NaN();
         auto output_strides = GetStrides(out_len, 1);
@@ -223,9 +237,9 @@ int CosineEmbeddingLossDriver<Tgpu, Tref>::GetandSetData()
         SetTensorNd(outputDesc, out_len_rd, data_type);
         auto output_strides = GetStrides(out_len_rd, 1);
         SetTensorNd(outputGradDesc, out_len_rd, output_strides, data_type);
-        if(reduction == "sum")
-            divisor = 1;
-        if(reduction == "mean")
+        if(reduce == "sum")
+            divisor = 1.0f;
+        if(reduce == "mean")
             divisor = miopen::deref(targetDesc).GetElementSize();
     }
 
@@ -365,37 +379,20 @@ int CosineEmbeddingLossDriver<Tgpu, Tref>::RunForwardGPU()
 
     for(int i = 0; i < inflags.GetValueInt("iter"); i++)
     {
-        if(!std::isnan(divisor))
-        {
-            miopenCosineEmbeddingLossReducedForward(GetHandle(),
-                                                    workspace_dev_fwd->GetMem(),
-                                                    ws_sizeInBytes_fwd,
-                                                    input1Desc,
-                                                    in1_dev->GetMem(),
-                                                    input2Desc,
-                                                    in2_dev->GetMem(),
-                                                    targetDesc,
-                                                    target_dev->GetMem(),
-                                                    outputDesc,
-                                                    out_dev->GetMem(),
-                                                    margin,
-                                                    divisor);
-        }
-        else
-        {
-            miopenCosineEmbeddingLossUnreducedForward(GetHandle(),
-                                                      workspace_dev_fwd->GetMem(),
-                                                      ws_sizeInBytes_fwd,
-                                                      input1Desc,
-                                                      in1_dev->GetMem(),
-                                                      input2Desc,
-                                                      in2_dev->GetMem(),
-                                                      targetDesc,
-                                                      target_dev->GetMem(),
-                                                      outputDesc,
-                                                      out_dev->GetMem(),
-                                                      margin);
-        }
+        miopenCosineEmbeddingLossForward(GetHandle(),
+                                         workspace_dev_fwd->GetMem(),
+                                         ws_sizeInBytes_fwd,
+                                         input1Desc,
+                                         in1_dev->GetMem(),
+                                         input2Desc,
+                                         in2_dev->GetMem(),
+                                         targetDesc,
+                                         target_dev->GetMem(),
+                                         outputDesc,
+                                         out_dev->GetMem(),
+                                         margin,
+                                         reduction);
+
         float time = 0.0;
         miopenGetKernelTime(GetHandle(), &time);
         kernel_total_time += time;
@@ -462,45 +459,23 @@ int CosineEmbeddingLossDriver<Tgpu, Tref>::RunBackwardGPU()
 
     for(int i = 0; i < inflags.GetValueInt("iter"); i++)
     {
-        if(!std::isnan(divisor))
-        {
-            miopenCosineEmbeddingLossReducedBackward(GetHandle(),
-                                                     workspace_dev_bwd->GetMem(),
-                                                     ws_sizeInBytes_bwd,
-                                                     input1Desc,
-                                                     in1_dev->GetMem(),
-                                                     input2Desc,
-                                                     in2_dev->GetMem(),
-                                                     targetDesc,
-                                                     target_dev->GetMem(),
-                                                     outputGradDesc,
-                                                     out_grad_dev->GetMem(),
-                                                     input1GradDesc,
-                                                     in1_grad_dev->GetMem(),
-                                                     input2GradDesc,
-                                                     in2_grad_dev->GetMem(),
-                                                     margin,
-                                                     divisor);
-        }
-        else
-        {
-            miopenCosineEmbeddingLossUnreducedBackward(GetHandle(),
-                                                       workspace_dev_bwd->GetMem(),
-                                                       ws_sizeInBytes_bwd,
-                                                       input1Desc,
-                                                       in1_dev->GetMem(),
-                                                       input2Desc,
-                                                       in2_dev->GetMem(),
-                                                       targetDesc,
-                                                       target_dev->GetMem(),
-                                                       outputGradDesc,
-                                                       out_grad_dev->GetMem(),
-                                                       input1GradDesc,
-                                                       in1_grad_dev->GetMem(),
-                                                       input2GradDesc,
-                                                       in2_grad_dev->GetMem(),
-                                                       margin);
-        }
+        miopenCosineEmbeddingLossBackward(GetHandle(),
+                                          workspace_dev_bwd->GetMem(),
+                                          ws_sizeInBytes_bwd,
+                                          input1Desc,
+                                          in1_dev->GetMem(),
+                                          input2Desc,
+                                          in2_dev->GetMem(),
+                                          targetDesc,
+                                          target_dev->GetMem(),
+                                          outputGradDesc,
+                                          out_grad_dev->GetMem(),
+                                          input1GradDesc,
+                                          in1_grad_dev->GetMem(),
+                                          input2GradDesc,
+                                          in2_grad_dev->GetMem(),
+                                          margin,
+                                          reduction);
 
         float time = 0.0;
         miopenGetKernelTime(GetHandle(), &time);

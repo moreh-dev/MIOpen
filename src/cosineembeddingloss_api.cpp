@@ -24,6 +24,7 @@
  *
  *******************************************************************************/
 
+#include "miopen/miopen.h"
 #include <miopen/cosineembeddingloss.hpp>
 #include <miopen/errors.hpp>
 #include <miopen/handle.hpp>
@@ -46,7 +47,8 @@ inline std::ostream& operator<<(std::ostream& os, const std::vector<size_t>& v)
 static void LogCmdCosineEmbeddingLoss(const miopenTensorDescriptor_t x1Desc,
                                       const miopenTensorDescriptor_t x2Desc,
                                       const miopenTensorDescriptor_t tDesc,
-                                      bool is_fwd)
+                                      bool is_fwd,
+                                      const miopenLossReductionMode_t reduction)
 {
     if(miopen::IsLoggingCmd())
     {
@@ -72,53 +74,10 @@ static void LogCmdCosineEmbeddingLoss(const miopenTensorDescriptor_t x1Desc,
         ss << " -St " << miopen::deref(tDesc).GetStrides();
 
         ss << " -F " << ((is_fwd) ? "1" : "2");
+        ss << " -R " << reduction;
 
         MIOPEN_LOG_DRIVER_CMD(ss.str());
     }
-}
-
-extern "C" miopenStatus_t
-miopenCosineEmbeddingLossUnreducedForward(miopenHandle_t handle,
-                                          void* workspace,
-                                          size_t workspaceSizeInBytes,
-                                          const miopenTensorDescriptor_t input1Desc,
-                                          const void* input1,
-                                          const miopenTensorDescriptor_t input2Desc,
-                                          const void* input2,
-                                          const miopenTensorDescriptor_t targetDesc,
-                                          const void* target,
-                                          const miopenTensorDescriptor_t outputDesc,
-                                          void* output,
-                                          const float margin)
-{
-    MIOPEN_LOG_FUNCTION(handle,
-                        workspace,
-                        workspaceSizeInBytes,
-                        input1Desc,
-                        input1,
-                        input2Desc,
-                        input2,
-                        targetDesc,
-                        target,
-                        outputDesc,
-                        output,
-                        margin);
-
-    LogCmdCosineEmbeddingLoss(input1Desc, input2Desc, targetDesc, true);
-    return miopen::try_([&] {
-        miopen::CosineEmbeddingLossUnreducedForward(miopen::deref(handle),
-                                                    DataCast(workspace),
-                                                    workspaceSizeInBytes,
-                                                    miopen::deref(input1Desc),
-                                                    DataCast(input1),
-                                                    miopen::deref(input2Desc),
-                                                    DataCast(input2),
-                                                    miopen::deref(targetDesc),
-                                                    DataCast(target),
-                                                    miopen::deref(outputDesc),
-                                                    DataCast(output),
-                                                    margin);
-    });
 }
 
 extern "C" miopenStatus_t
@@ -146,19 +105,19 @@ miopenGetCosineEmbeddingLossForwardWorkspaceSize(miopenHandle_t handle,
 }
 
 extern "C" miopenStatus_t
-miopenCosineEmbeddingLossReducedForward(miopenHandle_t handle,
-                                        void* workspace,
-                                        size_t workspaceSizeInBytes,
-                                        const miopenTensorDescriptor_t input1Desc,
-                                        const void* input1,
-                                        const miopenTensorDescriptor_t input2Desc,
-                                        const void* input2,
-                                        const miopenTensorDescriptor_t targetDesc,
-                                        const void* target,
-                                        const miopenTensorDescriptor_t outputDesc,
-                                        void* output,
-                                        const float margin,
-                                        const float divisor)
+miopenCosineEmbeddingLossForward(miopenHandle_t handle,
+                                 void* workspace,
+                                 size_t workspaceSizeInBytes,
+                                 const miopenTensorDescriptor_t input1Desc,
+                                 const void* input1,
+                                 const miopenTensorDescriptor_t input2Desc,
+                                 const void* input2,
+                                 const miopenTensorDescriptor_t targetDesc,
+                                 const void* target,
+                                 const miopenTensorDescriptor_t outputDesc,
+                                 void* output,
+                                 const float margin,
+                                 const miopenLossReductionMode_t reduction)
 {
     MIOPEN_LOG_FUNCTION(handle,
                         workspace,
@@ -172,9 +131,26 @@ miopenCosineEmbeddingLossReducedForward(miopenHandle_t handle,
                         outputDesc,
                         output,
                         margin,
-                        divisor);
+                        reduction);
 
-    LogCmdCosineEmbeddingLoss(input1Desc, input2Desc, targetDesc, true);
+    LogCmdCosineEmbeddingLoss(input1Desc, input2Desc, targetDesc, true, reduction);
+    if(reduction == MIOPEN_LOSS_REDUCTION_NONE)
+    {
+        return miopen::try_([&] {
+            miopen::CosineEmbeddingLossUnreducedForward(miopen::deref(handle),
+                                                        DataCast(workspace),
+                                                        workspaceSizeInBytes,
+                                                        miopen::deref(input1Desc),
+                                                        DataCast(input1),
+                                                        miopen::deref(input2Desc),
+                                                        DataCast(input2),
+                                                        miopen::deref(targetDesc),
+                                                        DataCast(target),
+                                                        miopen::deref(outputDesc),
+                                                        DataCast(output),
+                                                        margin);
+        });
+    }
     return miopen::try_([&] {
         miopen::CosineEmbeddingLossReducedForward(miopen::deref(handle),
                                                   DataCast(workspace),
@@ -188,7 +164,7 @@ miopenCosineEmbeddingLossReducedForward(miopenHandle_t handle,
                                                   miopen::deref(outputDesc),
                                                   DataCast(output),
                                                   margin,
-                                                  divisor);
+                                                  reduction);
     });
 }
 
@@ -228,79 +204,23 @@ miopenGetCosineEmbeddingLossBackwardWorkspaceSize(miopenHandle_t handle,
 }
 
 extern "C" miopenStatus_t
-miopenCosineEmbeddingLossUnreducedBackward(miopenHandle_t handle,
-                                           void* workspace,
-                                           size_t workspaceSizeInBytes,
-                                           const miopenTensorDescriptor_t input1Desc,
-                                           const void* input1,
-                                           const miopenTensorDescriptor_t input2Desc,
-                                           const void* input2,
-                                           const miopenTensorDescriptor_t targetDesc,
-                                           const void* target,
-                                           const miopenTensorDescriptor_t outputGradDesc,
-                                           const void* output_grad,
-                                           const miopenTensorDescriptor_t input1GradDesc,
-                                           void* input1_grad,
-                                           const miopenTensorDescriptor_t input2GradDesc,
-                                           void* input2_grad,
-                                           const float margin)
-{
-    MIOPEN_LOG_FUNCTION(handle,
-                        workspace,
-                        workspaceSizeInBytes,
-                        input1Desc,
-                        input1,
-                        input2Desc,
-                        input2,
-                        targetDesc,
-                        target,
-                        outputGradDesc,
-                        output_grad,
-                        input1GradDesc,
-                        input1_grad,
-                        input2GradDesc,
-                        input2_grad,
-                        margin);
-
-    LogCmdCosineEmbeddingLoss(input1Desc, input2Desc, targetDesc, false);
-    return miopen::try_([&] {
-        miopen::CosineEmbeddingLossUnreducedBackward(miopen::deref(handle),
-                                                     DataCast(workspace),
-                                                     workspaceSizeInBytes,
-                                                     miopen::deref(input1Desc),
-                                                     DataCast(input1),
-                                                     miopen::deref(input2Desc),
-                                                     DataCast(input2),
-                                                     miopen::deref(targetDesc),
-                                                     DataCast(target),
-                                                     miopen::deref(outputGradDesc),
-                                                     DataCast(output_grad),
-                                                     miopen::deref(input1GradDesc),
-                                                     DataCast(input1_grad),
-                                                     miopen::deref(input2GradDesc),
-                                                     DataCast(input2_grad),
-                                                     margin);
-    });
-}
-
-extern "C" miopenStatus_t
-miopenCosineEmbeddingLossReducedBackward(miopenHandle_t handle,
-                                         void* workspace,
-                                         size_t workspaceSizeInBytes,
-                                         const miopenTensorDescriptor_t input1Desc,
-                                         const void* input1,
-                                         const miopenTensorDescriptor_t input2Desc,
-                                         const void* input2,
-                                         const miopenTensorDescriptor_t targetDesc,
-                                         const void* target,
-                                         const miopenTensorDescriptor_t outputGradDesc,
-                                         const void* output_grad,
-                                         const miopenTensorDescriptor_t input1GradDesc,
-                                         void* input1_grad,
-                                         const miopenTensorDescriptor_t input2GradDesc,
-                                         void* input2_grad,
-                                         const float margin,
-                                         const float divisor)
+miopenCosineEmbeddingLossBackward(miopenHandle_t handle,
+                                  void* workspace,
+                                  size_t workspaceSizeInBytes,
+                                  const miopenTensorDescriptor_t input1Desc,
+                                  const void* input1,
+                                  const miopenTensorDescriptor_t input2Desc,
+                                  const void* input2,
+                                  const miopenTensorDescriptor_t targetDesc,
+                                  const void* target,
+                                  const miopenTensorDescriptor_t outputGradDesc,
+                                  const void* output_grad,
+                                  const miopenTensorDescriptor_t input1GradDesc,
+                                  void* input1_grad,
+                                  const miopenTensorDescriptor_t input2GradDesc,
+                                  void* input2_grad,
+                                  const float margin,
+                                  const miopenLossReductionMode_t reduction)
 {
     MIOPEN_LOG_FUNCTION(handle,
                         workspace,
@@ -318,9 +238,31 @@ miopenCosineEmbeddingLossReducedBackward(miopenHandle_t handle,
                         input2GradDesc,
                         input2_grad,
                         margin,
-                        divisor);
+                        reduction);
 
-    LogCmdCosineEmbeddingLoss(input1Desc, input2Desc, targetDesc, false);
+    LogCmdCosineEmbeddingLoss(input1Desc, input2Desc, targetDesc, false, reduction);
+
+    if(reduction == MIOPEN_LOSS_REDUCTION_NONE)
+    {
+        return miopen::try_([&] {
+            miopen::CosineEmbeddingLossUnreducedBackward(miopen::deref(handle),
+                                                         DataCast(workspace),
+                                                         workspaceSizeInBytes,
+                                                         miopen::deref(input1Desc),
+                                                         DataCast(input1),
+                                                         miopen::deref(input2Desc),
+                                                         DataCast(input2),
+                                                         miopen::deref(targetDesc),
+                                                         DataCast(target),
+                                                         miopen::deref(outputGradDesc),
+                                                         DataCast(output_grad),
+                                                         miopen::deref(input1GradDesc),
+                                                         DataCast(input1_grad),
+                                                         miopen::deref(input2GradDesc),
+                                                         DataCast(input2_grad),
+                                                         margin);
+        });
+    }
     return miopen::try_([&] {
         miopen::CosineEmbeddingLossReducedBackward(miopen::deref(handle),
                                                    DataCast(workspace),
@@ -338,6 +280,6 @@ miopenCosineEmbeddingLossReducedBackward(miopenHandle_t handle,
                                                    miopen::deref(input2GradDesc),
                                                    DataCast(input2_grad),
                                                    margin,
-                                                   divisor);
+                                                   reduction);
     });
 }

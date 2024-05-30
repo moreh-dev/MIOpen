@@ -160,13 +160,11 @@ struct FwdReducedProblemDescription : ProblemDescription
                                  const TensorDescriptor& input2Desc_,
                                  const TensorDescriptor& targetDesc_,
                                  const TensorDescriptor& outputDesc_,
-                                 const float margin_,
-                                 const float divisor_)
+                                 const float margin_)
         : ProblemDescription(input1Desc_, input2Desc_, targetDesc_, outputDesc_, margin_, true)
     {
         IsValidLength();
         IsAllValidStride();
-        divisor = divisor_;
     }
 
     bool IsValidLength() const
@@ -182,7 +180,6 @@ struct FwdReducedProblemDescription : ProblemDescription
     NetworkConfig MakeNetworkConfig() const override;
 
 private:
-    float divisor;
     NetworkConfig MakeForwardNetworkConfig() const;
 };
 
@@ -249,13 +246,11 @@ struct BwdReducedProblemDescription : ProblemDescription
                                  const TensorDescriptor& outputGradDesc_,
                                  const TensorDescriptor& input1GradDesc_,
                                  const TensorDescriptor& input2GradDesc_,
-                                 const float margin_,
-                                 const float divisor_)
+                                 const float margin_)
         : ProblemDescription(input1Desc_, input2Desc_, targetDesc_, outputGradDesc_, margin_, false)
     {
         input1GradDesc = input1GradDesc_;
         input2GradDesc = input2GradDesc_;
-        divisor        = divisor_;
         IsValidLength();
         IsAllValidStride();
     }
@@ -297,7 +292,6 @@ struct BwdReducedProblemDescription : ProblemDescription
     NetworkConfig MakeNetworkConfig() const override;
 
 private:
-    float divisor;
     TensorDescriptor input1GradDesc;
     TensorDescriptor input2GradDesc;
     NetworkConfig MakeForwardNetworkConfig() const;

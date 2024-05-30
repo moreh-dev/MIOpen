@@ -197,6 +197,11 @@ ConvSolution CosineEmbeddingLossReducedBackward2d::GetSolution(
             auto output_grad_tv = get_inner_expanded_tv_1d(deref(params.outputGradDesc));
             auto input1_grad_tv = get_inner_expanded_tv_2d(deref(params.input1GradDesc));
             auto input2_grad_tv = get_inner_expanded_tv_2d(deref(params.input2GradDesc));
+            float divisor       = 1;
+            if(params.reduction == MIOPEN_LOSS_REDUCTION_MEAN)
+            {
+                divisor *= deref(params.targetDesc).GetElementSize();
+            }
 
             auto kernel = handle_.Run(kernels[kernelCnt++]);
             kernel(work_a,
@@ -207,7 +212,7 @@ ConvSolution CosineEmbeddingLossReducedBackward2d::GetSolution(
                    params.input1_grad,
                    params.input2_grad,
                    params.margin,
-                   params.divisor,
+                   divisor,
                    input1_tv,
                    input2_tv,
                    target_tv,

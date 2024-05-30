@@ -24,6 +24,7 @@
  *
  *******************************************************************************/
 
+#include "miopen/miopen.h"
 #include "miopen/conv_solution.hpp"
 #include "miopen/execution_context.hpp"
 #include "miopen/invoke_params.hpp"
@@ -199,9 +200,14 @@ ConvSolution CosineEmbeddingLossReducedForward2d::GetSolution(
 
             {
                 auto target_tv = get_inner_expanded_tv_1d(deref(params.targetDesc));
+                float divisor  = 1;
+                if(params.reduction == MIOPEN_LOSS_REDUCTION_MEAN)
+                {
+                    divisor *= deref(params.targetDesc).GetElementSize();
+                }
 
                 auto kernel = handle_.Run(kernels[kernel_cnt++]);
-                kernel(work_a, params.target, work_b, params.margin, params.divisor, target_tv);
+                kernel(work_a, params.target, work_b, params.margin, divisor, target_tv);
                 if(handle_.IsProfilingEnabled())
                 {
                     elapsed += handle_.GetKernelTime();
