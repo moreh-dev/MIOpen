@@ -43,66 +43,6 @@
 #define D_TYPE float
 #endif
 
-#ifndef REDUCE_SIZE
-#define REDUCE_SIZE 256
-#endif
-
-__device__ FLOAT_ACCUM warpReduceSum(FLOAT_ACCUM val)
-{
-    if(warpSize >= 64)
-        val += __shfl_down(val, 32);
-    if(warpSize >= 32)
-        val += __shfl_down(val, 16);
-    if(warpSize >= 16)
-        val += __shfl_down(val, 8);
-    if(warpSize >= 8)
-        val += __shfl_down(val, 4);
-    if(warpSize >= 4)
-        val += __shfl_down(val, 2);
-    if(warpSize >= 2)
-        val += __shfl_down(val, 1);
-    return val;
-}
-
-__device__ FLOAT_ACCUM blockReduceSum(FLOAT_ACCUM val)
-{
-    static __shared__ FLOAT_ACCUM shared[REDUCE_SIZE / warpSize];
-    auto lane = threadIdx.x % warpSize;
-    auto wid  = threadIdx.x / warpSize;
-
-    val = warpReduceSum(val);
-
-    if(lane == 0)
-        shared[wid] = val;
-    __syncthreads();
-
-    val = threadIdx.x < REDUCE_SIZE / warpSize ? shared[lane] : CVT_FP32_2ACCUM(0.0f);
-    if(wid == 0)
-        val = warpReduceSum(val);
-
-    return val;
-}
-
-template <typename DTYPE>
-__device__ void lossSum(const DTYPE* input, DTYPE* output, size_t N)
-{
-    auto gid = blockIdx.x * blockDim.x + threadIdx.x;
-
-    FLOAT_ACCUM val = gid < N ? CVT_FLOAT2ACCUM(input[gid]) : CVT_FP32_2ACCUM(0.0f);
-    val             = blockReduceSum(val);
-
-    if(threadIdx.x == 0)
-    {
-        output[blockIdx.x] = CVT_ACCUM2FLOAT(val);
-    }
-}
-
-extern "C" __global__ void
-LossSum(const D_TYPE* __restrict__ input, D_TYPE* __restrict__ output, size_t N)
-{
-    lossSum<D_TYPE>(input, output, N);
-}
-
 template <typename TI, typename TO>
 __device__ void cosineembeddinglossNorm2d(const TI* __restrict__ input1,
                                           const TI* __restrict__ input2,

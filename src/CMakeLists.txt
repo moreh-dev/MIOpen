@@ -465,6 +465,7 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         kernels/MIOpenCosineEmbeddingLoss.cpp
         kernels/MIOpenGroupNorm.cpp
         kernels/MIOpenLayerNorm.cpp
+        kernels/MIOpenLossSum.cpp
         kernels/MIOpenLRNBwd.cl
         kernels/MIOpenLRNFwd.cl
         kernels/MIOpenNeuron.cl

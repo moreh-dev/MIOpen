@@ -175,11 +175,8 @@ ConvSolution CosineEmbeddingLossReducedForward2d::GetSolution(
     auto size = N_total;
     do
     {
-        result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE_REDUCED},
-                                                             {size},
-                                                             "MIOpenCosineEmbeddingLoss.cpp",
-                                                             "LossSum",
-                                                             build_params));
+        result.construction_params.push_back(make_hip_kernel(
+            {LOCAL_SIZE_REDUCED}, {size}, "MIOpenLossSum.cpp", "LossSum", build_params));
         size = (size + LOCAL_SIZE_REDUCED - 1) / LOCAL_SIZE_REDUCED;
     } while(size > 1);
 
