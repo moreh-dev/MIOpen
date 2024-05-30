@@ -89,13 +89,13 @@ int32_t mloCosineEmbeddingLossReducedForwardRunHost2d(const miopenTensorDescript
                                                       const Tgpu* input2,
                                                       const int32_t* target,
                                                       Tcheck* output,
-                                                      Tcheck* workspace,
                                                       const float margin,
                                                       const float divisor)
 {
     auto I1_tv = get_inner_expanded_tv_2d(miopen::deref(input1Desc));
     auto I2_tv = get_inner_expanded_tv_2d(miopen::deref(input2Desc));
     auto T_tv  = get_inner_expanded_tv_1d(miopen::deref(targetDesc));
+    std::vector<float> workspace(I1_tv.size[0]);
 
     size_t N = miopen::deref(input1Desc).GetLengths()[0],
            D = miopen::deref(input1Desc).GetLengths()[1];
@@ -121,9 +121,9 @@ int32_t mloCosineEmbeddingLossReducedForwardRunHost2d(const miopenTensorDescript
         if(t == 1)
             loss = 1.0f - cos_term;
         else
-            loss = std::max(0.1f, cos_term - margin);
+            loss = std::max(0.0f, cos_term - margin);
 
-        workspace[n] = static_cast<Tcheck>(loss / divisor);
+        workspace[n] = loss / divisor;
     }
 
     auto reduce_size     = N;
@@ -137,7 +137,7 @@ int32_t mloCosineEmbeddingLossReducedForwardRunHost2d(const miopenTensorDescript
         {
             float shared[local_size];
             for(auto j = 0; j < local_size; ++j)
-                shared[j] = i + j < _size ? static_cast<float>(workspace[offset_a + i + j]) : 0.0f;
+                shared[j] = i + j < _size ? workspace[offset_a + i + j] : 0.0f;
             for(int offset = local_size / 2; offset > 0; offset >>= 1)
                 for(auto j = 0; j < local_size; ++j)
                     if(j < offset)
@@ -145,7 +145,7 @@ int32_t mloCosineEmbeddingLossReducedForwardRunHost2d(const miopenTensorDescript
             if(_size <= local_size)
                 output[0] = static_cast<Tcheck>(shared[0]);
             else
-                workspace[offset_b + i / local_size] = static_cast<Tcheck>(shared[0]);
+                workspace[offset_b + i / local_size] = shared[0];
         }
         std::swap(offset_a, offset_b);
         _size = (_size + local_size - 1) / local_size;

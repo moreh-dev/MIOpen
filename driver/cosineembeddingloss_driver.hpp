@@ -121,7 +121,8 @@ private:
     std::unique_ptr<GPUMem> in2_dev;
     std::unique_ptr<GPUMem> target_dev;
     std::unique_ptr<GPUMem> out_dev;
-    std::unique_ptr<GPUMem> workspace_dev;
+    std::unique_ptr<GPUMem> workspace_dev_fwd;
+    std::unique_ptr<GPUMem> workspace_dev_bwd;
     std::unique_ptr<GPUMem> in1_grad_dev;
     std::unique_ptr<GPUMem> in2_grad_dev;
     std::unique_ptr<GPUMem> out_grad_dev;
@@ -131,16 +132,15 @@ private:
     std::vector<int32_t> target;
     std::vector<Tgpu> out;
     std::vector<Tref> out_host;
-    std::vector<Tgpu> workspace;
-    std::vector<Tref> workspace_host;
 
+    std::vector<Tgpu> out_grad;
     std::vector<Tgpu> in1_grad;
     std::vector<Tgpu> in2_grad;
     std::vector<Tref> in1_grad_host;
     std::vector<Tref> in2_grad_host;
-    std::vector<Tgpu> out_grad;
 
-    size_t ws_sizeInBytes;
+    size_t ws_sizeInBytes_fwd;
+    size_t ws_sizeInBytes_bwd;
 
     std::vector<int> input_sizes;
     float margin;
@@ -275,30 +275,41 @@ int CosineEmbeddingLossDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     size_t out_sz    = GetTensorSize(outputDesc);
 
     miopenGetCosineEmbeddingLossForwardWorkspaceSize(
-        GetHandle(), input1Desc, input2Desc, targetDesc, outputDesc, margin, &ws_sizeInBytes);
-    if(ws_sizeInBytes == static_cast<size_t>(-1))
+        GetHandle(), input1Desc, input2Desc, targetDesc, outputDesc, margin, &ws_sizeInBytes_fwd);
+    if(ws_sizeInBytes_fwd == static_cast<size_t>(-1))
         return miopenStatusAllocFailed;
 
-    size_t ws_sz = ws_sizeInBytes / sizeof(Tgpu);
+    miopenGetCosineEmbeddingLossBackwardWorkspaceSize(GetHandle(),
+                                                      input1Desc,
+                                                      input2Desc,
+                                                      targetDesc,
+                                                      outputGradDesc,
+                                                      input1GradDesc,
+                                                      input2GradDesc,
+                                                      margin,
+                                                      &ws_sizeInBytes_bwd);
+    if(ws_sizeInBytes_bwd == static_cast<size_t>(-1))
+        return miopenStatusAllocFailed;
 
     uint32_t ctx = 0;
 
-    in1_dev       = std::unique_ptr<GPUMem>(new GPUMem(ctx, in_sz, sizeof(Tgpu)));
-    in2_dev       = std::unique_ptr<GPUMem>(new GPUMem(ctx, in_sz, sizeof(Tgpu)));
-    target_dev    = std::unique_ptr<GPUMem>(new GPUMem(ctx, target_sz, sizeof(int32_t)));
-    out_dev       = std::unique_ptr<GPUMem>(new GPUMem(ctx, out_sz, sizeof(Tgpu)));
-    workspace_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, ws_sizeInBytes, sizeof(std::byte)));
-    in1_grad_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, in_sz, sizeof(Tgpu)));
-    in2_grad_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, in_sz, sizeof(Tgpu)));
-    out_grad_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, out_sz, sizeof(Tgpu)));
+    in1_dev    = std::unique_ptr<GPUMem>(new GPUMem(ctx, in_sz, sizeof(Tgpu)));
+    in2_dev    = std::unique_ptr<GPUMem>(new GPUMem(ctx, in_sz, sizeof(Tgpu)));
+    target_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, target_sz, sizeof(int32_t)));
+    out_dev    = std::unique_ptr<GPUMem>(new GPUMem(ctx, out_sz, sizeof(Tgpu)));
+    workspace_dev_fwd =
+        std::unique_ptr<GPUMem>(new GPUMem(ctx, ws_sizeInBytes_fwd, sizeof(std::byte)));
+    workspace_dev_bwd =
+        std::unique_ptr<GPUMem>(new GPUMem(ctx, ws_sizeInBytes_bwd, sizeof(std::byte)));
+    in1_grad_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, in_sz, sizeof(Tgpu)));
+    in2_grad_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, in_sz, sizeof(Tgpu)));
+    out_grad_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, out_sz, sizeof(Tgpu)));
 
-    in1            = std::vector<Tgpu>(in_sz, static_cast<Tgpu>(0));
-    in2            = std::vector<Tgpu>(in_sz, static_cast<Tgpu>(0));
-    target         = std::vector<int32_t>(target_sz, static_cast<int32_t>(1));
-    out            = std::vector<Tgpu>(out_sz, static_cast<Tgpu>(0));
-    out_host       = std::vector<Tref>(out_sz, static_cast<Tref>(0));
-    workspace      = std::vector<Tgpu>(ws_sz, static_cast<Tgpu>(0));
-    workspace_host = std::vector<Tref>(ws_sz, static_cast<Tref>(0));
+    in1      = std::vector<Tgpu>(in_sz, static_cast<Tgpu>(0));
+    in2      = std::vector<Tgpu>(in_sz, static_cast<Tgpu>(0));
+    target   = std::vector<int32_t>(target_sz, static_cast<int32_t>(1));
+    out      = std::vector<Tgpu>(out_sz, static_cast<Tgpu>(0));
+    out_host = std::vector<Tref>(out_sz, static_cast<Tref>(0));
 
     in1_grad      = std::vector<Tgpu>(in_sz, static_cast<Tgpu>(0));
     in2_grad      = std::vector<Tgpu>(in_sz, static_cast<Tgpu>(0));
@@ -357,8 +368,8 @@ int CosineEmbeddingLossDriver<Tgpu, Tref>::RunForwardGPU()
         if(!std::isnan(divisor))
         {
             miopenCosineEmbeddingLossReducedForward(GetHandle(),
-                                                    workspace_dev->GetMem(),
-                                                    ws_sizeInBytes,
+                                                    workspace_dev_fwd->GetMem(),
+                                                    ws_sizeInBytes_fwd,
                                                     input1Desc,
                                                     in1_dev->GetMem(),
                                                     input2Desc,
@@ -373,8 +384,8 @@ int CosineEmbeddingLossDriver<Tgpu, Tref>::RunForwardGPU()
         else
         {
             miopenCosineEmbeddingLossUnreducedForward(GetHandle(),
-                                                      workspace_dev->GetMem(),
-                                                      ws_sizeInBytes,
+                                                      workspace_dev_fwd->GetMem(),
+                                                      ws_sizeInBytes_fwd,
                                                       input1Desc,
                                                       in1_dev->GetMem(),
                                                       input2Desc,
@@ -422,7 +433,6 @@ int CosineEmbeddingLossDriver<Tgpu, Tref>::RunForwardCPU()
                                                                   in2.data(),
                                                                   target.data(),
                                                                   out_host.data(),
-                                                                  workspace_host.data(),
                                                                   margin,
                                                                   divisor);
     }
@@ -455,8 +465,8 @@ int CosineEmbeddingLossDriver<Tgpu, Tref>::RunBackwardGPU()
         if(!std::isnan(divisor))
         {
             miopenCosineEmbeddingLossReducedBackward(GetHandle(),
-                                                     workspace_dev->GetMem(),
-                                                     ws_sizeInBytes,
+                                                     workspace_dev_bwd->GetMem(),
+                                                     ws_sizeInBytes_bwd,
                                                      input1Desc,
                                                      in1_dev->GetMem(),
                                                      input2Desc,
@@ -475,8 +485,8 @@ int CosineEmbeddingLossDriver<Tgpu, Tref>::RunBackwardGPU()
         else
         {
             miopenCosineEmbeddingLossUnreducedBackward(GetHandle(),
-                                                       workspace_dev->GetMem(),
-                                                       ws_sizeInBytes,
+                                                       workspace_dev_bwd->GetMem(),
+                                                       ws_sizeInBytes_bwd,
                                                        input1Desc,
                                                        in1_dev->GetMem(),
                                                        input2Desc,
