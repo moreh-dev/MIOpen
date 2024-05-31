@@ -6604,7 +6604,7 @@ typedef enum
  */
 
 /*! @brief Helper function to query the minimum workspace size required by the CosineEmbeddingLoss
- * call
+ * Forward call
  *
  * @param handle                   MIOpen Handle (input)
  * @param input1Desc               Tensor descriptor for input 1 tensor (input)
@@ -6624,20 +6624,22 @@ miopenGetCosineEmbeddingLossForwardWorkspaceSize(miopenHandle_t handle,
                                                  const float margin,
                                                  size_t* sizeInBytes);
 
-/*! @brief Execute a cosineembeddingloss reduced forward layer
+/*! @brief Execute a cosineembeddingloss forward layer
  *
- * @param handle          MIOpen handle (input)
- * @param input1Desc      Tensor descriptor for input 1 tensor (input)
- * @param input1          Data tensor input 1 (input)
- * @param input2Desc      Tensor descriptor for input 2 tensor (input)
- * @param input2          Data tensor input 2 (input)
- * @param targetDesc      Tensor descriptor for target tensor (input)
- * @param target          Data tensor target (input)
- * @param outputDesc      Tensor descriptor for output tensor (input)
- * @param output          Data tensor output (output)
- * @param margin          If margin is missing, the default value is 0 (input)
- * @param reduction       Reduction (input)
- * @return                miopenStatus_t
+ * @param handle                MIOpen handle (input)
+ * @param workspace             Pointer to workspace (input)
+ * @param workspaceSizeInBytes  Size of workspace buffer (input)
+ * @param input1Desc            Tensor descriptor for input 1 tensor (input)
+ * @param input1                Data tensor input 1 (input)
+ * @param input2Desc            Tensor descriptor for input 2 tensor (input)
+ * @param input2                Data tensor input 2 (input)
+ * @param targetDesc            Tensor descriptor for target tensor (input)
+ * @param target                Data tensor target (input)
+ * @param outputDesc            Tensor descriptor for output tensor (input)
+ * @param output                Data tensor output (output)
+ * @param margin                If margin is missing, the default value is 0 (input)
+ * @param reduction             Reduction (input)
+ * @return                      miopenStatus_t
  */
 MIOPEN_EXPORT miopenStatus_t
 miopenCosineEmbeddingLossForward(miopenHandle_t handle,
@@ -6655,13 +6657,15 @@ miopenCosineEmbeddingLossForward(miopenHandle_t handle,
                                  miopenLossReductionMode_t reduction);
 
 /*! @brief Helper function to query the minimum workspace size required by the CosineEmbeddingLoss
- * call
+ * Backward call
  *
  * @param handle                   MIOpen Handle (input)
  * @param input1Desc               Tensor descriptor for input 1 tensor (input)
  * @param input2Desc               Tensor descriptor for input 2 tensor (input)
  * @param targetDesc               Tensor descriptor for target tensor (input)
- * @param outputDesc               Tensor descriptor for output tensor (input)
+ * @param outputGradDesc           Tensor descriptor for output grad tensor (input)
+ * @param input1GradDesc           Tensor descriptor for input 1 grad tensor (input)
+ * @param input2GradDesc           Tensor descriptor for input 2 grad tensor (input)
  * @param margin                   If margin is missing, the default value is 0 (input)
  * @param sizeInBytes              Pointer to data to return the minimum workspace size (output)
  * @return                         miopenStatus_t
@@ -6677,9 +6681,11 @@ miopenGetCosineEmbeddingLossBackwardWorkspaceSize(miopenHandle_t handle,
                                                   const float margin,
                                                   size_t* sizeInBytes);
 
-/*! @brief Execute a cosineembeddingloss reduced backward layer
+/*! @brief Execute a cosineembeddingloss backward layer
  *
  * @param handle          MIOpen handle (input)
+ * @param workspace             Pointer to workspace (input)
+ * @param workspaceSizeInBytes  Size of workspace buffer (input)
  * @param input1Desc      Tensor descriptor for input 1 tensor (input)
  * @param input1          Data tensor input 1 (input)
  * @param input2Desc      Tensor descriptor for input 2 tensor (input)
