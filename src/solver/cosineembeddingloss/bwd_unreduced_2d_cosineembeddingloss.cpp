@@ -29,7 +29,7 @@
 #include "miopen/invoke_params.hpp"
 #include <cstdio>
 #include <miopen/cosineembeddingloss/solvers.hpp>
-#include <miopen/cosineembeddingloss/forward_sum.hpp>
+#include <miopen/cosineembeddingloss/utils.hpp>
 
 #include <miopen/cosineembeddingloss/invoke_params.hpp>
 #include <miopen/datatype.hpp>

@@ -24,7 +24,7 @@
  *
  *******************************************************************************/
 
-#include <miopen/cosineembeddingloss/forward_sum.hpp>
+#include <miopen/cosineembeddingloss/utils.hpp>
 
 namespace miopen {
 
