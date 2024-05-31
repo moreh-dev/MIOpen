@@ -42,8 +42,6 @@ float dist(const T* I1,
            const size_t n,
            const size_t C)
 {
-    // eps defined in
-    // https://pytorch.org/docs/stable/generated/torch.nn.PairwiseDistance.html
     float d = 0.0f;
     for(size_t c = 0; c < C; c++)
     {
