@@ -84,6 +84,68 @@ void mloSigmoidFocalLossUnreducedFwdRunHost(TIO* input,
 }
 
 template <typename TIO>
+void mloSigmoidFocalLossUnreducedFwdRunHost(TIO* input,
+                                            miopenTensorDescriptor_t inputDesc,
+                                            TIO* target,
+                                            miopenTensorDescriptor_t targetDesc,
+                                            TIO* workspace,
+                                            TIO* ref_output,
+                                            float alpha   = 0.25,
+                                            float gamma   = 2,
+                                            float divisor = 1)
+{
+    tensor_view_5d_t input_tv  = get_inner_expanded_tv(miopen::deref(inputDesc));
+    tensor_view_5d_t target_tv = get_inner_expanded_tv(miopen::deref(targetDesc));
+    size_t inputSize           = miopen::deref(inputDesc).GetElementSize();
+    size_t n[5];
+
+    for(size_t idx = 0; idx < inputSize; ++idx)
+    {
+        GET_NCDHW(n[0], n[1], n[2], n[3], n[4], idx, input_tv);
+
+        float i = static_cast<float>(TV_5D_AT(input, n[0], n[1], n[2], n[3], n[4]));
+        float t = static_cast<float>(TV_5D_AT(target, n[0], n[1], n[2], n[3], n[4]));
+
+        float sig    = 1 / (1 + exp(-i));
+        float ceLoss = -(t * log(sig) + (1 - t) * log(1 - sig));
+        float sigT   = sig * t + (1 - sig) * (1 - t);
+        float loss   = ceLoss * pow(1 - sigT, gamma);
+
+        if(alpha >= 0)
+        {
+            float alphaT = alpha * t + (1 - alpha) * (1 - t);
+            loss         = alphaT * loss;
+        }
+
+        workspace[idx] = static_cast<TIO>(loss / divisor);
+    }
+
+    // Reduce loss
+    const int local_size = 256;
+    int offset_a         = 0;
+    int offset_b         = inputSize;
+    size_t _size         = inputSize;
+    do
+    {
+        for(int i = 0; i < _size; i += local_size)
+        {
+            TIO shared[local_size];
+            for(int j = 0; j < local_size; ++j)
+                shared[j] = i + j < _size ? workspace[offset_a + i + j] : 0.0f;
+            for(int offset = local_size / 2; offset > 0; offset >>= 1)
+                for(int j = 0; j < offset; ++j)
+                    shared[j] += shared[j + offset];
+            if(_size <= local_size)
+                ref_output[0] = shared[0];
+            else
+                workspace[offset_b + i / local_size] = shared[0];
+        }
+        std::swap(offset_a, offset_b);
+        _size = (_size + local_size - 1) / local_size;
+    } while(_size > 1);
+}
+
+template <typename TIO>
 class SigmoidFocalLossDriver : public Driver
 {
 public:
@@ -439,6 +501,18 @@ int SigmoidFocalLossDriver<TIO>::RunForwardCPU()
     {
         mloSigmoidFocalLossUnreducedFwdRunHost<TIO>(
             input.data(), inputDesc, target.data(), targetDesc, outputHost.data(), alpha, gamma);
+    }
+    else
+    {
+        mloSigmoidFocalLossUnreducedFwdRunHost<TIO>(input.data(),
+                                                    inputDesc,
+                                                    target.data(),
+                                                    targetDesc,
+                                                    workspace.data(),
+                                                    outputHost.data(),
+                                                    alpha,
+                                                    gamma,
+                                                    divisor);
     }
 
     return miopenStatusSuccess;

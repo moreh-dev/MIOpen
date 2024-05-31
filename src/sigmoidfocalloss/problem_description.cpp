@@ -81,7 +81,7 @@ bool checkSameLength(const TensorDescriptor& x, const TensorDescriptor& y)
 //     return NetworkConfig{ss.str()};
 // }
 
-NetworkConfig SigmoidFocalLossUnreducedFwdProblemDescription::MakeNetworkConfig() const
+NetworkConfig SigmoidFocalLossFwdProblemDescription::MakeNetworkConfig() const
 {
     auto input_dtype  = inputDesc.GetType();
     auto target_dtype = targetDesc.GetType();
@@ -90,7 +90,8 @@ NetworkConfig SigmoidFocalLossUnreducedFwdProblemDescription::MakeNetworkConfig(
 
     std::ostringstream ss;
 
-    ss << "sfl_unreduced_fwd";
+    ss << "sfl_fwd";
+    ss << "reduction" << reduction;
     ss << "i_dtype" << input_dtype;
     ss << "t_dtype" << target_dtype;
     ss << "dim_num" << dim_num;

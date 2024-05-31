@@ -273,6 +273,7 @@ set( MIOpen_Source
     solver/pooling/backwardNd.cpp
     solver/reduce/forward_argmax.cpp
     solver/reduce/forward_sum.cpp
+    solver/sigmoidfocalloss/forward_unreduced_sigmoid_focal_loss.cpp
     solver/sigmoidfocalloss/forward_sigmoid_focal_loss.cpp
     solver/softmax/attn_softmax.cpp
     solver/softmax/softmax.cpp
@@ -426,6 +427,7 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         kernels/stride_array.hpp
         kernels/tensor_view_5d.hpp
         kernels/utilities.inc
+        kernels/warp_shuffle.hpp
         kernels/workaround_issue_1431.hpp
         kernels/xform_bidirect_winograd_code.inc
         kernels/xform_data_filter.inc
@@ -463,6 +465,7 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         kernels/MIOpenLRNBwd.cl
         kernels/MIOpenLRNFwd.cl
         kernels/MIOpenNeuron.cl
+        kernels/MIOpenLossSum.cpp
         kernels/MIOpenPooling.cl
         kernels/MIOpenPoolingBwd.cl
         kernels/MIOpenPoolingBwdND.cl

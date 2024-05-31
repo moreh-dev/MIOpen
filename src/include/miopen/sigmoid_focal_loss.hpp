@@ -64,16 +64,6 @@ miopenStatus_t SigmoidFocalLossForward(Handle& handle,
 //                                           float margin,
 //                                           miopenLossReductionMode_t reduction);
 
-miopenStatus_t SigmoidFocalLossUnreducedForward(Handle& handle,
-                                                const TensorDescriptor& inputDesc,
-                                                ConstData_t input,
-                                                const TensorDescriptor& targetDesc,
-                                                ConstData_t target,
-                                                const TensorDescriptor& outputDesc,
-                                                Data_t output,
-                                                float alpha,
-                                                float gamma);
-
 // miopenStatus_t SigmoidFocalLossUnreducedBackward(Handle& handle,
 //                                                    const TensorDescriptor& inputDesc,
 //                                                    ConstData_t input,

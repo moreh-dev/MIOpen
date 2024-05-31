@@ -46,20 +46,17 @@ size_t GetSigmoidFocalLossForwardWorkspaceSize(Handle& handle,
     {
         return 0;
     }
-    return 0;
 
-    // auto ctx = ExecutionContext{&handle};
-    // const auto problem =
-    //     sigmoidfocalloss::SigmoidFocalLossFwdProblemDescription{inputDesc, targetDesc,
-    //     outputDesc};
+    auto ctx           = ExecutionContext{&handle};
+    const auto problem = sigmoidfocalloss::SigmoidFocalLossFwdProblemDescription{
+        inputDesc, targetDesc, outputDesc, reduction};
 
-    // const auto algo    = AlgorithmName{"SigmoidFocalLossFwd"};
-    // const auto solvers =
-    // solver::SolverContainer<solver::sigmoidfocalloss::SigmoidFocalLossFwd>{};
+    const auto algo    = AlgorithmName{"SigmoidFocalLossFwd"};
+    const auto solvers = solver::SolverContainer<solver::sigmoidfocalloss::SigmoidFocalLossFwd>{};
 
-    // auto pair_size_vector = solvers.GetWorkspaceSizes(ctx, problem);
+    auto pair_size_vector = solvers.GetWorkspaceSizes(ctx, problem);
 
-    // return pair_size_vector.empty() ? static_cast<size_t>(-1) : pair_size_vector.front().second;
+    return pair_size_vector.empty() ? static_cast<size_t>(-1) : pair_size_vector.front().second;
 }
 
 // miopenStatus_t SigmoidFocalLossBackward(Handle& handle,
@@ -100,37 +97,53 @@ size_t GetSigmoidFocalLossForwardWorkspaceSize(Handle& handle,
 //     return miopenStatusSuccess;
 // }
 
-miopenStatus_t SigmoidFocalLossUnreducedForward(Handle& handle,
-                                                const TensorDescriptor& inputDesc,
-                                                ConstData_t input,
-                                                const TensorDescriptor& targetDesc,
-                                                ConstData_t target,
-                                                const TensorDescriptor& outputDesc,
-                                                Data_t output,
-                                                float alpha,
-                                                float gamma)
+miopenStatus_t SigmoidFocalLossForward(Handle& handle,
+                                       Data_t workspace,
+                                       size_t workspaceSizeInBytes,
+                                       const TensorDescriptor& inputDesc,
+                                       ConstData_t input,
+                                       const TensorDescriptor& targetDesc,
+                                       ConstData_t target,
+                                       const TensorDescriptor& outputDesc,
+                                       Data_t output,
+                                       float alpha,
+                                       float gamma,
+                                       miopenLossReductionMode_t reduction)
 {
-    const auto problem = sigmoidfocalloss::SigmoidFocalLossUnreducedFwdProblemDescription{
-        inputDesc, targetDesc, outputDesc};
+    const auto problem = sigmoidfocalloss::SigmoidFocalLossFwdProblemDescription{
+        inputDesc, targetDesc, outputDesc, reduction};
 
     const auto invoke_params = [&]() {
-        auto tmp       = sigmoidfocalloss::UnreducedFwdInvokeParams{};
-        tmp.inputDesc  = &inputDesc;
-        tmp.targetDesc = &targetDesc;
-        tmp.outputDesc = &outputDesc;
-        tmp.input      = input;
-        tmp.target     = target;
-        tmp.output     = output;
-        tmp.alpha      = alpha;
-        tmp.gamma      = gamma;
+        auto tmp           = sigmoidfocalloss::FwdInvokeParams{};
+        tmp.inputDesc      = &inputDesc;
+        tmp.targetDesc     = &targetDesc;
+        tmp.outputDesc     = &outputDesc;
+        tmp.input          = input;
+        tmp.target         = target;
+        tmp.output         = output;
+        tmp.workspace      = workspace;
+        tmp.workspace_size = workspaceSizeInBytes;
+        tmp.alpha          = alpha;
+        tmp.gamma          = gamma;
         return tmp;
     }();
 
-    const auto algo = AlgorithmName{"SigmoidFocalLossUnreducedFwd"};
-    const auto solvers =
-        solver::SolverContainer<solver::sigmoidfocalloss::SigmoidFocalLossUnreducedFwd>{};
+    if(reduction == MIOPEN_LOSS_REDUCTION_NONE)
+    {
+        const auto algo = AlgorithmName{"SigmoidFocalLossUnreducedFwd"};
+        const auto solvers =
+            solver::SolverContainer<solver::sigmoidfocalloss::SigmoidFocalLossUnreducedFwd>{};
 
-    solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
+        solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
+    }
+    else
+    {
+        const auto algo = AlgorithmName{"SigmoidFocalLossFwd"};
+        const auto solvers =
+            solver::SolverContainer<solver::sigmoidfocalloss::SigmoidFocalLossFwd>{};
+
+        solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
+    }
 
     return miopenStatusSuccess;
 }

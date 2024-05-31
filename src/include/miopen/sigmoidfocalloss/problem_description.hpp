@@ -26,6 +26,7 @@
 #pragma once
 
 #include "miopen/errors.hpp"
+#include "miopen/miopen.h"
 #include <miopen/activ.hpp>
 #include <miopen/problem_description_base.hpp>
 #include <miopen/tensor.hpp>
@@ -44,8 +45,9 @@ bool checkSameLength(const TensorDescriptor& x, const TensorDescriptor& y);
 struct SigmoidFocalLossProblemDescription : ProblemDescriptionBase
 {
     SigmoidFocalLossProblemDescription(const TensorDescriptor& inputDesc_,
-                                       const TensorDescriptor& targetDesc_)
-        : inputDesc(inputDesc_), targetDesc(targetDesc_)
+                                       const TensorDescriptor& targetDesc_,
+                                       const miopenLossReductionMode_t reduction_)
+        : inputDesc(inputDesc_), targetDesc(targetDesc_), reduction(reduction_)
     {
         if(!checkSameLength(inputDesc, targetDesc))
             MIOPEN_THROW(miopenStatusBadParm, "Loss: Input, target tensor sizes do not match.");
@@ -57,51 +59,17 @@ struct SigmoidFocalLossProblemDescription : ProblemDescriptionBase
 public:
     TensorDescriptor inputDesc;
     TensorDescriptor targetDesc;
+    miopenLossReductionMode_t reduction;
 };
 
-// struct SigmoidFocalLossFwdProblemDescription : SigmoidFocalLossProblemDescription
-// {
-//     SigmoidFocalLossFwdProblemDescription(const TensorDescriptor& inputDesc_,
-//                                             const TensorDescriptor& targetDesc_,
-//                                             const TensorDescriptor& outputDesc_)
-//         : SigmoidFocalLossProblemDescription(inputDesc_, targetDesc_), outputDesc(outputDesc_)
-//     {
-//     }
-
-//     NetworkConfig MakeNetworkConfig() const override;
-//     const TensorDescriptor& GetOutputDesc() const { return outputDesc; }
-
-// public:
-//     TensorDescriptor outputDesc;
-// };
-
-// struct SigmoidFocalLossBwdProblemDescription : SigmoidFocalLossProblemDescription
-// {
-//     SigmoidFocalLossBwdProblemDescription(const TensorDescriptor& inputDesc_,
-//                                             const TensorDescriptor& targetDesc_,
-//                                             const TensorDescriptor& doutputDesc_,
-//                                             const TensorDescriptor& dinputDesc_)
-//         : SigmoidFocalLossProblemDescription(inputDesc_, targetDesc_),
-//           doutputDesc(doutputDesc_),
-//           dinputDesc(dinputDesc_)
-//     {
-//     }
-
-//     NetworkConfig MakeNetworkConfig() const override;
-//     const TensorDescriptor& GetDoutputDesc() const { return doutputDesc; }
-//     const TensorDescriptor& GetDinputDesc() const { return dinputDesc; }
-
-// public:
-//     TensorDescriptor doutputDesc;
-//     TensorDescriptor dinputDesc;
-// };
-
-struct SigmoidFocalLossUnreducedFwdProblemDescription : SigmoidFocalLossProblemDescription
+struct SigmoidFocalLossFwdProblemDescription : SigmoidFocalLossProblemDescription
 {
-    SigmoidFocalLossUnreducedFwdProblemDescription(const TensorDescriptor& inputDesc_,
-                                                   const TensorDescriptor& targetDesc_,
-                                                   const TensorDescriptor& outputDesc_)
-        : SigmoidFocalLossProblemDescription(inputDesc_, targetDesc_), outputDesc(outputDesc_)
+    SigmoidFocalLossFwdProblemDescription(const TensorDescriptor& inputDesc_,
+                                          const TensorDescriptor& targetDesc_,
+                                          const TensorDescriptor& outputDesc_,
+                                          const miopenLossReductionMode_t reduction_)
+        : SigmoidFocalLossProblemDescription(inputDesc_, targetDesc_, reduction_),
+          outputDesc(outputDesc_)
     {
     }
 

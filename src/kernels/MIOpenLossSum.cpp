@@ -23,45 +23,34 @@
  * SOFTWARE.
  *
  *******************************************************************************/
-#pragma once
 
-#include "miopen/miopen.h"
-#include <miopen/invoke_params.hpp>
-#include <miopen/tensor.hpp>
+#ifndef MIOPEN_DONT_USE_HIP_RUNTIME_HEADERS
+#include <hip/hip_fp16.h>
+#include <hip/hip_runtime.h>
+#endif
 
-#include <limits>
+#include "float_types.h"
+#include "warp_shuffle.hpp"
 
-namespace miopen {
+#ifndef IN_OUT_TYPE
+#define IN_OUT_TYPE float
+#endif
 
-namespace sigmoidfocalloss {
-
-struct SigmoidFocalLossInvokeParams : public miopen::InvokeParams
+template <typename TIO>
+__device__ void losssum(const TIO* input, TIO* output, size_t N)
 {
-    SigmoidFocalLossInvokeParams() = default;
+    auto gid = blockIdx.x * blockDim.x + threadIdx.x;
 
-    const TensorDescriptor* inputDesc  = nullptr;
-    const TensorDescriptor* targetDesc = nullptr;
+    FLOAT_ACCUM val = gid < N ? CVT_FLOAT2ACCUM(input[gid]) : static_cast<FLOAT_ACCUM>(0.0f);
+    val             = block_reduce_sum(val);
 
-    ConstData_t input                   = nullptr;
-    ConstData_t target                  = nullptr;
-    Data_t workspace                    = nullptr;
-    std::size_t workspace_size          = 0;
-    float alpha                         = 0.25;
-    float gamma                         = 2.0f;
-    miopenLossReductionMode_t reduction = MIOPEN_LOSS_REDUCTION_NONE;
+    if(threadIdx.x == 0)
+        output[blockIdx.x] = CVT_ACCUM2FLOAT(val);
+}
 
-    std::size_t GetWorkspaceSize() const { return workspace_size; }
-    Data_t GetWorkspace() const { return workspace; }
-};
-
-struct FwdInvokeParams : SigmoidFocalLossInvokeParams
+extern "C" __global__ void
+LossSum(const IN_OUT_TYPE* __restrict__ input, IN_OUT_TYPE* __restrict__ output, size_t N)
 {
-    FwdInvokeParams() = default;
-
-    const TensorDescriptor* outputDesc = nullptr;
-    Data_t output                      = nullptr;
-};
-
-} // namespace sigmoidfocalloss
-
-} // namespace miopen
+    // instantiate the kernel
+    losssum<IN_OUT_TYPE>(input, output, N);
+}

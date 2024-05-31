@@ -23,45 +23,50 @@
  * SOFTWARE.
  *
  *******************************************************************************/
-#pragma once
 
-#include "miopen/miopen.h"
-#include <miopen/invoke_params.hpp>
-#include <miopen/tensor.hpp>
+#ifndef MIOPEN_DONT_USE_HIP_RUNTIME_HEADERS
+#include <hip/hip_fp16.h>
+#include <hip/hip_runtime.h>
+#endif
 
-#include <limits>
+#include "float_types.h"
 
-namespace miopen {
+#ifndef REDUCE_SIZE
+#define REDUCE_SIZE 256
+#endif
 
-namespace sigmoidfocalloss {
-
-struct SigmoidFocalLossInvokeParams : public miopen::InvokeParams
+__device__ FLOAT_ACCUM warp_reduce_sum(FLOAT_ACCUM val)
 {
-    SigmoidFocalLossInvokeParams() = default;
+    if(warpSize >= 64)
+        val += __shfl_down(val, 32);
+    if(warpSize >= 32)
+        val += __shfl_down(val, 16);
+    if(warpSize >= 16)
+        val += __shfl_down(val, 8);
+    if(warpSize >= 8)
+        val += __shfl_down(val, 4);
+    if(warpSize >= 4)
+        val += __shfl_down(val, 2);
+    if(warpSize >= 2)
+        val += __shfl_down(val, 1);
+    return val;
+}
 
-    const TensorDescriptor* inputDesc  = nullptr;
-    const TensorDescriptor* targetDesc = nullptr;
-
-    ConstData_t input                   = nullptr;
-    ConstData_t target                  = nullptr;
-    Data_t workspace                    = nullptr;
-    std::size_t workspace_size          = 0;
-    float alpha                         = 0.25;
-    float gamma                         = 2.0f;
-    miopenLossReductionMode_t reduction = MIOPEN_LOSS_REDUCTION_NONE;
-
-    std::size_t GetWorkspaceSize() const { return workspace_size; }
-    Data_t GetWorkspace() const { return workspace; }
-};
-
-struct FwdInvokeParams : SigmoidFocalLossInvokeParams
+__device__ FLOAT_ACCUM block_reduce_sum(FLOAT_ACCUM val)
 {
-    FwdInvokeParams() = default;
+    static __shared__ FLOAT_ACCUM shared[REDUCE_SIZE / warpSize];
+    auto lane = threadIdx.x % warpSize;
+    auto wid  = threadIdx.x / warpSize;
 
-    const TensorDescriptor* outputDesc = nullptr;
-    Data_t output                      = nullptr;
-};
+    val = warp_reduce_sum(val);
 
-} // namespace sigmoidfocalloss
+    if(lane == 0)
+        shared[wid] = val;
+    __syncthreads();
 
-} // namespace miopen
+    val = threadIdx.x < REDUCE_SIZE / warpSize ? shared[lane] : 0;
+    if(wid == 0)
+        val = warp_reduce_sum(val);
+
+    return val;
+}

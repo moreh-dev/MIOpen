@@ -45,6 +45,53 @@
 #endif
 
 template <typename TIO>
+__device__ void sigmoidFocalLossFwd(const TIO* input,
+                                    TIO* target,
+                                    TIO* workspace,
+                                    float alpha,
+                                    float gamma,
+                                    float divisor,
+                                    tensor_view_5d_t input_tv,
+                                    tensor_view_5d_t target_tv)
+{
+    size_t gid = threadIdx.x + blockIdx.x * blockDim.x;
+    size_t n[5];
+    GET_NCDHW(n[0], n[1], n[2], n[3], n[4], gid, input_tv);
+
+    if(n[0] >= input_tv.size[0])
+        return;
+
+    FLOAT_ACCUM i = CVT_FLOAT2ACCUM(TV_5D_AT(input, n[0], n[1], n[2], n[3], n[4]));
+    FLOAT_ACCUM t = CVT_FLOAT2ACCUM(TV_5D_AT(target, n[0], n[1], n[2], n[3], n[4]));
+
+    FLOAT_ACCUM sig    = 1 / (1 + exp(-i));
+    FLOAT_ACCUM ceLoss = -(t * log(sig) + (1 - t) * log(1 - sig));
+    FLOAT_ACCUM sig_t  = sig * t + (1 - sig) * (1 - t);
+    FLOAT_ACCUM loss   = ceLoss * pow(1 - sig_t, gamma);
+
+    if(alpha >= 0)
+    {
+        FLOAT_ACCUM alpha_t = alpha * t + (1 - alpha) * (1 - t);
+        loss                = alpha_t * loss;
+    }
+
+    workspace[gid] = CVT_ACCUM2FLOAT(loss / divisor);
+}
+
+extern "C" __global__ void SigmoidFocalLossFwd(const IN_OUT_TYPE* input,
+                                               IN_OUT_TYPE* target,
+                                               IN_OUT_TYPE* workspace,
+                                               float alpha,
+                                               float gamma,
+                                               float divisor,
+                                               tensor_view_5d_t input_tv,
+                                               tensor_view_5d_t target_tv)
+{
+    sigmoidFocalLossFwd<IN_OUT_TYPE>(
+        input, target, workspace, alpha, gamma, divisor, input_tv, target_tv);
+}
+
+template <typename TIO>
 __device__ void sigmoidFocalLossUnreducedFwd(const TIO* input,
                                              TIO* target,
                                              TIO* output,
