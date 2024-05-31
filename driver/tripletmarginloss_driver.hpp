@@ -283,11 +283,11 @@ int TripletMarginLossDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     dN_dev        = std::unique_ptr<GPUMem>(new GPUMem(ctx, negative_sz, sizeof(Tgpu)));
     workspace_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, ws_sizeInBytes, sizeof(std::byte)));
 
-    anchor   = std::vector<Tgpu>(anchor_sz, static_cast<Tgpu>(0));
-    positive = std::vector<Tgpu>(positive_sz, static_cast<Tgpu>(0));
-    negative = std::vector<Tgpu>(negative_sz, static_cast<Tgpu>(0));
+    anchor   = std::vector<Tgpu>(anchor_sz);
+    positive = std::vector<Tgpu>(positive_sz);
+    negative = std::vector<Tgpu>(negative_sz);
     out      = std::vector<Tgpu>(out_sz, static_cast<Tgpu>(0));
-    dO       = std::vector<Tgpu>(out_sz, static_cast<Tgpu>(0));
+    dO       = std::vector<Tgpu>(out_sz, static_cast<Tgpu>(0.5));
     dA       = std::vector<Tgpu>(anchor_sz, static_cast<Tgpu>(0));
     dP       = std::vector<Tgpu>(positive_sz, static_cast<Tgpu>(0));
     dN       = std::vector<Tgpu>(negative_sz, static_cast<Tgpu>(0));
@@ -305,10 +305,6 @@ int TripletMarginLossDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
 
     for(int i = 0; i < negative_sz; i++)
         negative[i] = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.2), static_cast<Tgpu>(0.4));
-
-    fill(out.begin(), out.end(), static_cast<Tgpu>(0));
-
-    fill(dO.begin(), dO.end(), static_cast<Tgpu>(0.5));
 
     if(anchor_dev->ToGPU(GetStream(), anchor.data()) != 0)
         std::cerr << "Error copying (anchor) to GPU, size: " << anchor_dev->GetSize() << std::endl;
