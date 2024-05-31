@@ -45,6 +45,7 @@ add_executable(MIOpenDriver
     dm_groupnorm.cpp
     dm_layernorm.cpp
     dm_lrn.cpp
+    dm_marginrankingloss.cpp
     dm_pool.cpp
     dm_reduce.cpp
     dm_rnn.cpp
