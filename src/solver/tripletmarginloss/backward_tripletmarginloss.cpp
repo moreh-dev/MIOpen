@@ -149,10 +149,6 @@ bool Backward2d::IsApplicable(
     const ExecutionContext& context,
     const miopen::tripletmarginloss::BackwardProblemDescription& problem) const
 {
-    if(!problem.IsSameType())
-        return false;
-    if(!problem.IsRightLength())
-        return false;
     if(!IsImprovementOverROCm(context, problem))
         return false;
     return true;
@@ -185,7 +181,7 @@ bool UnreducedBackward2d::IsApplicable(
     const ExecutionContext& context,
     const miopen::tripletmarginloss::BackwardProblemDescription& problem) const
 {
-    if(!problem.IsUnreduced())
+    if(problem.IsReduced())
         return false;
     if(!Backward2d::IsApplicable(context, problem))
         return false;

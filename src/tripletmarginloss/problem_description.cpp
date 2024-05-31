@@ -73,7 +73,7 @@ NetworkConfig ForwardProblemDescription::MakeNetworkConfig() const
 
     std::ostringstream ss;
 
-    ss << "tripletmarginloss_fwd" << IsUnreduced() << IsReduced();
+    ss << "tripletmarginloss_fwd" << IsReduced();
     ss << "idtype" << input_dtype;
     ss << "odtype" << output_dtype;
     ss << "size[0]" << size0;
@@ -91,7 +91,7 @@ NetworkConfig BackwardProblemDescription::MakeNetworkConfig() const
 
     std::ostringstream ss;
 
-    ss << "tripletmarginloss_bwd" << IsUnreduced() << IsReduced();
+    ss << "tripletmarginloss_bwd" << IsReduced();
     ss << "idtype" << input_dtype;
     ss << "odtype" << output_dtype;
     ss << "size[0]" << size0;

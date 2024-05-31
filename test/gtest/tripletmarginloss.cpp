@@ -58,7 +58,7 @@ struct TripletMarginLossTestBfloat16 : TripletMarginLossTest<bfloat16>
 } // namespace smoothl1loss
 using namespace smoothl1loss;
 
-TEST_P(TripletMarginLossTestFloat, TripletMarginLossTestFw)
+TEST_P(TripletMarginLossTestFloat, TripletMarginLossTest)
 {
     if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) || (GetFloatArg() == "--float"))
     {
@@ -71,7 +71,7 @@ TEST_P(TripletMarginLossTestFloat, TripletMarginLossTestFw)
     }
 };
 
-TEST_P(TripletMarginLossTestHalf, TripletMarginLossTestFw)
+TEST_P(TripletMarginLossTestHalf, TripletMarginLossTest)
 {
     if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) || (GetFloatArg() == "--half"))
     {
@@ -84,7 +84,7 @@ TEST_P(TripletMarginLossTestHalf, TripletMarginLossTestFw)
     }
 };
 
-TEST_P(TripletMarginLossTestBfloat16, TripletMarginLossTestFw)
+TEST_P(TripletMarginLossTestBfloat16, TripletMarginLossTest)
 {
     if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) || (GetFloatArg() == "--bfloat16"))
     {

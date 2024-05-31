@@ -146,10 +146,6 @@ bool Forward2d::IsApplicable(
     const ExecutionContext& context,
     const miopen::tripletmarginloss::ForwardProblemDescription& problem) const
 {
-    if(!problem.IsSameType())
-        return false;
-    if(!problem.IsRightLength())
-        return false;
     if(!IsImprovementOverROCm(context, problem))
         return false;
     return true;
@@ -182,7 +178,7 @@ bool UnreducedForward2d::IsApplicable(
     const ExecutionContext& context,
     const miopen::tripletmarginloss::ForwardProblemDescription& problem) const
 {
-    if(!problem.IsUnreduced())
+    if(problem.IsReduced())
         return false;
     if(!Forward2d::IsApplicable(context, problem))
         return false;

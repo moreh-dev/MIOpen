@@ -47,6 +47,25 @@ struct ForwardProblemDescription : ProblemDescriptionBase
                               const TensorDescriptor& oDesc_)
         : aDesc(aDesc_), pDesc(pDesc_), nDesc(nDesc_), oDesc(oDesc_)
     {
+        if(!checkSameType(aDesc, pDesc) || !checkSameType(aDesc, nDesc))
+            MIOPEN_THROW(
+                miopenStatusBadParm,
+                "Triplet Margin Loss: Anchor, Positive, Negative tensor must have same type.");
+        if(aDesc.GetSize() != 2 || pDesc.GetSize() != 2 || nDesc.GetSize() != 2)
+            MIOPEN_THROW(
+                miopenStatusBadParm,
+                "Triplet Margin Loss: Anchor, Positive, Negative tensor must have 2 dimensions.");
+        if(!checkSameLength(aDesc, pDesc) || !checkSameLength(aDesc, nDesc))
+            MIOPEN_THROW(
+                miopenStatusBadParm,
+                "Triplet Margin Loss: Anchor, Positive, Negative tensor sizes do not match.");
+        if(oDesc.GetSize() != 1)
+            MIOPEN_THROW(miopenStatusBadParm,
+                         "Triplet Margin Loss: Output tensor must have 1 dimension.");
+        if(oDesc.GetElementSize() != 1 && oDesc.GetElementSize() != aDesc.GetLengths()[0])
+            MIOPEN_THROW(miopenStatusBadParm,
+                         "Triplet Margin Loss: Output tensor size must be 1 (for reduction) or "
+                         "Anchor's first dimension.");
     }
 
     const TensorDescriptor& GetADesc() const { return aDesc; }
@@ -54,41 +73,9 @@ struct ForwardProblemDescription : ProblemDescriptionBase
     const TensorDescriptor& GetNDesc() const { return nDesc; }
     const TensorDescriptor& GetODesc() const { return oDesc; }
 
-    bool IsSameType() const
-    {
-        if(!checkSameType(aDesc, pDesc) || !checkSameType(aDesc, nDesc))
-            MIOPEN_THROW(
-                miopenStatusBadParm,
-                "Triplet Margin Loss: Anchor, Positive, Negative tensor must have same type.");
-        return true;
-    }
-
-    bool IsRightLength() const
-    {
-        if(aDesc.GetSize() != 2 || pDesc.GetSize() != 2 || nDesc.GetSize() != 2)
-            MIOPEN_THROW(
-                miopenStatusBadParm,
-                "Triplet Margin Loss: Anchor, Positive, Negative tensor must have 2 dimensions.");
-        if(oDesc.GetSize() != 1)
-            MIOPEN_THROW(miopenStatusBadParm,
-                         "Triplet Margin Loss: Output tensor must have 1 dimension.");
-        if(!checkSameLength(aDesc, pDesc) || !checkSameLength(aDesc, nDesc))
-            MIOPEN_THROW(
-                miopenStatusBadParm,
-                "Triplet Margin Loss: Anchor, Positive, Negative tensor sizes do not match.");
-        return true;
-    }
-
     bool IsReduced() const
     {
-        if(oDesc.GetElementSize() != 1)
-            return false;
-        return true;
-    }
-
-    bool IsUnreduced() const
-    {
-        if(oDesc.GetLengths()[0] != aDesc.GetLengths()[0])
+        if(oDesc.GetElementSize() == aDesc.GetLengths()[0])
             return false;
         return true;
     }
@@ -122,6 +109,34 @@ struct BackwardProblemDescription : ProblemDescriptionBase
           dPDesc(dPDesc_),
           dNDesc(dNDesc_)
     {
+        if(!checkSameType(aDesc, pDesc) || !checkSameType(aDesc, nDesc))
+            MIOPEN_THROW(
+                miopenStatusBadParm,
+                "Triplet Margin Loss: Anchor, Positive, Negative tensor must have same type.");
+        if(!checkSameType(aDesc, dADesc) || !checkSameType(pDesc, dPDesc) ||
+           !checkSameType(nDesc, dNDesc))
+            MIOPEN_THROW(miopenStatusBadParm,
+                         "Triplet Margin Loss: Gradient tensors (excluding Output gradient) must "
+                         "share a same type with Anchor, Positive and Negative tensor.");
+        if(aDesc.GetSize() != 2 || pDesc.GetSize() != 2 || nDesc.GetSize() != 2)
+            MIOPEN_THROW(
+                miopenStatusBadParm,
+                "Triplet Margin Loss: Anchor, Positive, Negative tensor must have 2 dimensions.");
+        if(dADesc.GetSize() != 2 || dPDesc.GetSize() != 2 || dNDesc.GetSize() != 2)
+            MIOPEN_THROW(miopenStatusBadParm,
+                         "Triplet Margin Loss: Gradient tensors (excluding Output gradient) must "
+                         "have 2 dimensions.");
+        if(!checkSameLength(aDesc, pDesc) || !checkSameLength(aDesc, nDesc))
+            MIOPEN_THROW(
+                miopenStatusBadParm,
+                "Triplet Margin Loss: Anchor, Positive, Negative tensor sizes do not match.");
+        if(dODesc.GetSize() != 1)
+            MIOPEN_THROW(miopenStatusBadParm,
+                         "Triplet Margin Loss: Output gradient tensor must have 1 dimension.");
+        if(dODesc.GetElementSize() != 1 && dODesc.GetElementSize() != aDesc.GetLengths()[0])
+            MIOPEN_THROW(miopenStatusBadParm,
+                         "Triplet Margin Loss: Output gradient tensor size must be 1 (for "
+                         "reduction) or Anchor's first dimension.");
     }
 
     const TensorDescriptor& GetADesc() const { return aDesc; }
@@ -132,50 +147,9 @@ struct BackwardProblemDescription : ProblemDescriptionBase
     const TensorDescriptor& GetdPDesc() const { return dPDesc; }
     const TensorDescriptor& GetdNDesc() const { return dNDesc; }
 
-    bool IsSameType() const
-    {
-        if(!checkSameType(aDesc, pDesc) || !checkSameType(aDesc, nDesc))
-            MIOPEN_THROW(
-                miopenStatusBadParm,
-                "Triplet Margin Loss: Anchor, Positive, Negative tensor must have same type.");
-        if(!checkSameType(aDesc, dADesc) || !checkSameType(pDesc, dPDesc) ||
-           !checkSameType(nDesc, dNDesc))
-            MIOPEN_THROW(miopenStatusBadParm,
-                         "Triplet Margin Loss: Gradient tensors (excluding Output gradient) must "
-                         "share a same type with Anchor, Positive and Negative tensor.");
-        return true;
-    }
-
-    bool IsRightLength() const
-    {
-        if(aDesc.GetSize() != 2 || pDesc.GetSize() != 2 || nDesc.GetSize() != 2)
-            MIOPEN_THROW(
-                miopenStatusBadParm,
-                "Triplet Margin Loss: Anchor, Positive, Negative tensor must have 2 dimensions.");
-        if(dADesc.GetSize() != 2 || dPDesc.GetSize() != 2 || dNDesc.GetSize() != 2)
-            MIOPEN_THROW(miopenStatusBadParm,
-                         "Triplet Margin Loss: Gradient tensors (excluding Output gradient) must "
-                         "have 2 dimensions.");
-        if(dODesc.GetSize() != 1)
-            MIOPEN_THROW(miopenStatusBadParm,
-                         "Triplet Margin Loss: Output gradient tensor must have 1 dimension.");
-        if(!checkSameLength(aDesc, pDesc) || !checkSameLength(aDesc, nDesc))
-            MIOPEN_THROW(
-                miopenStatusBadParm,
-                "Triplet Margin Loss: Anchor, Positive, Negative tensor sizes do not match.");
-        return true;
-    }
-
     bool IsReduced() const
     {
-        if(dODesc.GetElementSize() != 1)
-            return false;
-        return true;
-    }
-
-    bool IsUnreduced() const
-    {
-        if(dODesc.GetLengths()[0] != aDesc.GetLengths()[0])
+        if(dODesc.GetElementSize() == aDesc.GetLengths()[0])
             return false;
         return true;
     }
