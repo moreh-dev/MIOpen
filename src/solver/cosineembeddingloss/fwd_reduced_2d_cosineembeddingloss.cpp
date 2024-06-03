@@ -82,7 +82,6 @@ ConstructNormParamsKernels(const ExecutionContext& context,
 inline void RunNormKernels(const std::vector<Kernel>& kernels,
                            const Handle& handle_,
                            const AnyInvokeParams& raw_params,
-                           float& elapsed,
                            int& kernel_cnt,
                            Data_t& work_a,
                            Data_t& work_b)
@@ -95,8 +94,6 @@ inline void RunNormKernels(const std::vector<Kernel>& kernels,
         auto kernel = handle_.Run(kernels[kernel_cnt++]);
 
         kernel(params.input1, params.input2, work_a, I1_tv, I2_tv);
-        if(handle_.IsProfilingEnabled())
-            elapsed += handle_.GetKernelTime();
     }
 
     auto reduce_size        = params.input1Desc->GetLengths()[1];
@@ -114,22 +111,15 @@ inline void RunNormKernels(const std::vector<Kernel>& kernels,
                         (uint64_t)parallelism_size,
                         (uint64_t)1,
                         false);
-        if(handle_.IsProfilingEnabled())
-            elapsed += handle_.GetKernelTime();
 
         auto kernel = handle_.Run(kernels[kernel_cnt++]);
         kernel(
             work_b, work_a, (uint64_t)output_numel, (uint64_t)parallelism_size, (uint64_t)1, false);
-
-        if(handle_.IsProfilingEnabled())
-            elapsed += handle_.GetKernelTime();
     }
     else
     {
         auto kernel = handle_.Run(kernels[kernel_cnt++]);
         kernel(work_a, work_b, (uint64_t)output_numel, (uint64_t)reduce_size, (uint64_t)1, false);
-        if(handle_.IsProfilingEnabled())
-            elapsed += handle_.GetKernelTime();
         std::swap(work_a, work_b);
     }
 }
@@ -194,8 +184,18 @@ ConvSolution CosineEmbeddingLossReducedForward2d::GetSolution(
                                          params.input1Desc->GetElementSize() *
                                              get_data_size(params.outputDesc->GetType()) * 3);
 
+            HipEventPtr start;
+            HipEventPtr stop;
+
+            if(handle_.IsProfilingEnabled())
             {
-                RunNormKernels(kernels, handle_, raw_params, elapsed, kernel_cnt, work_a, work_b);
+                start = miopen::make_hip_event();
+                stop  = miopen::make_hip_event();
+                hipEventRecord(start.get(), handle_.GetStream());
+            }
+
+            {
+                RunNormKernels(kernels, handle_, raw_params, kernel_cnt, work_a, work_b);
             }
 
             {
@@ -208,10 +208,6 @@ ConvSolution CosineEmbeddingLossReducedForward2d::GetSolution(
 
                 auto kernel = handle_.Run(kernels[kernel_cnt++]);
                 kernel(work_a, params.target, work_b, params.margin, divisor, target_tv);
-                if(handle_.IsProfilingEnabled())
-                {
-                    elapsed += handle_.GetKernelTime();
-                }
                 std::swap(work_a, work_b);
             }
 
@@ -229,13 +225,14 @@ ConvSolution CosineEmbeddingLossReducedForward2d::GetSolution(
                     }
                     else
                         kernel(work_a, params.output, size);
-                    if(handle_.IsProfilingEnabled())
-                        elapsed += handle_.GetKernelTime();
                     size = (size + LOCAL_SIZE_REDUCED - 1) / LOCAL_SIZE_REDUCED;
                 }
             }
             if(handle_.IsProfilingEnabled())
             {
+                hipEventRecord(stop.get(), handle_.GetStream());
+                hipEventSynchronize(stop.get());
+                hipEventElapsedTime(&elapsed, start.get(), stop.get());
                 handle_.ResetKernelTime();
                 handle_.AccumKernelTime(elapsed);
             };
