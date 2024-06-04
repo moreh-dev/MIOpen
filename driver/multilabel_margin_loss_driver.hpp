@@ -134,226 +134,7 @@ void mloMultilabelMarginLossFwdRunHost(TIO* input,
         _size = (_size + local_size - 1) / local_size;
     } while(_size > 1);
 }
-
-template <class TIO, class TT>
-void mloMultilabelMarginLossBwdRunHost(TIO* input,
-                                     miopenTensorDescriptor_t inputDesc,
-                                     TT* target,
-                                     miopenTensorDescriptor_t targetDesc,
-                                     TIO* doutput,
-                                     miopenTensorDescriptor_t doutputDesc,
-                                     TIO* dinput,
-                                     miopenTensorDescriptor_t dinputDesc,
-                                     float divisor = 1)
-{
-    auto idims = miopen::deref(inputDesc).GetLengths();
-    auto tdims = miopen::deref(targetDesc).GetLengths();
-    auto istrides = miopen::deref(inputDesc).GetStrides();
-    auto tstrides = miopen::deref(targetDesc).GetStrides();
-    auto input_size = std::accumulate(idims.begin(), idims.end(), 1L, std::multiplies<int64_t>());
-
-    auto dOstrides = miopen::deref(doutputDesc).GetStrides();
-    auto dIstrides = miopen::deref(dinputDesc).GetStrides();
-
-    auto N = idims[0];
-    auto C = idims[1];
-    auto ws = std::vector<char>(input_size, static_cast<char>(0.0));
-    // Compute loss
-    for(size_t idx = 0; idx < N; ++idx)
-    {
-        auto n = idx;
-        for (size_t c = 0; c < C; c++) 
-        {
-            ws[n * C + c] = 0;
-            dinput[(dIstrides[1] * c) + (dIstrides[0] * n)] = 0.0f;
-        }
-        
-        for (size_t c = 0; c < C; c++) 
-        {
-            int is_target_idx = 0;
-            for (size_t i = 0; i < C; i++)
-            {
-                size_t T_at_n_i = target[tstrides[1] * i + tstrides[0] * n];
-                if (T_at_n_i == -1) break;
-                if (T_at_n_i == c) 
-                {
-                    is_target_idx = 1;
-                    break;
-                }
-            }
-            if (is_target_idx)
-            {
-                ws[n * C + c] = 1;
-            }
-        }
-        float out_grad = doutput[dOstrides[0] * 0];
-        float delta = 1.0f / C * out_grad  / divisor;
-
-        for (size_t ct = 0; ct < C; ct++)
-        {
-            size_t T_at_n_ct = target[tstrides[1] * ct + tstrides[0] * n];
-            if (T_at_n_ct == -1) break;
-            for (size_t ci = 0; ci < C; ci++)
-            {
-                if (ws[n * C + ci] == 0)
-                {
-                    float t = 1.0f - static_cast<float>(input[istrides[1] * T_at_n_ct + istrides[0] * n]) - static_cast<float>(input[istrides[1] * ci + istrides[0] * n]);
-                    if (t >= 0)
-                    {
-                        float x = static_cast<float>(dinput[(dIstrides[1] * ci) + (dIstrides[0] * n)]) + delta;
-                        dinput[(dIstrides[1] * ci) + (dIstrides[0] * n)] = static_cast<TIO>(x);
-                        float y = static_cast<float>(dinput[(dIstrides[1] * T_at_n_ct) + (dIstrides[0] * n)]) - delta;
-                        dinput[(dIstrides[1] * T_at_n_ct) + (dIstrides[0] * n)] = static_cast<TIO>(y);
-                    }
-                }
-            }
-        }
-    }
-
-}
-
-template <typename TIO, typename TT>
-void mloMultilabelMarginLossUnreducedFwdRunHost(TIO* input,
-                                              miopenTensorDescriptor_t inputDesc,
-                                              TT* target,
-                                              miopenTensorDescriptor_t targetDesc,
-                                              TIO* outputhost,
-                                              miopenTensorDescriptor_t outputhostDesc)
-{
-    auto idims = miopen::deref(inputDesc).GetLengths();
-    auto tdims = miopen::deref(targetDesc).GetLengths();
-    auto istrides = miopen::deref(inputDesc).GetStrides();
-    auto tstrides = miopen::deref(targetDesc).GetStrides();
-    auto ostrides = miopen::deref(outputhostDesc).GetStrides();
-    auto input_size = std::accumulate(idims.begin(), idims.end(), 1L, std::multiplies<int64_t>());
-
-    auto N = idims[0];
-    auto C = idims[1];
-    auto ws = std::vector<char>(input_size, static_cast<char>(0.0));
-    // Compute loss
-    for(size_t idx = 0; idx < N; ++idx)
-    {
-        auto n = idx;
-        for (size_t c = 0; c < C; c++) 
-        {
-            ws[n * C + c] = 0;
-        }
-        
-        for (size_t c = 0; c < C; c++) 
-        {
-            int is_target_idx = 0;
-            for (size_t i = 0; i < C; i++)
-            {
-                size_t T_at_n_i = target[tstrides[1] * i + tstrides[0] * n];
-                if (T_at_n_i == -1) break;
-                if (T_at_n_i == c) 
-                {
-                    is_target_idx = 1;
-                    break;
-                }
-            }
-            if (is_target_idx)
-            {
-                ws[n * C + c] = 1;
-            }
-        }
-        float loss = 0.0f;
-
-        for (size_t ct = 0; ct < C; ct++)
-        {
-            size_t T_at_n_ct = target[tstrides[1] * ct + tstrides[0] * n];
-            if (T_at_n_ct == -1) break;
-            for (size_t ci = 0; ci < C; ci++)
-            {
-                if (ws[n * C + ci] == 0)
-                {
-                    float t = 1.0f - static_cast<float>(input[istrides[1] * T_at_n_ct + istrides[0] * n]) - static_cast<float>(input[istrides[1] * ci + istrides[0] * n]);
-                    t /= C;
-                    loss += t >= 0 ? t : 0.0f;
-                }
-            }
-        }
-
-        outputhost[ostrides[0] * n] = static_cast<TIO>(loss);
-    }
-}
-
-template <class TIO, class TT>
-void mloMultilabelMarginLossUnreducedBwdRunHost(TIO* input,
-                                              miopenTensorDescriptor_t inputDesc,
-                                              TT* target,
-                                              miopenTensorDescriptor_t targetDesc,
-                                              TIO* doutput,
-                                              miopenTensorDescriptor_t doutputDesc,
-                                              TIO* dinput,
-                                              miopenTensorDescriptor_t dinputDesc)
-{
-    auto idims = miopen::deref(inputDesc).GetLengths();
-    auto tdims = miopen::deref(targetDesc).GetLengths();
-    auto istrides = miopen::deref(inputDesc).GetStrides();
-    auto tstrides = miopen::deref(targetDesc).GetStrides();
-    auto input_size = std::accumulate(idims.begin(), idims.end(), 1L, std::multiplies<int64_t>());
-
-    auto dOstrides = miopen::deref(doutputDesc).GetStrides();
-    auto dIstrides = miopen::deref(dinputDesc).GetStrides();
-
-    auto N = idims[0];
-    auto C = idims[1];
-    auto ws = std::vector<char>(input_size, static_cast<char>(0.0));
-    // Compute loss
-    for(size_t idx = 0; idx < N; ++idx)
-    {
-        auto n = idx;
-        for (size_t c = 0; c < C; c++) 
-        {
-            ws[n * C + c] = 0;
-            dinput[(dIstrides[1] * c) + (dIstrides[0] * n)] = static_cast<TIO>(0.0f);
-        }
-        
-        for (size_t c = 0; c < C; c++) 
-        {
-            int is_target_idx = 0;
-            for (size_t i = 0; i < C; i++)
-            {
-                size_t T_at_n_i = target[tstrides[1] * i + tstrides[0] * n];
-                if (T_at_n_i == -1) break;
-                if (T_at_n_i == c) 
-                {
-                    is_target_idx = 1;
-                    break;
-                }
-            }
-            if (is_target_idx)
-            {
-                ws[n * C + c] = 1;
-            }
-        }
-        float out_grad = doutput[dOstrides[0] * n];
-        float delta = 1.0f / C * out_grad;
-
-        for (size_t ct = 0; ct < C; ct++)
-        {
-            size_t T_at_n_ct = target[tstrides[1] * ct + tstrides[0] * n];
-            if (T_at_n_ct == -1) break;
-            for (size_t ci = 0; ci < C; ci++)
-            {
-                if (ws[n * C + ci] == 0)
-                {
-                    float t = 1.0f - static_cast<float>(input[istrides[1] * T_at_n_ct + istrides[0] * n]) - static_cast<float>(input[istrides[1] * ci + istrides[0] * n]);
-                    if (t >= 0)
-                    {
-                        float x = static_cast<float>(dinput[(dIstrides[1] * ci) + (dIstrides[0] * n)]) + delta;
-                        dinput[(dIstrides[1] * ci) + (dIstrides[0] * n)] = x;
-                        float y = static_cast<float>(dinput[(dIstrides[1] * T_at_n_ct) + (dIstrides[0] * n)]) - delta;
-                        dinput[(dIstrides[1] * T_at_n_ct) + (dIstrides[0] * n)] = y;
-                    }
-                }
-            }
-        }
-    }
-}
 #endif
-
 
 template <typename TIO, typename TT>
 class MultilabelMarginLossDriver : public Driver
@@ -508,7 +289,7 @@ int MultilabelMarginLossDriver<TIO, TT>::AddCmdLineArgs()
     inflags.AddInputFlag("in_w", 'W', "32", "Input Width (Default=32)", "int");
     inflags.AddInputFlag("contiguous", 'C', "1", "Contiguous (Default=1)", "int");
     inflags.AddInputFlag(
-        "reduction", 'R', "0", "Reduction mode: 0(default) - unreduced, 1 - sum, 2 -mean", "int");
+        "reduction", 'R', "1", "Reduction mode: 0 - unreduced, 1(default) - sum, 2 -mean", "int");
     inflags.AddInputFlag("margin", 'M', "1", "Margin (Default=1)", "float");
     inflags.AddInputFlag("iter", 'i', "10", "Number of Iterations (Default=10)", "int");
     inflags.AddInputFlag("verify", 'V', "1", "Verify Each Layer (Default=1)", "int");
@@ -637,15 +418,6 @@ int MultilabelMarginLossDriver<TIO, TT>::RunForwardGPU()
     {
         if (reduction == MIOPEN_LOSS_REDUCTION_NONE)
         {
-            miopenMultilabelMarginLossUnreducedForward(GetHandle(),
-                 workspace_dev->GetMem(),
-                workSpaceSizeInBytes,
-                inputDesc,
-                 input_dev->GetMem(),
-                 targetDesc,
-                 target_dev->GetMem(),
-                 outputDesc,
-                 output_dev->GetMem());
         }
         else {
             miopenMultilabelMarginLossForward(GetHandle(),
@@ -693,8 +465,6 @@ int MultilabelMarginLossDriver<TIO, TT>::RunForwardCPU()
 {
     if(reduction == MIOPEN_LOSS_REDUCTION_NONE)
     {
-        mloMultilabelMarginLossUnreducedFwdRunHost<TIO, TT>(
-            input.data(), inputDesc, target.data(), targetDesc, outputHost.data(), outputDesc);
     }
     else
     {
@@ -713,97 +483,12 @@ int MultilabelMarginLossDriver<TIO, TT>::RunForwardCPU()
 template <typename TIO, typename TT>
 int MultilabelMarginLossDriver<TIO, TT>::RunBackwardGPU()
 {
-    float kernel_total_time = 0;
-    float kernel_first_time = 0;
-
-    Timer t;
-    START_TIME
-
-    for(int i = 0; i < inflags.GetValueInt("iter"); i++)
-    {
-        if(reduction == MIOPEN_LOSS_REDUCTION_NONE)
-        {
-            miopenMultilabelMarginLossUnreducedBackward(GetHandle(),
-                workspace_dev->GetMem(),
-                workSpaceSizeInBytes,
-                inputDesc,
-                input_dev->GetMem(),
-                targetDesc,
-                target_dev->GetMem(),
-                doutputDesc,
-                doutput_dev->GetMem(),
-                dinputDesc,
-                dinput_dev->GetMem());
-        }
-        else
-        {
-            miopenMultilabelMarginLossBackward(GetHandle(),
-                workspace_dev->GetMem(),
-                workSpaceSizeInBytes,
-                inputDesc,
-                input_dev->GetMem(),
-                targetDesc,
-                target_dev->GetMem(),
-                doutputDesc,
-                doutput_dev->GetMem(),
-                dinputDesc,
-                dinput_dev->GetMem(),
-                divisor);
-        }
-        float time = 0.0;
-        miopenGetKernelTime(GetHandle(), &time);
-        kernel_total_time += time;
-        if(i == 0)
-            kernel_first_time = time;
-    }
-
-    if(inflags.GetValueInt("time") == 1)
-    {
-        STOP_TIME
-        int iter = inflags.GetValueInt("iter");
-        if(WALL_CLOCK)
-            std::cout << "Wall-clock Time Multilabel Loss" << "Bwd Elapsed: "
-                      << t.gettime_ms() / iter << " ms" << std::endl;
-
-        float kernel_average_time =
-            iter > 1 ? (kernel_total_time - kernel_first_time) / (iter - 1) : kernel_first_time;
-        std::cout << "GPU Kernel Time Multilabel Loss Bwd Elapsed: "
-                  << kernel_average_time << " ms" << std::endl;
-    }
-
-    if(dinput_dev->FromGPU(GetStream(), dinput.data()) != 0)
-        std::cerr << "Error copying (dI_dev) from GPU, size: " << dinput_dev->GetSize()
-                  << std::endl;
-
     return miopenStatusSuccess;
 }
 
 template <typename TIO, typename TT>
 int MultilabelMarginLossDriver<TIO, TT>::RunBackwardCPU()
 {
-    if(reduction == MIOPEN_LOSS_REDUCTION_NONE)
-    {
-        mloMultilabelMarginLossUnreducedBwdRunHost<TIO, TT>(input.data(),
-                                                          inputDesc,
-                                                          target.data(),
-                                                          targetDesc,
-                                                          doutput.data(),
-                                                          doutputDesc,
-                                                          dinputHost.data(),
-                                                          dinputDesc);
-    }
-    else
-    {
-        mloMultilabelMarginLossBwdRunHost<TIO, TT>(input.data(),
-                                                 inputDesc,
-                                                 target.data(),
-                                                 targetDesc,
-                                                 doutput.data(),
-                                                 doutputDesc,
-                                                 dinputHost.data(),
-                                                 dinputDesc,
-                                                 divisor);
-    }
     return miopenStatusSuccess;
 }
 
@@ -836,25 +521,6 @@ int MultilabelMarginLossDriver<TIO, TT>::VerifyForward()
 template <typename TIO, typename TT>
 int MultilabelMarginLossDriver<TIO, TT>::VerifyBackward()
 {
-    RunBackwardCPU();
-    double tolerance = std::is_same<TIO, float>::value ? 1.5e-6 : 8.2e-3;
-    if(std::is_same<TIO, bfloat16>::value)
-        tolerance *= 80.0;
-    auto error       = miopen::rms_range(dinputHost, dinput);
-
-    if(!std::isfinite(error) || error > tolerance)
-    {
-        std::cout << "Backward " << reduction << " Multilabel Margin Loss FAILED: " << error << " > "
-                  << tolerance << std::endl;
-        return EC_VerifyFwd;
-    }
-    else
-    {
-        std::cout << "Backward " << reduction
-                  << " Multilabel Margin Loss Verifies OK on CPU reference (" << error << "< "
-                  << tolerance << ')' << std::endl;
-    }
-
     return miopenStatusSuccess;
 }
 

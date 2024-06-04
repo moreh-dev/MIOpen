@@ -48,59 +48,5 @@ miopenStatus_t MultilabelMarginLossForward(Handle& handle,
                                              const TensorDescriptor& oDesc,
                                              Data_t o,
                                              float divisor);
-
-size_t GetMultilabelMarginLossBackwardWorkspaceSize(Handle& handle,
-                                                 const TensorDescriptor& iDesc,
-                                                 const TensorDescriptor& tDesc,
-                                                 const TensorDescriptor& dODesc,
-                                                 const TensorDescriptor& dIDesc);
-
-miopenStatus_t MultilabelMarginLossBackward(Handle& handle,
-                                             Data_t workspace,
-                                             size_t workspaceSizeInBytes,
-                                             const TensorDescriptor& iDesc,
-                                             ConstData_t  i,
-                                             const TensorDescriptor& tDesc,
-                                             ConstData_t  t,
-                                             const TensorDescriptor& dODesc,
-                                             Data_t dO,
-                                             const TensorDescriptor& dIDesc,
-                                             Data_t dI,
-                                             float divisor);
-
-
-size_t GetMultilabelMarginLossUnreducedForwardWorkspaceSize(Handle& handle,
-                                                 const TensorDescriptor& iDesc,
-                                                 const TensorDescriptor& tDesc,
-                                                 const TensorDescriptor& oDesc);
-                                             
-miopenStatus_t MultilabelMarginLossUnreducedForward(Handle& handle,
-                                             Data_t workspace,
-                                             size_t workspaceSizeInBytes,
-                                             const TensorDescriptor& iDesc,
-                                             ConstData_t  i,
-                                             const TensorDescriptor& tDesc,
-                                             ConstData_t  t,
-                                             const TensorDescriptor& oDesc,
-                                             Data_t o);
-
-size_t GetMultilabelMarginLossUnreducedBackwardWorkspaceSize(Handle& handle,
-                                                 const TensorDescriptor& iDesc,
-                                                 const TensorDescriptor& tDesc,
-                                                 const TensorDescriptor& dODesc,
-                                                 const TensorDescriptor& dIDesc);
-
-miopenStatus_t MultilabelMarginLossUnreducedBackward(Handle& handle,
-                                             Data_t workspace,
-                                             size_t workspaceSizeInBytes,
-                                             const TensorDescriptor& iDesc,
-                                             ConstData_t  i,
-                                             const TensorDescriptor& tDesc,
-                                             ConstData_t  t,
-                                             const TensorDescriptor& dODesc,
-                                             Data_t dO,
-                                             const TensorDescriptor& dIDesc,
-                                             Data_t dI);
-                                             
 } // namespace miopen
 #endif // _MIOPEN_MULTILABEL_MARGIN_LOSS_HPP_

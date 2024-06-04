@@ -51,62 +51,6 @@ NetworkConfig MultilabelMarginLossFwdProblemDescription::MakeNetworkConfig() con
     return NetworkConfig{ss.str()};
 }
 
-NetworkConfig MultilabelMarginLossUnreducedFwdProblemDescription::MakeNetworkConfig() const
-{
-    auto ilength    = iDesc.GetLengths();
-    auto tlength    = tDesc.GetLengths();
-    auto i_size = std::accumulate(
-        ilength.begin(), ilength.end(), static_cast<size_t>(1), std::multiplies<size_t>());
-
-    auto idtype = iDesc.GetType();
-    auto tdtype = tDesc.GetType();
-
-    std::ostringstream ss;
-    ss << "fwd";
-    ss << "unreduced";
-    ss << "i_dtype" << idtype;
-    ss << "t_dtype" << tdtype;
-    ss << "i_size" << i_size;
-    return NetworkConfig{ss.str()};
-}
-
-NetworkConfig MultilabelMarginLossBwdProblemDescription::MakeNetworkConfig() const
-{
-    auto ilength    = iDesc.GetLengths();
-    auto tlength    = tDesc.GetLengths();
-    auto i_size = std::accumulate(
-        ilength.begin(), ilength.end(), static_cast<size_t>(1), std::multiplies<size_t>());
-
-    auto idtype = iDesc.GetType();
-    auto tdtype = tDesc.GetType();
-
-    std::ostringstream ss;
-    ss << "bwd";
-    ss << "i_dtype" << idtype;
-    ss << "t_dtype" << tdtype;
-    ss << "i_size" << i_size;
-    return NetworkConfig{ss.str()};
-}
-
-NetworkConfig MultilabelMarginLossUnreducedBwdProblemDescription::MakeNetworkConfig() const
-{
-    auto ilength    = iDesc.GetLengths();
-    auto tlength    = tDesc.GetLengths();
-    auto i_size = std::accumulate(
-        ilength.begin(), ilength.end(), static_cast<size_t>(1), std::multiplies<size_t>());
-
-    auto idtype = iDesc.GetType();
-    auto tdtype = tDesc.GetType();
-
-    std::ostringstream ss;
-    ss << "bwd";
-    ss << "unreduced";
-    ss << "i_dtype" << idtype;
-    ss << "t_dtype" << tdtype;
-    ss << "i_size" << i_size;
-    return NetworkConfig{ss.str()};
-}
-
 } // namespace multilabel_margin_loss
 
 } // namespace miopen

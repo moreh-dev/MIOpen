@@ -50,52 +50,6 @@ struct MultilabelMarginLossForward final : MultilabelMarginLossFwdSolver
     bool MayNeedWorkspace() const override { return true; }
 };
 
-using MultilabelMarginLossBwdSolver = NonTunableSolverBase<ExecutionContext, miopen::multilabel_margin_loss::MultilabelMarginLossBwdProblemDescription>;
-
-struct MultilabelMarginLossBackward final : MultilabelMarginLossBwdSolver
-{
-    const std::string& SolverDbId() const override { return GetSolverDbId<MultilabelMarginLossBackward>(); }
-
-    bool IsApplicable(const ExecutionContext& context,
-                      const miopen::multilabel_margin_loss::MultilabelMarginLossBwdProblemDescription& problem) const override;
-    ConvSolution GetSolution(const ExecutionContext& context,
-                             const miopen::multilabel_margin_loss::MultilabelMarginLossBwdProblemDescription& problem) const override;
-    std::size_t GetWorkspaceSize(const ExecutionContext& context,
-                                 const miopen::multilabel_margin_loss::MultilabelMarginLossBwdProblemDescription& problem) const override;
-    bool MayNeedWorkspace() const override { return true; }
-};
-
-using MultilabelMarginLossUnreducedFwdSolver = NonTunableSolverBase<ExecutionContext, miopen::multilabel_margin_loss::MultilabelMarginLossUnreducedFwdProblemDescription>;
-
-struct MultilabelMarginLossUnreducedForward final : MultilabelMarginLossUnreducedFwdSolver
-{
-    const std::string& SolverDbId() const override { return GetSolverDbId<MultilabelMarginLossUnreducedForward>(); }
-
-    bool IsApplicable(const ExecutionContext& context,
-                      const miopen::multilabel_margin_loss::MultilabelMarginLossUnreducedFwdProblemDescription& problem) const override;
-    ConvSolution GetSolution(const ExecutionContext& context,
-                             const miopen::multilabel_margin_loss::MultilabelMarginLossUnreducedFwdProblemDescription& problem) const override;
-    std::size_t GetWorkspaceSize(const ExecutionContext& context,
-                                const miopen::multilabel_margin_loss::MultilabelMarginLossUnreducedFwdProblemDescription& problem) const override;
-    bool MayNeedWorkspace() const override { return true; }
-};
-
-using MultilabelMarginLossUnreducedBwdSolver = NonTunableSolverBase<ExecutionContext, miopen::multilabel_margin_loss::MultilabelMarginLossUnreducedBwdProblemDescription>;
-
-struct MultilabelMarginLossUnreducedBackward final : MultilabelMarginLossUnreducedBwdSolver
-{
-    const std::string& SolverDbId() const override { return GetSolverDbId<MultilabelMarginLossUnreducedBackward>(); }
-
-    bool IsApplicable(const ExecutionContext& context,
-                      const miopen::multilabel_margin_loss::MultilabelMarginLossUnreducedBwdProblemDescription& problem) const override;
-    ConvSolution GetSolution(const ExecutionContext& context,
-                             const miopen::multilabel_margin_loss::MultilabelMarginLossUnreducedBwdProblemDescription& problem) const override;
-    std::size_t GetWorkspaceSize(const ExecutionContext& context,
-                            const miopen::multilabel_margin_loss::MultilabelMarginLossUnreducedBwdProblemDescription& problem) const override;
-    bool MayNeedWorkspace() const override { return true; }
-};
-
-
 } // namespace multilabel_margin_loss
 
 } // namespace solver
