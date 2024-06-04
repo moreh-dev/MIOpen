@@ -31,43 +31,44 @@
 #include <miopen/logger.hpp>
 #include <miopen/tensor_ops.hpp>
 
-extern "C" miopenStatus_t miopenGetMultilabelMarginLossForwardWorkspaceSize(miopenHandle_t handle,
-                                                 const miopenTensorDescriptor_t iDesc,
-                                                 const miopenTensorDescriptor_t tDesc,
-                                                 const miopenTensorDescriptor_t oDesc,
-                                                 size_t* sizeInBytes)
+extern "C" miopenStatus_t
+miopenGetMultilabelMarginLossForwardWorkspaceSize(miopenHandle_t handle,
+                                                  const miopenTensorDescriptor_t iDesc,
+                                                  const miopenTensorDescriptor_t tDesc,
+                                                  const miopenTensorDescriptor_t oDesc,
+                                                  size_t* sizeInBytes)
 {
 
     return miopen::try_([&] {
         miopen::deref(sizeInBytes) =
             miopen::GetMultilabelMarginLossForwardWorkspaceSize(miopen::deref(handle),
-                                                               miopen::deref(iDesc),
-                                                               miopen::deref(tDesc),
-                                                               miopen::deref(oDesc));
+                                                                miopen::deref(iDesc),
+                                                                miopen::deref(tDesc),
+                                                                miopen::deref(oDesc));
     });
 }
 
 extern "C" miopenStatus_t miopenMultilabelMarginLossForward(miopenHandle_t handle,
-                                                           void* workspace,
-                                                           size_t workspaceSizeInBytes,
-                                                           const miopenTensorDescriptor_t iDesc,
-                                                           const void* i,
-                                                           const miopenTensorDescriptor_t tDesc,
-                                                           const void* t,
-                                                           const miopenTensorDescriptor_t oDesc,
-                                                           void* o,
-                                                           const float divisor)
+                                                            void* workspace,
+                                                            size_t workspaceSizeInBytes,
+                                                            const miopenTensorDescriptor_t iDesc,
+                                                            const void* i,
+                                                            const miopenTensorDescriptor_t tDesc,
+                                                            const void* t,
+                                                            const miopenTensorDescriptor_t oDesc,
+                                                            void* o,
+                                                            const float divisor)
 {
     return miopen::try_([&] {
         miopen::MultilabelMarginLossForward(miopen::deref(handle),
-                                           DataCast(workspace),
-                                           workspaceSizeInBytes,
-                                           miopen::deref(iDesc),
-                                           DataCast(i),
-                                           miopen::deref(tDesc),
-                                           DataCast(t),
-                                           miopen::deref(oDesc),
-                                           DataCast(o),
-                                           divisor);
+                                            DataCast(workspace),
+                                            workspaceSizeInBytes,
+                                            miopen::deref(iDesc),
+                                            DataCast(i),
+                                            miopen::deref(tDesc),
+                                            DataCast(t),
+                                            miopen::deref(oDesc),
+                                            DataCast(o),
+                                            divisor);
     });
 }

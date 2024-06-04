@@ -41,8 +41,8 @@ namespace multilabel_margin_loss {
 struct MultilabelMarginLossFwdProblemDescriptionBase : ProblemDescriptionBase
 {
     MultilabelMarginLossFwdProblemDescriptionBase(const TensorDescriptor& iDesc_,
-                                                const TensorDescriptor& tDesc_,
-                                                const TensorDescriptor& oDesc_)
+                                                  const TensorDescriptor& tDesc_,
+                                                  const TensorDescriptor& oDesc_)
         : iDesc(iDesc_), tDesc(tDesc_), oDesc(oDesc_)
     {
         if(!IsSameLength())
@@ -51,10 +51,11 @@ struct MultilabelMarginLossFwdProblemDescriptionBase : ProblemDescriptionBase
         }
         if(!IsRightDim())
         {
-            MIOPEN_THROW(miopenStatusBadParm, "Multilabel Margin Loss: Only accept 2d tensor (N, C)");
+            MIOPEN_THROW(miopenStatusBadParm,
+                         "Multilabel Margin Loss: Only accept 2d tensor (N, C)");
         }
     }
-    
+
     bool IsSameLength() const
     {
         if(iDesc.GetSize() != tDesc.GetSize())
@@ -85,8 +86,8 @@ protected:
 struct MultilabelMarginLossFwdProblemDescription : MultilabelMarginLossFwdProblemDescriptionBase
 {
     MultilabelMarginLossFwdProblemDescription(const TensorDescriptor& iDesc_,
-                                                const TensorDescriptor& tDesc_,
-                                                const TensorDescriptor& oDesc_)
+                                              const TensorDescriptor& tDesc_,
+                                              const TensorDescriptor& oDesc_)
         : MultilabelMarginLossFwdProblemDescriptionBase(iDesc_, tDesc_, oDesc_)
     {
     }

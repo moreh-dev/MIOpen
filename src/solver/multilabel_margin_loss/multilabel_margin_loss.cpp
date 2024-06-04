@@ -43,7 +43,8 @@ namespace solver {
 
 namespace multilabel_margin_loss {
 
-// =================================== MultilabelMarginLossForward Begin =======================================
+// =================================== MultilabelMarginLossForward Begin
+// =======================================
 bool MultilabelMarginLossForward::IsApplicable(
     [[maybe_unused]] const ExecutionContext& context,
     const miopen::multilabel_margin_loss::MultilabelMarginLossFwdProblemDescription& problem) const
@@ -55,16 +56,16 @@ ConvSolution MultilabelMarginLossForward::GetSolution(
     [[maybe_unused]] const ExecutionContext& context,
     const miopen::multilabel_margin_loss::MultilabelMarginLossFwdProblemDescription& problem) const
 {
-    auto result       = ConvSolution{miopenStatusSuccess};
-    auto i_dtype  = miopen::GetDataType(problem.GetIDesc().GetType());
-    auto t_dtype  = miopen::GetDataType(problem.GetTDesc().GetType());
-    auto o_dtype  = miopen::GetDataType(problem.GetODesc().GetType());
-    auto idims        = problem.GetIDesc().GetLengths();
-    auto tdims        = problem.GetTDesc().GetLengths();
-    auto odims        = problem.GetODesc().GetLengths();
-    auto dtype  = problem.GetODesc().GetType();
-    size_t N = idims[0];
-    auto size         = N;
+    auto result  = ConvSolution{miopenStatusSuccess};
+    auto i_dtype = miopen::GetDataType(problem.GetIDesc().GetType());
+    auto t_dtype = miopen::GetDataType(problem.GetTDesc().GetType());
+    auto o_dtype = miopen::GetDataType(problem.GetODesc().GetType());
+    auto idims   = problem.GetIDesc().GetLengths();
+    auto tdims   = problem.GetTDesc().GetLengths();
+    auto odims   = problem.GetODesc().GetLengths();
+    auto dtype   = problem.GetODesc().GetType();
+    size_t N     = idims[0];
+    auto size    = N;
 
     // Construct MultilabelMarginLossForward2d kernel paras
     auto kernel        = KernelInfo{};
@@ -117,56 +118,55 @@ ConvSolution MultilabelMarginLossForward::GetSolution(
 
         result.construction_params.push_back(reduce_kernel);
         _size = AlignUp(_size, LOCAL_SIZE_REDUCE) / LOCAL_SIZE_REDUCE;
-    } while (_size > 1);
+    } while(_size > 1);
 
     result.invoker_factory = [](const std::vector<Kernel>& kernels) {
         return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
-
-            decltype(auto) params = raw_params.CastTo<miopen::multilabel_margin_loss::InvokeParams>();
+            decltype(auto) params =
+                raw_params.CastTo<miopen::multilabel_margin_loss::InvokeParams>();
             /* Phase 1: Calc loss for each element. */
             auto idims = params.iDesc->GetLengths();
             auto tdims = params.tDesc->GetLengths();
 
-            auto istrides = params.iDesc->GetStrides();
-            auto tstrides = params.tDesc->GetStrides();
-            auto N = idims[0];
-            auto odtypeSize  = get_data_size(params.oDesc->GetType());
+            auto istrides   = params.iDesc->GetStrides();
+            auto tstrides   = params.tDesc->GetStrides();
+            auto N          = idims[0];
+            auto odtypeSize = get_data_size(params.oDesc->GetType());
 
-            int64_t ws_offset = ((N) + ((N + LOCAL_SIZE_REDUCE - 1) / LOCAL_SIZE_REDUCE)) * odtypeSize;
+            int64_t ws_offset =
+                ((N) + ((N + LOCAL_SIZE_REDUCE - 1) / LOCAL_SIZE_REDUCE)) * odtypeSize;
             {
                 decltype(auto) kernel = handle_.Run(kernels[0]);
 
-                size_t I_size_0           = idims[0];
-                size_t I_size_1           = idims[1];
-                size_t T_size_0           = tdims[0];
-                size_t T_size_1           = tdims[1];
+                size_t I_size_0   = idims[0];
+                size_t I_size_1   = idims[1];
+                size_t T_size_0   = tdims[0];
+                size_t T_size_1   = tdims[1];
                 size_t I_stride_0 = istrides[0];
                 size_t I_stride_1 = istrides[1];
                 size_t T_stride_0 = tstrides[0];
                 size_t T_stride_1 = tstrides[1];
                 kernel(params.i,
-                        params.t,
-                        params.workspace,
-                        params.workspace,
-                        ws_offset,
-                        params.divisor,
-                        I_size_0,
-                        I_size_1,
-                        T_size_0,
-                        T_size_1,
-                        I_stride_0,
-                        I_stride_1,
-                        T_stride_0,
-                        T_stride_1);
+                       params.t,
+                       params.workspace,
+                       params.workspace,
+                       ws_offset,
+                       params.divisor,
+                       I_size_0,
+                       I_size_1,
+                       T_size_0,
+                       T_size_1,
+                       I_stride_0,
+                       I_stride_1,
+                       T_stride_0,
+                       T_stride_1);
             }
             /* Phase 2: Reduce */
 
-            auto reduce_in = params.workspace;
-            auto reduce_out =
-                static_cast<Data_t>(static_cast<char*>(params.workspace) +
-                                    (N) *
-                                        get_data_size(deref(params.oDesc).GetType()));
-            auto size = N;
+            auto reduce_in  = params.workspace;
+            auto reduce_out = static_cast<Data_t>(static_cast<char*>(params.workspace) +
+                                                  (N)*get_data_size(deref(params.oDesc).GetType()));
+            auto size       = N;
             for(int i = 1; i < kernels.size(); ++i)
             {
                 decltype(auto) kernel = handle_.Run(kernels[i]);
@@ -190,16 +190,17 @@ std::size_t MultilabelMarginLossForward::GetWorkspaceSize(
     const ExecutionContext& /*context*/,
     const miopen::multilabel_margin_loss::MultilabelMarginLossFwdProblemDescription& problem) const
 {
-    auto odtypeSize  = get_data_size(problem.GetODesc().GetType());
-    auto idims        = problem.GetIDesc().GetLengths();
-    size_t N = idims[0];
-    auto elem = problem.GetIDesc().GetElementSize();
-    auto lsumElements = N;
+    auto odtypeSize     = get_data_size(problem.GetODesc().GetType());
+    auto idims          = problem.GetIDesc().GetLengths();
+    size_t N            = idims[0];
+    auto elem           = problem.GetIDesc().GetElementSize();
+    auto lsumElements   = N;
     auto reduceElements = (N + LOCAL_SIZE_REDUCE - 1) / LOCAL_SIZE_REDUCE;
-    size_t res = (lsumElements + reduceElements + elem) * odtypeSize;
+    size_t res          = (lsumElements + reduceElements + elem) * odtypeSize;
     return res;
 }
-// =================================== MultilabelMarginLossForward End =======================================
+// =================================== MultilabelMarginLossForward End
+// =======================================
 
 } // namespace multilabel_margin_loss
 

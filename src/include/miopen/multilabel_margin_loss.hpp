@@ -34,19 +34,19 @@ struct Handle;
 struct TensorDescriptor;
 
 size_t GetMultilabelMarginLossForwardWorkspaceSize(Handle& handle,
-                                                 const TensorDescriptor& iDesc,
-                                                 const TensorDescriptor& tDesc,
-                                                 const TensorDescriptor& oDesc);
+                                                   const TensorDescriptor& iDesc,
+                                                   const TensorDescriptor& tDesc,
+                                                   const TensorDescriptor& oDesc);
 
 miopenStatus_t MultilabelMarginLossForward(Handle& handle,
-                                             Data_t workspace,
-                                             size_t workspaceSizeInBytes,
-                                             const TensorDescriptor& iDesc,
-                                             ConstData_t  i,
-                                             const TensorDescriptor& tDesc,
-                                             ConstData_t  t,
-                                             const TensorDescriptor& oDesc,
-                                             Data_t o,
-                                             float divisor);
+                                           Data_t workspace,
+                                           size_t workspaceSizeInBytes,
+                                           const TensorDescriptor& iDesc,
+                                           ConstData_t i,
+                                           const TensorDescriptor& tDesc,
+                                           ConstData_t t,
+                                           const TensorDescriptor& oDesc,
+                                           Data_t o,
+                                           float divisor);
 } // namespace miopen
 #endif // _MIOPEN_MULTILABEL_MARGIN_LOSS_HPP_

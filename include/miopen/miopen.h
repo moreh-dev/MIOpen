@@ -4960,8 +4960,8 @@ typedef enum
                                        number of elements to get mean value */
 } miopenLossReductionMode_t;
 
-/*! @brief Helper function to query the minimum workspace size required by the multilabel margin loss
- * call
+/*! @brief Helper function to query the minimum workspace size required by the multilabel margin
+ * loss call
  *
  * @param handle                   MIOpen Handle (input)
  * @param iDesc                    Tensor descriptor for input tensor (input)
@@ -4970,13 +4970,14 @@ typedef enum
  * @param sizeInBytes              Pointer to data to return the minimum workspace size
  * @return                         miopenStatus_t
  */
-MIOPEN_EXPORT miopenStatus_t miopenGetMultilabelMarginLossForwardWorkspaceSize(miopenHandle_t handle,
-                                                miopenTensorDescriptor_t iDesc,
-                                                miopenTensorDescriptor_t tDesc,
-                                                miopenTensorDescriptor_t oDesc,
-                                                size_t* sizeInBytes);
+MIOPEN_EXPORT miopenStatus_t
+miopenGetMultilabelMarginLossForwardWorkspaceSize(miopenHandle_t handle,
+                                                  miopenTensorDescriptor_t iDesc,
+                                                  miopenTensorDescriptor_t tDesc,
+                                                  miopenTensorDescriptor_t oDesc,
+                                                  size_t* sizeInBytes);
 
-/*! @brief Execute MultilabelMargin Loss forward layer 
+/*! @brief Execute MultilabelMargin Loss forward layer
  *
  * @param handle                   MIOpen handle (input)
  * @param workspace                Address of the allocated workspace data (input)
@@ -4992,15 +4993,15 @@ MIOPEN_EXPORT miopenStatus_t miopenGetMultilabelMarginLossForwardWorkspaceSize(m
  */
 
 MIOPEN_EXPORT miopenStatus_t miopenMultilabelMarginLossForward(miopenHandle_t handle,
-                                                                void * workspace,
-                                                                size_t workspaceSizeInBytes,
-                                                                const miopenTensorDescriptor_t iDesc,
-                                                                const void* i,
-                                                                const miopenTensorDescriptor_t tDesc,
-                                                                const void * t,
-                                                                const miopenTensorDescriptor_t oDesc,
-                                                                void * o,
-                                                                float divisor);
+                                                               void* workspace,
+                                                               size_t workspaceSizeInBytes,
+                                                               const miopenTensorDescriptor_t iDesc,
+                                                               const void* i,
+                                                               const miopenTensorDescriptor_t tDesc,
+                                                               const void* t,
+                                                               const miopenTensorDescriptor_t oDesc,
+                                                               void* o,
+                                                               float divisor);
 
 #endif
 

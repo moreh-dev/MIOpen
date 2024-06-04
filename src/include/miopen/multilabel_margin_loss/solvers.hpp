@@ -35,18 +35,29 @@ namespace solver {
 
 namespace multilabel_margin_loss {
 
-using MultilabelMarginLossFwdSolver = NonTunableSolverBase<ExecutionContext, miopen::multilabel_margin_loss::MultilabelMarginLossFwdProblemDescription>;
+using MultilabelMarginLossFwdSolver =
+    NonTunableSolverBase<ExecutionContext,
+                         miopen::multilabel_margin_loss::MultilabelMarginLossFwdProblemDescription>;
 
 struct MultilabelMarginLossForward final : MultilabelMarginLossFwdSolver
 {
-    const std::string& SolverDbId() const override { return GetSolverDbId<MultilabelMarginLossForward>(); }
+    const std::string& SolverDbId() const override
+    {
+        return GetSolverDbId<MultilabelMarginLossForward>();
+    }
 
-    bool IsApplicable(const ExecutionContext& context,
-                      const miopen::multilabel_margin_loss::MultilabelMarginLossFwdProblemDescription& problem) const override;
-    ConvSolution GetSolution(const ExecutionContext& context,
-                             const miopen::multilabel_margin_loss::MultilabelMarginLossFwdProblemDescription& problem) const override;
-    std::size_t GetWorkspaceSize(const ExecutionContext& context,
-                                 const miopen::multilabel_margin_loss::MultilabelMarginLossFwdProblemDescription& problem) const override;
+    bool
+    IsApplicable(const ExecutionContext& context,
+                 const miopen::multilabel_margin_loss::MultilabelMarginLossFwdProblemDescription&
+                     problem) const override;
+    ConvSolution
+    GetSolution(const ExecutionContext& context,
+                const miopen::multilabel_margin_loss::MultilabelMarginLossFwdProblemDescription&
+                    problem) const override;
+    std::size_t GetWorkspaceSize(
+        const ExecutionContext& context,
+        const miopen::multilabel_margin_loss::MultilabelMarginLossFwdProblemDescription& problem)
+        const override;
     bool MayNeedWorkspace() const override { return true; }
 };
 

@@ -35,9 +35,9 @@ namespace multilabel_margin_loss {
 
 NetworkConfig MultilabelMarginLossFwdProblemDescription::MakeNetworkConfig() const
 {
-    auto ilength    = iDesc.GetLengths();
-    auto tlength    = tDesc.GetLengths();
-    auto i_size = std::accumulate(
+    auto ilength = iDesc.GetLengths();
+    auto tlength = tDesc.GetLengths();
+    auto i_size  = std::accumulate(
         ilength.begin(), ilength.end(), static_cast<size_t>(1), std::multiplies<size_t>());
 
     auto idtype = iDesc.GetType();

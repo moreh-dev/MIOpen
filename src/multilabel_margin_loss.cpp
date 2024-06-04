@@ -39,15 +39,17 @@
 namespace miopen {
 
 size_t GetMultilabelMarginLossForwardWorkspaceSize(Handle& handle,
-                                                 const TensorDescriptor& iDesc,
-                                                 const TensorDescriptor& tDesc,
-                                                 const TensorDescriptor& oDesc)
+                                                   const TensorDescriptor& iDesc,
+                                                   const TensorDescriptor& tDesc,
+                                                   const TensorDescriptor& oDesc)
 {
-    auto ctx           = ExecutionContext{&handle};
-    const auto problem = multilabel_margin_loss::MultilabelMarginLossFwdProblemDescription{iDesc, tDesc, oDesc};
+    auto ctx = ExecutionContext{&handle};
+    const auto problem =
+        multilabel_margin_loss::MultilabelMarginLossFwdProblemDescription{iDesc, tDesc, oDesc};
 
-    const auto algo    = AlgorithmName{"MultilabelMarginLossForward"};
-    const auto solvers = solver::SolverContainer<solver::multilabel_margin_loss::MultilabelMarginLossForward>{};
+    const auto algo = AlgorithmName{"MultilabelMarginLossForward"};
+    const auto solvers =
+        solver::SolverContainer<solver::multilabel_margin_loss::MultilabelMarginLossForward>{};
 
     auto pair_size_vector = solvers.GetWorkspaceSizes(ctx, problem);
 
@@ -55,36 +57,37 @@ size_t GetMultilabelMarginLossForwardWorkspaceSize(Handle& handle,
 }
 
 miopenStatus_t MultilabelMarginLossForward(Handle& handle,
-                                Data_t workspace,
-                                size_t workspaceSizeInBytes,
-                                const TensorDescriptor& iDesc,
-                                ConstData_t i,
-                                const TensorDescriptor& tDesc,
-                                ConstData_t t,
-                                const TensorDescriptor& oDesc,
-                                Data_t o,
-                                float divisor)
+                                           Data_t workspace,
+                                           size_t workspaceSizeInBytes,
+                                           const TensorDescriptor& iDesc,
+                                           ConstData_t i,
+                                           const TensorDescriptor& tDesc,
+                                           ConstData_t t,
+                                           const TensorDescriptor& oDesc,
+                                           Data_t o,
+                                           float divisor)
 {
     const auto problem =
         multilabel_margin_loss::MultilabelMarginLossFwdProblemDescription{iDesc, tDesc, oDesc};
 
     const auto invoke_params = [&]() {
-        auto tmp        = multilabel_margin_loss::InvokeParams{};
-        tmp.type        = InvokeType::Run;
-        tmp.iDesc       = &iDesc;
-        tmp.tDesc       = &tDesc;
-        tmp.oDesc       = &oDesc;
-        tmp.i           = i;
-        tmp.t           = t;
-        tmp.o           = o;
-        tmp.workspace = workspace;
+        auto tmp           = multilabel_margin_loss::InvokeParams{};
+        tmp.type           = InvokeType::Run;
+        tmp.iDesc          = &iDesc;
+        tmp.tDesc          = &tDesc;
+        tmp.oDesc          = &oDesc;
+        tmp.i              = i;
+        tmp.t              = t;
+        tmp.o              = o;
+        tmp.workspace      = workspace;
         tmp.workspace_size = workspaceSizeInBytes;
-        tmp.divisor     = divisor;
+        tmp.divisor        = divisor;
         return tmp;
     }();
 
-    const auto algo    = AlgorithmName{"MultilabelMarginLossForward"};
-    const auto solvers = solver::SolverContainer<solver::multilabel_margin_loss::MultilabelMarginLossForward>{};
+    const auto algo = AlgorithmName{"MultilabelMarginLossForward"};
+    const auto solvers =
+        solver::SolverContainer<solver::multilabel_margin_loss::MultilabelMarginLossForward>{};
     solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
 
     return miopenStatusSuccess;
