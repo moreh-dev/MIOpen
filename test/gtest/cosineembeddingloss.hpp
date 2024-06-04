@@ -65,9 +65,14 @@ struct CosineEmbeddingLossTestCase
 
 inline std::vector<CosineEmbeddingLossTestCase> CosineEmbeddingLossTestConfigs()
 {
-    return {{{10, 768}, 0.0f, MIOPEN_LOSS_REDUCTION_NONE},
-            {{32, 64}, 0.1f, MIOPEN_LOSS_REDUCTION_MEAN},
-            {{32, 128}, 0.5f, MIOPEN_LOSS_REDUCTION_SUM}};
+    return {
+        {{768, 20}, 0.5f, MIOPEN_LOSS_REDUCTION_NONE},
+        {{768, 20}, 0.5f, MIOPEN_LOSS_REDUCTION_SUM},
+        {{768, 200}, 0.5f, MIOPEN_LOSS_REDUCTION_NONE},
+        {{768, 200}, 0.5f, MIOPEN_LOSS_REDUCTION_SUM},
+        {{768, 128}, 0.5f, MIOPEN_LOSS_REDUCTION_NONE},
+        {{768, 128}, 0.5f, MIOPEN_LOSS_REDUCTION_SUM}, // false
+    };
 }
 
 inline std::vector<size_t> GetStrides(std::vector<size_t> input, bool contiguous)
@@ -138,8 +143,13 @@ protected:
         ref_output = tensor<T>{out_dim, out_strides};
         std::fill(ref_output.begin(), ref_output.end(), std::numeric_limits<T>::quiet_NaN());
 
-        ws_sizeInBytes = miopen::GetCosineEmbeddingLossForwardWorkspaceSize(
-            handle, input1.desc, input2.desc, target.desc, output.desc, margin);
+        if(divisor == 0.f)
+            ws_sizeInBytes = miopen::GetCosineEmbeddingLossUnreducedForwardWorkspaceSize(
+                handle, input1.desc, input2.desc, target.desc, output.desc, margin);
+        else
+            ws_sizeInBytes = miopen::GetCosineEmbeddingLossReducedForwardWorkspaceSize(
+                handle, input1.desc, input2.desc, target.desc, output.desc, margin);
+
         if(ws_sizeInBytes == static_cast<size_t>(-1))
             GTEST_SKIP();
 

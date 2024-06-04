@@ -91,6 +91,26 @@ struct CosineEmbeddingLossUnreducedForward2d final : CosineEmbeddingLossFwdUnred
     std::size_t GetWorkspaceSize(
         const ExecutionContext& context,
         const miopen::cosineembeddingloss::FwdUnreducedProblemDescription& problem) const override;
+
+    bool MayNeedWorkspace() const override { return true; }
+};
+
+// FORWARD UNREDUCE NON SUM
+struct CosineEmbeddingLossUnreducedForward2dNonSum final : CosineEmbeddingLossFwdUnreducedSolver
+{
+    const std::string& SolverDbId() const override
+    {
+        return GetSolverDbId<CosineEmbeddingLossUnreducedForward2dNonSum>();
+    }
+
+    bool IsApplicable(
+        const ExecutionContext& context,
+        const miopen::cosineembeddingloss::FwdUnreducedProblemDescription& problem) const override;
+
+    ConvSolution GetSolution(
+        const ExecutionContext& context,
+        const miopen::cosineembeddingloss::FwdUnreducedProblemDescription& problem) const override;
+
     bool MayNeedWorkspace() const override { return true; }
 };
 
@@ -113,6 +133,30 @@ struct CosineEmbeddingLossReducedForward2d final : CosineEmbeddingLossFwdReduced
     std::size_t GetWorkspaceSize(
         const ExecutionContext& context,
         const miopen::cosineembeddingloss::FwdReducedProblemDescription& problem) const override;
+
+    bool MayNeedWorkspace() const override { return true; }
+};
+
+// FORWARD REDUCE NON SUM
+struct CosineEmbeddingLossReducedForward2dNonSum final : CosineEmbeddingLossFwdReducedSolver
+{
+    const std::string& SolverDbId() const override
+    {
+        return GetSolverDbId<CosineEmbeddingLossReducedForward2dNonSum>();
+    }
+
+    bool IsApplicable(
+        const ExecutionContext& context,
+        const miopen::cosineembeddingloss::FwdReducedProblemDescription& problem) const override;
+
+    ConvSolution GetSolution(
+        const ExecutionContext& context,
+        const miopen::cosineembeddingloss::FwdReducedProblemDescription& problem) const override;
+
+    std::size_t GetWorkspaceSize(
+        const ExecutionContext& context,
+        const miopen::cosineembeddingloss::FwdReducedProblemDescription& problem) const override;
+
     bool MayNeedWorkspace() const override { return true; }
 };
 
@@ -135,6 +179,26 @@ struct CosineEmbeddingLossUnreducedBackward2d final : CosineEmbeddingLossBwdUnre
     std::size_t GetWorkspaceSize(
         const ExecutionContext& context,
         const miopen::cosineembeddingloss::BwdUnreducedProblemDescription& problem) const override;
+
+    bool MayNeedWorkspace() const override { return true; }
+};
+
+// BACKWARD UNREDUCE NON SUM
+struct CosineEmbeddingLossUnreducedBackward2dNonSum final : CosineEmbeddingLossBwdUnreducedSolver
+{
+    const std::string& SolverDbId() const override
+    {
+        return GetSolverDbId<CosineEmbeddingLossUnreducedBackward2dNonSum>();
+    }
+
+    bool IsApplicable(
+        const ExecutionContext& context,
+        const miopen::cosineembeddingloss::BwdUnreducedProblemDescription& problem) const override;
+
+    ConvSolution GetSolution(
+        const ExecutionContext& context,
+        const miopen::cosineembeddingloss::BwdUnreducedProblemDescription& problem) const override;
+
     bool MayNeedWorkspace() const override { return true; }
 };
 
@@ -157,6 +221,26 @@ struct CosineEmbeddingLossReducedBackward2d final : CosineEmbeddingLossBwdReduce
     std::size_t GetWorkspaceSize(
         const ExecutionContext& context,
         const miopen::cosineembeddingloss::BwdReducedProblemDescription& problem) const override;
+
+    bool MayNeedWorkspace() const override { return true; }
+};
+
+// BACKWARD REDUCE NON SUM
+struct CosineEmbeddingLossReducedBackward2dNonSum final : CosineEmbeddingLossBwdReducedSolver
+{
+    const std::string& SolverDbId() const override
+    {
+        return GetSolverDbId<CosineEmbeddingLossReducedBackward2dNonSum>();
+    }
+
+    bool IsApplicable(
+        const ExecutionContext& context,
+        const miopen::cosineembeddingloss::BwdReducedProblemDescription& problem) const override;
+
+    ConvSolution GetSolution(
+        const ExecutionContext& context,
+        const miopen::cosineembeddingloss::BwdReducedProblemDescription& problem) const override;
+
     bool MayNeedWorkspace() const override { return true; }
 };
 

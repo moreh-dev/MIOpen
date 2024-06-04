@@ -261,6 +261,10 @@ set( MIOpen_Source
     solver/cosineembeddingloss/fwd_reduced_2d_cosineembeddingloss.cpp
     solver/cosineembeddingloss/bwd_unreduced_2d_cosineembeddingloss.cpp
     solver/cosineembeddingloss/bwd_reduced_2d_cosineembeddingloss.cpp
+    solver/cosineembeddingloss/non_sum_fwd_unreduced_2d_cosineembeddingloss.cpp
+    solver/cosineembeddingloss/non_sum_fwd_reduced_2d_cosineembeddingloss.cpp
+    solver/cosineembeddingloss/non_sum_bwd_unreduced_2d_cosineembeddingloss.cpp
+    solver/cosineembeddingloss/non_sum_bwd_reduced_2d_cosineembeddingloss.cpp
     solver/cosineembeddingloss/forward_sum.cpp
     solver/fft.cpp
     solver/gemm.cpp

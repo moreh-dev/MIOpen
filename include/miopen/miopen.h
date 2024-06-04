@@ -513,7 +513,7 @@ typedef enum
     miopenActivationABS      = 5, /*!< Absolute value \f$abs(x)\f$ */
     miopenActivationPOWER = 6, /*!< Scaled and shifted power \f$(\alpha + \beta * x)^{gamma}\f$ */
     miopenActivationCLIPPEDRELU =
-        7, /*!< Clipped Rectified Linear Unit \f$ min(\alpha, max(0,x)) \f$ */
+        7,                     /*!< Clipped Rectified Linear Unit \f$ min(\alpha, max(0,x)) \f$ */
     miopenActivationLEAKYRELU =
         8, /*!< Leaky Rectified Linear Unit \f$ \alpha * x | x <= 0; x | x > 0 \f$ */
     miopenActivationELU =
@@ -6613,6 +6613,7 @@ typedef enum
  * @param outputDesc               Tensor descriptor for output tensor (input)
  * @param margin                   If margin is missing, the default value is 0 (input)
  * @param sizeInBytes              Pointer to data to return the minimum workspace size (output)
+ * @param reduction                Reduction (input)
  * @return                         miopenStatus_t
  */
 MIOPEN_EXPORT miopenStatus_t
@@ -6622,7 +6623,8 @@ miopenGetCosineEmbeddingLossForwardWorkspaceSize(miopenHandle_t handle,
                                                  const miopenTensorDescriptor_t targetDesc,
                                                  const miopenTensorDescriptor_t outputDesc,
                                                  const float margin,
-                                                 size_t* sizeInBytes);
+                                                 size_t* sizeInBytes,
+                                                 miopenLossReductionMode_t reduction);
 
 /*! @brief Execute a cosineembeddingloss forward layer
  *

@@ -31,14 +31,6 @@
 #include "float_types.h"
 #include "tensor_view.hpp"
 
-#ifndef D_TYPE
-#define D_TYPE float
-#endif
-
-#ifndef REDUCE_SIZE
-#define REDUCE_SIZE 256
-#endif
-
 __device__ FLOAT_ACCUM warpReduceSum(FLOAT_ACCUM val)
 {
     if(warpSize >= 64)

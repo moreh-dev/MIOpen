@@ -665,6 +665,22 @@ inline SolverRegistrar::SolverRegistrar(IdRegistryData& registry)
              ++id,
              Primitive::Loss,
              cosineembeddingloss::CosineEmbeddingLossReducedBackward2d{}.SolverDbId());
+    Register(registry,
+             ++id,
+             Primitive::Loss,
+             cosineembeddingloss::CosineEmbeddingLossUnreducedForward2dNonSum{}.SolverDbId());
+    Register(registry,
+             ++id,
+             Primitive::Loss,
+             cosineembeddingloss::CosineEmbeddingLossReducedForward2dNonSum{}.SolverDbId());
+    Register(registry,
+             ++id,
+             Primitive::Loss,
+             cosineembeddingloss::CosineEmbeddingLossUnreducedBackward2dNonSum{}.SolverDbId());
+    Register(registry,
+             ++id,
+             Primitive::Loss,
+             cosineembeddingloss::CosineEmbeddingLossReducedBackward2dNonSum{}.SolverDbId());
     // IMPORTANT: New solvers should be added to the end of the function!
 }
 

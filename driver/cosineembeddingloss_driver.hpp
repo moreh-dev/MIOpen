@@ -90,18 +90,25 @@ public:
     int RunBackwardGPU() override;
     int RunBackwardCPU();
 
-    Tref GetTolerance();
     int VerifyBackward() override;
     int VerifyForward() override;
     ~CosineEmbeddingLossDriver() override
     {
+        std::cout << "Destroying" << std::endl;
         miopenDestroyTensorDescriptor(input1Desc);
+        std::cout << "Destroyed input1Desc" << std::endl;
         miopenDestroyTensorDescriptor(input2Desc);
+        std::cout << "Destroyed input2Desc" << std::endl;
         miopenDestroyTensorDescriptor(targetDesc);
+        std::cout << "Destroyed targetDesc" << std::endl;
         miopenDestroyTensorDescriptor(outputDesc);
+        std::cout << "Destroyed outputDesc" << std::endl;
         miopenDestroyTensorDescriptor(input1GradDesc);
+        std::cout << "Destroyed input1GradDesc" << std::endl;
         miopenDestroyTensorDescriptor(input2GradDesc);
+        std::cout << "Destroyed input2GradDesc" << std::endl;
         miopenDestroyTensorDescriptor(outputGradDesc);
+        std::cout << "Destroyed outputGradDesc" << std::endl;
     }
 
 private:
@@ -288,8 +295,15 @@ int CosineEmbeddingLossDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     size_t target_sz = GetTensorSize(targetDesc);
     size_t out_sz    = GetTensorSize(outputDesc);
 
-    miopenGetCosineEmbeddingLossForwardWorkspaceSize(
-        GetHandle(), input1Desc, input2Desc, targetDesc, outputDesc, margin, &ws_sizeInBytes_fwd);
+    miopenGetCosineEmbeddingLossForwardWorkspaceSize(GetHandle(),
+                                                     input1Desc,
+                                                     input2Desc,
+                                                     targetDesc,
+                                                     outputDesc,
+                                                     margin,
+                                                     &ws_sizeInBytes_fwd,
+                                                     reduction);
+
     if(ws_sizeInBytes_fwd == static_cast<size_t>(-1))
         return miopenStatusAllocFailed;
 
@@ -311,8 +325,10 @@ int CosineEmbeddingLossDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     in2_dev    = std::unique_ptr<GPUMem>(new GPUMem(ctx, in_sz, sizeof(Tgpu)));
     target_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, target_sz, sizeof(int32_t)));
     out_dev    = std::unique_ptr<GPUMem>(new GPUMem(ctx, out_sz, sizeof(Tgpu)));
+
     workspace_dev_fwd =
         std::unique_ptr<GPUMem>(new GPUMem(ctx, ws_sizeInBytes_fwd, sizeof(std::byte)));
+
     workspace_dev_bwd =
         std::unique_ptr<GPUMem>(new GPUMem(ctx, ws_sizeInBytes_bwd, sizeof(std::byte)));
     in1_grad_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, in_sz, sizeof(Tgpu)));
@@ -548,25 +564,11 @@ int CosineEmbeddingLossDriver<Tgpu, Tref>::RunBackwardCPU()
 }
 
 template <typename Tgpu, typename Tref>
-Tref CosineEmbeddingLossDriver<Tgpu, Tref>::GetTolerance()
-{
-    // Computation error of fp16 is ~2^13 (=8192) bigger than
-    // the one of fp32 because mantissa is shorter by 13 bits.
-    auto tolerance = std::is_same<Tgpu, float>::value ? 1.5e-6 : 8.2e-3;
-
-    // bf16 mantissa has 7 bits, by 3 bits shorter than fp16.
-    if(std::is_same<Tgpu, bfloat16>::value)
-        tolerance *= 8.0;
-    return tolerance;
-}
-
-template <typename Tgpu, typename Tref>
 int CosineEmbeddingLossDriver<Tgpu, Tref>::VerifyForward()
 {
     RunForwardCPU();
-    const Tref tolerance = GetTolerance();
-    auto error           = miopen::rms_range(out_host, out);
-
+    auto tolerance = std::numeric_limits<Tgpu>::epsilon() * 10;
+    auto error     = miopen::rms_range(out_host, out);
     if(!std::isfinite(error) || error > tolerance)
     {
         std::cout << "Forward CosineEmbeddingLoss FAILED: " << error << std::endl;
@@ -584,12 +586,13 @@ template <typename Tgpu, typename Tref>
 int CosineEmbeddingLossDriver<Tgpu, Tref>::VerifyBackward()
 {
     RunBackwardCPU();
-    const Tref tolerance = GetTolerance();
-    auto error1          = miopen::rms_range(in1_grad_host, in1_grad);
+    auto tolerance = std::numeric_limits<Tgpu>::epsilon() * 10;
+    auto error1    = miopen::rms_range(in1_grad_host, in1_grad);
 
     if(!std::isfinite(error1) || error1 > tolerance)
     {
-        std::cout << "Backward CosineEmbeddingLoss in Input Grad 1 FAILED: " << error1 << std::endl;
+        std::cout << "Backward CosineEmbeddingLoss in Input Grad 1 FAILED: " << error1
+                  << " while tolerance: " << tolerance << std::endl;
         return EC_VerifyFwd;
     }
     else
@@ -602,7 +605,8 @@ int CosineEmbeddingLossDriver<Tgpu, Tref>::VerifyBackward()
 
     if(!std::isfinite(error2) || error2 > tolerance)
     {
-        std::cout << "Backward CosineEmbeddingLoss in Input Grad 2 FAILED: " << error2 << std::endl;
+        std::cout << "Backward CosineEmbeddingLoss in Input Grad 2 FAILED: " << error2
+                  << " while tolerance: " << tolerance << std::endl;
         return EC_VerifyFwd;
     }
     else

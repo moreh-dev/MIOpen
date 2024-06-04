@@ -128,7 +128,9 @@ bool CosineEmbeddingLossReducedForward2d::IsApplicable(
     const ExecutionContext&,
     const miopen::cosineembeddingloss::FwdReducedProblemDescription& problem) const
 {
-    if(!problem.IsValidLength())
+    if(!((problem.GetInput1Desc().GetLengths()[0] >= 768 &&
+          problem.GetInput1Desc().GetLengths()[1] >= 128) ||
+         problem.GetInput1Desc().GetLengths()[1] >= 2000))
         return false;
     return true;
 }

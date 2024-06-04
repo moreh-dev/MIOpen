@@ -33,12 +33,19 @@ namespace miopen {
 struct Handle;
 struct TensorDescriptor;
 
-size_t GetCosineEmbeddingLossForwardWorkspaceSize(Handle& handle,
-                                                  const TensorDescriptor input1Desc,
-                                                  const TensorDescriptor input2Desc,
-                                                  const TensorDescriptor targetDesc,
-                                                  const TensorDescriptor outputDesc,
-                                                  const float margin);
+size_t GetCosineEmbeddingLossUnreducedForwardWorkspaceSize(Handle& handle,
+                                                           const TensorDescriptor input1Desc,
+                                                           const TensorDescriptor input2Desc,
+                                                           const TensorDescriptor targetDesc,
+                                                           const TensorDescriptor outputDesc,
+                                                           const float margin);
+
+size_t GetCosineEmbeddingLossReducedForwardWorkspaceSize(Handle& handle,
+                                                         const TensorDescriptor input1Desc,
+                                                         const TensorDescriptor input2Desc,
+                                                         const TensorDescriptor targetDesc,
+                                                         const TensorDescriptor outputDesc,
+                                                         const float margin);
 
 miopenStatus_t CosineEmbeddingLossUnreducedForward(Handle& handle,
                                                    Data_t workspace,

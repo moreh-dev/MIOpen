@@ -87,20 +87,34 @@ miopenGetCosineEmbeddingLossForwardWorkspaceSize(miopenHandle_t handle,
                                                  const miopenTensorDescriptor_t targetDesc,
                                                  const miopenTensorDescriptor_t outputDesc,
                                                  const float margin,
-                                                 size_t* sizeInBytes)
+                                                 size_t* sizeInBytes,
+                                                 const miopenLossReductionMode_t reduction)
 {
 
     MIOPEN_LOG_FUNCTION(
-        handle, input1Desc, input2Desc, targetDesc, outputDesc, margin, sizeInBytes);
+        handle, input1Desc, input2Desc, targetDesc, outputDesc, margin, sizeInBytes, reduction);
 
+    if(reduction == MIOPEN_LOSS_REDUCTION_NONE)
+    {
+        return miopen::try_([&] {
+            miopen::deref(sizeInBytes) =
+                miopen::GetCosineEmbeddingLossUnreducedForwardWorkspaceSize(
+                    miopen::deref(handle),
+                    miopen::deref(input1Desc),
+                    miopen::deref(input2Desc),
+                    miopen::deref(targetDesc),
+                    miopen::deref(outputDesc),
+                    margin);
+        });
+    }
     return miopen::try_([&] {
         miopen::deref(sizeInBytes) =
-            miopen::GetCosineEmbeddingLossForwardWorkspaceSize(miopen::deref(handle),
-                                                               miopen::deref(input1Desc),
-                                                               miopen::deref(input2Desc),
-                                                               miopen::deref(targetDesc),
-                                                               miopen::deref(outputDesc),
-                                                               margin);
+            miopen::GetCosineEmbeddingLossReducedForwardWorkspaceSize(miopen::deref(handle),
+                                                                      miopen::deref(input1Desc),
+                                                                      miopen::deref(input2Desc),
+                                                                      miopen::deref(targetDesc),
+                                                                      miopen::deref(outputDesc),
+                                                                      margin);
     });
 }
 

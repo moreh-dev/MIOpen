@@ -35,12 +35,12 @@
 
 namespace miopen {
 
-size_t GetCosineEmbeddingLossForwardWorkspaceSize(Handle& handle,
-                                                  const TensorDescriptor input1Desc,
-                                                  const TensorDescriptor input2Desc,
-                                                  const TensorDescriptor targetDesc,
-                                                  const TensorDescriptor outputDesc,
-                                                  const float margin)
+size_t GetCosineEmbeddingLossUnreducedForwardWorkspaceSize(Handle& handle,
+                                                           const TensorDescriptor input1Desc,
+                                                           const TensorDescriptor input2Desc,
+                                                           const TensorDescriptor targetDesc,
+                                                           const TensorDescriptor outputDesc,
+                                                           const float margin)
 {
     auto ctx           = ExecutionContext{&handle};
     const auto problem = cosineembeddingloss::FwdUnreducedProblemDescription{
@@ -48,7 +48,29 @@ size_t GetCosineEmbeddingLossForwardWorkspaceSize(Handle& handle,
 
     const auto algo    = AlgorithmName{"CosineEmbeddingLossUnreducedForward"};
     const auto solvers = solver::SolverContainer<
-        solver::cosineembeddingloss::CosineEmbeddingLossUnreducedForward2d>{};
+        solver::cosineembeddingloss::CosineEmbeddingLossUnreducedForward2d,
+        solver::cosineembeddingloss::CosineEmbeddingLossUnreducedForward2dNonSum>{};
+
+    auto pair_size_vector = solvers.GetWorkspaceSizes(ctx, problem);
+
+    return pair_size_vector.empty() ? static_cast<size_t>(-1) : pair_size_vector.front().second;
+}
+
+size_t GetCosineEmbeddingLossReducedForwardWorkspaceSize(Handle& handle,
+                                                         const TensorDescriptor input1Desc,
+                                                         const TensorDescriptor input2Desc,
+                                                         const TensorDescriptor targetDesc,
+                                                         const TensorDescriptor outputDesc,
+                                                         const float margin)
+{
+    auto ctx           = ExecutionContext{&handle};
+    const auto problem = cosineembeddingloss::FwdReducedProblemDescription{
+        input1Desc, input2Desc, targetDesc, outputDesc, margin};
+
+    const auto algo    = AlgorithmName{"CosineEmbeddingLossReducedForward"};
+    const auto solvers = solver::SolverContainer<
+        solver::cosineembeddingloss::CosineEmbeddingLossReducedForward2d,
+        solver::cosineembeddingloss::CosineEmbeddingLossReducedForward2dNonSum>{};
 
     auto pair_size_vector = solvers.GetWorkspaceSizes(ctx, problem);
 
@@ -92,7 +114,8 @@ miopenStatus_t CosineEmbeddingLossUnreducedForward(Handle& handle,
     }();
     const auto algo    = AlgorithmName{"CosineEmbeddingLossUnreducedForward"};
     const auto solvers = solver::SolverContainer<
-        solver::cosineembeddingloss::CosineEmbeddingLossUnreducedForward2d>{};
+        solver::cosineembeddingloss::CosineEmbeddingLossUnreducedForward2d,
+        solver::cosineembeddingloss::CosineEmbeddingLossUnreducedForward2dNonSum>{};
 
     solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
 
@@ -134,9 +157,10 @@ miopenStatus_t CosineEmbeddingLossReducedForward(Handle& handle,
         return tmp;
     }();
 
-    const auto algo = AlgorithmName{"CosineEmbeddingLossReducedForward"};
-    const auto solvers =
-        solver::SolverContainer<solver::cosineembeddingloss::CosineEmbeddingLossReducedForward2d>{};
+    const auto algo    = AlgorithmName{"CosineEmbeddingLossReducedForward"};
+    const auto solvers = solver::SolverContainer<
+        solver::cosineembeddingloss::CosineEmbeddingLossReducedForward2d,
+        solver::cosineembeddingloss::CosineEmbeddingLossReducedForward2dNonSum>{};
 
     solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
 
@@ -156,9 +180,10 @@ size_t GetCosineEmbeddingLossBackwardWorkspaceSize(Handle& handle,
     const auto problem = cosineembeddingloss::BwdUnreducedProblemDescription{
         input1Desc, input2Desc, targetDesc, outputGradDesc, input1GradDesc, input2GradDesc, margin};
 
-    const auto algo    = AlgorithmName{"CosineEmbeddingLossUnreducedBackward"};
+    const auto algo    = AlgorithmName{"CosineEmbeddingLossBackward"};
     const auto solvers = solver::SolverContainer<
-        solver::cosineembeddingloss::CosineEmbeddingLossUnreducedBackward2d>{};
+        solver::cosineembeddingloss::CosineEmbeddingLossUnreducedBackward2d,
+        solver::cosineembeddingloss::CosineEmbeddingLossUnreducedBackward2dNonSum>{};
 
     auto pair_size_vector = solvers.GetWorkspaceSizes(ctx, problem);
 
@@ -209,7 +234,8 @@ miopenStatus_t CosineEmbeddingLossUnreducedBackward(Handle& handle,
     }();
     const auto algo    = AlgorithmName{"CosineEmbeddingLossUnreducedBackward"};
     const auto solvers = solver::SolverContainer<
-        solver::cosineembeddingloss::CosineEmbeddingLossUnreducedBackward2d>{};
+        solver::cosineembeddingloss::CosineEmbeddingLossUnreducedBackward2d,
+        solver::cosineembeddingloss::CosineEmbeddingLossUnreducedBackward2dNonSum>{};
 
     solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
 
@@ -262,7 +288,8 @@ miopenStatus_t CosineEmbeddingLossReducedBackward(Handle& handle,
     }();
     const auto algo    = AlgorithmName{"CosineEmbeddingLossReducedBackward"};
     const auto solvers = solver::SolverContainer<
-        solver::cosineembeddingloss::CosineEmbeddingLossReducedBackward2d>{};
+        solver::cosineembeddingloss::CosineEmbeddingLossReducedBackward2d,
+        solver::cosineembeddingloss::CosineEmbeddingLossReducedBackward2dNonSum>{};
 
     solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
 
