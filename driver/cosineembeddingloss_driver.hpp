@@ -94,21 +94,13 @@ public:
     int VerifyForward() override;
     ~CosineEmbeddingLossDriver() override
     {
-        std::cout << "Destroying" << std::endl;
         miopenDestroyTensorDescriptor(input1Desc);
-        std::cout << "Destroyed input1Desc" << std::endl;
         miopenDestroyTensorDescriptor(input2Desc);
-        std::cout << "Destroyed input2Desc" << std::endl;
         miopenDestroyTensorDescriptor(targetDesc);
-        std::cout << "Destroyed targetDesc" << std::endl;
         miopenDestroyTensorDescriptor(outputDesc);
-        std::cout << "Destroyed outputDesc" << std::endl;
         miopenDestroyTensorDescriptor(input1GradDesc);
-        std::cout << "Destroyed input1GradDesc" << std::endl;
         miopenDestroyTensorDescriptor(input2GradDesc);
-        std::cout << "Destroyed input2GradDesc" << std::endl;
         miopenDestroyTensorDescriptor(outputGradDesc);
-        std::cout << "Destroyed outputGradDesc" << std::endl;
     }
 
 private:
