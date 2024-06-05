@@ -83,6 +83,7 @@ ConvSolution SigmoidFocalLossUnreducedFwd::GetSolution(
             decltype(auto) params = raw_params.CastTo<miopen::sigmoidfocalloss::FwdInvokeParams>();
             auto input_tv         = get_inner_expanded_tv(deref(params.inputDesc));
             auto target_tv        = get_inner_expanded_tv(deref(params.targetDesc));
+            auto output_tv        = get_inner_expanded_tv(deref(params.outputDesc));
 
             kernel(params.input,
                    params.target,
@@ -90,7 +91,8 @@ ConvSolution SigmoidFocalLossUnreducedFwd::GetSolution(
                    params.alpha,
                    params.gamma,
                    input_tv,
-                   target_tv);
+                   target_tv,
+                   output_tv);
         };
     };
 

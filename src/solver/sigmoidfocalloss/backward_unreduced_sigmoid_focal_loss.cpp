@@ -84,6 +84,7 @@ ConvSolution SigmoidFocalLossUnreducedBwd::GetSolution(
             auto input_tv         = get_inner_expanded_tv(deref(params.inputDesc));
             auto target_tv        = get_inner_expanded_tv(deref(params.targetDesc));
             auto doutput_tv       = get_inner_expanded_tv(deref(params.doutputDesc));
+            auto dinput_tv        = get_inner_expanded_tv(deref(params.dinputDesc));
 
             kernel(params.input,
                    params.target,
@@ -93,7 +94,8 @@ ConvSolution SigmoidFocalLossUnreducedBwd::GetSolution(
                    params.gamma,
                    input_tv,
                    target_tv,
-                   doutput_tv);
+                   doutput_tv,
+                   dinput_tv);
         };
     };
 

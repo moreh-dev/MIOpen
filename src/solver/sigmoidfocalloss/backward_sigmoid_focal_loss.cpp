@@ -84,7 +84,9 @@ ConvSolution SigmoidFocalLossBwd::GetSolution(
             auto input_tv         = get_inner_expanded_tv(deref(params.inputDesc));
             auto target_tv        = get_inner_expanded_tv(deref(params.targetDesc));
             auto doutput_tv       = get_inner_expanded_tv(deref(params.doutputDesc));
-            float divisor         = 1;
+            auto dinput_tv        = get_inner_expanded_tv(deref(params.dinputDesc));
+
+            float divisor = 1;
             if(params.reduction == MIOPEN_LOSS_REDUCTION_MEAN)
             {
                 divisor = deref(params.inputDesc).GetElementSize();
@@ -99,7 +101,8 @@ ConvSolution SigmoidFocalLossBwd::GetSolution(
                    divisor,
                    input_tv,
                    target_tv,
-                   doutput_tv);
+                   doutput_tv,
+                   dinput_tv);
         };
     };
 

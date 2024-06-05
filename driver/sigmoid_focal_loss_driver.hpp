@@ -45,7 +45,7 @@
 #include <../test/tensor_holder.hpp>
 #include <../test/verify.hpp>
 
-// #define DEBUGGING
+#define DEBUGGING
 
 template <typename TIO>
 void mloSigmoidFocalLossUnreducedFwdRunHost(TIO* input,
@@ -53,6 +53,7 @@ void mloSigmoidFocalLossUnreducedFwdRunHost(TIO* input,
                                             TIO* target,
                                             miopenTensorDescriptor_t targetDesc,
                                             TIO* outputHost,
+                                            // miopenTensorDescriptor_t outputDesc,
                                             float alpha = 0.25,
                                             float gamma = 2)
 {
@@ -733,7 +734,7 @@ int SigmoidFocalLossDriver<TIO>::VerifyBackward()
 {
     RunBackwardCPU();
 #ifdef DEBUGGING
-    for(int i = 0; i < miopen::deref(d).GetElementSize(); ++i)
+    for(int i = 0; i < miopen::deref(dinputDesc).GetElementSize(); ++i)
     {
         std::cout << dinput.data()[i] << " " << dinputHost.data()[i] << std::endl;
     }

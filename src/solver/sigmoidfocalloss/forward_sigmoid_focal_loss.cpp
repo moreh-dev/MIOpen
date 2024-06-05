@@ -33,6 +33,7 @@
 #include <miopen/sigmoid_focal_loss.hpp>
 #include <miopen/target_properties.hpp>
 #include <miopen/sigmoidfocalloss/utils.hpp>
+#include <miopen/tensor_view_utils.hpp>
 
 #define LOCAL_SIZE 256
 #define LOCAL_SIZE_REDUCE_FWD 256
@@ -105,8 +106,8 @@ ConvSolution SigmoidFocalLossFwd::GetSolution(
             /* Execute loss kernel */
             {
                 decltype(auto) kernel = handle_.Run(kernels.front());
-                auto input_tv         = get_inner_expanded_tv(deref(params.inputDesc));
-                auto target_tv        = get_inner_expanded_tv(deref(params.targetDesc));
+                auto input_tv         = get_inner_expanded_tv<5>(*params.inputDesc);
+                auto target_tv        = get_inner_expanded_tv<5>(deref(params.targetDesc));
                 float divisor         = 1;
                 if(params.reduction == MIOPEN_LOSS_REDUCTION_MEAN)
                 {
