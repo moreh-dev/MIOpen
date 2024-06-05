@@ -45,7 +45,8 @@
 #include <../test/tensor_holder.hpp>
 #include <../test/verify.hpp>
 
-#define DEBUGGING
+// #define DEBUGGING
+// #define COMPARE_WITH_ROCM
 
 template <typename TIO>
 void mloSigmoidFocalLossUnreducedFwdRunHost(TIO* input,
@@ -481,7 +482,7 @@ int SigmoidFocalLossDriver<TIO>::AllocateBuffersAndCopy()
         doutput[i] = prng::gen_A_to_B<TIO>(static_cast<TIO>(-2), static_cast<TIO>(2));
     }
 
-#ifdef DEBUGGING
+#ifdef COMPARE_WITH_ROCM
     float input_arr[12] = {0.4525,
                            -1.1261,
                            -2.2234,

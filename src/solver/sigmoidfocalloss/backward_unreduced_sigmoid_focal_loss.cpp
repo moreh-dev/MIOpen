@@ -32,6 +32,7 @@
 #include <miopen/sigmoid_focal_loss.hpp>
 #include <miopen/target_properties.hpp>
 #include <miopen/sigmoidfocalloss/utils.hpp>
+#include <miopen/tensor_view_utils.hpp>
 
 #define LOCAL_SIZE 256
 
@@ -81,10 +82,10 @@ ConvSolution SigmoidFocalLossUnreducedBwd::GetSolution(
         return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
             decltype(auto) kernel = handle_.Run(kernels.front());
             decltype(auto) params = raw_params.CastTo<miopen::sigmoidfocalloss::BwdInvokeParams>();
-            auto input_tv         = get_inner_expanded_tv(deref(params.inputDesc));
-            auto target_tv        = get_inner_expanded_tv(deref(params.targetDesc));
-            auto doutput_tv       = get_inner_expanded_tv(deref(params.doutputDesc));
-            auto dinput_tv        = get_inner_expanded_tv(deref(params.dinputDesc));
+            auto input_tv         = get_inner_expanded_tv<5>(deref(params.inputDesc));
+            auto target_tv        = get_inner_expanded_tv<5>(deref(params.targetDesc));
+            auto doutput_tv       = get_inner_expanded_tv<5>(deref(params.doutputDesc));
+            auto dinput_tv        = get_inner_expanded_tv<5>(deref(params.dinputDesc));
 
             kernel(params.input,
                    params.target,
