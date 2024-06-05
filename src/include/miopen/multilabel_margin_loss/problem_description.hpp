@@ -45,18 +45,18 @@ struct MultilabelMarginLossFwdProblemDescriptionBase : ProblemDescriptionBase
                                                   const TensorDescriptor& oDesc_)
         : iDesc(iDesc_), tDesc(tDesc_), oDesc(oDesc_)
     {
-        if(!IsSameLength())
+        if(!IsValidLength())
         {
             MIOPEN_THROW(miopenStatusBadParm, "Multilabel Margin Loss: Tensor sizes do not match");
         }
-        if(!IsRightDim())
+        if(!IsValidDim())
         {
             MIOPEN_THROW(miopenStatusBadParm,
                          "Multilabel Margin Loss: Only accept 2d tensor (N, C)");
         }
     }
 
-    bool IsSameLength() const
+    bool IsValidLength() const
     {
         if(iDesc.GetSize() != tDesc.GetSize())
             return false;
@@ -68,7 +68,7 @@ struct MultilabelMarginLossFwdProblemDescriptionBase : ProblemDescriptionBase
         return true;
     }
 
-    bool IsRightDim() const
+    bool IsValidDim() const
     {
         if(!(iDesc.GetSize() == 2 && tDesc.GetSize() == 2))
         {
