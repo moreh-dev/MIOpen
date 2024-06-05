@@ -60,6 +60,23 @@ struct SigmoidFocalLossFwd final : SigmoidFocalLossFwdSolverBase
     bool MayNeedWorkspace() const override { return true; }
 };
 
+using SigmoidFocalLossBwdSolverBase =
+    NonTunableSolverBase<ExecutionContext,
+                         miopen::sigmoidfocalloss::SigmoidFocalLossBwdProblemDescription>;
+
+struct SigmoidFocalLossBwd final : SigmoidFocalLossBwdSolverBase
+{
+    const std::string& SolverDbId() const override { return GetSolverDbId<SigmoidFocalLossBwd>(); }
+
+    bool IsApplicable(const ExecutionContext& context,
+                      const miopen::sigmoidfocalloss::SigmoidFocalLossBwdProblemDescription&
+                          problem) const override;
+
+    ConvSolution GetSolution(const ExecutionContext& context,
+                             const miopen::sigmoidfocalloss::SigmoidFocalLossBwdProblemDescription&
+                                 problem) const override;
+};
+
 using SigmoidFocalLossUnreducedFwdSolverBase =
     NonTunableSolverBase<ExecutionContext,
                          miopen::sigmoidfocalloss::SigmoidFocalLossFwdProblemDescription>;
@@ -77,6 +94,25 @@ struct SigmoidFocalLossUnreducedFwd final : SigmoidFocalLossUnreducedFwdSolverBa
 
     ConvSolution GetSolution(const ExecutionContext& context,
                              const miopen::sigmoidfocalloss::SigmoidFocalLossFwdProblemDescription&
+                                 problem) const override;
+};
+
+using SigmoidFocalLossUnreducedBwdSolverBase =
+    NonTunableSolverBase<ExecutionContext,
+                         miopen::sigmoidfocalloss::SigmoidFocalLossBwdProblemDescription>;
+
+struct SigmoidFocalLossUnreducedBwd final : SigmoidFocalLossUnreducedBwdSolverBase
+{
+    const std::string& SolverDbId() const override
+    {
+        return GetSolverDbId<SigmoidFocalLossUnreducedBwd>();
+    }
+
+    bool IsApplicable(const ExecutionContext& context,
+                      const miopen::sigmoidfocalloss::SigmoidFocalLossBwdProblemDescription&
+                          problem) const override;
+    ConvSolution GetSolution(const ExecutionContext& context,
+                             const miopen::sigmoidfocalloss::SigmoidFocalLossBwdProblemDescription&
                                  problem) const override;
 };
 

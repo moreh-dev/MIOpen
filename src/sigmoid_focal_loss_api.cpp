@@ -125,18 +125,6 @@ extern "C" miopenStatus_t miopenSigmoidFocalLossForward(miopenHandle_t handle,
 
     LogCmdSigmoidFocalLoss(inputDesc, targetDesc, true);
 
-    // return miopen::try_([&] {
-    //     miopen::SigmoidFocalLossUnreducedForward(miopen::deref(handle),
-    //                                              miopen::deref(inputDesc),
-    //                                              DataCast(input),
-    //                                              miopen::deref(targetDesc),
-    //                                              DataCast(target),
-    //                                              miopen::deref(outputDesc),
-    //                                              DataCast(output),
-    //                                              alpha,
-    //                                              gamma);
-    // });
-
     return miopen::try_([&] {
         miopen::SigmoidFocalLossForward(miopen::deref(handle),
                                         DataCast(workspace),
@@ -153,60 +141,46 @@ extern "C" miopenStatus_t miopenSigmoidFocalLossForward(miopenHandle_t handle,
     });
 }
 
-// extern "C" miopenStatus_t miopenSigmoidFocalLossBackward(miopenHandle_t handle,
-//                                                          miopenTensorDescriptor_t inputDesc,
-//                                                          const void* input,
-//                                                          miopenTensorDescriptor_t targetDesc,
-//                                                          const void* target,
-//                                                          miopenTensorDescriptor_t doutputDesc,
-//                                                          const void* doutput,
-//                                                          miopenTensorDescriptor_t dinputDesc,
-//                                                          void* dinput,
-//                                                          float margin,
-//                                                          const miopenLossReductionMode_t
-//                                                          reduction)
-// {
-//     MIOPEN_LOG_FUNCTION(handle,
-//                         inputDesc,
-//                         input,
-//                         targetDesc,
-//                         target,
-//                         doutputDesc,
-//                         doutput,
-//                         dinputDesc,
-//                         dinput,
-//                         margin,
-//                         reduction);
+extern "C" miopenStatus_t miopenSigmoidFocalLossBackward(miopenHandle_t handle,
+                                                         miopenTensorDescriptor_t inputDesc,
+                                                         const void* input,
+                                                         miopenTensorDescriptor_t targetDesc,
+                                                         const void* target,
+                                                         miopenTensorDescriptor_t doutputDesc,
+                                                         const void* doutput,
+                                                         miopenTensorDescriptor_t dinputDesc,
+                                                         void* dinput,
+                                                         float alpha,
+                                                         float gamma,
+                                                         const miopenLossReductionMode_t reduction)
+{
+    MIOPEN_LOG_FUNCTION(handle,
+                        inputDesc,
+                        input,
+                        targetDesc,
+                        target,
+                        doutputDesc,
+                        doutput,
+                        dinputDesc,
+                        dinput,
+                        alpha,
+                        gamma,
+                        reduction);
 
-//     LogCmdSigmoidFocalLoss(inputDesc, targetDesc, false);
+    LogCmdSigmoidFocalLoss(inputDesc, targetDesc, false);
 
-//     if(reduction == MIOPEN_LOSS_REDUCTION_NONE)
-//     {
-//         return miopen::try_([&] {
-//             miopen::SigmoidFocalLossUnreducedBackward(miopen::deref(handle),
-//                                                       miopen::deref(inputDesc),
-//                                                       DataCast(input),
-//                                                       miopen::deref(targetDesc),
-//                                                       DataCast(target),
-//                                                       miopen::deref(doutputDesc),
-//                                                       DataCast(doutput),
-//                                                       miopen::deref(dinputDesc),
-//                                                       DataCast(dinput),
-//                                                       margin);
-//         });
-//     }
-
-//     return miopen::try_([&] {
-//         miopen::SigmoidFocalLossBackward(miopen::deref(handle),
-//                                          miopen::deref(inputDesc),
-//                                          DataCast(input),
-//                                          miopen::deref(targetDesc),
-//                                          DataCast(target),
-//                                          miopen::deref(doutputDesc),
-//                                          DataCast(doutput),
-//                                          miopen::deref(dinputDesc),
-//                                          DataCast(dinput),
-//                                          margin,
-//                                          reduction);
-//     });
-// }
+    return miopen::try_([&] {
+        miopen::SigmoidFocalLossBackward(miopen::deref(handle),
+                                         miopen::deref(inputDesc),
+                                         DataCast(input),
+                                         miopen::deref(targetDesc),
+                                         DataCast(target),
+                                         miopen::deref(doutputDesc),
+                                         DataCast(doutput),
+                                         miopen::deref(dinputDesc),
+                                         DataCast(dinput),
+                                         alpha,
+                                         gamma,
+                                         reduction);
+    });
+}

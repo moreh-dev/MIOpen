@@ -273,6 +273,8 @@ set( MIOpen_Source
     solver/pooling/backwardNd.cpp
     solver/reduce/forward_argmax.cpp
     solver/reduce/forward_sum.cpp
+    solver/sigmoidfocalloss/backward_unreduced_sigmoid_focal_loss.cpp
+    solver/sigmoidfocalloss/backward_sigmoid_focal_loss.cpp
     solver/sigmoidfocalloss/forward_unreduced_sigmoid_focal_loss.cpp
     solver/sigmoidfocalloss/forward_sigmoid_focal_loss.cpp
     solver/softmax/attn_softmax.cpp

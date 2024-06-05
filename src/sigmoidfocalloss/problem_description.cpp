@@ -45,41 +45,24 @@ bool checkSameLength(const TensorDescriptor& x, const TensorDescriptor& y)
     return true;
 }
 
-// NetworkConfig SigmoidFocalLossFwdProblemDescription::MakeNetworkConfig() const
-// {
-//     auto input_dtype  = inputDesc.GetType();
-//     auto target_dtype = targetDesc.GetType();
-//     auto size         = inputDesc.GetElementSize();
-//     auto dim_num      = inputDesc.GetSize();
+NetworkConfig SigmoidFocalLossBwdProblemDescription::MakeNetworkConfig() const
+{
+    auto input_dtype  = inputDesc.GetType();
+    auto target_dtype = targetDesc.GetType();
+    auto size         = inputDesc.GetElementSize();
+    auto dim_num      = inputDesc.GetSize();
 
-//     std::ostringstream ss;
+    std::ostringstream ss;
 
-//     ss << "hel_fwd";
-//     ss << "i_dtype" << input_dtype;
-//     ss << "t_dtype" << target_dtype;
-//     ss << "dim_num" << dim_num;
-//     ss << "size" << size;
+    ss << "sfl_bwd";
+    ss << "reduction" << reduction;
+    ss << "i_dtype" << input_dtype;
+    ss << "t_dtype" << target_dtype;
+    ss << "dim_num" << dim_num;
+    ss << "size" << size;
 
-//     return NetworkConfig{ss.str()};
-// }
-
-// NetworkConfig SigmoidFocalLossBwdProblemDescription::MakeNetworkConfig() const
-// {
-//     auto input_dtype  = inputDesc.GetType();
-//     auto target_dtype = targetDesc.GetType();
-//     auto size         = inputDesc.GetElementSize();
-//     auto dim_num      = inputDesc.GetSize();
-
-//     std::ostringstream ss;
-
-//     ss << "hel_bwd";
-//     ss << "i_dtype" << input_dtype;
-//     ss << "t_dtype" << target_dtype;
-//     ss << "dim_num" << dim_num;
-//     ss << "size" << size;
-
-//     return NetworkConfig{ss.str()};
-// }
+    return NetworkConfig{ss.str()};
+}
 
 NetworkConfig SigmoidFocalLossFwdProblemDescription::MakeNetworkConfig() const
 {
@@ -99,24 +82,6 @@ NetworkConfig SigmoidFocalLossFwdProblemDescription::MakeNetworkConfig() const
 
     return NetworkConfig{ss.str()};
 }
-
-// NetworkConfig SigmoidFocalLossUnreducedBwdProblemDescription::MakeNetworkConfig() const
-// {
-//     auto input_dtype  = inputDesc.GetType();
-//     auto target_dtype = targetDesc.GetType();
-//     auto size         = inputDesc.GetElementSize();
-//     auto dim_num      = inputDesc.GetSize();
-
-//     std::ostringstream ss;
-
-//     ss << "hel_unreduced_bwd";
-//     ss << "i_dtype" << input_dtype;
-//     ss << "t_dtype" << target_dtype;
-//     ss << "dim_num" << dim_num;
-//     ss << "size" << size;
-
-//     return NetworkConfig{ss.str()};
-// }
 
 } // namespace sigmoidfocalloss
 

@@ -52,28 +52,18 @@ miopenStatus_t SigmoidFocalLossForward(Handle& handle,
                                        float gamma,
                                        miopenLossReductionMode_t reduction);
 
-// miopenStatus_t SigmoidFocalLossBackward(Handle& handle,
-//                                           const TensorDescriptor& inputDesc,
-//                                           ConstData_t input,
-//                                           const TensorDescriptor& targetDesc,
-//                                           ConstData_t target,
-//                                           const TensorDescriptor& doutputDesc,
-//                                           ConstData_t doutput,
-//                                           const TensorDescriptor& dinputDesc,
-//                                           Data_t dinput,
-//                                           float margin,
-//                                           miopenLossReductionMode_t reduction);
-
-// miopenStatus_t SigmoidFocalLossUnreducedBackward(Handle& handle,
-//                                                    const TensorDescriptor& inputDesc,
-//                                                    ConstData_t input,
-//                                                    const TensorDescriptor& targetDesc,
-//                                                    ConstData_t target,
-//                                                    const TensorDescriptor& doutputDesc,
-//                                                    ConstData_t doutput,
-//                                                    const TensorDescriptor& dinputDesc,
-//                                                    Data_t dinput,
-//                                                    float margin);
+miopenStatus_t SigmoidFocalLossBackward(Handle& handle,
+                                        const TensorDescriptor& inputDesc,
+                                        ConstData_t input,
+                                        const TensorDescriptor& targetDesc,
+                                        ConstData_t target,
+                                        const TensorDescriptor& doutputDesc,
+                                        ConstData_t doutput,
+                                        const TensorDescriptor& dinputDesc,
+                                        Data_t dinput,
+                                        float alpha,
+                                        float gamma,
+                                        miopenLossReductionMode_t reduction);
 
 } // namespace miopen
 #endif // MIOPEN_SIGMOID_FOCAL_LOSS_HPP_

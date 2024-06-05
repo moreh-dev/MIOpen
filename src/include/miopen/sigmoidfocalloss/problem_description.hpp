@@ -80,26 +80,27 @@ public:
     TensorDescriptor outputDesc;
 };
 
-// struct SigmoidFocalLossUnreducedBwdProblemDescription : SigmoidFocalLossProblemDescription
-// {
-//     SigmoidFocalLossUnreducedBwdProblemDescription(const TensorDescriptor& inputDesc_,
-//                                                      const TensorDescriptor& targetDesc_,
-//                                                      const TensorDescriptor& doutputDesc_,
-//                                                      const TensorDescriptor& dinputDesc_)
-//         : SigmoidFocalLossProblemDescription(inputDesc_, targetDesc_),
-//           doutputDesc(doutputDesc_),
-//           dinputDesc(dinputDesc_)
-//     {
-//     }
+struct SigmoidFocalLossBwdProblemDescription : SigmoidFocalLossProblemDescription
+{
+    SigmoidFocalLossBwdProblemDescription(const TensorDescriptor& inputDesc_,
+                                          const TensorDescriptor& targetDesc_,
+                                          const TensorDescriptor& doutputDesc_,
+                                          const TensorDescriptor& dinputDesc_,
+                                          const miopenLossReductionMode_t reduction_)
+        : SigmoidFocalLossProblemDescription(inputDesc_, targetDesc_, reduction_),
+          doutputDesc(doutputDesc_),
+          dinputDesc(dinputDesc_)
+    {
+    }
 
-//     NetworkConfig MakeNetworkConfig() const override;
-//     const TensorDescriptor& GetDoutputDesc() const { return doutputDesc; }
-//     const TensorDescriptor& GetDinputDesc() const { return dinputDesc; }
+    NetworkConfig MakeNetworkConfig() const override;
+    const TensorDescriptor& GetDoutputDesc() const { return doutputDesc; }
+    const TensorDescriptor& GetDinputDesc() const { return dinputDesc; }
 
-// public:
-//     TensorDescriptor doutputDesc;
-//     TensorDescriptor dinputDesc;
-// };
+public:
+    TensorDescriptor doutputDesc;
+    TensorDescriptor dinputDesc;
+};
 
 } // namespace sigmoidfocalloss
 

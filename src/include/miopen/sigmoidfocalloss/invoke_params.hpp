@@ -62,6 +62,17 @@ struct FwdInvokeParams : SigmoidFocalLossInvokeParams
     Data_t output                      = nullptr;
 };
 
+struct BwdInvokeParams : SigmoidFocalLossInvokeParams
+{
+    BwdInvokeParams() = default;
+
+    const TensorDescriptor* doutputDesc = nullptr;
+    const TensorDescriptor* dinputDesc  = nullptr;
+
+    ConstData_t doutput = nullptr;
+    ConstData_t dinput  = nullptr;
+};
+
 } // namespace sigmoidfocalloss
 
 } // namespace miopen

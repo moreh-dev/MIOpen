@@ -512,7 +512,7 @@ typedef enum
     miopenActivationABS      = 5, /*!< Absolute value \f$abs(x)\f$ */
     miopenActivationPOWER = 6, /*!< Scaled and shifted power \f$(\alpha + \beta * x)^{gamma}\f$ */
     miopenActivationCLIPPEDRELU =
-        7, /*!< Clipped Rectified Linear Unit \f$ min(\alpha, max(0,x)) \f$ */
+        7,                     /*!< Clipped Rectified Linear Unit \f$ min(\alpha, max(0,x)) \f$ */
     miopenActivationLEAKYRELU =
         8, /*!< Leaky Rectified Linear Unit \f$ \alpha * x | x <= 0; x | x > 0 \f$ */
     miopenActivationELU =
@@ -5005,6 +5005,37 @@ MIOPEN_EXPORT miopenStatus_t miopenSigmoidFocalLossForward(miopenHandle_t handle
                                                            float alpha,
                                                            float gamma,
                                                            miopenLossReductionMode_t reduction);
+
+/*! @brief Execute a SigmoidFocalLoss backward layer
+ *
+ * @param handle                   MIOpen handle (input)
+ * @param inputDesc                Tensor descriptor for input tensor (input)
+ * @param input                    Data tensor input (input)
+ * @param targetDesc               Tensor descriptor for target tensor (input)
+ * @param target                   Data tensor target (input)
+ * @param doutputDesc              Tensor descriptor for output gradient (input)
+ * @param doutput                  Gradient of output (input)
+ * @param dinputDesc               Tensor descriptor for input gradient (input)
+ * @param dinput                   Gradient of input (output)
+ * @param dtargetDesc              Tensor descriptor for target gradient (input)
+ * @param dtarget                  Gradient of target (output)
+ * @param alpha                    Alpha (input)
+ * @param gamma                    Gamma (input)
+ * @param reduction                Reduction (input)
+ * @return                         miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t miopenSigmoidFocalLossBackward(miopenHandle_t handle,
+                                                            miopenTensorDescriptor_t inputDesc,
+                                                            const void* input,
+                                                            miopenTensorDescriptor_t targetDesc,
+                                                            const void* target,
+                                                            miopenTensorDescriptor_t doutputDesc,
+                                                            const void* doutput,
+                                                            miopenTensorDescriptor_t dinputDesc,
+                                                            void* dinput,
+                                                            float alpha,
+                                                            float gamma,
+                                                            miopenLossReductionMode_t reduction);
 
 /** @} */
 // CLOSEOUT LossFunction DOXYGEN GROUP

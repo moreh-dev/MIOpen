@@ -83,16 +83,63 @@ void mloSigmoidFocalLossUnreducedFwdRunHost(TIO* input,
     }
 }
 
-template <typename TIO>
-void mloSigmoidFocalLossUnreducedFwdRunHost(TIO* input,
+template <class TIO>
+void mloSigmoidFocalLossUnreducedBwdRunHost(TIO* input,
                                             miopenTensorDescriptor_t inputDesc,
                                             TIO* target,
                                             miopenTensorDescriptor_t targetDesc,
-                                            TIO* workspace,
-                                            TIO* ref_output,
-                                            float alpha   = 0.25,
-                                            float gamma   = 2,
-                                            float divisor = 1)
+                                            TIO* doutput,
+                                            miopenTensorDescriptor_t /*doutputDesc*/,
+                                            TIO* dinput,
+                                            float alpha = 0.25,
+                                            float gamma = 2)
+{
+    tensor_view_5d_t input_tv  = get_inner_expanded_tv(miopen::deref(inputDesc));
+    tensor_view_5d_t target_tv = get_inner_expanded_tv(miopen::deref(targetDesc));
+    // tensor_view_5d_t doutput_tv = get_inner_expanded_tv(miopen::deref(doutputDesc));
+    size_t inputSize = miopen::deref(inputDesc).GetElementSize();
+    size_t n[5];
+
+    for(size_t idx = 0; idx < inputSize; ++idx)
+    {
+        GET_NCDHW(n[0], n[1], n[2], n[3], n[4], idx, input_tv);
+
+        float i = static_cast<float>(TV_5D_AT(input, n[0], n[1], n[2], n[3], n[4]));
+        float t = static_cast<float>(TV_5D_AT(target, n[0], n[1], n[2], n[3], n[4]));
+
+        float p      = 1 / (1 + exp(-i));
+        float ceLoss = -(t * log(p) + (1 - t) * log(1 - p));
+        float pT     = p * t + (1 - p) * (1 - t);
+        float powPt  = pow(1 - pT, gamma);
+
+        float dpdi      = exp(-i) / pow(1 + exp(-i), 2);
+        float dcelossdi = (-t / p + (1 - t) / (1 - p)) * dpdi;
+        float dpowptdi  = gamma * pow(1 - pT, gamma - 1) * (1 - 2 * t) * dpdi;
+
+        // L = ce_loss * pow_pt => dL/di = dceloss/di * pow_pt + ce_loss * dpowpt/di
+        float dLdi = dcelossdi * powPt + ceLoss * dpowptdi;
+        float grad = doutput[idx] * dLdi;
+
+        if(alpha >= 0)
+        {
+            float alpha_t = alpha * t + (1 - alpha) * (1 - t);
+            grad *= alpha_t;
+        }
+
+        dinput[idx] = static_cast<TIO>(grad);
+    }
+}
+
+template <typename TIO>
+void mloSigmoidFocalLossFwdRunHost(TIO* input,
+                                   miopenTensorDescriptor_t inputDesc,
+                                   TIO* target,
+                                   miopenTensorDescriptor_t targetDesc,
+                                   TIO* workspace,
+                                   TIO* ref_output,
+                                   float alpha   = 0.25,
+                                   float gamma   = 2,
+                                   float divisor = 1)
 {
     tensor_view_5d_t input_tv  = get_inner_expanded_tv(miopen::deref(inputDesc));
     tensor_view_5d_t target_tv = get_inner_expanded_tv(miopen::deref(targetDesc));
@@ -143,6 +190,55 @@ void mloSigmoidFocalLossUnreducedFwdRunHost(TIO* input,
         std::swap(offset_a, offset_b);
         _size = (_size + local_size - 1) / local_size;
     } while(_size > 1);
+}
+
+template <class TIO>
+void mloSigmoidFocalLossBwdRunHost(TIO* input,
+                                   miopenTensorDescriptor_t inputDesc,
+                                   TIO* target,
+                                   miopenTensorDescriptor_t targetDesc,
+                                   TIO* doutput,
+                                   miopenTensorDescriptor_t doutputDesc,
+                                   TIO* dinput,
+                                   float alpha   = 0.25,
+                                   float gamma   = 2,
+                                   float divisor = 1)
+{
+    tensor_view_5d_t input_tv   = get_inner_expanded_tv(miopen::deref(inputDesc));
+    tensor_view_5d_t target_tv  = get_inner_expanded_tv(miopen::deref(targetDesc));
+    tensor_view_5d_t doutput_tv = get_inner_expanded_tv(miopen::deref(doutputDesc));
+    size_t inputSize            = miopen::deref(inputDesc).GetElementSize();
+    size_t n[5];
+
+    for(size_t idx = 0; idx < inputSize; ++idx)
+    {
+        GET_NCDHW(n[0], n[1], n[2], n[3], n[4], idx, input_tv);
+
+        float i  = static_cast<float>(TV_5D_AT(input, n[0], n[1], n[2], n[3], n[4]));
+        float t  = static_cast<float>(TV_5D_AT(target, n[0], n[1], n[2], n[3], n[4]));
+        float dO = static_cast<float>(TV_5D_AT(doutput, 0, 0, 0, 0, 0));
+
+        float p      = 1 / (1 + exp(-i));
+        float ceLoss = -(t * log(p) + (1 - t) * log(1 - p));
+        float pT     = p * t + (1 - p) * (1 - t);
+        float powPt  = pow(1 - pT, gamma);
+
+        float dpdi      = exp(-i) / pow(1 + exp(-i), 2);
+        float dcelossdi = (-t / p + (1 - t) / (1 - p)) * dpdi;
+        float dpowptdi  = gamma * pow(1 - pT, gamma - 1) * (1 - 2 * t) * dpdi;
+
+        // L = ce_loss * pow_pt => dL/di = dceloss/di * pow_pt + ce_loss * dpowpt/di
+        float dLdi = dcelossdi * powPt + ceLoss * dpowptdi;
+        float grad = dO * dLdi / divisor;
+
+        if(alpha >= 0)
+        {
+            float alpha_t = alpha * t + (1 - alpha) * (1 - t);
+            grad *= alpha_t;
+        }
+
+        dinput[idx] = static_cast<TIO>(grad);
+    }
 }
 
 template <typename TIO>
@@ -379,6 +475,10 @@ int SigmoidFocalLossDriver<TIO>::AllocateBuffersAndCopy()
         input[i]  = prng::gen_A_to_B<TIO>(static_cast<TIO>(-2), static_cast<TIO>(2));
         target[i] = prng::gen_A_to_B<TIO>(static_cast<TIO>(-2), static_cast<TIO>(2));
     }
+    for(int i = 0; i < dO_sz; ++i)
+    {
+        doutput[i] = prng::gen_A_to_B<TIO>(static_cast<TIO>(-2), static_cast<TIO>(2));
+    }
 
 #ifdef DEBUGGING
     float input_arr[12] = {0.4525,
@@ -409,15 +509,11 @@ int SigmoidFocalLossDriver<TIO>::AllocateBuffersAndCopy()
 
     for(int i = 0; i < in_sz; ++i)
     {
-        input[i]  = input_arr[i];
-        target[i] = target_arr[i];
+        input[i]   = input_arr[i];
+        target[i]  = target_arr[i];
+        doutput[i] = 1;
     }
 #endif
-
-    for(int i = 0; i < dO_sz; ++i)
-    {
-        doutput[i] = prng::gen_A_to_B<TIO>(static_cast<TIO>(-2), static_cast<TIO>(2));
-    }
 
     fill(output.begin(), output.end(), static_cast<TIO>(0));
     fill(dinput.begin(), dinput.end(), static_cast<TIO>(0));
@@ -478,13 +574,13 @@ int SigmoidFocalLossDriver<TIO>::RunForwardGPU()
         STOP_TIME
         int iter = inflags.GetValueInt("iter");
         if(WALL_CLOCK)
-            std::cout << "Wall-clock Time Sigmoid Focal Loss Unreduced Fwd Elapsed: "
-                      << t.gettime_ms() / iter << " ms" << std::endl;
+            std::cout << "Wall-clock Time Sigmoid Focal Loss Fwd Elapsed: " << t.gettime_ms() / iter
+                      << " ms" << std::endl;
 
         float kernel_average_time =
             iter > 1 ? (kernel_total_time - kernel_first_time) / (iter - 1) : kernel_first_time;
-        std::cout << "GPU Kernel Time Sigmoid Focal Loss Unreduced Fwd Elapsed: "
-                  << kernel_average_time << " ms" << std::endl;
+        std::cout << "GPU Kernel Time Sigmoid Focal Loss Fwd Elapsed: " << kernel_average_time
+                  << " ms" << std::endl;
     }
 
     if(output_dev->FromGPU(GetStream(), output.data()) != 0)
@@ -504,15 +600,15 @@ int SigmoidFocalLossDriver<TIO>::RunForwardCPU()
     }
     else
     {
-        mloSigmoidFocalLossUnreducedFwdRunHost<TIO>(input.data(),
-                                                    inputDesc,
-                                                    target.data(),
-                                                    targetDesc,
-                                                    workspace.data(),
-                                                    outputHost.data(),
-                                                    alpha,
-                                                    gamma,
-                                                    divisor);
+        mloSigmoidFocalLossFwdRunHost<TIO>(input.data(),
+                                           inputDesc,
+                                           target.data(),
+                                           targetDesc,
+                                           workspace.data(),
+                                           outputHost.data(),
+                                           alpha,
+                                           gamma,
+                                           divisor);
     }
 
     return miopenStatusSuccess;
@@ -521,52 +617,52 @@ int SigmoidFocalLossDriver<TIO>::RunForwardCPU()
 template <typename TIO>
 int SigmoidFocalLossDriver<TIO>::RunBackwardGPU()
 {
-    // float kernel_total_time = 0;
-    // float kernel_first_time = 0;
+    float kernel_total_time = 0;
+    float kernel_first_time = 0;
 
-    // Timer t;
-    // START_TIME
+    Timer t;
+    START_TIME
 
-    // for(int i = 0; i < inflags.GetValueInt("iter"); i++)
-    // {
+    for(int i = 0; i < inflags.GetValueInt("iter"); i++)
+    {
 
-    //     miopenSigmoidFocalLossBackward(GetHandle(),
-    //                                    inputDesc,
-    //                                    input_dev->GetMem(),
-    //                                    targetDesc,
-    //                                    target_dev->GetMem(),
-    //                                    doutputDesc,
-    //                                    doutput_dev->GetMem(),
-    //                                    dinputDesc,
-    //                                    dinput_dev->GetMem(),
-    //                                    alpha,
-    //                                    gamma,
-    //                                    reduction);
+        miopenSigmoidFocalLossBackward(GetHandle(),
+                                       inputDesc,
+                                       input_dev->GetMem(),
+                                       targetDesc,
+                                       target_dev->GetMem(),
+                                       doutputDesc,
+                                       doutput_dev->GetMem(),
+                                       dinputDesc,
+                                       dinput_dev->GetMem(),
+                                       alpha,
+                                       gamma,
+                                       reduction);
 
-    //     float time = 0.0;
-    //     miopenGetKernelTime(GetHandle(), &time);
-    //     kernel_total_time += time;
-    //     if(i == 0)
-    //         kernel_first_time = time;
-    // }
+        float time = 0.0;
+        miopenGetKernelTime(GetHandle(), &time);
+        kernel_total_time += time;
+        if(i == 0)
+            kernel_first_time = time;
+    }
 
-    // if(inflags.GetValueInt("time") == 1)
-    // {
-    //     STOP_TIME
-    //     int iter = inflags.GetValueInt("iter");
-    //     if(WALL_CLOCK)
-    //         std::cout << "Wall-clock Time Sigmoid Focal Loss Unreduced Bwd Elapsed: "
-    //                   << t.gettime_ms() / iter << " ms" << std::endl;
+    if(inflags.GetValueInt("time") == 1)
+    {
+        STOP_TIME
+        int iter = inflags.GetValueInt("iter");
+        if(WALL_CLOCK)
+            std::cout << "Wall-clock Time Sigmoid Focal Loss Bwd Elapsed: " << t.gettime_ms() / iter
+                      << " ms" << std::endl;
 
-    //     float kernel_average_time =
-    //         iter > 1 ? (kernel_total_time - kernel_first_time) / (iter - 1) : kernel_first_time;
-    //     std::cout << "GPU Kernel Time Sigmoid Focal Loss Unreduced Bwd Elapsed: "
-    //               << kernel_average_time << " ms" << std::endl;
-    // }
+        float kernel_average_time =
+            iter > 1 ? (kernel_total_time - kernel_first_time) / (iter - 1) : kernel_first_time;
+        std::cout << "GPU Kernel Time Sigmoid Focal Loss Bwd Elapsed: " << kernel_average_time
+                  << " ms" << std::endl;
+    }
 
-    // if(dinput_dev->FromGPU(GetStream(), dinput.data()) != 0)
-    //     std::cerr << "Error copying (dI_dev) from GPU, size: " << dinput_dev->GetSize()
-    //               << std::endl;
+    if(dinput_dev->FromGPU(GetStream(), dinput.data()) != 0)
+        std::cerr << "Error copying (dI_dev) from GPU, size: " << dinput_dev->GetSize()
+                  << std::endl;
 
     return miopenStatusSuccess;
 }
@@ -574,31 +670,32 @@ int SigmoidFocalLossDriver<TIO>::RunBackwardGPU()
 template <typename TIO>
 int SigmoidFocalLossDriver<TIO>::RunBackwardCPU()
 {
-    // if(reduction == MIOPEN_LOSS_REDUCTION_NONE)
-    // {
+    if(reduction == MIOPEN_LOSS_REDUCTION_NONE)
+    {
 
-    //     mloSigmoidFocalLossUnreducedBwdRunHost<TIO>(input.data(),
-    //                                                 inputDesc,
-    //                                                 target.data(),
-    //                                                 targetDesc,
-    //                                                 doutput.data(),
-    //                                                 doutputDesc,
-    //                                                 dinputHost.data(),
-    //                                                 alpha,
-    //                                                 gamma);
-    // }
-    // else
-    // {
-    //     mloSigmoidFocalLossBwdRunHost<TIO>(input.data(),
-    //                                        inputDesc,
-    //                                        target.data(),
-    //                                        targetDesc,
-    //                                        doutput.data(),
-    //                                        doutputDesc,
-    //                                        dinputHost.data(),
-    //                                        margin,
-    //                                        divisor);
-    // }
+        mloSigmoidFocalLossUnreducedBwdRunHost<TIO>(input.data(),
+                                                    inputDesc,
+                                                    target.data(),
+                                                    targetDesc,
+                                                    doutput.data(),
+                                                    doutputDesc,
+                                                    dinputHost.data(),
+                                                    alpha,
+                                                    gamma);
+    }
+    else
+    {
+        mloSigmoidFocalLossBwdRunHost<TIO>(input.data(),
+                                           inputDesc,
+                                           target.data(),
+                                           targetDesc,
+                                           doutput.data(),
+                                           doutputDesc,
+                                           dinputHost.data(),
+                                           alpha,
+                                           gamma,
+                                           divisor);
+    }
 
     return miopenStatusSuccess;
 }
@@ -608,7 +705,7 @@ int SigmoidFocalLossDriver<TIO>::VerifyForward()
 {
     RunForwardCPU();
 #ifdef DEBUGGING
-    for(int i = 0; i < miopen::deref(inputDesc).GetElementSize(); ++i)
+    for(int i = 0; i < miopen::deref(outputDesc).GetElementSize(); ++i)
     {
         std::cout << output.data()[i] << " " << outputHost.data()[i] << std::endl;
     }
@@ -635,6 +732,13 @@ template <typename TIO>
 int SigmoidFocalLossDriver<TIO>::VerifyBackward()
 {
     RunBackwardCPU();
+#ifdef DEBUGGING
+    for(int i = 0; i < miopen::deref(d).GetElementSize(); ++i)
+    {
+        std::cout << dinput.data()[i] << " " << dinputHost.data()[i] << std::endl;
+    }
+#endif
+
     double tolerance = std::numeric_limits<TIO>::epsilon() * 10;
     auto error       = miopen::rms_range(dinputHost, dinput);
 
