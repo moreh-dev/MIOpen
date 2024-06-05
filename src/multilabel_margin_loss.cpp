@@ -41,8 +41,13 @@ namespace miopen {
 size_t GetMultilabelMarginLossForwardWorkspaceSize(Handle& handle,
                                                    const TensorDescriptor& iDesc,
                                                    const TensorDescriptor& tDesc,
-                                                   const TensorDescriptor& oDesc)
+                                                   const TensorDescriptor& oDesc,
+                                                   miopenLossReductionMode_t reduction)
 {
+    if(reduction == MIOPEN_LOSS_REDUCTION_NONE)
+    {
+        return 0;
+    }
     auto ctx = ExecutionContext{&handle};
     const auto problem =
         multilabel_margin_loss::MultilabelMarginLossFwdProblemDescription{iDesc, tDesc, oDesc};
@@ -65,7 +70,7 @@ miopenStatus_t MultilabelMarginLossForward(Handle& handle,
                                            ConstData_t t,
                                            const TensorDescriptor& oDesc,
                                            Data_t o,
-                                           float divisor)
+                                           miopenLossReductionMode_t reduction)
 {
     const auto problem =
         multilabel_margin_loss::MultilabelMarginLossFwdProblemDescription{iDesc, tDesc, oDesc};
@@ -81,7 +86,7 @@ miopenStatus_t MultilabelMarginLossForward(Handle& handle,
         tmp.o              = o;
         tmp.workspace      = workspace;
         tmp.workspace_size = workspaceSizeInBytes;
-        tmp.divisor        = divisor;
+        tmp.reduction = reduction;
         return tmp;
     }();
 

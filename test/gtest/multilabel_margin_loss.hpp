@@ -45,7 +45,7 @@ struct MultilabelMarginLossCase
     size_t H;
     size_t W;
     float divisor;
-    std::string reduction;
+    miopenLossReductionMode_t reduction;
     friend std::ostream& operator<<(std::ostream& os, const MultilabelMarginLossCase& tc)
     {
         return os << " N:" << tc.N << " C:" << tc.C << " D:" << tc.D << " H:" << tc.H
@@ -85,14 +85,14 @@ struct MultilabelMarginLossCase
 std::vector<MultilabelMarginLossCase> MultilabelMarginLossTestFloatConfigs()
 { // n c d h w padding
     return {
-        {16, 0, 0, 0, 32, 1, "sum"},
-        {32, 0, 0, 0, 64, 1, "mean"},
-        {16, 0, 0, 0, 64, 1, "sum"},
-        {543, 0, 0, 0, 156, 1, "mean"},
-        {321, 0, 0, 0, 752, 1, "sum"},
-        {257, 0, 0, 0, 128, 1, "mean"},
-        {512, 0, 0, 0, 32, 1, "sum"},
-        {128, 0, 0, 0, 64, 1, "mean"},
+        {16, 0, 0, 0, 32, 1, MIOPEN_LOSS_REDUCTION_SUM},
+        {32, 0, 0, 0, 64, 1, MIOPEN_LOSS_REDUCTION_MEAN},
+        {16, 0, 0, 0, 64, 1, MIOPEN_LOSS_REDUCTION_SUM},
+        {543, 0, 0, 0, 156, 1, MIOPEN_LOSS_REDUCTION_MEAN},
+        {321, 0, 0, 0, 752, 1, MIOPEN_LOSS_REDUCTION_SUM},
+        {257, 0, 0, 0, 128, 1, MIOPEN_LOSS_REDUCTION_MEAN},
+        {512, 0, 0, 0, 32, 1, MIOPEN_LOSS_REDUCTION_SUM},
+        {128, 0, 0, 0, 64, 1, MIOPEN_LOSS_REDUCTION_MEAN},
     };
 }
 
@@ -113,7 +113,7 @@ protected:
         target             = tensor<TT>{in_dims}.generate(tar_gen_value);
 
         size_t workspaceSizeBytes = miopen::GetMultilabelMarginLossForwardWorkspaceSize(
-            handle, input.desc, target.desc, output.desc);
+            handle, input.desc, target.desc, output.desc, config.reduction);
 
         if(workspaceSizeBytes != 0)
         {
@@ -136,7 +136,7 @@ protected:
         std::fill(ref_output.begin(), ref_output.end(), 0);
 
         config.divisor = 1;
-        if(config.reduction == "mean")
+        if(config.reduction == MIOPEN_LOSS_REDUCTION_MEAN)
         {
             config.divisor *= input.desc.GetElementSize();
         }
@@ -160,7 +160,7 @@ protected:
                                                      target_dev.get(),
                                                      output.desc,
                                                      output_dev.get(),
-                                                     config.divisor);
+                                                     config.reduction);
         cpu_multilabel_margin_loss_forward_2d<TIO, TT>(
             input, target, ref_workspace, ref_output, config.divisor);
 

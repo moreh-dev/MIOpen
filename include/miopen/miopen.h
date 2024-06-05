@@ -4967,7 +4967,7 @@ typedef enum
  * @param iDesc                    Tensor descriptor for input tensor (input)
  * @param tDesc                    Tensor descriptor for target tensor (input)
  * @param oDesc                    Tensor descriptor for output tensor (input)
- * @param sizeInBytes              Pointer to data to return the minimum workspace size
+ * @param sizeInBytes              Pointer to data to return the minimum workspace size (output)
  * @return                         miopenStatus_t
  */
 MIOPEN_EXPORT miopenStatus_t
@@ -4975,6 +4975,7 @@ miopenGetMultilabelMarginLossForwardWorkspaceSize(miopenHandle_t handle,
                                                   miopenTensorDescriptor_t iDesc,
                                                   miopenTensorDescriptor_t tDesc,
                                                   miopenTensorDescriptor_t oDesc,
+                                                  miopenLossReductionMode_t reduction,
                                                   size_t* sizeInBytes);
 
 /*! @brief Execute MultilabelMargin Loss forward layer
@@ -5001,7 +5002,7 @@ MIOPEN_EXPORT miopenStatus_t miopenMultilabelMarginLossForward(miopenHandle_t ha
                                                                const void* t,
                                                                const miopenTensorDescriptor_t oDesc,
                                                                void* o,
-                                                               float divisor);
+                                                               miopenLossReductionMode_t reduction);
 
 #endif
 

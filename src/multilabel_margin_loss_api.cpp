@@ -36,15 +36,16 @@ miopenGetMultilabelMarginLossForwardWorkspaceSize(miopenHandle_t handle,
                                                   const miopenTensorDescriptor_t iDesc,
                                                   const miopenTensorDescriptor_t tDesc,
                                                   const miopenTensorDescriptor_t oDesc,
+                                                  miopenLossReductionMode_t reduction,
                                                   size_t* sizeInBytes)
 {
-
     return miopen::try_([&] {
         miopen::deref(sizeInBytes) =
             miopen::GetMultilabelMarginLossForwardWorkspaceSize(miopen::deref(handle),
                                                                 miopen::deref(iDesc),
                                                                 miopen::deref(tDesc),
-                                                                miopen::deref(oDesc));
+                                                                miopen::deref(oDesc),
+                                                                reduction);
     });
 }
 
@@ -57,7 +58,7 @@ extern "C" miopenStatus_t miopenMultilabelMarginLossForward(miopenHandle_t handl
                                                             const void* t,
                                                             const miopenTensorDescriptor_t oDesc,
                                                             void* o,
-                                                            const float divisor)
+                                                            miopenLossReductionMode_t reduction)
 {
     return miopen::try_([&] {
         miopen::MultilabelMarginLossForward(miopen::deref(handle),
@@ -69,6 +70,6 @@ extern "C" miopenStatus_t miopenMultilabelMarginLossForward(miopenHandle_t handl
                                             DataCast(t),
                                             miopen::deref(oDesc),
                                             DataCast(o),
-                                            divisor);
+                                            reduction);
     });
 }

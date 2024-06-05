@@ -357,7 +357,7 @@ int MultilabelMarginLossDriver<TIO, TT>::AllocateBuffersAndCopy()
     dinput_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, dI_sz, sizeof(TIO)));
 
     miopenGetMultilabelMarginLossForwardWorkspaceSize(
-        handle, inputDesc, targetDesc, outputDesc, &workSpaceSizeInBytes);
+        handle, inputDesc, targetDesc, outputDesc, reduction, &workSpaceSizeInBytes);
     workspace_dev =
         std::unique_ptr<GPUMem>(new GPUMem(ctx, workSpaceSizeInBytes / sizeof(TIO), sizeof(TIO)));
 
@@ -429,7 +429,7 @@ int MultilabelMarginLossDriver<TIO, TT>::RunForwardGPU()
                                               target_dev->GetMem(),
                                               outputDesc,
                                               output_dev->GetMem(),
-                                              divisor);
+                                              reduction);
         }
         float time = 0.0;
         miopenGetKernelTime(GetHandle(), &time);

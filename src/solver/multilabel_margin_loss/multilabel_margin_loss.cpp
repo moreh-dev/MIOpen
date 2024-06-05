@@ -124,6 +124,18 @@ ConvSolution MultilabelMarginLossForward::GetSolution(
         return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
             decltype(auto) params =
                 raw_params.CastTo<miopen::multilabel_margin_loss::InvokeParams>();
+
+            auto elapsed = 0.f;
+            HipEventPtr start;
+            HipEventPtr stop;
+
+            if(handle_.IsProfilingEnabled())
+            {
+                start = miopen::make_hip_event();
+                stop  = miopen::make_hip_event();
+                hipEventRecord(start.get(), handle_.GetStream());
+            }
+
             /* Phase 1: Calc loss for each element. */
             auto idims = params.iDesc->GetLengths();
             auto tdims = params.tDesc->GetLengths();
@@ -135,6 +147,13 @@ ConvSolution MultilabelMarginLossForward::GetSolution(
 
             int64_t ws_offset =
                 ((N) + ((N + LOCAL_SIZE_REDUCE - 1) / LOCAL_SIZE_REDUCE)) * odtypeSize;
+
+            float divisor         = 1;
+            if(params.reduction == MIOPEN_LOSS_REDUCTION_MEAN)
+            {
+                divisor = deref(params.iDesc).GetElementSize();
+            }
+
             {
                 decltype(auto) kernel = handle_.Run(kernels[0]);
 
@@ -151,7 +170,7 @@ ConvSolution MultilabelMarginLossForward::GetSolution(
                        params.workspace,
                        params.workspace,
                        ws_offset,
-                       params.divisor,
+                       divisor,
                        I_size_0,
                        I_size_1,
                        T_size_0,
@@ -181,6 +200,15 @@ ConvSolution MultilabelMarginLossForward::GetSolution(
                 }
                 size = AlignUp(size, LOCAL_SIZE_REDUCE) / LOCAL_SIZE_REDUCE;
             }
+
+            if(handle_.IsProfilingEnabled())
+            {
+                hipEventRecord(stop.get(), handle_.GetStream());
+                hipEventSynchronize(stop.get());
+                hipEventElapsedTime(&elapsed, start.get(), stop.get());
+                handle_.ResetKernelTime();
+                handle_.AccumKernelTime(elapsed);
+            };
         };
     };
     return result;
