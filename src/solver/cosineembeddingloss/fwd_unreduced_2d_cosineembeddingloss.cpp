@@ -104,20 +104,29 @@ inline void RunNormKernels(const std::vector<Kernel>& kernels,
         auto parallel_kernel  = handle_.Run(kernels[kernelCnt++]);
         parallel_kernel(work_a,
                         work_b,
-                        (uint64_t)output_numel,
-                        (uint64_t)reduce_size,
-                        (uint64_t)parallelism_size,
-                        (uint64_t)1,
+                        static_cast<uint64_t>(output_numel),
+                        static_cast<uint64_t>(reduce_size),
+                        static_cast<uint64_t>(parallelism_size),
+                        static_cast<uint64_t>(1),
                         false);
 
         auto kernel = handle_.Run(kernels[kernelCnt++]);
-        kernel(
-            work_b, work_a, (uint64_t)output_numel, (uint64_t)parallelism_size, (uint64_t)1, false);
+        kernel(work_b,
+               work_a,
+               static_cast<uint64_t>(output_numel),
+               static_cast<uint64_t>(parallelism_size),
+               static_cast<uint64_t>(1),
+               false);
     }
     else
     {
         auto kernel = handle_.Run(kernels[kernelCnt++]);
-        kernel(work_a, work_b, (uint64_t)output_numel, (uint64_t)reduce_size, (uint64_t)1, false);
+        kernel(work_a,
+               work_b,
+               static_cast<uint64_t>(output_numel),
+               static_cast<uint64_t>(reduce_size),
+               static_cast<uint64_t>(1),
+               false);
         std::swap(work_a, work_b);
     }
 }
