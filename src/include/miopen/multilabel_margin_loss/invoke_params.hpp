@@ -35,20 +35,20 @@ namespace multilabel_margin_loss {
 
 struct InvokeParams : public miopen::InvokeParams
 {
-    InvokeParams()                = default;
-    const TensorDescriptor* iDesc = nullptr;
-    const TensorDescriptor* tDesc = nullptr;
-    const TensorDescriptor* oDesc = nullptr;
+    InvokeParams()                 = default;
+    const TensorDescriptor* iDesc  = nullptr;
+    const TensorDescriptor* tDesc  = nullptr;
+    const TensorDescriptor* oDesc  = nullptr;
     const TensorDescriptor* dODesc = nullptr;
     const TensorDescriptor* dIDesc = nullptr;
 
     ConstData_t i = nullptr;
     ConstData_t t = nullptr;
     Data_t o      = nullptr;
-    Data_t dO      = nullptr;
+    Data_t dO     = nullptr;
     Data_t dI     = nullptr;
 
-    Data_t workspace = nullptr;
+    Data_t workspace           = nullptr;
     std::size_t workspace_size = 0;
 
     miopenLossReductionMode_t reduction;

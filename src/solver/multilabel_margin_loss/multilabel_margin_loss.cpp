@@ -148,7 +148,7 @@ ConvSolution MultilabelMarginLossForward::GetSolution(
             int64_t ws_offset =
                 ((N) + ((N + LOCAL_SIZE_REDUCE - 1) / LOCAL_SIZE_REDUCE)) * odtypeSize;
 
-            float divisor         = 1;
+            float divisor = 1;
             if(params.reduction == MIOPEN_LOSS_REDUCTION_MEAN)
             {
                 divisor = deref(params.iDesc).GetElementSize();

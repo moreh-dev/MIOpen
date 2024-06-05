@@ -86,7 +86,7 @@ miopenStatus_t MultilabelMarginLossForward(Handle& handle,
         tmp.o              = o;
         tmp.workspace      = workspace;
         tmp.workspace_size = workspaceSizeInBytes;
-        tmp.reduction = reduction;
+        tmp.reduction      = reduction;
         return tmp;
     }();
 
