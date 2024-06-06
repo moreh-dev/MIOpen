@@ -33,16 +33,11 @@
 #include "tensor_driver.hpp"
 #include "timer.hpp"
 #include "random.hpp"
-#include <algorithm>
-#include <cfloat>
-#include <cmath>
-#include <cstdlib>
-#include <iostream>
-#include <memory>
-#include <numeric>
-#include <vector>
 #include <../test/tensor_holder.hpp>
 #include <../test/verify.hpp>
+#include <cmath>
+#include <iostream>
+#include <vector>
 
 // #define DEBUGGING
 // #define COMPARE_WITH_ROCM
