@@ -23,7 +23,6 @@
  * SOFTWARE.
  *
  *******************************************************************************/
-
 #include "../driver/tensor_driver.hpp"
 #include "cpu_sigmoid_focal_loss.hpp"
 #include "get_handle.hpp"
@@ -33,6 +32,7 @@
 #include "verify.hpp"
 #include <cstddef>
 #include <cstdlib>
+#include <random>
 #include <gtest/gtest.h>
 #include <miopen/miopen.h>
 #include <miopen/sigmoid_focal_loss.hpp>
@@ -40,8 +40,9 @@
 struct SigmoidFocalLossTestCase
 {
     std::vector<size_t> dims;
-    float alpha = 0.25;
-    float gamma = 2;
+    bool isContiguous;
+    float alpha;
+    float gamma;
     miopenLossReductionMode_t reduction;
     friend std::ostream& operator<<(std::ostream& os, const SigmoidFocalLossTestCase& tc)
     {
@@ -58,22 +59,48 @@ struct SigmoidFocalLossTestCase
     SigmoidFocalLossTestCase() {}
 
     SigmoidFocalLossTestCase(std::vector<size_t> dim_,
+                             bool isContiguous_                   = true,
                              miopenLossReductionMode_t reduction_ = MIOPEN_LOSS_REDUCTION_NONE,
                              float alpha_                         = 0.25,
                              float gamma_                         = 2)
-        : dims(dim_), alpha(alpha_), gamma(gamma_), reduction(reduction_)
+        : dims(dim_),
+          isContiguous(isContiguous_),
+          alpha(alpha_),
+          gamma(gamma_),
+          reduction(reduction_)
     {
+    }
+
+    std::vector<size_t> GetStrides()
+    {
+        std::vector<size_t> strides(dims.size(), 1);
+        for(int i = dims.size() - 2; i >= 0; --i)
+        {
+            strides[i] = dims[i + 1] * strides[i + 1];
+        }
+
+        if(!isContiguous)
+        {
+            auto rng = std::default_random_engine{};
+            std::shuffle(std::begin(strides), std::end(strides), rng);
+        }
+
+        return strides;
     }
 };
 
 inline std::vector<SigmoidFocalLossTestCase> SigmoidFocalLossTestConfigs()
 {
     return {
-        SigmoidFocalLossTestCase({4000}),            // 1D cont
-        SigmoidFocalLossTestCase({100, 500}),        // 2D cont
-        SigmoidFocalLossTestCase({10, 20, 200}),     // 3D cont
-        SigmoidFocalLossTestCase({8, 3, 20, 100}),   // 4D cont
-        SigmoidFocalLossTestCase({2, 2, 3, 4, 100}), // 5D cont
+        SigmoidFocalLossTestCase({4000}),                   // 1D cont
+        SigmoidFocalLossTestCase({100, 500}),               // 2D cont
+        SigmoidFocalLossTestCase({100, 500}, false),        // 2D non-cont
+        SigmoidFocalLossTestCase({10, 20, 200}),            // 3D cont
+        SigmoidFocalLossTestCase({10, 20, 200}, false),     // 3D non-cont
+        SigmoidFocalLossTestCase({8, 3, 20, 100}),          // 4D cont
+        SigmoidFocalLossTestCase({8, 3, 20, 100}, false),   // 4D non-cont
+        SigmoidFocalLossTestCase({2, 2, 3, 4, 100}),        // 5D cont
+        SigmoidFocalLossTestCase({2, 2, 3, 4, 100}, false), // 5D non-cont
     };
 }
 
@@ -86,13 +113,14 @@ protected:
         auto&& handle = get_handle();
         config        = GetParam();
 
-        auto in_dims = config.GetDims();
+        auto in_dims    = config.GetDims();
+        auto in_strides = config.GetStrides();
 
         auto in_gen_value = [](auto...) { return prng::gen_descreet_uniform_sign<TIO>(0.1, 50); };
-        input             = tensor<TIO>{in_dims}.generate(in_gen_value);
+        input             = tensor<TIO>{in_dims, in_strides}.generate(in_gen_value);
 
         auto tar_gen_value = [](auto...) { return prng::gen_descreet_uniform_sign<TIO>(0.1, 50); };
-        target             = tensor<TIO>{in_dims}.generate(tar_gen_value);
+        target             = tensor<TIO>{in_dims, in_strides}.generate(tar_gen_value);
 
         output = tensor<TIO>{in_dims};
         std::fill(output.begin(), output.end(), 0);
@@ -161,14 +189,15 @@ protected:
         config        = GetParam();
 
         auto in_dims      = config.GetDims();
+        auto in_strides   = config.GetStrides();
         auto in_gen_value = [](auto...) { return prng::gen_descreet_uniform_sign<TIO>(0.1, 50); };
-        input             = tensor<TIO>{in_dims}.generate(in_gen_value);
+        input             = tensor<TIO>{in_dims, in_strides}.generate(in_gen_value);
 
         auto tar_gen_value = [](auto...) { return prng::gen_descreet_uniform_sign<TIO>(0.1, 50); };
-        target             = tensor<TIO>{in_dims}.generate(tar_gen_value);
+        target             = tensor<TIO>{in_dims, in_strides}.generate(tar_gen_value);
 
         auto dOut_gen_value = [](auto...) { return prng::gen_descreet_uniform_sign<TIO>(0.1, 50); };
-        dOutput             = tensor<TIO>{in_dims}.generate(dOut_gen_value);
+        dOutput             = tensor<TIO>{in_dims, in_strides}.generate(dOut_gen_value);
 
         dInput = tensor<TIO>{in_dims};
         std::fill(dInput.begin(), dInput.end(), 0);
@@ -244,13 +273,14 @@ protected:
 
         config.reduction = miopenLossReductionMode_t(int(prng::gen_0_to_B(2) + 1));
 
-        auto in_dims = config.GetDims();
+        auto in_dims    = config.GetDims();
+        auto in_strides = config.GetStrides();
 
         auto in_gen_value = [](auto...) { return prng::gen_descreet_uniform_sign<TIO>(0.1, 20); };
-        input             = tensor<TIO>{in_dims}.generate(in_gen_value);
+        input             = tensor<TIO>{in_dims, in_strides}.generate(in_gen_value);
 
         auto tar_gen_value = [](auto...) { return prng::gen_descreet_uniform_sign<TIO>(0.1, 20); };
-        target             = tensor<TIO>{in_dims}.generate(tar_gen_value);
+        target             = tensor<TIO>{in_dims, in_strides}.generate(tar_gen_value);
 
         size_t workspaceSizeBytes = miopen::GetSigmoidFocalLossForwardWorkspaceSize(
             handle, input.desc, target.desc, output.desc, config.reduction);
@@ -337,17 +367,18 @@ struct SigmoidFocalLossBwdTest : public ::testing::TestWithParam<SigmoidFocalLos
 protected:
     void SetUp() override
     {
-        auto&& handle = get_handle();
-        config        = GetParam();
-        auto in_dims  = config.GetDims();
+        auto&& handle   = get_handle();
+        config          = GetParam();
+        auto in_dims    = config.GetDims();
+        auto in_strides = config.GetStrides();
 
         config.reduction = miopenLossReductionMode_t(int(prng::gen_0_to_B(2) + 1));
 
         auto in_gen_value = [](auto...) { return prng::gen_descreet_uniform_sign<TIO>(0.1, 50); };
-        input             = tensor<TIO>{in_dims}.generate(in_gen_value);
+        input             = tensor<TIO>{in_dims, in_strides}.generate(in_gen_value);
 
         auto tar_gen_value = [](auto...) { return prng::gen_descreet_uniform_sign<TIO>(0.1, 50); };
-        target             = tensor<TIO>{in_dims}.generate(tar_gen_value);
+        target             = tensor<TIO>{in_dims, in_strides}.generate(tar_gen_value);
 
         dOutput    = tensor<TIO>(1);
         dOutput[0] = prng::gen_descreet_uniform_sign<TIO>(0.1, 50);
