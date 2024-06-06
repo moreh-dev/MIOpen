@@ -203,7 +203,7 @@ ConvSolution MultilabelMarginLossForward::GetSolution(
                 }
                 size = AlignUp(size, LOCAL_SIZE_REDUCE) / LOCAL_SIZE_REDUCE;
             }
-            if (reset_profiling_state)
+            if(reset_profiling_state)
                 handle_.EnableProfiling(true);
             if(handle_.IsProfilingEnabled())
             {
