@@ -129,8 +129,11 @@ ConvSolution MultilabelMarginLossForward::GetSolution(
             HipEventPtr start;
             HipEventPtr stop;
 
+            bool reset_profiling_state = false;
             if(handle_.IsProfilingEnabled())
             {
+                reset_profiling_state = true;
+                handle_.EnableProfiling(false);
                 start = miopen::make_hip_event();
                 stop  = miopen::make_hip_event();
                 hipEventRecord(start.get(), handle_.GetStream());
@@ -200,12 +203,15 @@ ConvSolution MultilabelMarginLossForward::GetSolution(
                 }
                 size = AlignUp(size, LOCAL_SIZE_REDUCE) / LOCAL_SIZE_REDUCE;
             }
-
+            if (reset_profiling_state)
+                handle_.EnableProfiling(true);
             if(handle_.IsProfilingEnabled())
             {
                 hipEventRecord(stop.get(), handle_.GetStream());
                 hipEventSynchronize(stop.get());
                 hipEventElapsedTime(&elapsed, start.get(), stop.get());
+                hipEventDestroy(start.get());
+                hipEventDestroy(stop.get());
                 handle_.ResetKernelTime();
                 handle_.AccumKernelTime(elapsed);
             };
