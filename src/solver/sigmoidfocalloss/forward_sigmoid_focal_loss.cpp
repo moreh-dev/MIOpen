@@ -106,7 +106,7 @@ ConvSolution SigmoidFocalLossFwd::GetSolution(
             /* Execute loss kernel */
             {
                 decltype(auto) kernel = handle_.Run(kernels.front());
-                auto input_tv         = get_inner_expanded_tv<5>(*params.inputDesc);
+                auto input_tv         = get_inner_expanded_tv<5>(deref(params.inputDesc));
                 auto target_tv        = get_inner_expanded_tv<5>(deref(params.targetDesc));
                 float divisor         = 1;
                 if(params.reduction == MIOPEN_LOSS_REDUCTION_MEAN)

@@ -28,10 +28,9 @@
 #include "InputFlags.hpp"
 #include "driver.hpp"
 #include "miopen/errors.hpp"
-#include "miopen/sigmoidfocalloss/utils.hpp"
+#include <miopen/tensor_view_utils.hpp>
 #include "miopen/miopen.h"
 #include "tensor_driver.hpp"
-#include "tensor_view_5d.hpp"
 #include "timer.hpp"
 #include "random.hpp"
 #include <algorithm>
@@ -54,21 +53,21 @@ void mloSigmoidFocalLossUnreducedFwdRunHost(TIO* input,
                                             TIO* target,
                                             miopenTensorDescriptor_t targetDesc,
                                             TIO* outputHost,
-                                            // miopenTensorDescriptor_t outputDesc,
+                                            miopenTensorDescriptor_t outputDesc,
                                             float alpha = 0.25,
                                             float gamma = 2)
 {
-    tensor_view_5d_t input_tv  = get_inner_expanded_tv(miopen::deref(inputDesc));
-    tensor_view_5d_t target_tv = get_inner_expanded_tv(miopen::deref(targetDesc));
-    size_t inputSize           = miopen::deref(inputDesc).GetElementSize();
-    size_t n[5];
+    auto input_tv    = miopen::get_inner_expanded_tv<5>(miopen::deref(inputDesc));
+    auto target_tv   = miopen::get_inner_expanded_tv<5>(miopen::deref(targetDesc));
+    auto output_tv   = miopen::get_inner_expanded_tv<5>(miopen::deref(outputDesc));
+    size_t inputSize = miopen::deref(inputDesc).GetElementSize();
 
-    for(size_t idx = 0; idx < inputSize; ++idx)
+    for(size_t id = 0; id < inputSize; ++id)
     {
-        GET_NCDHW(n[0], n[1], n[2], n[3], n[4], idx, input_tv);
+        tensor_layout_t<5> idx(input_tv, id);
 
-        float i = static_cast<float>(TV_5D_AT(input, n[0], n[1], n[2], n[3], n[4]));
-        float t = static_cast<float>(TV_5D_AT(target, n[0], n[1], n[2], n[3], n[4]));
+        float i = static_cast<float>(input[input_tv.get_tensor_view_idx(idx)]);
+        float t = static_cast<float>(target[target_tv.get_tensor_view_idx(idx)]);
 
         float sig    = 1 / (1 + exp(-i));
         float ceLoss = -(t * log(sig) + (1 - t) * log(1 - sig));
@@ -81,7 +80,7 @@ void mloSigmoidFocalLossUnreducedFwdRunHost(TIO* input,
             loss         = alphaT * loss;
         }
 
-        outputHost[idx] = static_cast<TIO>(loss);
+        outputHost[output_tv.get_tensor_view_idx(idx)] = static_cast<TIO>(loss);
     }
 }
 
@@ -91,23 +90,25 @@ void mloSigmoidFocalLossUnreducedBwdRunHost(TIO* input,
                                             TIO* target,
                                             miopenTensorDescriptor_t targetDesc,
                                             TIO* doutput,
-                                            miopenTensorDescriptor_t /*doutputDesc*/,
+                                            miopenTensorDescriptor_t doutputDesc,
                                             TIO* dinput,
+                                            miopenTensorDescriptor_t dinputDesc,
                                             float alpha = 0.25,
                                             float gamma = 2)
 {
-    tensor_view_5d_t input_tv  = get_inner_expanded_tv(miopen::deref(inputDesc));
-    tensor_view_5d_t target_tv = get_inner_expanded_tv(miopen::deref(targetDesc));
-    // tensor_view_5d_t doutput_tv = get_inner_expanded_tv(miopen::deref(doutputDesc));
+    auto input_tv    = miopen::get_inner_expanded_tv<5>(miopen::deref(inputDesc));
+    auto target_tv   = miopen::get_inner_expanded_tv<5>(miopen::deref(targetDesc));
+    auto doutput_tv  = miopen::get_inner_expanded_tv<5>(miopen::deref(doutputDesc));
+    auto dinput_tv   = miopen::get_inner_expanded_tv<5>(miopen::deref(dinputDesc));
     size_t inputSize = miopen::deref(inputDesc).GetElementSize();
-    size_t n[5];
 
-    for(size_t idx = 0; idx < inputSize; ++idx)
+    for(size_t id = 0; id < inputSize; ++id)
     {
-        GET_NCDHW(n[0], n[1], n[2], n[3], n[4], idx, input_tv);
+        tensor_layout_t<5> idx(input_tv, id);
 
-        float i = static_cast<float>(TV_5D_AT(input, n[0], n[1], n[2], n[3], n[4]));
-        float t = static_cast<float>(TV_5D_AT(target, n[0], n[1], n[2], n[3], n[4]));
+        float i  = static_cast<float>(input[input_tv.get_tensor_view_idx(idx)]);
+        float t  = static_cast<float>(target[target_tv.get_tensor_view_idx(idx)]);
+        float dO = static_cast<float>(doutput[doutput_tv.get_tensor_view_idx(idx)]);
 
         float p      = 1 / (1 + exp(-i));
         float ceLoss = -(t * log(p) + (1 - t) * log(1 - p));
@@ -120,7 +121,7 @@ void mloSigmoidFocalLossUnreducedBwdRunHost(TIO* input,
 
         // L = ce_loss * pow_pt => dL/di = dceloss/di * pow_pt + ce_loss * dpowpt/di
         float dLdi = dcelossdi * powPt + ceLoss * dpowptdi;
-        float grad = doutput[idx] * dLdi;
+        float grad = dO * dLdi;
 
         if(alpha >= 0)
         {
@@ -128,7 +129,7 @@ void mloSigmoidFocalLossUnreducedBwdRunHost(TIO* input,
             grad *= alpha_t;
         }
 
-        dinput[idx] = static_cast<TIO>(grad);
+        dinput[dinput_tv.get_tensor_view_idx(idx)] = static_cast<TIO>(grad);
     }
 }
 
@@ -143,17 +144,16 @@ void mloSigmoidFocalLossFwdRunHost(TIO* input,
                                    float gamma   = 2,
                                    float divisor = 1)
 {
-    tensor_view_5d_t input_tv  = get_inner_expanded_tv(miopen::deref(inputDesc));
-    tensor_view_5d_t target_tv = get_inner_expanded_tv(miopen::deref(targetDesc));
-    size_t inputSize           = miopen::deref(inputDesc).GetElementSize();
-    size_t n[5];
+    auto input_tv    = miopen::get_inner_expanded_tv<5>(miopen::deref(inputDesc));
+    auto target_tv   = miopen::get_inner_expanded_tv<5>(miopen::deref(targetDesc));
+    size_t inputSize = miopen::deref(inputDesc).GetElementSize();
 
-    for(size_t idx = 0; idx < inputSize; ++idx)
+    for(size_t id = 0; id < inputSize; ++id)
     {
-        GET_NCDHW(n[0], n[1], n[2], n[3], n[4], idx, input_tv);
+        tensor_layout_t<5> idx(input_tv, id);
 
-        float i = static_cast<float>(TV_5D_AT(input, n[0], n[1], n[2], n[3], n[4]));
-        float t = static_cast<float>(TV_5D_AT(target, n[0], n[1], n[2], n[3], n[4]));
+        float i = static_cast<float>(input[input_tv.get_tensor_view_idx(idx)]);
+        float t = static_cast<float>(target[target_tv.get_tensor_view_idx(idx)]);
 
         float sig    = 1 / (1 + exp(-i));
         float ceLoss = -(t * log(sig) + (1 - t) * log(1 - sig));
@@ -166,7 +166,7 @@ void mloSigmoidFocalLossFwdRunHost(TIO* input,
             loss         = alphaT * loss;
         }
 
-        workspace[idx] = static_cast<TIO>(loss / divisor);
+        workspace[id] = static_cast<TIO>(loss / divisor);
     }
 
     // Reduce loss
@@ -202,23 +202,27 @@ void mloSigmoidFocalLossBwdRunHost(TIO* input,
                                    TIO* doutput,
                                    miopenTensorDescriptor_t doutputDesc,
                                    TIO* dinput,
+                                   miopenTensorDescriptor_t dinputDesc,
                                    float alpha   = 0.25,
                                    float gamma   = 2,
                                    float divisor = 1)
 {
-    tensor_view_5d_t input_tv   = get_inner_expanded_tv(miopen::deref(inputDesc));
-    tensor_view_5d_t target_tv  = get_inner_expanded_tv(miopen::deref(targetDesc));
-    tensor_view_5d_t doutput_tv = get_inner_expanded_tv(miopen::deref(doutputDesc));
-    size_t inputSize            = miopen::deref(inputDesc).GetElementSize();
-    size_t n[5];
+    auto input_tv   = miopen::get_inner_expanded_tv<5>(miopen::deref(inputDesc));
+    auto target_tv  = miopen::get_inner_expanded_tv<5>(miopen::deref(targetDesc));
+    auto doutput_tv = miopen::get_inner_expanded_tv<5>(miopen::deref(doutputDesc));
+    auto dinput_tv  = miopen::get_inner_expanded_tv<5>(miopen::deref(dinputDesc));
 
-    for(size_t idx = 0; idx < inputSize; ++idx)
+    size_t inputSize = miopen::deref(inputDesc).GetElementSize();
+
+    tensor_layout_t<5> doIdx(input_tv, 0);
+
+    for(size_t id = 0; id < inputSize; ++id)
     {
-        GET_NCDHW(n[0], n[1], n[2], n[3], n[4], idx, input_tv);
+        tensor_layout_t<5> idx(input_tv, id);
 
-        float i  = static_cast<float>(TV_5D_AT(input, n[0], n[1], n[2], n[3], n[4]));
-        float t  = static_cast<float>(TV_5D_AT(target, n[0], n[1], n[2], n[3], n[4]));
-        float dO = static_cast<float>(TV_5D_AT(doutput, 0, 0, 0, 0, 0));
+        float i  = static_cast<float>(input[input_tv.get_tensor_view_idx(idx)]);
+        float t  = static_cast<float>(target[target_tv.get_tensor_view_idx(idx)]);
+        float dO = static_cast<float>(doutput[doutput_tv.get_tensor_view_idx(doIdx)]);
 
         float p      = 1 / (1 + exp(-i));
         float ceLoss = -(t * log(p) + (1 - t) * log(1 - p));
@@ -239,7 +243,7 @@ void mloSigmoidFocalLossBwdRunHost(TIO* input,
             grad *= alpha_t;
         }
 
-        dinput[idx] = static_cast<TIO>(grad);
+        dinput[dinput_tv.get_tensor_view_idx(idx)] = static_cast<TIO>(grad);
     }
 }
 
@@ -597,8 +601,14 @@ int SigmoidFocalLossDriver<TIO>::RunForwardCPU()
 {
     if(reduction == MIOPEN_LOSS_REDUCTION_NONE)
     {
-        mloSigmoidFocalLossUnreducedFwdRunHost<TIO>(
-            input.data(), inputDesc, target.data(), targetDesc, outputHost.data(), alpha, gamma);
+        mloSigmoidFocalLossUnreducedFwdRunHost<TIO>(input.data(),
+                                                    inputDesc,
+                                                    target.data(),
+                                                    targetDesc,
+                                                    outputHost.data(),
+                                                    outputDesc,
+                                                    alpha,
+                                                    gamma);
     }
     else
     {
@@ -682,6 +692,7 @@ int SigmoidFocalLossDriver<TIO>::RunBackwardCPU()
                                                     doutput.data(),
                                                     doutputDesc,
                                                     dinputHost.data(),
+                                                    dinputDesc,
                                                     alpha,
                                                     gamma);
     }
@@ -694,6 +705,7 @@ int SigmoidFocalLossDriver<TIO>::RunBackwardCPU()
                                            doutput.data(),
                                            doutputDesc,
                                            dinputHost.data(),
+                                           dinputDesc,
                                            alpha,
                                            gamma,
                                            divisor);
