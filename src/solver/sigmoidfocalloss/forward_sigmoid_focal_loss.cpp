@@ -96,8 +96,11 @@ ConvSolution SigmoidFocalLossFwd::GetSolution(
             HipEventPtr start;
             HipEventPtr stop;
 
+            bool resetProfilingState = false;
             if(handle_.IsProfilingEnabled())
             {
+                resetProfilingState = true;
+                handle_.EnableProfiling(false);
                 start = miopen::make_hip_event();
                 stop  = miopen::make_hip_event();
                 hipEventRecord(start.get(), handle_.GetStream());
@@ -125,8 +128,8 @@ ConvSolution SigmoidFocalLossFwd::GetSolution(
             }
 
             /* Execute reduce kernels */
-            auto reduce_in = params.workspace;
-            auto reduce_out =
+            auto reduceIn = params.workspace;
+            auto reduceOut =
                 static_cast<Data_t>(static_cast<char*>(params.workspace) +
                                     deref(params.inputDesc).GetElementSize() *
                                         get_data_size(deref(params.outputDesc).GetType()));
@@ -135,14 +138,19 @@ ConvSolution SigmoidFocalLossFwd::GetSolution(
                 decltype(auto) kernel = handle_.Run(kernels[i]);
                 if(i + 1 != kernels.size())
                 {
-                    kernel(reduce_in, reduce_out, size);
-                    std::swap(reduce_in, reduce_out);
+                    kernel(reduceIn, reduceOut, size);
+                    std::swap(reduceIn, reduceOut);
                 }
                 else
                 {
-                    kernel(reduce_in, params.output, size);
+                    kernel(reduceIn, params.output, size);
                 }
                 size = AlignUp(size, LOCAL_SIZE_REDUCE_FWD) / LOCAL_SIZE_REDUCE_FWD;
+            }
+
+            if(resetProfilingState)
+            {
+                handle_.EnableProfiling(true);
             }
 
             if(handle_.IsProfilingEnabled())
