@@ -427,7 +427,6 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         kernels/neuron.inc
         kernels/rocm_version.inc
         kernels/stride_array.hpp
-        kernels/tensor_view_5d.hpp
         kernels/tensor_view.hpp
         kernels/utilities.inc
         kernels/warp_shuffle.hpp

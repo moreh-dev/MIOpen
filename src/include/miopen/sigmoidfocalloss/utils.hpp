@@ -30,27 +30,6 @@
 #include "miopen/kernel_info.hpp"
 #include "miopen/tensor.hpp"
 #include "miopen/kernel_build_params.hpp"
-#include "../../../kernels/tensor_view_5d.hpp"
-
-inline tensor_view_5d_t get_inner_expanded_tv(const miopen::TensorDescriptor desc)
-{
-    auto dims    = desc.GetLengths();
-    auto strides = desc.GetStrides();
-
-    tensor_view_5d_t tv_5d;
-    for(size_t i = 0; i < strides.size(); ++i)
-    {
-        tv_5d.stride[i] = strides[i];
-        tv_5d.size[i]   = dims[i];
-    }
-    auto rest = strides.size();
-    for(size_t j = rest; j < 5; ++j)
-    {
-        tv_5d.stride[j] = (rest == 0 ? 1 : strides[rest - 1]);
-        tv_5d.size[j]   = 1;
-    }
-    return tv_5d;
-}
 
 const auto make_hip_kernel = [](std::vector<size_t> localsize,
                                 std::vector<size_t> gridsize,

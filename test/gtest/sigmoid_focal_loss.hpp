@@ -51,7 +51,8 @@ struct SigmoidFocalLossTestCase
         {
             os << dim << " ";
         }
-        return os << "alpha:" << tc.alpha << " gamma:" << tc.gamma << " reduction:" << tc.reduction;
+        return os << "is_contiguous: " << tc.isContiguous << " alpha: " << tc.alpha
+                  << " gamma: " << tc.gamma << " reduction: " << tc.reduction;
     }
 
     std::vector<size_t> GetDims() const { return dims; }

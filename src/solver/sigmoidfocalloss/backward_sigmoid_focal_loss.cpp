@@ -68,7 +68,7 @@ ConvSolution SigmoidFocalLossBwd::GetSolution(
         {"MIOPEN_USE_FP32", static_cast<int>(dtype == miopenFloat)},
         {"MIOPEN_USE_BFP16", static_cast<int>(dtype == miopenBFloat16)},
         {"IN_OUT_TYPE", in_dtype == "bfloat16" ? "ushort" : in_dtype},
-        {"TARGET_TYPE", target_dtype},
+        {"TARGET_TYPE", target_dtype == "bfloat16" ? "ushort" : in_dtype},
         {"LOCAL_SIZE", LOCAL_SIZE},
     };
 

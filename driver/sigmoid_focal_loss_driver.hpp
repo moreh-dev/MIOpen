@@ -40,7 +40,6 @@
 #include <vector>
 
 // #define DEBUGGING
-// #define COMPARE_WITH_ROCM
 
 template <typename TIO>
 void mloSigmoidFocalLossUnreducedFwdRunHost(TIO* input,
@@ -273,7 +272,6 @@ public:
     int RunBackwardGPU() override;
     int RunBackwardCPU();
 
-    TIO GetTolerance();
     int VerifyBackward() override;
     int VerifyForward() override;
     ~SigmoidFocalLossDriver() override
@@ -480,41 +478,6 @@ int SigmoidFocalLossDriver<TIO>::AllocateBuffersAndCopy()
     {
         doutput[i] = prng::gen_A_to_B<TIO>(static_cast<TIO>(-2), static_cast<TIO>(2));
     }
-
-#ifdef COMPARE_WITH_ROCM
-    float input_arr[12] = {0.4525,
-                           -1.1261,
-                           -2.2234,
-                           -0.7377,
-                           0.2541,
-                           -2.2175,
-                           2.5682,
-                           -2.2930,
-                           -0.5593,
-                           1.9189,
-                           -2.5782,
-                           -0.4460};
-
-    float target_arr[12] = {1.0245,
-                            0.4950,
-                            1.7240,
-                            -1.1395,
-                            2.1006,
-                            -0.2978,
-                            -1.1221,
-                            4.5647,
-                            2.3071,
-                            -0.6812,
-                            -3.5125,
-                            -0.4301};
-
-    for(int i = 0; i < in_sz; ++i)
-    {
-        input[i]   = input_arr[i];
-        target[i]  = target_arr[i];
-        doutput[i] = 1;
-    }
-#endif
 
     fill(output.begin(), output.end(), static_cast<TIO>(0));
     fill(dinput.begin(), dinput.end(), static_cast<TIO>(0));

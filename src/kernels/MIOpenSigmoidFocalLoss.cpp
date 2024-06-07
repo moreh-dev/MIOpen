@@ -119,9 +119,11 @@ __device__ void sigmoidFocalLossBwd(const TIO* input,
     FLOAT_ACCUM pT     = p * t + (1 - p) * (1 - t);
     FLOAT_ACCUM powPt  = pow(1 - pT, gamma);
 
-    FLOAT_ACCUM dpdi      = exp(-i) / pow(1 + exp(-i), 2);
+    FLOAT_ACCUM dpdi = exp(-i) / pow(1 + exp(-i), 2);
+    // dceloss/di = dceloss/dp * dp/di
     FLOAT_ACCUM dcelossdi = (-t / p + (1 - t) / (1 - p)) * dpdi;
-    FLOAT_ACCUM dpowptdi  = gamma * pow(1 - pT, gamma - 1) * (1 - 2 * t) * dpdi;
+    // dpowt/di = dpowt/dpT * dpT/dp * dp/di
+    FLOAT_ACCUM dpowptdi = gamma * pow(1 - pT, gamma - 1) * (1 - 2 * t) * dpdi;
 
     // L = ce_loss * pow_pt => dL/di = dceloss/di * pow_pt + ce_loss * dpowpt/di
     FLOAT_ACCUM dLdi = dcelossdi * powPt + ceLoss * dpowptdi;
@@ -234,9 +236,11 @@ __device__ void sigmoidFocalLossUnreducedBwd(const TIO* input,
     FLOAT_ACCUM pT     = p * t + (1 - p) * (1 - t);
     FLOAT_ACCUM powPt  = pow(1 - pT, gamma);
 
-    FLOAT_ACCUM dpdi      = exp(-i) / pow(1 + exp(-i), 2);
+    FLOAT_ACCUM dpdi = exp(-i) / pow(1 + exp(-i), 2);
+    // dceloss/di = dceloss/dp * dp/di
     FLOAT_ACCUM dcelossdi = (-t / p + (1 - t) / (1 - p)) * dpdi;
-    FLOAT_ACCUM dpowptdi  = gamma * pow(1 - pT, gamma - 1) * (1 - 2 * t) * dpdi;
+    // dpowt/di = dpowt/dpT * dpT/dp * dp/di
+    FLOAT_ACCUM dpowptdi = gamma * pow(1 - pT, gamma - 1) * (1 - 2 * t) * dpdi;
 
     // L = ce_loss * pow_pt => dL/di = dceloss/di * pow_pt + ce_loss * dpowpt/di
     FLOAT_ACCUM dLdi = dcelossdi * powPt + ceLoss * dpowptdi;

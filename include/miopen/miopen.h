@@ -5019,8 +5019,6 @@ MIOPEN_EXPORT miopenStatus_t miopenSigmoidFocalLossForward(miopenHandle_t handle
  * @param doutput                  Gradient of output (input)
  * @param dinputDesc               Tensor descriptor for input gradient (input)
  * @param dinput                   Gradient of input (output)
- * @param dtargetDesc              Tensor descriptor for target gradient (input)
- * @param dtarget                  Gradient of target (output)
  * @param alpha                    Alpha (input)
  * @param gamma                    Gamma (input)
  * @param reduction                Reduction (input)
