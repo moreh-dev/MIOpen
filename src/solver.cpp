@@ -648,6 +648,8 @@ inline SolverRegistrar::SolverRegistrar(IdRegistryData& registry)
     Register(registry, ++id, Primitive::Mha, mha::Mha{}.SolverDbId());
     Register(registry, ++id, Primitive::Softmax, softmax::Softmax{}.SolverDbId());
     Register(registry, ++id, Primitive::Softmax, softmax::AttnSoftmax{}.SolverDbId());
+    Register(registry, ++id, Primitive::ReLU, rrelu::ContiguouseForward{}.SolverDbId());
+    Register(registry, ++id, Primitive::ReLU, rrelu::nonContiguouseForward{}.SolverDbId());
 
     // IMPORTANT: New solvers should be added to the end of the function!
 }

@@ -6582,6 +6582,55 @@ MIOPEN_EXPORT miopenStatus_t miopenBackendInitialize(miopenBackendDescriptor_t d
 // CLOSEOUT BackendAPI DOXYGEN GROUP
 #endif // MIOPEN_BETA_API
 
+#ifdef MIOPEN_BETA_API
+
+/** @addtogroup ReLU
+ *
+ *  @{
+ */
+
+/*! @brief Helper function to query the minimum workspace size required by the RReLU forward call
+ *
+ * @param handle                   MIOpen Handle (input)
+ * @param inputDesc                Tensor descriptor for input tensor (input)
+ * @param sizeInBytes              Pointer to data to return the minimum workspace size
+ * @return                         miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t miopenGetRReLUForwardWorkspaceSize(miopenHandle_t handle,
+                                                                miopenTensorDescriptor_t inputDesc,
+                                                                size_t* sizeInBytes);
+
+/*! @brief Execute a ReLU forward layer
+ *
+ * @param handle                   MIOpen handle (input)
+ * @param workspace                Address of the allocated workspace data (input)
+ * @param workspaceSizeInBytes     Size in bytes of the allocated workspace data (input)
+ * @param inputDesc                Tensor descriptor for input tensor (input)
+ * @param input                    Data tensor input (input)
+ * @param outputDesc               Tensor descriptor for output tensor (input)
+ * @param output                   Data tensor output (output)
+ * @param noiseDesc                Tensor descriptor for noise tensor (input)
+ * @param noise                    Data tensor noise (optional output)
+ * @param lower                    Lower bound of the uniform distribution (input)
+ * @param upper                    Upper bound of the uniform distribution (input)
+ * @return                         miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t miopenRReLUForward(miopenHandle_t handle,
+                                                void* workspace,
+                                                size_t workspaceSizeInBytes,
+                                                miopenTensorDescriptor_t inputDesc,
+                                                const void* input,
+                                                miopenTensorDescriptor_t outputDesc,
+                                                void* output,
+                                                miopenTensorDescriptor_t noiseDesc,
+                                                void* noise,
+                                                float lower,
+                                                float upper);
+
+/** @} */
+// CLOSEOUT ReLU DOXYGEN GROUP
+#endif // MIOPEN_BETA_API
+
 #ifdef __cplusplus
 }
 #endif
