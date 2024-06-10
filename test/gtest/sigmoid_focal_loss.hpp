@@ -52,7 +52,7 @@ struct SigmoidFocalLossTestCase
             os << dim << " ";
         }
         return os << "is_contiguous: " << tc.isContiguous << " alpha: " << tc.alpha
-                  << " gamma: " << tc.gamma << " reduction: " << tc.reduction;
+                  << " gamma: " << tc.gamma;
     }
 
     std::vector<size_t> GetDims() const { return dims; }
@@ -72,20 +72,16 @@ struct SigmoidFocalLossTestCase
     {
     }
 
-    std::vector<size_t> GetStrides()
+    std::vector<size_t> ComputeStrides(std::vector<size_t> inputDim) const
     {
-        std::vector<size_t> strides(dims.size(), 1);
-        for(int i = dims.size() - 2; i >= 0; --i)
-        {
-            strides[i] = dims[i + 1] * strides[i + 1];
-        }
-
         if(!isContiguous)
-        {
-            auto rng = std::default_random_engine{};
-            std::shuffle(std::begin(strides), std::end(strides), rng);
-        }
-
+            std::swap(inputDim.front(), inputDim.back());
+        std::vector<size_t> strides(inputDim.size());
+        strides.back() = 1;
+        for(int i = inputDim.size() - 2; i >= 0; --i)
+            strides[i] = strides[i + 1] * inputDim[i + 1];
+        if(!isContiguous)
+            std::swap(strides.front(), strides.back());
         return strides;
     }
 };
@@ -115,7 +111,7 @@ protected:
         config        = GetParam();
 
         auto in_dims    = config.GetDims();
-        auto in_strides = config.GetStrides();
+        auto in_strides = config.ComputeStrides(in_dims);
 
         auto in_gen_value = [](auto...) { return prng::gen_descreet_uniform_sign<TIO>(0.1, 50); };
         input             = tensor<TIO>{in_dims, in_strides}.generate(in_gen_value);
@@ -190,7 +186,7 @@ protected:
         config        = GetParam();
 
         auto in_dims      = config.GetDims();
-        auto in_strides   = config.GetStrides();
+        auto in_strides   = config.ComputeStrides(in_dims);
         auto in_gen_value = [](auto...) { return prng::gen_descreet_uniform_sign<TIO>(0.1, 50); };
         input             = tensor<TIO>{in_dims, in_strides}.generate(in_gen_value);
 
@@ -275,7 +271,7 @@ protected:
         config.reduction = miopenLossReductionMode_t(int(prng::gen_0_to_B(2) + 1));
 
         auto in_dims    = config.GetDims();
-        auto in_strides = config.GetStrides();
+        auto in_strides = config.ComputeStrides(in_dims);
 
         auto in_gen_value = [](auto...) { return prng::gen_descreet_uniform_sign<TIO>(0.1, 20); };
         input             = tensor<TIO>{in_dims, in_strides}.generate(in_gen_value);
@@ -371,7 +367,7 @@ protected:
         auto&& handle   = get_handle();
         config          = GetParam();
         auto in_dims    = config.GetDims();
-        auto in_strides = config.GetStrides();
+        auto in_strides = config.ComputeStrides(in_dims);
 
         config.reduction = miopenLossReductionMode_t(int(prng::gen_0_to_B(2) + 1));
 

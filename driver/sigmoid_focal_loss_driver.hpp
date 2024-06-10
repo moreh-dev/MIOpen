@@ -28,6 +28,7 @@
 #include "InputFlags.hpp"
 #include "driver.hpp"
 #include "miopen/errors.hpp"
+#include <cstddef>
 #include <miopen/tensor_view_utils.hpp>
 #include "miopen/miopen.h"
 #include "tensor_driver.hpp"
@@ -256,13 +257,12 @@ public:
         data_type = miopen_type<TIO>{};
     }
 
+    std::vector<int> ComputeStrides(std::vector<int> input);
     int AddCmdLineArgs() override;
     int ParseCmdLineArgs(int argc, char* argv[]) override;
     InputFlags& GetInputFlags() override { return inflags; }
 
     int GetandSetData() override;
-    std::vector<int> GetInputTensorLengthsFromCmdLine();
-    std::vector<int> GetTensorStride(std::vector<int> dim);
 
     int AllocateBuffersAndCopy() override;
 
@@ -332,26 +332,22 @@ int SigmoidFocalLossDriver<TIO>::ParseCmdLineArgs(int argc, char* argv[])
 template <typename TIO>
 int SigmoidFocalLossDriver<TIO>::GetandSetData()
 {
-    std::vector<int> inDim = GetInputTensorLengthsFromCmdLine();
-    alpha                  = inflags.GetValueDouble("alpha");
-    gamma                  = inflags.GetValueDouble("gamma");
-    isContiguous           = inflags.GetValueInt("is-contiguous") == 1 ? true : false;
-    reduction = static_cast<miopenLossReductionMode_t>(inflags.GetValueInt("reduction"));
+    auto inDims  = inflags.GetValueTensor("DimLengths").lengths;
+    alpha        = inflags.GetValueDouble("alpha");
+    gamma        = inflags.GetValueDouble("gamma");
+    isContiguous = inflags.GetValueInt("is-contiguous") == 1 ? true : false;
+    reduction    = static_cast<miopenLossReductionMode_t>(inflags.GetValueInt("reduction"));
 
-    std::vector<int> inStride = GetTensorStride(inDim);
-    if(!isContiguous)
-    {
-        std::swap(inDim.front(), inDim.back());
-    }
+    std::vector<int> inStride = ComputeStrides(inDims);
 
-    SetTensorNd(inputDesc, inDim, inStride, data_type);
-    SetTensorNd(targetDesc, inDim, inStride, data_type);
-    SetTensorNd(doutputDesc, inDim, data_type);
-    SetTensorNd(dinputDesc, inDim, data_type);
+    SetTensorNd(inputDesc, inDims, inStride, data_type);
+    SetTensorNd(targetDesc, inDims, inStride, data_type);
+    SetTensorNd(doutputDesc, inDims, data_type);
+    SetTensorNd(dinputDesc, inDims, data_type);
 
     if(reduction == MIOPEN_LOSS_REDUCTION_NONE)
     {
-        SetTensorNd(outputDesc, inDim, data_type);
+        SetTensorNd(outputDesc, inDims, data_type);
     }
     else
     {
@@ -368,20 +364,18 @@ int SigmoidFocalLossDriver<TIO>::GetandSetData()
     return 0;
 }
 
+// Equivalent to: tensor.tranpose(0, -1).contiguous().tranpose(0, -1) incase contiguous = False
 template <typename TIO>
-std::vector<int> SigmoidFocalLossDriver<TIO>::GetTensorStride(std::vector<int> dim)
+std::vector<int> SigmoidFocalLossDriver<TIO>::ComputeStrides(std::vector<int> inputDim)
 {
-    std::vector<int> strides(dim.size(), 1);
-    for(int i = dim.size() - 2; i >= 0; --i)
-    {
-        strides[i] = dim[i + 1] * strides[i + 1];
-    }
-
     if(!isContiguous)
-    {
+        std::swap(inputDim.front(), inputDim.back());
+    std::vector<int> strides(inputDim.size());
+    strides.back() = 1;
+    for(int i = inputDim.size() - 2; i >= 0; --i)
+        strides[i] = strides[i + 1] * inputDim[i + 1];
+    if(!isContiguous)
         std::swap(strides.front(), strides.back());
-    }
-
     return strides;
 }
 
@@ -389,11 +383,8 @@ template <typename TIO>
 int SigmoidFocalLossDriver<TIO>::AddCmdLineArgs()
 {
     inflags.AddInputFlag("forw", 'F', "1", "Run only Forward (Default=1)", "int");
-    inflags.AddInputFlag("DimLengths",
-                         'D',
-                         "256,4,1,1,8723",
-                         "The dimensional lengths of the input tensor",
-                         "string");
+    inflags.AddTensorFlag(
+        "DimLengths", 'D', "256x4x2", "The dimensional lengths of the input tensor");
     inflags.AddInputFlag("is-contiguous", 'c', "1", "is-contiguous (Default=1)", "int");
     inflags.AddInputFlag(
         "reduction", 'R', "0", "reduction mode: 0(default) - unreduced, 1 - sum, 2 -mean", "int");
@@ -406,36 +397,6 @@ int SigmoidFocalLossDriver<TIO>::AddCmdLineArgs()
         "wall", 'w', "0", "Wall-clock Time Each Layer, Requires time == 1 (Default=0)", "int");
 
     return miopenStatusSuccess;
-}
-
-template <typename TIO>
-std::vector<int> SigmoidFocalLossDriver<TIO>::GetInputTensorLengthsFromCmdLine()
-{
-    std::string lengthsStr = inflags.GetValueStr("DimLengths");
-
-    std::vector<int> lengths;
-    std::size_t pos = 0;
-    std::size_t new_pos;
-
-    new_pos = lengthsStr.find(',', pos);
-    while(new_pos != std::string::npos)
-    {
-        std::string sliceStr = lengthsStr.substr(pos, new_pos - pos);
-
-        int len = std::stoi(sliceStr);
-
-        lengths.push_back(len);
-
-        pos     = new_pos + 1;
-        new_pos = lengthsStr.find(',', pos);
-    };
-
-    std::string sliceStr = lengthsStr.substr(pos);
-    int len              = std::stoi(sliceStr);
-
-    lengths.push_back(len);
-
-    return (lengths);
 }
 
 template <typename TIO>

@@ -29,6 +29,11 @@
 #include "tensor_holder.hpp"
 #include <miopen/env.hpp>
 
+#define TEST_FWD_REDUCED
+#define TEST_BWD_REDUCED
+#define TEST_FWD_UNREDUCED
+#define TEST_BWD_UNREDUCED
+
 MIOPEN_DECLARE_ENV_VAR_BOOL(MIOPEN_TEST_ALL)
 
 namespace sigmoidfocalloss {
@@ -82,7 +87,8 @@ struct SigmoidFocalLossUnreducedBackwardTestBFloat16 : SigmoidFocalLossUnreduced
 }; // namespace sigmoidfocalloss
 
 using namespace sigmoidfocalloss;
-// =========================== Reduced Forward Test ===========================
+
+#ifdef TEST_FWD_REDUCED
 TEST_P(SigmoidFocalLossForwardTestFloat32, SigmoidFocalLossForwardTest)
 {
     if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
@@ -133,8 +139,9 @@ TEST_P(SigmoidFocalLossForwardTestBFloat16, SigmoidFocalLossForwardTest)
 INSTANTIATE_TEST_SUITE_P(SigmoidFocalLossForwardTestSet,
                          SigmoidFocalLossForwardTestBFloat16,
                          testing::ValuesIn(SigmoidFocalLossTestConfigs()));
+#endif
 
-// =========================== Reduced Backward Test ===========================
+#ifdef TEST_BWD_REDUCED
 TEST_P(SigmoidFocalLossBackwardTestFloat32, SigmoidFocalLossBackwardTest)
 {
     if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
@@ -185,8 +192,9 @@ TEST_P(SigmoidFocalLossBackwardTestBFloat16, SigmoidFocalLossBackwardTest)
 INSTANTIATE_TEST_SUITE_P(SigmoidFocalLossBackwardTestSet,
                          SigmoidFocalLossBackwardTestBFloat16,
                          testing::ValuesIn(SigmoidFocalLossTestConfigs()));
+#endif
 
-// =========================== Unreduced Forward Test ===========================
+#ifdef TEST_FWD_UNREDUCED
 TEST_P(SigmoidFocalLossUnreducedForwardTestFloat32, SigmoidFocalLossUnreducedForwardTest)
 {
     if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
@@ -237,8 +245,9 @@ TEST_P(SigmoidFocalLossUnreducedForwardTestBFloat16, SigmoidFocalLossUnreducedFo
 INSTANTIATE_TEST_SUITE_P(SigmoidFocalLossUnreducedForwardTestSet,
                          SigmoidFocalLossUnreducedForwardTestBFloat16,
                          testing::ValuesIn(SigmoidFocalLossTestConfigs()));
+#endif
 
-// =========================== Unreduced Backward Test ===========================
+#ifdef TEST_BWD_UNREDUCED
 TEST_P(SigmoidFocalLossUnreducedBackwardTestFloat32, SigmoidFocalLossUnreducedBackwardTest)
 {
     if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
@@ -289,3 +298,4 @@ TEST_P(SigmoidFocalLossUnreducedBackwardTestBFloat16, SigmoidFocalLossUnreducedB
 INSTANTIATE_TEST_SUITE_P(SigmoidFocalLossUnreducedBackwardTestSet,
                          SigmoidFocalLossUnreducedBackwardTestBFloat16,
                          testing::ValuesIn(SigmoidFocalLossTestConfigs()));
+#endif
