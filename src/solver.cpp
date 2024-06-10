@@ -35,6 +35,7 @@
 #include <miopen/reduce/solvers.hpp>
 #include <miopen/mha/solvers.hpp>
 #include <miopen/softmax/solvers.hpp>
+#include <miopen/softmaxcrossentropywithlogits/solvers.hpp>
 
 #include <miopen/conv_algo_name.hpp>
 #include <miopen/db.hpp>
@@ -649,6 +650,16 @@ inline SolverRegistrar::SolverRegistrar(IdRegistryData& registry)
     Register(registry, ++id, Primitive::Softmax, softmax::Softmax{}.SolverDbId());
     Register(registry, ++id, Primitive::Softmax, softmax::AttnSoftmax{}.SolverDbId());
 
+    Register(registry,
+             ++id,
+             Primitive::SoftmaxCrossEntropyWithLogits,
+             softmaxcrossentropywithlogits::SoftmaxCrossEntropyWithLogitForwardContiguous{}
+                 .SolverDbId());
+    Register(registry,
+             ++id,
+             Primitive::SoftmaxCrossEntropyWithLogits,
+             softmaxcrossentropywithlogits::SoftmaxCrossEntropyWithLogitBackwardContiguous{}
+                 .SolverDbId());
     // IMPORTANT: New solvers should be added to the end of the function!
 }
 
