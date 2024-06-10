@@ -35,27 +35,7 @@
 
 namespace miopen {
 
-size_t GetMarginRankingLossForwardWorkspaceSize(Handle& handle,
-                                                const TensorDescriptor& input1Desc,
-                                                const TensorDescriptor& input2Desc,
-                                                const TensorDescriptor& targetDesc,
-                                                const TensorDescriptor& outputDesc,
-                                                float margin)
-{
-    auto ctx           = ExecutionContext{&handle};
-    const auto problem = marginrankingloss::ProblemDescriptionForward{input1Desc, input2Desc, targetDesc, outputDesc, margin, true};
-
-    const auto algo    = AlgorithmName{"MarginRankingLossForward"};
-    const auto solvers = solver::SolverContainer<solver::marginrankingloss::MarginRankingLossForward>{};
-
-    auto pair_size_vector = solvers.GetWorkspaceSizes(ctx, problem);
-
-    return pair_size_vector.empty() ? static_cast<size_t>(-1) : pair_size_vector.front().second;
-}
-
 miopenStatus_t MarginRankingLossForward(Handle& handle,
-                                        Data_t workspace,
-                                        size_t workspaceSizeInBytes,
                                         const TensorDescriptor& input1Desc,
                                         ConstData_t input1,
                                         const TensorDescriptor& input2Desc,
@@ -65,24 +45,22 @@ miopenStatus_t MarginRankingLossForward(Handle& handle,
                                         const TensorDescriptor& outputDesc,
                                         Data_t output,
                                         float margin,
-                                        float divisor)
+                                        miopenMarginRakningLossReductionMode_t reduction_mode)
 {
-    const auto problem = marginrankingloss::ProblemDescriptionForward{input1Desc, input2Desc, targetDesc, outputDesc, margin, true};
+    const auto problem = marginrankingloss::ProblemDescriptionForward{input1Desc, input2Desc, targetDesc, outputDesc, margin, reduction_mode};
 
     const auto invoke_params = [&]() {
-        auto tmp          = marginrankingloss::FwdInvokeParams{};
-        tmp.input1Desc    = &input1Desc;
-        tmp.input2Desc    = &input2Desc;
-        tmp.targetDesc    = &targetDesc;
-        tmp.outputDesc    = &outputDesc;
-        tmp.input1        = input1;
-        tmp.input2        = input2;
-        tmp.target        = target;
-        tmp.output        = output;
-        tmp.margin        = margin;
-        tmp.divisor       = divisor;
-        tmp.workspace     = workspace;
-        tmp.workspaceSize = workspaceSizeInBytes;
+        auto tmp           = marginrankingloss::FwdInvokeParams{};
+        tmp.input1Desc     = &input1Desc;
+        tmp.input2Desc     = &input2Desc;
+        tmp.targetDesc     = &targetDesc;
+        tmp.outputDesc     = &outputDesc;
+        tmp.input1         = input1;
+        tmp.input2         = input2;
+        tmp.target         = target;
+        tmp.output         = output;
+        tmp.margin         = margin;
+        tmp.reduction_mode = reduction_mode;
         return tmp;
     }();
 
@@ -106,100 +84,26 @@ miopenStatus_t MarginRankingLossBackward(Handle& handle,
                                          const TensorDescriptor& in2GradDesc,
                                          Data_t in2Grad,
                                          float margin,
-                                         float divisor)
+                                         miopenMarginRakningLossReductionMode_t reduction_mode)
 {
-    const auto problem = marginrankingloss::ProblemDescriptionBackward{input1Desc, input2Desc, targetDesc, outGradDesc, in1GradDesc, in2GradDesc, margin, true};
+    const auto problem = marginrankingloss::ProblemDescriptionBackward{input1Desc, input2Desc, targetDesc, outGradDesc, in1GradDesc, in2GradDesc, margin, reduction_mode};
 
     const auto invoke_params = [&]() {
-        auto tmp          = marginrankingloss::BwdInvokeParams{};
-        tmp.input1Desc    = &input1Desc;
-        tmp.input2Desc    = &input2Desc;
-        tmp.targetDesc    = &targetDesc;
-        tmp.outGradDesc   = &outGradDesc;
-        tmp.in1GradDesc   = &in1GradDesc;
-        tmp.in2GradDesc   = &in2GradDesc;
-        tmp.input1        = input1;
-        tmp.input2        = input2;
-        tmp.target        = target;
-        tmp.outGrad       = outGrad;
-        tmp.in1Grad       = in1Grad;
-        tmp.in2Grad       = in2Grad;
-        tmp.margin        = margin;
-        tmp.divisor       = divisor;
-        return tmp;
-    }();
-
-    const auto algo = AlgorithmName{"MarginRankingLossBackward"};
-    const auto solvers = solver::SolverContainer<solver::marginrankingloss::MarginRankingLossBackward>{};
-    solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
-    return miopenStatusSuccess;
-}
-
-miopenStatus_t MarginRankingLossUnreducedForward(Handle& handle,
-                                                 const TensorDescriptor& input1Desc,
-                                                 ConstData_t input1,
-                                                 const TensorDescriptor& input2Desc,
-                                                 ConstData_t input2,
-                                                 const TensorDescriptor& targetDesc,
-                                                 ConstData_t target,
-                                                 const TensorDescriptor& outputDesc,
-                                                 Data_t output,
-                                                 float margin)
-{
-    const auto problem = marginrankingloss::ProblemDescriptionForward{input1Desc, input2Desc, targetDesc, outputDesc, margin, false};
-
-    const auto invoke_params = [&]() {
-        auto tmp          = marginrankingloss::FwdInvokeParams{};
-        tmp.input1Desc    = &input1Desc;
-        tmp.input2Desc    = &input2Desc;
-        tmp.targetDesc    = &targetDesc;
-        tmp.outputDesc    = &outputDesc;
-        tmp.input1        = input1;
-        tmp.input2        = input2;
-        tmp.target        = target;
-        tmp.output        = output;
-        tmp.margin        = margin;
-        return tmp;
-    }();
-
-    const auto algo = AlgorithmName{"MarginRankingLossForward"};
-    const auto solvers = solver::SolverContainer<solver::marginrankingloss::MarginRankingLossForward>{};
-    solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
-    return miopenStatusSuccess;
-}
-
-miopenStatus_t MarginRankingLossUnreducedBackward(Handle& handle,
-                                                  const TensorDescriptor& input1Desc,
-                                                  ConstData_t input1,
-                                                  const TensorDescriptor& input2Desc,
-                                                  ConstData_t input2,
-                                                  const TensorDescriptor& targetDesc,
-                                                  ConstData_t target,
-                                                  const TensorDescriptor& outGradDesc,
-                                                  Data_t outGrad,
-                                                  const TensorDescriptor& in1GradDesc,
-                                                  Data_t in1Grad,
-                                                  const TensorDescriptor& in2GradDesc,
-                                                  Data_t in2Grad,
-                                                  float margin)
-{
-    const auto problem = marginrankingloss::ProblemDescriptionBackward{input1Desc, input2Desc, targetDesc, outGradDesc, in1GradDesc, in2GradDesc, margin, false};
-
-    const auto invoke_params = [&]() {
-        auto tmp          = marginrankingloss::BwdInvokeParams{};
-        tmp.input1Desc    = &input1Desc;
-        tmp.input2Desc    = &input2Desc;
-        tmp.targetDesc    = &targetDesc;
-        tmp.outGradDesc   = &outGradDesc;
-        tmp.in1GradDesc   = &in1GradDesc;
-        tmp.in2GradDesc   = &in2GradDesc;
-        tmp.input1        = input1;
-        tmp.input2        = input2;
-        tmp.target        = target;
-        tmp.outGrad       = outGrad;
-        tmp.in1Grad       = in1Grad;
-        tmp.in2Grad       = in2Grad;
-        tmp.margin        = margin;
+        auto tmp           = marginrankingloss::BwdInvokeParams{};
+        tmp.input1Desc     = &input1Desc;
+        tmp.input2Desc     = &input2Desc;
+        tmp.targetDesc     = &targetDesc;
+        tmp.outGradDesc    = &outGradDesc;
+        tmp.in1GradDesc    = &in1GradDesc;
+        tmp.in2GradDesc    = &in2GradDesc;
+        tmp.input1         = input1;
+        tmp.input2         = input2;
+        tmp.target         = target;
+        tmp.outGrad        = outGrad;
+        tmp.in1Grad        = in1Grad;
+        tmp.in2Grad        = in2Grad;
+        tmp.margin         = margin;
+        tmp.reduction_mode = reduction_mode;
         return tmp;
     }();
 

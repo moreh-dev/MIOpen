@@ -24,10 +24,51 @@
  *
  *******************************************************************************/
 
-#include <cstddef>
-#include <miopen/marginrankingloss/problem_description.hpp>
-#include <miopen/names.hpp>
+#include "miopen/marginrankingloss/problem_description.hpp"
+#include "miopen/names.hpp"
 
 #include <sstream>
 
-namespace mi
+namespace miopen {
+
+namespace marginrankingloss {
+
+NetworkConfig ProblemDescriptionForward::MakeNetworkConfig() const
+{
+    auto dtype = input1Desc.GetType();
+    auto lengths = input1Desc.GetLengths();
+
+    std::ostringstream ss;
+
+    ss << "marginrankingloss_forward";
+    ss << "dtype" << dtype;
+    ss << "lengths";
+    for(auto length : lengths)
+        ss << length << ',';
+    ss << "margin" << margin;
+    ss << "reduction" << (int)reduction_mode;
+
+    return NetworkConfig{ss.str()};
+}
+
+NetworkConfig ProblemDescriptionBackward::MakeNetworkConfig() const
+{
+    auto dtype = input1Desc.GetType();
+    auto lengths = input1Desc.GetLengths();
+
+    std::ostringstream ss;
+
+    ss << "marginrankingloss_backward";
+    ss << "dtype" << dtype;
+    ss << "lengths";
+    for(auto length : lengths)
+        ss << length << ',';
+    ss << "margin" << margin;
+    ss << "reduction" << (int)reduction_mode;
+
+    return NetworkConfig{ss.str()};
+}
+
+} // namespace marginrankingloss
+
+} // namespace miopen 

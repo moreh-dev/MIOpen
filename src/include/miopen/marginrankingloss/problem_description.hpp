@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "miopen/miopen.h"
 #include "miopen/names.hpp"
 #include <miopen/problem_description_base.hpp>
 #include <miopen/activ.hpp>
@@ -45,8 +46,8 @@ struct ProblemDescriptionForward : ProblemDescriptionBase
                               const TensorDescriptor& targetDesc_,
                               const TensorDescriptor& outputDesc_,
                               float margin_,
-                              bool is_reduced_) 
-        : input1Desc(input1Desc_), input2Desc(input2Desc_), targetDesc(targetDesc_), outputDesc(outputDesc_), margin(margin_), is_reduced(is_reduced_)
+                              miopenMarginRakningLossReductionMode_t reduction_mode_) 
+        : input1Desc(input1Desc_), input2Desc(input2Desc_), targetDesc(targetDesc_), outputDesc(outputDesc_), margin(margin_), reduction_mode(reduction_mode_)
     {
     }
 
@@ -54,6 +55,7 @@ struct ProblemDescriptionForward : ProblemDescriptionBase
     const TensorDescriptor& GetInput2Desc() const { return input2Desc; }
     const TensorDescriptor& GetTargetDesc() const { return targetDesc; }
     const TensorDescriptor& GetOutputDesc() const { return outputDesc; }
+    const miopenMarginRakningLossReductionMode_t& GetReductionMode() const { return reduction_mode; }
     const float& GetMargin() const { return margin; }
 
     bool IsSameLength() const
@@ -86,7 +88,7 @@ private:
     TensorDescriptor targetDesc;
     TensorDescriptor outputDesc;
     float margin;
-    bool is_reduced;
+    miopenMarginRakningLossReductionMode_t reduction_mode;
 
     NetworkConfig MakeForwardNetworkConfig() const;
 };
@@ -100,8 +102,8 @@ struct ProblemDescriptionBackward : ProblemDescriptionBase
                               const TensorDescriptor& in1GradDesc_,
                               const TensorDescriptor& in2GradDesc_,
                               float margin_,
-                              bool is_reduced_) 
-        : input1Desc(input1Desc_), input2Desc(input2Desc_), targetDesc(targetDesc_), outGradDesc(outGradDesc_), in1GradDesc(in1GradDesc_), in2GradDesc(in2GradDesc_), margin(margin_), is_reduced(is_reduced_)
+                              miopenMarginRakningLossReductionMode_t reduction_mode_) 
+        : input1Desc(input1Desc_), input2Desc(input2Desc_), targetDesc(targetDesc_), outGradDesc(outGradDesc_), in1GradDesc(in1GradDesc_), in2GradDesc(in2GradDesc_), margin(margin_), reduction_mode(reduction_mode_)
     {
     }
 
@@ -111,6 +113,7 @@ struct ProblemDescriptionBackward : ProblemDescriptionBase
     const TensorDescriptor& GetOutGradDesc() const { return outGradDesc; }
     const TensorDescriptor& GetIn1GradDesc() const { return in1GradDesc; }
     const TensorDescriptor& GetIn2GradDesc() const { return in2GradDesc; }
+    const miopenMarginRakningLossReductionMode_t& GetReductionMode() const { return reduction_mode; }
     const float& GetMargin() const { return margin; }
 
     bool IsSameLength() const
@@ -147,7 +150,7 @@ private:
     TensorDescriptor in1GradDesc;
     TensorDescriptor in2GradDesc;
     float margin;
-    bool is_reduced;
+    miopenMarginRakningLossReductionMode_t reduction_mode;
 
     NetworkConfig MakeForwardNetworkConfig() const;
 };

@@ -31,6 +31,7 @@
 #include <miopen/fusion/solvers.hpp>
 #include <miopen/groupnorm/solvers.hpp>
 #include <miopen/layernorm/solvers.hpp>
+#include <miopen/marginrankingloss/solvers.hpp>
 #include <miopen/pooling/solvers.hpp>
 #include <miopen/reduce/solvers.hpp>
 #include <miopen/mha/solvers.hpp>
@@ -648,6 +649,8 @@ inline SolverRegistrar::SolverRegistrar(IdRegistryData& registry)
     Register(registry, ++id, Primitive::Mha, mha::Mha{}.SolverDbId());
     Register(registry, ++id, Primitive::Softmax, softmax::Softmax{}.SolverDbId());
     Register(registry, ++id, Primitive::Softmax, softmax::AttnSoftmax{}.SolverDbId());
+    Register(registry, ++id, Primitive::MarginRankingLoss, marginrankingloss::MarginRankingLossForward{}.SolverDbId());
+    Register(registry, ++id, Primitive::MarginRankingLoss, marginrankingloss::MarginRankingLossBackward{}.SolverDbId());
 
     // IMPORTANT: New solvers should be added to the end of the function!
 }

@@ -41,21 +41,6 @@ namespace miopen {
 
 namespace solver {
 
-const auto make_hip_kernel = [](std::vector<size_t> local_size,
-                                std::vector<size_t> grid_size,
-                                std::string kernel_file,
-                                std::string kernel_name,
-                                KernelBuildParameters build_params) {
-
-    while(local_size.size() < 3)
-        local_size.push_back(1);
-    while(grid_size.size() < 3)
-        grid_size.push_back(1);
-    for(int i = 0; i < local_size.size(); ++i)
-        grid_size[i] = AlignUp(grid_size[i], local_size[i]);
-    return KernelInfo{build_params.GenerateFor(kbp::HIP{}), local_size, grid_size, kernel_file, kernel_name};
-};
-
 namespace marginrankingloss {
 
 using MarginRankingLossForwardSolver = NonTunableSolverBase<ExecutionContext, miopen::marginrankingloss::ProblemDescriptionForward>;
@@ -73,9 +58,13 @@ struct MarginRankingLossForward : MarginRankingLossForwardSolver
 
     ConvSolution GetSolution(const ExecutionContext& context, const miopen::marginrankingloss::ProblemDescriptionForward& problem) const override;
 
-    std::size_t GetWorkspaceSize(const ExecutionContext& context, const miopen::marginrankingloss::ProblemDescriptionForward& problem) const override;
+    std::size_t GetWorkspaceSize([[maybe_unused]] const ExecutionContext& context,
+                                 [[maybe_unused]] const miopen::marginrankingloss::ProblemDescriptionForward& problem) const override
+    {
+        return 0;
+    }
 
-    bool MayNeedWorkspace() const override;
+    bool MayNeedWorkspace() const override { return false; }
 };
 
 struct MarginRankingLossBackward : MarginRankingLossBackwardSolver

@@ -27,10 +27,10 @@
 
 #include "miopen/common.hpp"
 #include "miopen/invoke_params.hpp"
+#include "miopen/miopen.h"
 #include "miopen/tensor.hpp"
 
 #include <cstddef>
-#include <limits>
 
 namespace miopen {
 namespace marginrankingloss {
@@ -48,13 +48,11 @@ struct FwdInvokeParams : public miopen::InvokeParams
     ConstData_t input2 = nullptr;
     ConstData_t target = nullptr;
     Data_t output = nullptr;
-    Data_t workspace = nullptr;
     float margin = 0;
-    float divisor = std::numeric_limits<float>::quiet_NaN();
-    size_t workspaceSize = std::numeric_limits<float>::quiet_NaN();
-
-    size_t GetWorkspaceSize() const { return workspaceSize; }
-    Data_t GetWorkspace() const { return workspace; }
+    miopenMarginRakningLossReductionMode_t reduction_mode;
+    
+    size_t GetWorkspaceSize() const { return 0; }
+    Data_t GetWorkspace() const { return nullptr; }
 };
 
 struct BwdInvokeParams : public miopen::InvokeParams
@@ -71,11 +69,11 @@ struct BwdInvokeParams : public miopen::InvokeParams
     ConstData_t input1 = nullptr;
     ConstData_t input2 = nullptr;
     ConstData_t target = nullptr;
-    Data_t outGrad = nullptr;
+    ConstData_t outGrad = nullptr;
     Data_t in1Grad = nullptr;
     Data_t in2Grad = nullptr;
     float margin = 0;
-    float divisor = std::numeric_limits<float>::quiet_NaN();
+    miopenMarginRakningLossReductionMode_t reduction_mode;
 
     size_t GetWorkspaceSize() const { return 0; }
     Data_t GetWorkspace() const { return nullptr; }
