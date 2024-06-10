@@ -58,8 +58,11 @@ extern "C" __global__ void MarginRankingLossReducedForward5d(const FLOAT* __rest
     size_t Tidx  = TV5D_IDX(T_tv, n0, n1, n2, n3, n4);
     size_t Oidx  = TV5D_IDX(O_tv, n0, n1, n2, n3, n4);
 
-    FLOAT_ACCUM output_accum = -CVT_FLOAT2ACCUM(T[Tidx]) * (CVT_FLOAT2ACCUM(I1[I1idx]) - CVT_FLOAT2ACCUM(I2[I2idx])) + FLOAT_ACCUM(margin);
-    if (output_accum < 0) output_accum = 0;
+    FLOAT_ACCUM output_accum =
+        -CVT_FLOAT2ACCUM(T[Tidx]) * (CVT_FLOAT2ACCUM(I1[I1idx]) - CVT_FLOAT2ACCUM(I2[I2idx])) +
+        FLOAT_ACCUM(margin);
+    if(output_accum < 0)
+        output_accum = 0;
     O[Oidx] = CVT_ACCUM2FLOAT(output_accum / FLOAT_ACCUM(divisor));
 }
 
@@ -95,7 +98,9 @@ extern "C" __global__ void MarginRankingLossReducedBackward5d(const FLOAT* __res
     size_t Tidx   = TV5D_IDX(T_tv, n0, n1, n2, n3, n4);
     size_t dOidx  = TV5D_IDX(dO_tv, n0, n1, n2, n3, n4);
 
-    FLOAT_ACCUM t = -CVT_FLOAT2ACCUM(T[Tidx]) * (CVT_FLOAT2ACCUM(I1[I1idx]) - CVT_FLOAT2ACCUM(I2[I2idx])) + FLOAT_ACCUM(margin);
+    FLOAT_ACCUM t =
+        -CVT_FLOAT2ACCUM(T[Tidx]) * (CVT_FLOAT2ACCUM(I1[I1idx]) - CVT_FLOAT2ACCUM(I2[I2idx])) +
+        FLOAT_ACCUM(margin);
 
     if(t < 0)
     {
@@ -104,7 +109,8 @@ extern "C" __global__ void MarginRankingLossReducedBackward5d(const FLOAT* __res
     }
     else
     {
-        FLOAT_ACCUM d_accum = CVT_FLOAT2ACCUM(T[Tidx]) * CVT_FLOAT2ACCUM(dO[dOidx]) / FLOAT_ACCUM(divisor);
+        FLOAT_ACCUM d_accum =
+            CVT_FLOAT2ACCUM(T[Tidx]) * CVT_FLOAT2ACCUM(dO[dOidx]) / FLOAT_ACCUM(divisor);
         dI1[dI1idx] = CVT_ACCUM2FLOAT(-d_accum);
         dI2[dI2idx] = CVT_ACCUM2FLOAT(d_accum);
     }
@@ -135,8 +141,11 @@ extern "C" __global__ void MarginRankingLossUnreducedForward5d(const FLOAT* __re
     size_t Tidx  = TV5D_IDX(T_tv, n0, n1, n2, n3, n4);
     size_t Oidx  = TV5D_IDX(O_tv, n0, n1, n2, n3, n4);
 
-    FLOAT_ACCUM output_accum = -CVT_FLOAT2ACCUM(T[Tidx]) * (CVT_FLOAT2ACCUM(I1[I1idx]) - CVT_FLOAT2ACCUM(I2[I2idx])) + FLOAT_ACCUM(margin);
-    if (output_accum < 0) output_accum = 0;
+    FLOAT_ACCUM output_accum =
+        -CVT_FLOAT2ACCUM(T[Tidx]) * (CVT_FLOAT2ACCUM(I1[I1idx]) - CVT_FLOAT2ACCUM(I2[I2idx])) +
+        FLOAT_ACCUM(margin);
+    if(output_accum < 0)
+        output_accum = 0;
     O[Oidx] = CVT_ACCUM2FLOAT(output_accum);
 }
 
@@ -171,7 +180,9 @@ extern "C" __global__ void MarginRankingLossUnreducedBackward5d(const FLOAT* __r
     size_t Tidx   = TV5D_IDX(T_tv, n0, n1, n2, n3, n4);
     size_t dOidx  = TV5D_IDX(dO_tv, n0, n1, n2, n3, n4);
 
-    FLOAT_ACCUM t = -CVT_FLOAT2ACCUM(T[Tidx]) * (CVT_FLOAT2ACCUM(I1[I1idx]) - CVT_FLOAT2ACCUM(I2[I2idx])) + FLOAT_ACCUM(margin);
+    FLOAT_ACCUM t =
+        -CVT_FLOAT2ACCUM(T[Tidx]) * (CVT_FLOAT2ACCUM(I1[I1idx]) - CVT_FLOAT2ACCUM(I2[I2idx])) +
+        FLOAT_ACCUM(margin);
 
     if(t < 0)
     {
@@ -181,7 +192,7 @@ extern "C" __global__ void MarginRankingLossUnreducedBackward5d(const FLOAT* __r
     else
     {
         FLOAT_ACCUM d_accum = CVT_FLOAT2ACCUM(T[Tidx]) * CVT_FLOAT2ACCUM(dO[dOidx]);
-        dI1[dI1idx] = CVT_ACCUM2FLOAT(-d_accum);
-        dI2[dI2idx] = CVT_ACCUM2FLOAT(d_accum);
+        dI1[dI1idx]         = CVT_ACCUM2FLOAT(-d_accum);
+        dI2[dI2idx]         = CVT_ACCUM2FLOAT(d_accum);
     }
 }

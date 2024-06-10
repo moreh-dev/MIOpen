@@ -167,6 +167,11 @@ std::vector<int> MarginRankingLossDriver<Tgpu, Tref>::GetTensorDimsFromCmd()
 
     lengths.push_back(len);
 
+    while (lengths.size() < 5)
+    {
+        lengths.push_back(1);
+    }
+
     return (lengths);
 }
 
@@ -355,7 +360,8 @@ int MarginRankingLossDriver<Tgpu, Tref>::RunForwardGPU()
 
     if(output_dev->FromGPU(GetStream(), output.data()) != 0)
     {
-        std::cerr << "Error copying (output_dev) from GPU, size: " << output_dev->GetSize() << std::endl; 
+        std::cerr << "Error copying (output_dev) from GPU, size: " << output_dev->GetSize()
+                  << std::endl;
     }
 
     return miopenStatusSuccess;

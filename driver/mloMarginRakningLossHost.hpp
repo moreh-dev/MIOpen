@@ -57,7 +57,9 @@ int32_t mloMarginRankingLossReducedForwardRunHost(const miopenTensorDescriptor_t
         size_t Tidx  = TV5D_IDX(T_tv, n[0], n[1], n[2], n[3], n[4]);
         size_t Oidx  = TV5D_IDX(O_tv, n[0], n[1], n[2], n[3], n[4]);
 
-        output[Oidx] = static_cast<Tcheck>(-target[Tidx]) * (static_cast<Tcheck>(input1[I1idx]) - static_cast<Tcheck>(input2[I2idx])) + margin;
+        output[Oidx] = static_cast<Tcheck>(-target[Tidx]) * (static_cast<Tcheck>(input1[I1idx]) -
+                                                             static_cast<Tcheck>(input2[I2idx])) +
+                       margin;
         if(output[Oidx] < 0)
             output[Oidx] = 0.0f;
         output[Oidx] /= divisor;
@@ -148,7 +150,9 @@ int32_t mloMarginRankingLossUnreducedForwardRunHost(const miopenTensorDescriptor
         size_t Tidx  = TV5D_IDX(T_tv, n[0], n[1], n[2], n[3], n[4]);
         size_t Oidx  = TV5D_IDX(O_tv, n[0], n[1], n[2], n[3], n[4]);
 
-        output[Oidx] = static_cast<Tcheck>(-target[Tidx]) * (static_cast<Tcheck>(input1[I1idx]) - static_cast<Tcheck>(input2[I2idx])) + margin;
+        output[Oidx] = static_cast<Tcheck>(-target[Tidx]) * (static_cast<Tcheck>(input1[I1idx]) -
+                                                             static_cast<Tcheck>(input2[I2idx])) +
+                       margin;
         if(output[Oidx] < 0)
             output[Oidx] = 0.0f;
     }

@@ -174,14 +174,6 @@ protected:
         double threshold = std::numeric_limits<T>::epsilon();
         auto error       = miopen::rms_range(ref_output, output);
 
-        fprintf(stderr,
-                "CAM: %f %f %f out=%f, ref_output=%f\n",
-                (float)input1[0],
-                (float)input2[0],
-                (float)target[0],
-                (float)output[0],
-                (float)ref_output[0]);
-
         EXPECT_TRUE(miopen::range_distance(ref_output) == miopen::range_distance(output));
         EXPECT_TRUE(error < threshold * 10) << "Error output beyond tolerance Error: " << error
                                             << ",  Thresholdx10: " << threshold * 10;
