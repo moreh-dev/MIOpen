@@ -23,7 +23,7 @@
  * SOFTWARE.
  *
  *******************************************************************************/
-#include <cstdio>
+
 #ifndef MIOPEN_DONT_USE_HIP_RUNTIME_HEADERS
 #include <hip/hip_fp16.h>
 #include <hip/hip_runtime.h>
@@ -58,10 +58,9 @@ extern "C" __global__ void MarginRankingLossReducedForward5d(const FLOAT* __rest
     size_t Tidx  = TV5D_IDX(T_tv, n0, n1, n2, n3, n4);
     size_t Oidx  = TV5D_IDX(O_tv, n0, n1, n2, n3, n4);
 
-    O[Oidx] = -T[Tidx] * (I1[I1idx] - I2[I2idx]) + margin;
-    if(O[Oidx] < 0)
-        O[Oidx] = 0.0f;
-    O[Oidx] /= divisor;
+    FLOAT_ACCUM output_accum = -CVT_FLOAT2ACCUM(T[Tidx]) * (CVT_FLOAT2ACCUM(I1[I1idx]) - CVT_FLOAT2ACCUM(I2[I2idx])) + FLOAT_ACCUM(margin);
+    if (output_accum < 0) output_accum = 0;
+    O[Oidx] = CVT_ACCUM2FLOAT(output_accum / FLOAT_ACCUM(divisor));
 }
 
 extern "C" __global__ void MarginRankingLossReducedBackward5d(const FLOAT* __restrict__ I1,
@@ -96,21 +95,18 @@ extern "C" __global__ void MarginRankingLossReducedBackward5d(const FLOAT* __res
     size_t Tidx   = TV5D_IDX(T_tv, n0, n1, n2, n3, n4);
     size_t dOidx  = TV5D_IDX(dO_tv, n0, n1, n2, n3, n4);
 
-    FLOAT t = -T[Tidx] * (I1[I1idx] - I2[I2idx]) + margin;
+    FLOAT_ACCUM t = -CVT_FLOAT2ACCUM(T[Tidx]) * (CVT_FLOAT2ACCUM(I1[I1idx]) - CVT_FLOAT2ACCUM(I2[I2idx])) + FLOAT_ACCUM(margin);
 
     if(t < 0)
     {
-        if(dI1)
-            dI1[dI1idx] = 0.0f;
-        if(dI2)
-            dI2[dI2idx] = 0.0f;
+        dI1[dI1idx] = 0.0f;
+        dI2[dI2idx] = 0.0f;
     }
     else
     {
-        if(dI1)
-            dI1[dI1idx] = -T[Tidx] * dO[dOidx] / divisor;
-        if(dI2)
-            dI2[dI2idx] = T[Tidx] * dO[dOidx] / divisor;
+        FLOAT_ACCUM d_accum = CVT_FLOAT2ACCUM(T[Tidx]) * CVT_FLOAT2ACCUM(dO[dOidx]) / FLOAT_ACCUM(divisor);
+        dI1[dI1idx] = CVT_ACCUM2FLOAT(-d_accum);
+        dI2[dI2idx] = CVT_ACCUM2FLOAT(d_accum);
     }
 }
 
@@ -121,7 +117,8 @@ extern "C" __global__ void MarginRankingLossUnreducedForward5d(const FLOAT* __re
                                                                float margin,
                                                                tensor_view_5d_t I1_tv,
                                                                tensor_view_5d_t I2_tv,
-                                                               tensor_view_5d_t T_tv)
+                                                               tensor_view_5d_t T_tv,
+                                                               tensor_view_5d_t O_tv)
 {
     size_t gid = threadIdx.x + blockIdx.x * blockDim.x;
 
@@ -136,10 +133,11 @@ extern "C" __global__ void MarginRankingLossUnreducedForward5d(const FLOAT* __re
     size_t I1idx = TV5D_IDX(I1_tv, n0, n1, n2, n3, n4);
     size_t I2idx = TV5D_IDX(I2_tv, n0, n1, n2, n3, n4);
     size_t Tidx  = TV5D_IDX(T_tv, n0, n1, n2, n3, n4);
+    size_t Oidx  = TV5D_IDX(O_tv, n0, n1, n2, n3, n4);
 
-    O[gid] = -T[Tidx] * (I1[I1idx] - I2[I2idx]) + margin;
-    if(O[gid] < 0)
-        O[gid] = 0.0f;
+    FLOAT_ACCUM output_accum = -CVT_FLOAT2ACCUM(T[Tidx]) * (CVT_FLOAT2ACCUM(I1[I1idx]) - CVT_FLOAT2ACCUM(I2[I2idx])) + FLOAT_ACCUM(margin);
+    if (output_accum < 0) output_accum = 0;
+    O[Oidx] = CVT_ACCUM2FLOAT(output_accum);
 }
 
 extern "C" __global__ void MarginRankingLossUnreducedBackward5d(const FLOAT* __restrict__ I1,
@@ -173,20 +171,17 @@ extern "C" __global__ void MarginRankingLossUnreducedBackward5d(const FLOAT* __r
     size_t Tidx   = TV5D_IDX(T_tv, n0, n1, n2, n3, n4);
     size_t dOidx  = TV5D_IDX(dO_tv, n0, n1, n2, n3, n4);
 
-    FLOAT t = -T[Tidx] * (I1[I1idx] - I2[I2idx]) + (FLOAT)margin;
+    FLOAT_ACCUM t = -CVT_FLOAT2ACCUM(T[Tidx]) * (CVT_FLOAT2ACCUM(I1[I1idx]) - CVT_FLOAT2ACCUM(I2[I2idx])) + FLOAT_ACCUM(margin);
 
     if(t < 0)
     {
-        if(dI1)
-            dI1[dI1idx] = 0.0f;
-        if(dI2)
-            dI2[dI2idx] = 0.0f;
+        dI1[dI1idx] = 0.0f;
+        dI2[dI2idx] = 0.0f;
     }
     else
     {
-        if(dI1)
-            dI1[dI1idx] = -T[Tidx] * dO[dOidx];
-        if(dI2)
-            dI2[dI2idx] = T[Tidx] * dO[dOidx];
+        FLOAT_ACCUM d_accum = CVT_FLOAT2ACCUM(T[Tidx]) * CVT_FLOAT2ACCUM(dO[dOidx]);
+        dI1[dI1idx] = CVT_ACCUM2FLOAT(-d_accum);
+        dI2[dI2idx] = CVT_ACCUM2FLOAT(d_accum);
     }
 }

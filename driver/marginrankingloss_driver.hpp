@@ -353,7 +353,10 @@ int MarginRankingLossDriver<Tgpu, Tref>::RunForwardGPU()
         printf("GPU Kernel Time Forward MarginRankingLoss Elapsed: %f ms\n", kernel_average_time);
     }
 
-    output_dev->FromGPU(GetStream(), output.data());
+    if(output_dev->FromGPU(GetStream(), output.data()) != 0)
+    {
+        std::cerr << "Error copying (output_dev) from GPU, size: " << output_dev->GetSize() << std::endl; 
+    }
 
     return miopenStatusSuccess;
 }
@@ -503,7 +506,7 @@ int MarginRankingLossDriver<Tgpu, Tref>::VerifyForward()
 
     if(!std::isfinite(error) || error > tolerance)
     {
-        std::cout << "Forward MarginRankingLoss FAILED: " << error << std::endl;
+        std::cout << "Forward MarginRankingLoss FAILED: error=" << error << std::endl;
         return EC_VerifyFwd;
     }
     else
