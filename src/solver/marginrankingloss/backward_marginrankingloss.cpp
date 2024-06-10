@@ -47,22 +47,26 @@ namespace solver {
 
 namespace marginrankingloss {
 
-bool MarginRankingLossBackward::IsApplicable([[maybe_unused]] const ExecutionContext& context, const miopen::marginrankingloss::ProblemDescriptionBackward& problem) const
+bool MarginRankingLossBackward::IsApplicable(
+    [[maybe_unused]] const ExecutionContext& context,
+    const miopen::marginrankingloss::ProblemDescriptionBackward& problem) const
 {
     if(!problem.IsSameType() || !problem.IsSameLength())
     {
         return false;
     }
-    
+
     return true;
 }
 
-ConvSolution MarginRankingLossBackward::GetSolution(const ExecutionContext& context, const miopen::marginrankingloss::ProblemDescriptionBackward& problem) const
+ConvSolution MarginRankingLossBackward::GetSolution(
+    const ExecutionContext& context,
+    const miopen::marginrankingloss::ProblemDescriptionBackward& problem) const
 {
     std::ignore = context;
     auto result = ConvSolution(miopenStatusSuccess);
-    auto dtype = problem.GetInput1Desc().GetType();
-    auto dims  = problem.GetInput1Desc().GetLengths();
+    auto dtype  = problem.GetInput1Desc().GetType();
+    auto dims   = problem.GetInput1Desc().GetLengths();
 
     size_t total_elements = problem.GetInput1Desc().GetElementSize();
 
@@ -95,7 +99,7 @@ ConvSolution MarginRankingLossBackward::GetSolution(const ExecutionContext& cont
     if(problem.GetReductionMode() != MIOPEN_MARGINRANKINGLOSS_REDUCTION_NONE)
     {
         float divisor = 1.0f;
-        if (problem.GetReductionMode() == MIOPEN_MARGINRANKINGLOSS_REDUCTION_MEAN)
+        if(problem.GetReductionMode() == MIOPEN_MARGINRANKINGLOSS_REDUCTION_MEAN)
         {
             divisor = static_cast<float>(problem.GetTargetDesc().GetElementSize());
         }
@@ -104,13 +108,14 @@ ConvSolution MarginRankingLossBackward::GetSolution(const ExecutionContext& cont
         result.invoker_factory = [=](const std::vector<Kernel>& kernels) {
             return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
                 decltype(auto) kernel = handle_.Run(kernels.front());
-                decltype(auto) params = raw_params.CastTo<miopen::marginrankingloss::BwdInvokeParams>();
+                decltype(auto) params =
+                    raw_params.CastTo<miopen::marginrankingloss::BwdInvokeParams>();
                 auto input1_tv  = get_inner_expanded_tv_5d(deref(params.input1Desc));
                 auto input2_tv  = get_inner_expanded_tv_5d(deref(params.input2Desc));
                 auto target_tv  = get_inner_expanded_tv_5d(deref(params.targetDesc));
-                auto outGrad_tv  = get_inner_expanded_tv_5d(deref(params.outGradDesc));
-                auto in1Grad_tv  = get_inner_expanded_tv_5d(deref(params.in1GradDesc));
-                auto in2Grad_tv  = get_inner_expanded_tv_5d(deref(params.in2GradDesc));
+                auto outGrad_tv = get_inner_expanded_tv_5d(deref(params.outGradDesc));
+                auto in1Grad_tv = get_inner_expanded_tv_5d(deref(params.in1GradDesc));
+                auto in2Grad_tv = get_inner_expanded_tv_5d(deref(params.in2GradDesc));
 
                 kernel(params.input1,
                        params.input2,
@@ -127,21 +132,22 @@ ConvSolution MarginRankingLossBackward::GetSolution(const ExecutionContext& cont
                        in1Grad_tv,
                        in2Grad_tv);
             };
-        }; 
-    } 
+        };
+    }
     else
     {
         kernel.kernel_name     = "MarginRankingLossUnreducedBackward5d";
         result.invoker_factory = [=](const std::vector<Kernel>& kernels) {
             return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
                 decltype(auto) kernel = handle_.Run(kernels.front());
-                decltype(auto) params = raw_params.CastTo<miopen::marginrankingloss::BwdInvokeParams>();
+                decltype(auto) params =
+                    raw_params.CastTo<miopen::marginrankingloss::BwdInvokeParams>();
                 auto input1_tv  = get_inner_expanded_tv_5d(deref(params.input1Desc));
                 auto input2_tv  = get_inner_expanded_tv_5d(deref(params.input2Desc));
                 auto target_tv  = get_inner_expanded_tv_5d(deref(params.targetDesc));
-                auto outGrad_tv  = get_inner_expanded_tv_5d(deref(params.outGradDesc));
-                auto in1Grad_tv  = get_inner_expanded_tv_5d(deref(params.in1GradDesc));
-                auto in2Grad_tv  = get_inner_expanded_tv_5d(deref(params.in2GradDesc));
+                auto outGrad_tv = get_inner_expanded_tv_5d(deref(params.outGradDesc));
+                auto in1Grad_tv = get_inner_expanded_tv_5d(deref(params.in1GradDesc));
+                auto in2Grad_tv = get_inner_expanded_tv_5d(deref(params.in2GradDesc));
 
                 kernel(params.input1,
                        params.input2,
@@ -157,7 +163,7 @@ ConvSolution MarginRankingLossBackward::GetSolution(const ExecutionContext& cont
                        in1Grad_tv,
                        in2Grad_tv);
             };
-        }; 
+        };
     }
 
     result.construction_params.push_back(kernel);
@@ -165,7 +171,7 @@ ConvSolution MarginRankingLossBackward::GetSolution(const ExecutionContext& cont
 }
 
 } // namespace marginrankingloss
-    
+
 } // namespace solver
-    
+
 } // namespace miopen

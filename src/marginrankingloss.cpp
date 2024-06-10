@@ -47,7 +47,8 @@ miopenStatus_t MarginRankingLossForward(Handle& handle,
                                         float margin,
                                         miopenMarginRakningLossReductionMode_t reduction_mode)
 {
-    const auto problem = marginrankingloss::ProblemDescriptionForward{input1Desc, input2Desc, targetDesc, outputDesc, margin, reduction_mode};
+    const auto problem = marginrankingloss::ProblemDescriptionForward{
+        input1Desc, input2Desc, targetDesc, outputDesc, margin, reduction_mode};
 
     const auto invoke_params = [&]() {
         auto tmp           = marginrankingloss::FwdInvokeParams{};
@@ -65,7 +66,8 @@ miopenStatus_t MarginRankingLossForward(Handle& handle,
     }();
 
     const auto algo = AlgorithmName{"MarginRankingLossForward"};
-    const auto solvers = solver::SolverContainer<solver::marginrankingloss::MarginRankingLossForward>{};
+    const auto solvers =
+        solver::SolverContainer<solver::marginrankingloss::MarginRankingLossForward>{};
     solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
     return miopenStatusSuccess;
 }
@@ -86,7 +88,14 @@ miopenStatus_t MarginRankingLossBackward(Handle& handle,
                                          float margin,
                                          miopenMarginRakningLossReductionMode_t reduction_mode)
 {
-    const auto problem = marginrankingloss::ProblemDescriptionBackward{input1Desc, input2Desc, targetDesc, outGradDesc, in1GradDesc, in2GradDesc, margin, reduction_mode};
+    const auto problem = marginrankingloss::ProblemDescriptionBackward{input1Desc,
+                                                                       input2Desc,
+                                                                       targetDesc,
+                                                                       outGradDesc,
+                                                                       in1GradDesc,
+                                                                       in2GradDesc,
+                                                                       margin,
+                                                                       reduction_mode};
 
     const auto invoke_params = [&]() {
         auto tmp           = marginrankingloss::BwdInvokeParams{};
@@ -108,7 +117,8 @@ miopenStatus_t MarginRankingLossBackward(Handle& handle,
     }();
 
     const auto algo = AlgorithmName{"MarginRankingLossBackward"};
-    const auto solvers = solver::SolverContainer<solver::marginrankingloss::MarginRankingLossBackward>{};
+    const auto solvers =
+        solver::SolverContainer<solver::marginrankingloss::MarginRankingLossBackward>{};
     solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
     return miopenStatusSuccess;
 }

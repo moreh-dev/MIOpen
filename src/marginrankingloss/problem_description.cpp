@@ -35,7 +35,7 @@ namespace marginrankingloss {
 
 NetworkConfig ProblemDescriptionForward::MakeNetworkConfig() const
 {
-    auto dtype = input1Desc.GetType();
+    auto dtype   = input1Desc.GetType();
     auto lengths = input1Desc.GetLengths();
 
     std::ostringstream ss;
@@ -53,7 +53,7 @@ NetworkConfig ProblemDescriptionForward::MakeNetworkConfig() const
 
 NetworkConfig ProblemDescriptionBackward::MakeNetworkConfig() const
 {
-    auto dtype = input1Desc.GetType();
+    auto dtype   = input1Desc.GetType();
     auto lengths = input1Desc.GetLengths();
 
     std::ostringstream ss;
@@ -71,4 +71,4 @@ NetworkConfig ProblemDescriptionBackward::MakeNetworkConfig() const
 
 } // namespace marginrankingloss
 
-} // namespace miopen 
+} // namespace miopen

@@ -46,8 +46,13 @@ struct ProblemDescriptionForward : ProblemDescriptionBase
                               const TensorDescriptor& targetDesc_,
                               const TensorDescriptor& outputDesc_,
                               float margin_,
-                              miopenMarginRakningLossReductionMode_t reduction_mode_) 
-        : input1Desc(input1Desc_), input2Desc(input2Desc_), targetDesc(targetDesc_), outputDesc(outputDesc_), margin(margin_), reduction_mode(reduction_mode_)
+                              miopenMarginRakningLossReductionMode_t reduction_mode_)
+        : input1Desc(input1Desc_),
+          input2Desc(input2Desc_),
+          targetDesc(targetDesc_),
+          outputDesc(outputDesc_),
+          margin(margin_),
+          reduction_mode(reduction_mode_)
     {
     }
 
@@ -55,29 +60,35 @@ struct ProblemDescriptionForward : ProblemDescriptionBase
     const TensorDescriptor& GetInput2Desc() const { return input2Desc; }
     const TensorDescriptor& GetTargetDesc() const { return targetDesc; }
     const TensorDescriptor& GetOutputDesc() const { return outputDesc; }
-    const miopenMarginRakningLossReductionMode_t& GetReductionMode() const { return reduction_mode; }
+    const miopenMarginRakningLossReductionMode_t& GetReductionMode() const
+    {
+        return reduction_mode;
+    }
     const float& GetMargin() const { return margin; }
 
     bool IsSameLength() const
     {
-        auto input1Lengths =  input1Desc.GetLengths();
-        auto input2Lengths =  input2Desc.GetLengths();
-        auto targetLengths =  targetDesc.GetLengths();
-        auto outputLengths =  outputDesc.GetLengths();
-        if((input1Lengths != input2Lengths) || (input2Lengths != targetLengths) || (targetLengths != outputLengths))
+        auto input1Lengths = input1Desc.GetLengths();
+        auto input2Lengths = input2Desc.GetLengths();
+        auto targetLengths = targetDesc.GetLengths();
+        auto outputLengths = outputDesc.GetLengths();
+        if((input1Lengths != input2Lengths) || (input2Lengths != targetLengths) ||
+           (targetLengths != outputLengths))
         {
             return false;
         }
-        return true;        
+        return true;
     }
 
     bool IsSameType() const
     {
-        if((input1Desc.GetType() != input2Desc.GetType()) || (input2Desc.GetType() != targetDesc.GetType()) || (targetDesc.GetType() != outputDesc.GetType()))
+        if((input1Desc.GetType() != input2Desc.GetType()) ||
+           (input2Desc.GetType() != targetDesc.GetType()) ||
+           (targetDesc.GetType() != outputDesc.GetType()))
         {
             return false;
         }
-        return true;        
+        return true;
     }
 
     NetworkConfig MakeNetworkConfig() const override;
@@ -96,14 +107,21 @@ private:
 struct ProblemDescriptionBackward : ProblemDescriptionBase
 {
     ProblemDescriptionBackward(const TensorDescriptor& input1Desc_,
-                              const TensorDescriptor& input2Desc_,
-                              const TensorDescriptor& targetDesc_,
-                              const TensorDescriptor& outGradDesc_,
-                              const TensorDescriptor& in1GradDesc_,
-                              const TensorDescriptor& in2GradDesc_,
-                              float margin_,
-                              miopenMarginRakningLossReductionMode_t reduction_mode_) 
-        : input1Desc(input1Desc_), input2Desc(input2Desc_), targetDesc(targetDesc_), outGradDesc(outGradDesc_), in1GradDesc(in1GradDesc_), in2GradDesc(in2GradDesc_), margin(margin_), reduction_mode(reduction_mode_)
+                               const TensorDescriptor& input2Desc_,
+                               const TensorDescriptor& targetDesc_,
+                               const TensorDescriptor& outGradDesc_,
+                               const TensorDescriptor& in1GradDesc_,
+                               const TensorDescriptor& in2GradDesc_,
+                               float margin_,
+                               miopenMarginRakningLossReductionMode_t reduction_mode_)
+        : input1Desc(input1Desc_),
+          input2Desc(input2Desc_),
+          targetDesc(targetDesc_),
+          outGradDesc(outGradDesc_),
+          in1GradDesc(in1GradDesc_),
+          in2GradDesc(in2GradDesc_),
+          margin(margin_),
+          reduction_mode(reduction_mode_)
     {
     }
 
@@ -113,31 +131,40 @@ struct ProblemDescriptionBackward : ProblemDescriptionBase
     const TensorDescriptor& GetOutGradDesc() const { return outGradDesc; }
     const TensorDescriptor& GetIn1GradDesc() const { return in1GradDesc; }
     const TensorDescriptor& GetIn2GradDesc() const { return in2GradDesc; }
-    const miopenMarginRakningLossReductionMode_t& GetReductionMode() const { return reduction_mode; }
+    const miopenMarginRakningLossReductionMode_t& GetReductionMode() const
+    {
+        return reduction_mode;
+    }
     const float& GetMargin() const { return margin; }
 
     bool IsSameLength() const
     {
-        auto input1Lengths =  input1Desc.GetLengths();
-        auto input2Lengths =  input2Desc.GetLengths();
-        auto targetLengths =  targetDesc.GetLengths();
-        auto outGradLengths =  outGradDesc.GetLengths();
-        auto in1GradLengths =  in1GradDesc.GetLengths();
-        auto in2GradLengths =  in2GradDesc.GetLengths();
-        if((input1Lengths != input2Lengths) || (input2Lengths != targetLengths) || (targetLengths != outGradLengths) || (outGradLengths != in1GradLengths) || (in1GradLengths != in2GradLengths))
+        auto input1Lengths  = input1Desc.GetLengths();
+        auto input2Lengths  = input2Desc.GetLengths();
+        auto targetLengths  = targetDesc.GetLengths();
+        auto outGradLengths = outGradDesc.GetLengths();
+        auto in1GradLengths = in1GradDesc.GetLengths();
+        auto in2GradLengths = in2GradDesc.GetLengths();
+        if((input1Lengths != input2Lengths) || (input2Lengths != targetLengths) ||
+           (targetLengths != outGradLengths) || (outGradLengths != in1GradLengths) ||
+           (in1GradLengths != in2GradLengths))
         {
             return false;
         }
-        return true;        
+        return true;
     }
 
     bool IsSameType() const
     {
-        if((input1Desc.GetType() != input2Desc.GetType()) || (input2Desc.GetType() != targetDesc.GetType()) || (targetDesc.GetType() != outGradDesc.GetType()) || (outGradDesc.GetType() != in1GradDesc.GetType()) || (in1GradDesc.GetType() != in2GradDesc.GetType()))
+        if((input1Desc.GetType() != input2Desc.GetType()) ||
+           (input2Desc.GetType() != targetDesc.GetType()) ||
+           (targetDesc.GetType() != outGradDesc.GetType()) ||
+           (outGradDesc.GetType() != in1GradDesc.GetType()) ||
+           (in1GradDesc.GetType() != in2GradDesc.GetType()))
         {
             return false;
         }
-        return true;        
+        return true;
     }
 
     NetworkConfig MakeNetworkConfig() const override;

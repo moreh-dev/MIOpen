@@ -36,32 +36,32 @@ struct Handle;
 struct TensorDescriptor;
 
 miopenStatus_t MarginRankingLossForward(Handle& handle,
-                                               const TensorDescriptor& input1Desc,
-                                               ConstData_t input1,
-                                               const TensorDescriptor& input2Desc,
-                                               ConstData_t input2,
-                                               const TensorDescriptor& targetDesc,
-                                               ConstData_t target,
-                                               const TensorDescriptor& outputDesc,
-                                               Data_t output,
-                                               float margin,
-                                               miopenMarginRakningLossReductionMode_t reduction_mode);
+                                        const TensorDescriptor& input1Desc,
+                                        ConstData_t input1,
+                                        const TensorDescriptor& input2Desc,
+                                        ConstData_t input2,
+                                        const TensorDescriptor& targetDesc,
+                                        ConstData_t target,
+                                        const TensorDescriptor& outputDesc,
+                                        Data_t output,
+                                        float margin,
+                                        miopenMarginRakningLossReductionMode_t reduction_mode);
 
 miopenStatus_t MarginRankingLossBackward(Handle& handle,
-                                                const TensorDescriptor& input1Desc,
-                                                ConstData_t input1,
-                                                const TensorDescriptor& input2Desc,
-                                                ConstData_t input2,
-                                                const TensorDescriptor& targetDesc,
-                                                ConstData_t target,
-                                                const TensorDescriptor& outGradDesc,
-                                                Data_t outGrad,
-                                                const TensorDescriptor& in1GradDesc,
-                                                Data_t in1Grad,
-                                                const TensorDescriptor& in2GradDesc,
-                                                Data_t in2Grad,
-                                                float margin,
-                                                miopenMarginRakningLossReductionMode_t reduction_mode);
+                                         const TensorDescriptor& input1Desc,
+                                         ConstData_t input1,
+                                         const TensorDescriptor& input2Desc,
+                                         ConstData_t input2,
+                                         const TensorDescriptor& targetDesc,
+                                         ConstData_t target,
+                                         const TensorDescriptor& outGradDesc,
+                                         Data_t outGrad,
+                                         const TensorDescriptor& in1GradDesc,
+                                         Data_t in1Grad,
+                                         const TensorDescriptor& in2GradDesc,
+                                         Data_t in2Grad,
+                                         float margin,
+                                         miopenMarginRakningLossReductionMode_t reduction_mode);
 
 } // namespace miopen
 #endif // MIOPEN_MARGINRANKINGLOSS_HPP_

@@ -28,7 +28,6 @@
 #include "../tensor_holder.hpp"
 #include <miopen/env.hpp>
 
-
 MIOPEN_DECLARE_ENV_VAR_STR(MIOPEN_TEST_FLOAT_ARG)
 MIOPEN_DECLARE_ENV_VAR_BOOL(MIOPEN_TEST_ALL)
 
@@ -114,9 +113,15 @@ TEST_P(MarginRankingLossTestBFloat16, MarginRankingLossTest)
     }
 };
 
-INSTANTIATE_TEST_SUITE_P(MarginRankingLossTestSet, MarginRankingLossTestFloat, testing::ValuesIn(MarginRankingLossTestConfigs()));
-INSTANTIATE_TEST_SUITE_P(MarginRankingLossTestSet, MarginRankingLossTestHalf, testing::ValuesIn(MarginRankingLossTestConfigs()));
-INSTANTIATE_TEST_SUITE_P(MarginRankingLossTestSet, MarginRankingLossTestBFloat16, testing::ValuesIn(MarginRankingLossTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(MarginRankingLossTestSet,
+                         MarginRankingLossTestFloat,
+                         testing::ValuesIn(MarginRankingLossTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(MarginRankingLossTestSet,
+                         MarginRankingLossTestHalf,
+                         testing::ValuesIn(MarginRankingLossTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(MarginRankingLossTestSet,
+                         MarginRankingLossTestBFloat16,
+                         testing::ValuesIn(MarginRankingLossTestConfigs()));
 
 // BACKWARD TEST
 TEST_P(MarginRankingLossTestFloatBwd, MarginRankingLossTestBwd)
@@ -161,6 +166,12 @@ TEST_P(MarginRankingLossTestBFloat16Bwd, MarginRankingLossTestBwd)
     }
 };
 
-INSTANTIATE_TEST_SUITE_P(MarginRankingLossTestSet, MarginRankingLossTestFloatBwd, testing::ValuesIn(MarginRankingLossTestConfigs()));
-INSTANTIATE_TEST_SUITE_P(MarginRankingLossTestSet, MarginRankingLossTestHalfBwd, testing::ValuesIn(MarginRankingLossTestConfigs()));
-INSTANTIATE_TEST_SUITE_P(MarginRankingLossTestSet, MarginRankingLossTestBFloat16Bwd, testing::ValuesIn(MarginRankingLossTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(MarginRankingLossTestSet,
+                         MarginRankingLossTestFloatBwd,
+                         testing::ValuesIn(MarginRankingLossTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(MarginRankingLossTestSet,
+                         MarginRankingLossTestHalfBwd,
+                         testing::ValuesIn(MarginRankingLossTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(MarginRankingLossTestSet,
+                         MarginRankingLossTestBFloat16Bwd,
+                         testing::ValuesIn(MarginRankingLossTestConfigs()));

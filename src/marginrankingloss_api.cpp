@@ -58,11 +58,11 @@ static void LogCmdMarginRankingLoss(bool isForward,
         {
             ss << "marginrankinglossfp16";
         }
-        else if (dtype == miopenFloat)
+        else if(dtype == miopenFloat)
         {
             ss << "marginrankinglossfp32";
         }
-        else if (dtype == miopenBFloat16)
+        else if(dtype == miopenBFloat16)
         {
             ss << "marginrankinglossbpf16";
         }
@@ -75,44 +75,79 @@ static void LogCmdMarginRankingLoss(bool isForward,
     }
 }
 
-extern "C" miopenStatus_t miopenMarginRankingLossForward(miopenHandle_t handle,
-                                                         const miopenTensorDescriptor_t input1Desc,
-                                                         const void* input1,
-                                                         const miopenTensorDescriptor_t input2Desc,
-                                                         const void* input2,
-                                                         const miopenTensorDescriptor_t targetDesc,
-                                                         const void* target,
-                                                         const miopenTensorDescriptor_t outputDesc,
-                                                         void* output,
-                                                         float margin,
-                                                         miopenMarginRakningLossReductionMode_t reduction_mode)
+extern "C" miopenStatus_t
+miopenMarginRankingLossForward(miopenHandle_t handle,
+                               const miopenTensorDescriptor_t input1Desc,
+                               const void* input1,
+                               const miopenTensorDescriptor_t input2Desc,
+                               const void* input2,
+                               const miopenTensorDescriptor_t targetDesc,
+                               const void* target,
+                               const miopenTensorDescriptor_t outputDesc,
+                               void* output,
+                               float margin,
+                               miopenMarginRakningLossReductionMode_t reduction_mode)
 {
-    MIOPEN_LOG_FUNCTION(handle, input1Desc, input2Desc, targetDesc, outputDesc, margin, reduction_mode);
+    MIOPEN_LOG_FUNCTION(
+        handle, input1Desc, input2Desc, targetDesc, outputDesc, margin, reduction_mode);
     LogCmdMarginRankingLoss(true, targetDesc, margin, reduction_mode);
     return miopen::try_([&] {
-        miopen::MarginRankingLossForward(miopen::deref(handle), miopen::deref(input1Desc), DataCast(input1), miopen::deref(input2Desc), DataCast(input2), miopen::deref(targetDesc), DataCast(target), miopen::deref(outputDesc), DataCast(output), margin, reduction_mode);
+        miopen::MarginRankingLossForward(miopen::deref(handle),
+                                         miopen::deref(input1Desc),
+                                         DataCast(input1),
+                                         miopen::deref(input2Desc),
+                                         DataCast(input2),
+                                         miopen::deref(targetDesc),
+                                         DataCast(target),
+                                         miopen::deref(outputDesc),
+                                         DataCast(output),
+                                         margin,
+                                         reduction_mode);
     });
 }
 
-extern "C" miopenStatus_t miopenMarginRankingLossBackward(miopenHandle_t handle,
-                                                          const miopenTensorDescriptor_t input1Desc,
-                                                          const void* input1,
-                                                          const miopenTensorDescriptor_t input2Desc,
-                                                          const void* input2,
-                                                          const miopenTensorDescriptor_t targetDesc,
-                                                          const void* target,
-                                                          const miopenTensorDescriptor_t outGradDesc,
-                                                          void* outGrad,
-                                                          const miopenTensorDescriptor_t in1GradDesc,
-                                                          void* in1Grad,
-                                                          const miopenTensorDescriptor_t in2GradDesc,
-                                                          void* in2Grad,
-                                                          float margin,
-                                                          miopenMarginRakningLossReductionMode_t reduction_mode)
+extern "C" miopenStatus_t
+miopenMarginRankingLossBackward(miopenHandle_t handle,
+                                const miopenTensorDescriptor_t input1Desc,
+                                const void* input1,
+                                const miopenTensorDescriptor_t input2Desc,
+                                const void* input2,
+                                const miopenTensorDescriptor_t targetDesc,
+                                const void* target,
+                                const miopenTensorDescriptor_t outGradDesc,
+                                void* outGrad,
+                                const miopenTensorDescriptor_t in1GradDesc,
+                                void* in1Grad,
+                                const miopenTensorDescriptor_t in2GradDesc,
+                                void* in2Grad,
+                                float margin,
+                                miopenMarginRakningLossReductionMode_t reduction_mode)
 {
-    MIOPEN_LOG_FUNCTION(handle, input1Desc, input2Desc, targetDesc, outGradDesc, in1GradDesc, in2GradDesc, margin, reduction_mode);
+    MIOPEN_LOG_FUNCTION(handle,
+                        input1Desc,
+                        input2Desc,
+                        targetDesc,
+                        outGradDesc,
+                        in1GradDesc,
+                        in2GradDesc,
+                        margin,
+                        reduction_mode);
     LogCmdMarginRankingLoss(false, targetDesc, margin, reduction_mode);
     return miopen::try_([&] {
-        miopen::MarginRankingLossBackward(miopen::deref(handle), miopen::deref(input1Desc), DataCast(input1), miopen::deref(input2Desc), DataCast(input2), miopen::deref(targetDesc), DataCast(target), miopen::deref(outGradDesc), DataCast(outGrad), miopen::deref(in1GradDesc), DataCast(in1Grad), miopen::deref(in2GradDesc), DataCast(in2Grad), margin, reduction_mode);
+        miopen::MarginRankingLossBackward(miopen::deref(handle),
+                                          miopen::deref(input1Desc),
+                                          DataCast(input1),
+                                          miopen::deref(input2Desc),
+                                          DataCast(input2),
+                                          miopen::deref(targetDesc),
+                                          DataCast(target),
+                                          miopen::deref(outGradDesc),
+                                          DataCast(outGrad),
+                                          miopen::deref(in1GradDesc),
+                                          DataCast(in1Grad),
+                                          miopen::deref(in2GradDesc),
+                                          DataCast(in2Grad),
+                                          margin,
+                                          reduction_mode);
     });
 }

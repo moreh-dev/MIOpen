@@ -47,10 +47,10 @@ struct FwdInvokeParams : public miopen::InvokeParams
     ConstData_t input1 = nullptr;
     ConstData_t input2 = nullptr;
     ConstData_t target = nullptr;
-    Data_t output = nullptr;
-    float margin = 0;
+    Data_t output      = nullptr;
+    float margin       = 0;
     miopenMarginRakningLossReductionMode_t reduction_mode;
-    
+
     size_t GetWorkspaceSize() const { return 0; }
     Data_t GetWorkspace() const { return nullptr; }
 };
@@ -59,20 +59,20 @@ struct BwdInvokeParams : public miopen::InvokeParams
 {
     BwdInvokeParams() = default;
 
-    const TensorDescriptor* input1Desc = nullptr;
-    const TensorDescriptor* input2Desc = nullptr;
-    const TensorDescriptor* targetDesc = nullptr;
+    const TensorDescriptor* input1Desc  = nullptr;
+    const TensorDescriptor* input2Desc  = nullptr;
+    const TensorDescriptor* targetDesc  = nullptr;
     const TensorDescriptor* outGradDesc = nullptr;
     const TensorDescriptor* in1GradDesc = nullptr;
     const TensorDescriptor* in2GradDesc = nullptr;
 
-    ConstData_t input1 = nullptr;
-    ConstData_t input2 = nullptr;
-    ConstData_t target = nullptr;
+    ConstData_t input1  = nullptr;
+    ConstData_t input2  = nullptr;
+    ConstData_t target  = nullptr;
     ConstData_t outGrad = nullptr;
-    Data_t in1Grad = nullptr;
-    Data_t in2Grad = nullptr;
-    float margin = 0;
+    Data_t in1Grad      = nullptr;
+    Data_t in2Grad      = nullptr;
+    float margin        = 0;
     miopenMarginRakningLossReductionMode_t reduction_mode;
 
     size_t GetWorkspaceSize() const { return 0; }

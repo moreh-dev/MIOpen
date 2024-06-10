@@ -2581,7 +2581,9 @@ typedef enum
 {
     MIOPEN_MARGINRANKINGLOSS_REDUCTION_NONE = 0, /*!< output tensor elements are not reduced */
     MIOPEN_MARGINRANKINGLOSS_REDUCTION_SUM  = 1, /*!< output tensor elements are summed up */
-    MIOPEN_MARGINRANKINGLOSS_REDUCTION_MEAN = 2, /*!< output tensor elements are summed up and divided with total number of elements to get mean value */
+    MIOPEN_MARGINRANKINGLOSS_REDUCTION_MEAN =
+        2, /*!< output tensor elements are summed up and divided with total number of elements to
+              get mean value */
 } miopenMarginRakningLossReductionMode_t;
 
 /*! @brief Execute a marginrankingloss forward layer
@@ -2601,17 +2603,18 @@ typedef enum
  * @param reduction_mode           Reduction mode (input)
  * @return                         miopenStatus_t
  */
-MIOPEN_EXPORT miopenStatus_t miopenMarginRankingLossForward(miopenHandle_t handle,
-                                                            const miopenTensorDescriptor_t input1Desc,
-                                                            const void* input1,
-                                                            const miopenTensorDescriptor_t input2Desc,
-                                                            const void* input2,
-                                                            const miopenTensorDescriptor_t targetDesc,
-                                                            const void* target,
-                                                            const miopenTensorDescriptor_t outputDesc,
-                                                            void* output,
-                                                            float margin,
-                                                            miopenMarginRakningLossReductionMode_t reduction_mode);
+MIOPEN_EXPORT miopenStatus_t
+miopenMarginRankingLossForward(miopenHandle_t handle,
+                               const miopenTensorDescriptor_t input1Desc,
+                               const void* input1,
+                               const miopenTensorDescriptor_t input2Desc,
+                               const void* input2,
+                               const miopenTensorDescriptor_t targetDesc,
+                               const void* target,
+                               const miopenTensorDescriptor_t outputDesc,
+                               void* output,
+                               float margin,
+                               miopenMarginRakningLossReductionMode_t reduction_mode);
 /*! @brief Execute a marginrankingloss backward layer
  *
  * @param handle                   MIOpen Handle (input)
@@ -2631,21 +2634,22 @@ MIOPEN_EXPORT miopenStatus_t miopenMarginRankingLossForward(miopenHandle_t handl
  * @param reduction_mode           Reduction mode (input)
  * @return                         miopenStatus_t
  */
-MIOPEN_EXPORT miopenStatus_t miopenMarginRankingLossBackward(miopenHandle_t handle,
-                                                             const miopenTensorDescriptor_t input1Desc,
-                                                             const void* input1,
-                                                             const miopenTensorDescriptor_t input2Desc,
-                                                             const void* input2,
-                                                             const miopenTensorDescriptor_t targetDesc,
-                                                             const void* target,
-                                                             const miopenTensorDescriptor_t outGradDesc,
-                                                             void* outGrad,
-                                                             const miopenTensorDescriptor_t in1GradDesc,
-                                                             void* in1Grad,
-                                                             const miopenTensorDescriptor_t in2GradDesc,
-                                                             void* in2Grad,
-                                                             float margin,
-                                                             miopenMarginRakningLossReductionMode_t reduction_mode);
+MIOPEN_EXPORT miopenStatus_t
+miopenMarginRankingLossBackward(miopenHandle_t handle,
+                                const miopenTensorDescriptor_t input1Desc,
+                                const void* input1,
+                                const miopenTensorDescriptor_t input2Desc,
+                                const void* input2,
+                                const miopenTensorDescriptor_t targetDesc,
+                                const void* target,
+                                const miopenTensorDescriptor_t outGradDesc,
+                                void* outGrad,
+                                const miopenTensorDescriptor_t in1GradDesc,
+                                void* in1Grad,
+                                const miopenTensorDescriptor_t in2GradDesc,
+                                void* in2Grad,
+                                float margin,
+                                miopenMarginRakningLossReductionMode_t reduction_mode);
 /** @} */
 // CLOSEOUT marginrankingloss DOXYGEN GROUP
 

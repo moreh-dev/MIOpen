@@ -33,15 +33,15 @@
 #include "tensor_view.hpp"
 
 extern "C" __global__ void MarginRankingLossReducedForward5d(const FLOAT* __restrict__ I1,
-                                                      const FLOAT* __restrict__ I2,
-                                                      const FLOAT* __restrict__ T,
-                                                      FLOAT* __restrict__ O,
-                                                      float margin,
-                                                      float divisor,
-                                                      tensor_view_5d_t I1_tv,
-                                                      tensor_view_5d_t I2_tv,
-                                                      tensor_view_5d_t T_tv,
-                                                      tensor_view_5d_t O_tv)
+                                                             const FLOAT* __restrict__ I2,
+                                                             const FLOAT* __restrict__ T,
+                                                             FLOAT* __restrict__ O,
+                                                             float margin,
+                                                             float divisor,
+                                                             tensor_view_5d_t I1_tv,
+                                                             tensor_view_5d_t I2_tv,
+                                                             tensor_view_5d_t T_tv,
+                                                             tensor_view_5d_t O_tv)
 {
     size_t gid = threadIdx.x + blockIdx.x * blockDim.x;
 
@@ -50,32 +50,34 @@ extern "C" __global__ void MarginRankingLossReducedForward5d(const FLOAT* __rest
     size_t n01 = n012 / I1_tv.size[2], n2 = n012 % I1_tv.size[2];
     size_t n0 = n01 / I1_tv.size[1], n1 = n01 % I1_tv.size[1];
 
-    if (!(n0 < I1_tv.size[0])) return;
+    if(!(n0 < I1_tv.size[0]))
+        return;
 
     size_t I1idx = TV5D_IDX(I1_tv, n0, n1, n2, n3, n4);
     size_t I2idx = TV5D_IDX(I2_tv, n0, n1, n2, n3, n4);
-    size_t Tidx = TV5D_IDX(T_tv, n0, n1, n2, n3, n4);
-    size_t Oidx = TV5D_IDX(O_tv, n0, n1, n2, n3, n4);
+    size_t Tidx  = TV5D_IDX(T_tv, n0, n1, n2, n3, n4);
+    size_t Oidx  = TV5D_IDX(O_tv, n0, n1, n2, n3, n4);
 
-    O[Oidx] = - T[Tidx] * (I1[I1idx] - I2[I2idx]) + margin;
-    if (O[Oidx] < 0) O[Oidx] = 0.0f;
+    O[Oidx] = -T[Tidx] * (I1[I1idx] - I2[I2idx]) + margin;
+    if(O[Oidx] < 0)
+        O[Oidx] = 0.0f;
     O[Oidx] /= divisor;
 }
 
 extern "C" __global__ void MarginRankingLossReducedBackward5d(const FLOAT* __restrict__ I1,
-                                                       const FLOAT* __restrict__ I2,
-                                                       const FLOAT* __restrict__ T,
-                                                       const FLOAT* __restrict__ dO,
-                                                       FLOAT* __restrict__ dI1,
-                                                       FLOAT* __restrict__ dI2,
-                                                       float margin,
-                                                       float divisor,
-                                                       tensor_view_5d_t I1_tv,
-                                                       tensor_view_5d_t I2_tv,
-                                                       tensor_view_5d_t T_tv,
-                                                       tensor_view_5d_t dO_tv,
-                                                       tensor_view_5d_t dI1_tv,
-                                                       tensor_view_5d_t dI2_tv)
+                                                              const FLOAT* __restrict__ I2,
+                                                              const FLOAT* __restrict__ T,
+                                                              const FLOAT* __restrict__ dO,
+                                                              FLOAT* __restrict__ dI1,
+                                                              FLOAT* __restrict__ dI2,
+                                                              float margin,
+                                                              float divisor,
+                                                              tensor_view_5d_t I1_tv,
+                                                              tensor_view_5d_t I2_tv,
+                                                              tensor_view_5d_t T_tv,
+                                                              tensor_view_5d_t dO_tv,
+                                                              tensor_view_5d_t dI1_tv,
+                                                              tensor_view_5d_t dI2_tv)
 {
     size_t gid = threadIdx.x + blockIdx.x * blockDim.x;
 
@@ -84,37 +86,42 @@ extern "C" __global__ void MarginRankingLossReducedBackward5d(const FLOAT* __res
     size_t n01 = n012 / I1_tv.size[2], n2 = n012 % I1_tv.size[2];
     size_t n0 = n01 / I1_tv.size[1], n1 = n01 % I1_tv.size[1];
 
-    if (!(n0 < I1_tv.size[0])) return;
+    if(!(n0 < I1_tv.size[0]))
+        return;
 
-    size_t I1idx = TV5D_IDX(I1_tv, n0, n1, n2, n3, n4);
-    size_t I2idx = TV5D_IDX(I2_tv, n0, n1, n2, n3, n4);
+    size_t I1idx  = TV5D_IDX(I1_tv, n0, n1, n2, n3, n4);
+    size_t I2idx  = TV5D_IDX(I2_tv, n0, n1, n2, n3, n4);
     size_t dI1idx = TV5D_IDX(dI1_tv, n0, n1, n2, n3, n4);
     size_t dI2idx = TV5D_IDX(dI2_tv, n0, n1, n2, n3, n4);
-    size_t Tidx = TV5D_IDX(T_tv, n0, n1, n2, n3, n4);
-    size_t dOidx = TV5D_IDX(dO_tv, n0, n1, n2, n3, n4);
-    
+    size_t Tidx   = TV5D_IDX(T_tv, n0, n1, n2, n3, n4);
+    size_t dOidx  = TV5D_IDX(dO_tv, n0, n1, n2, n3, n4);
 
-    FLOAT t = - T[Tidx] * (I1[I1idx] - I2[I2idx]) + margin;
+    FLOAT t = -T[Tidx] * (I1[I1idx] - I2[I2idx]) + margin;
 
-    if (t < 0) 
+    if(t < 0)
     {
-        if (dI1) dI1[dI1idx] = 0.0f;
-        if (dI2) dI2[dI2idx] = 0.0f;
-    } else 
+        if(dI1)
+            dI1[dI1idx] = 0.0f;
+        if(dI2)
+            dI2[dI2idx] = 0.0f;
+    }
+    else
     {
-        if (dI1) dI1[dI1idx] = - T[Tidx] * dO[dOidx] / divisor;
-        if (dI2) dI2[dI2idx] = T[Tidx] * dO[dOidx] / divisor;
+        if(dI1)
+            dI1[dI1idx] = -T[Tidx] * dO[dOidx] / divisor;
+        if(dI2)
+            dI2[dI2idx] = T[Tidx] * dO[dOidx] / divisor;
     }
 }
 
 extern "C" __global__ void MarginRankingLossUnreducedForward5d(const FLOAT* __restrict__ I1,
-                                                      const FLOAT* __restrict__ I2,
-                                                      const FLOAT* __restrict__ T,
-                                                      FLOAT* __restrict__ O,
-                                                      float margin,
-                                                      tensor_view_5d_t I1_tv,
-                                                      tensor_view_5d_t I2_tv,
-                                                      tensor_view_5d_t T_tv)
+                                                               const FLOAT* __restrict__ I2,
+                                                               const FLOAT* __restrict__ T,
+                                                               FLOAT* __restrict__ O,
+                                                               float margin,
+                                                               tensor_view_5d_t I1_tv,
+                                                               tensor_view_5d_t I2_tv,
+                                                               tensor_view_5d_t T_tv)
 {
     size_t gid = threadIdx.x + blockIdx.x * blockDim.x;
 
@@ -123,29 +130,31 @@ extern "C" __global__ void MarginRankingLossUnreducedForward5d(const FLOAT* __re
     size_t n01 = n012 / I1_tv.size[2], n2 = n012 % I1_tv.size[2];
     size_t n0 = n01 / I1_tv.size[1], n1 = n01 % I1_tv.size[1];
 
-    if (!(n0 < I1_tv.size[0])) return;
+    if(!(n0 < I1_tv.size[0]))
+        return;
 
     size_t I1idx = TV5D_IDX(I1_tv, n0, n1, n2, n3, n4);
     size_t I2idx = TV5D_IDX(I2_tv, n0, n1, n2, n3, n4);
-    size_t Tidx = TV5D_IDX(T_tv, n0, n1, n2, n3, n4);
+    size_t Tidx  = TV5D_IDX(T_tv, n0, n1, n2, n3, n4);
 
     O[gid] = -T[Tidx] * (I1[I1idx] - I2[I2idx]) + margin;
-    if (O[gid] < 0) O[gid] = 0.0f;
+    if(O[gid] < 0)
+        O[gid] = 0.0f;
 }
 
 extern "C" __global__ void MarginRankingLossUnreducedBackward5d(const FLOAT* __restrict__ I1,
-                                                       const FLOAT* __restrict__ I2,
-                                                       const FLOAT* __restrict__ T,
-                                                       const FLOAT* __restrict__ dO,
-                                                       FLOAT* __restrict__ dI1,
-                                                       FLOAT* __restrict__ dI2,
-                                                       float margin,
-                                                       tensor_view_5d_t I1_tv,
-                                                       tensor_view_5d_t I2_tv,
-                                                       tensor_view_5d_t T_tv,
-                                                       tensor_view_5d_t dO_tv,
-                                                       tensor_view_5d_t dI1_tv,
-                                                       tensor_view_5d_t dI2_tv)
+                                                                const FLOAT* __restrict__ I2,
+                                                                const FLOAT* __restrict__ T,
+                                                                const FLOAT* __restrict__ dO,
+                                                                FLOAT* __restrict__ dI1,
+                                                                FLOAT* __restrict__ dI2,
+                                                                float margin,
+                                                                tensor_view_5d_t I1_tv,
+                                                                tensor_view_5d_t I2_tv,
+                                                                tensor_view_5d_t T_tv,
+                                                                tensor_view_5d_t dO_tv,
+                                                                tensor_view_5d_t dI1_tv,
+                                                                tensor_view_5d_t dI2_tv)
 {
     size_t gid = threadIdx.x + blockIdx.x * blockDim.x;
 
@@ -154,24 +163,30 @@ extern "C" __global__ void MarginRankingLossUnreducedBackward5d(const FLOAT* __r
     size_t n01 = n012 / I1_tv.size[2], n2 = n012 % I1_tv.size[2];
     size_t n0 = n01 / I1_tv.size[1], n1 = n01 % I1_tv.size[1];
 
-    if (!(n0 < I1_tv.size[0])) return;
+    if(!(n0 < I1_tv.size[0]))
+        return;
 
-    size_t I1idx = TV5D_IDX(I1_tv, n0, n1, n2, n3, n4);
-    size_t I2idx = TV5D_IDX(I2_tv, n0, n1, n2, n3, n4);
+    size_t I1idx  = TV5D_IDX(I1_tv, n0, n1, n2, n3, n4);
+    size_t I2idx  = TV5D_IDX(I2_tv, n0, n1, n2, n3, n4);
     size_t dI1idx = TV5D_IDX(dI1_tv, n0, n1, n2, n3, n4);
     size_t dI2idx = TV5D_IDX(dI2_tv, n0, n1, n2, n3, n4);
-    size_t Tidx = TV5D_IDX(T_tv, n0, n1, n2, n3, n4);
-    size_t dOidx = TV5D_IDX(dO_tv, n0, n1, n2, n3, n4);
+    size_t Tidx   = TV5D_IDX(T_tv, n0, n1, n2, n3, n4);
+    size_t dOidx  = TV5D_IDX(dO_tv, n0, n1, n2, n3, n4);
 
-    FLOAT t = - T[Tidx] * (I1[I1idx] - I2[I2idx]) + (FLOAT)margin;
+    FLOAT t = -T[Tidx] * (I1[I1idx] - I2[I2idx]) + (FLOAT)margin;
 
-    if (t < 0) 
+    if(t < 0)
     {
-        if (dI1) dI1[dI1idx] = 0.0f;
-        if (dI2) dI2[dI2idx] = 0.0f;
-    } else 
+        if(dI1)
+            dI1[dI1idx] = 0.0f;
+        if(dI2)
+            dI2[dI2idx] = 0.0f;
+    }
+    else
     {
-        if (dI1) dI1[dI1idx] = -T[Tidx] * dO[dOidx];
-        if (dI2) dI2[dI2idx] = T[Tidx] * dO[dOidx];
+        if(dI1)
+            dI1[dI1idx] = -T[Tidx] * dO[dOidx];
+        if(dI2)
+            dI2[dI2idx] = T[Tidx] * dO[dOidx];
     }
 }

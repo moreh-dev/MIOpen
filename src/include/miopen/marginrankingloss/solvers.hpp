@@ -43,9 +43,11 @@ namespace solver {
 
 namespace marginrankingloss {
 
-using MarginRankingLossForwardSolver = NonTunableSolverBase<ExecutionContext, miopen::marginrankingloss::ProblemDescriptionForward>;
+using MarginRankingLossForwardSolver =
+    NonTunableSolverBase<ExecutionContext, miopen::marginrankingloss::ProblemDescriptionForward>;
 
-using MarginRankingLossBackwardSolver = NonTunableSolverBase<ExecutionContext, miopen::marginrankingloss::ProblemDescriptionBackward>;
+using MarginRankingLossBackwardSolver =
+    NonTunableSolverBase<ExecutionContext, miopen::marginrankingloss::ProblemDescriptionBackward>;
 
 struct MarginRankingLossForward : MarginRankingLossForwardSolver
 {
@@ -54,12 +56,18 @@ struct MarginRankingLossForward : MarginRankingLossForwardSolver
         return GetSolverDbId<MarginRankingLossForwardSolver>();
     }
 
-    bool IsApplicable(const ExecutionContext& context, const miopen::marginrankingloss::ProblemDescriptionForward& problem) const override;
+    bool IsApplicable(
+        const ExecutionContext& context,
+        const miopen::marginrankingloss::ProblemDescriptionForward& problem) const override;
 
-    ConvSolution GetSolution(const ExecutionContext& context, const miopen::marginrankingloss::ProblemDescriptionForward& problem) const override;
+    ConvSolution
+    GetSolution(const ExecutionContext& context,
+                const miopen::marginrankingloss::ProblemDescriptionForward& problem) const override;
 
-    std::size_t GetWorkspaceSize([[maybe_unused]] const ExecutionContext& context,
-                                 [[maybe_unused]] const miopen::marginrankingloss::ProblemDescriptionForward& problem) const override
+    std::size_t
+    GetWorkspaceSize([[maybe_unused]] const ExecutionContext& context,
+                     [[maybe_unused]] const miopen::marginrankingloss::ProblemDescriptionForward&
+                         problem) const override
     {
         return 0;
     }
@@ -74,16 +82,22 @@ struct MarginRankingLossBackward : MarginRankingLossBackwardSolver
         return GetSolverDbId<MarginRankingLossBackwardSolver>();
     }
 
-    bool IsApplicable(const ExecutionContext& context, const miopen::marginrankingloss::ProblemDescriptionBackward& problem) const override;
+    bool IsApplicable(
+        const ExecutionContext& context,
+        const miopen::marginrankingloss::ProblemDescriptionBackward& problem) const override;
 
-    ConvSolution GetSolution(const ExecutionContext& context, const miopen::marginrankingloss::ProblemDescriptionBackward& problem) const override;
+    ConvSolution GetSolution(
+        const ExecutionContext& context,
+        const miopen::marginrankingloss::ProblemDescriptionBackward& problem) const override;
 
-    std::size_t GetWorkspaceSize([[maybe_unused]] const ExecutionContext& context,
-                                 [[maybe_unused]] const miopen::marginrankingloss::ProblemDescriptionBackward& problem) const override
+    std::size_t
+    GetWorkspaceSize([[maybe_unused]] const ExecutionContext& context,
+                     [[maybe_unused]] const miopen::marginrankingloss::ProblemDescriptionBackward&
+                         problem) const override
     {
         return 0;
     }
-    
+
     bool MayNeedWorkspace() const override { return false; }
 };
 
