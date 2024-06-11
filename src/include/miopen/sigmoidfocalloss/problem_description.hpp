@@ -86,20 +86,24 @@ struct SigmoidFocalLossBwdProblemDescription : SigmoidFocalLossProblemDescriptio
                                           const TensorDescriptor& targetDesc_,
                                           const TensorDescriptor& doutputDesc_,
                                           const TensorDescriptor& dinputDesc_,
+                                          const TensorDescriptor& dtargetDesc_,
                                           const miopenLossReductionMode_t reduction_)
         : SigmoidFocalLossProblemDescription(inputDesc_, targetDesc_, reduction_),
           doutputDesc(doutputDesc_),
-          dinputDesc(dinputDesc_)
+          dinputDesc(dinputDesc_),
+          dtargetDesc(dtargetDesc_)
     {
     }
 
     NetworkConfig MakeNetworkConfig() const override;
     const TensorDescriptor& GetDoutputDesc() const { return doutputDesc; }
     const TensorDescriptor& GetDinputDesc() const { return dinputDesc; }
+    const TensorDescriptor& GetDtargetDesc() const { return dtargetDesc; }
 
 public:
     TensorDescriptor doutputDesc;
     TensorDescriptor dinputDesc;
+    TensorDescriptor dtargetDesc;
 };
 
 } // namespace sigmoidfocalloss

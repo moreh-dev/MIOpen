@@ -25,6 +25,7 @@
  *******************************************************************************/
 #pragma once
 
+#include "miopen/common.hpp"
 #include "miopen/miopen.h"
 #include <miopen/invoke_params.hpp>
 #include <miopen/tensor.hpp>
@@ -68,9 +69,11 @@ struct BwdInvokeParams : SigmoidFocalLossInvokeParams
 
     const TensorDescriptor* doutputDesc = nullptr;
     const TensorDescriptor* dinputDesc  = nullptr;
+    const TensorDescriptor* dtargetDesc = nullptr;
 
     ConstData_t doutput = nullptr;
     ConstData_t dinput  = nullptr;
+    ConstData_t dtarget = nullptr;
 };
 
 } // namespace sigmoidfocalloss

@@ -41,6 +41,7 @@
 #include <vector>
 
 // #define DEBUGGING
+// #define COMPARE_WITH_ROCM
 
 template <typename TIO>
 void mloSigmoidFocalLossUnreducedFwdRunHost(TIO* input,
@@ -88,6 +89,8 @@ void mloSigmoidFocalLossUnreducedBwdRunHost(TIO* input,
                                             miopenTensorDescriptor_t doutputDesc,
                                             TIO* dinput,
                                             miopenTensorDescriptor_t dinputDesc,
+                                            TIO* dtarget,
+                                            miopenTensorDescriptor_t dtargetDesc,
                                             float alpha = 0.25,
                                             float gamma = 2)
 {
@@ -95,6 +98,7 @@ void mloSigmoidFocalLossUnreducedBwdRunHost(TIO* input,
     auto target_tv   = miopen::get_inner_expanded_tv<5>(miopen::deref(targetDesc));
     auto doutput_tv  = miopen::get_inner_expanded_tv<5>(miopen::deref(doutputDesc));
     auto dinput_tv   = miopen::get_inner_expanded_tv<5>(miopen::deref(dinputDesc));
+    auto dtarget_tv  = miopen::get_inner_expanded_tv<5>(miopen::deref(dtargetDesc));
     size_t inputSize = miopen::deref(inputDesc).GetElementSize();
 
     for(size_t id = 0; id < inputSize; ++id)
@@ -105,26 +109,44 @@ void mloSigmoidFocalLossUnreducedBwdRunHost(TIO* input,
         float t  = static_cast<float>(target[target_tv.get_tensor_view_idx(idx)]);
         float dO = static_cast<float>(doutput[doutput_tv.get_tensor_view_idx(idx)]);
 
-        float p      = 1 / (1 + exp(-i));
-        float ceLoss = -(t * log(p) + (1 - t) * log(1 - p));
-        float pT     = p * t + (1 - p) * (1 - t);
-        float powPt  = pow(1 - pT, gamma);
+        float p       = 1 / (1 + exp(-i));
+        float ceLoss  = -(t * log(p) + (1 - t) * log(1 - p));
+        float pT      = p * t + (1 - p) * (1 - t);
+        float powPt   = pow(1 - pT, gamma);
+        float alpha_t = alpha * t + (1 - alpha) * (1 - t);
 
-        float dpdi      = exp(-i) / pow(1 + exp(-i), 2);
-        float dcelossdi = (-t / p + (1 - t) / (1 - p)) * dpdi;
-        float dpowptdi  = gamma * pow(1 - pT, gamma - 1) * (1 - 2 * t) * dpdi;
-
-        // L = ce_loss * pow_pt => dL/di = dceloss/di * pow_pt + ce_loss * dpowpt/di
-        float dLdi = dcelossdi * powPt + ceLoss * dpowptdi;
-        float grad = dO * dLdi;
-
-        if(alpha >= 0)
+        if(dinput)
         {
-            float alpha_t = alpha * t + (1 - alpha) * (1 - t);
-            grad *= alpha_t;
+            float dpdi      = exp(-i) / pow(1 + exp(-i), 2);
+            float dcelossdi = (-t / p + (1 - t) / (1 - p)) * dpdi;
+            float dpowptdi  = gamma * pow(1 - pT, gamma - 1) * (1 - 2 * t) * dpdi;
+
+            // L = ce_loss * pow_pt => dL/di = dceloss/di * pow_pt + ce_loss * dpowpt/di
+            float dLdi = dcelossdi * powPt + ceLoss * dpowptdi;
+            float grad = dO * dLdi;
+
+            if(alpha >= 0)
+            {
+                grad *= alpha_t;
+            }
+            dinput[dinput_tv.get_tensor_view_idx(idx)] = static_cast<TIO>(grad);
         }
 
-        dinput[dinput_tv.get_tensor_view_idx(idx)] = static_cast<TIO>(grad);
+        if(dtarget)
+        {
+            float dcelossdt = -log(p) + log(1 - p);
+            float dpowptdt  = gamma * pow(1 - pT, gamma - 1) * (1 - 2 * p);
+            // L = ce_loss * pow_pt => dL/dt = dceloss/dt * pow_pt + ce_loss * dpowpt/dt
+            float dLdt       = dcelossdt * powPt + ceLoss * dpowptdt;
+            float gradTarget = dO * dLdt;
+
+            if(alpha >= 0)
+            {
+                // alpha_t * dL/dt + dalpha_t/dt * dL
+                gradTarget = alpha_t * dLdt + (2 * alpha - 1) * ceLoss * powPt;
+            }
+            dtarget[dtarget_tv.get_tensor_view_idx(idx)] = static_cast<TIO>(gradTarget);
+        }
     }
 }
 
@@ -198,6 +220,8 @@ void mloSigmoidFocalLossBwdRunHost(TIO* input,
                                    miopenTensorDescriptor_t doutputDesc,
                                    TIO* dinput,
                                    miopenTensorDescriptor_t dinputDesc,
+                                   TIO* dtarget,
+                                   miopenTensorDescriptor_t dtargetDesc,
                                    float alpha   = 0.25,
                                    float gamma   = 2,
                                    float divisor = 1)
@@ -206,6 +230,7 @@ void mloSigmoidFocalLossBwdRunHost(TIO* input,
     auto target_tv  = miopen::get_inner_expanded_tv<5>(miopen::deref(targetDesc));
     auto doutput_tv = miopen::get_inner_expanded_tv<5>(miopen::deref(doutputDesc));
     auto dinput_tv  = miopen::get_inner_expanded_tv<5>(miopen::deref(dinputDesc));
+    auto dtarget_tv = miopen::get_inner_expanded_tv<5>(miopen::deref(dtargetDesc));
 
     size_t inputSize = miopen::deref(inputDesc).GetElementSize();
 
@@ -219,26 +244,46 @@ void mloSigmoidFocalLossBwdRunHost(TIO* input,
         float t  = static_cast<float>(target[target_tv.get_tensor_view_idx(idx)]);
         float dO = static_cast<float>(doutput[doutput_tv.get_tensor_view_idx(doIdx)]);
 
-        float p      = 1 / (1 + exp(-i));
-        float ceLoss = -(t * log(p) + (1 - t) * log(1 - p));
-        float pT     = p * t + (1 - p) * (1 - t);
-        float powPt  = pow(1 - pT, gamma);
+        float p       = 1 / (1 + exp(-i));
+        float ceLoss  = -(t * log(p) + (1 - t) * log(1 - p));
+        float pT      = p * t + (1 - p) * (1 - t);
+        float powPt   = pow(1 - pT, gamma);
+        float alpha_t = alpha * t + (1 - alpha) * (1 - t);
 
-        float dpdi      = exp(-i) / pow(1 + exp(-i), 2);
-        float dcelossdi = (-t / p + (1 - t) / (1 - p)) * dpdi;
-        float dpowptdi  = gamma * pow(1 - pT, gamma - 1) * (1 - 2 * t) * dpdi;
-
-        // L = ce_loss * pow_pt => dL/di = dceloss/di * pow_pt + ce_loss * dpowpt/di
-        float dLdi = dcelossdi * powPt + ceLoss * dpowptdi;
-        float grad = dO * dLdi / divisor;
-
-        if(alpha >= 0)
+        if(dinput)
         {
-            float alpha_t = alpha * t + (1 - alpha) * (1 - t);
-            grad *= alpha_t;
+            float dpdi      = exp(-i) / pow(1 + exp(-i), 2);
+            float dcelossdi = (-t / p + (1 - t) / (1 - p)) * dpdi;
+            float dpowptdi  = gamma * pow(1 - pT, gamma - 1) * (1 - 2 * t) * dpdi;
+
+            // L = ce_loss * pow_pt => dL/di = dceloss/di * pow_pt + ce_loss * dpowpt/di
+            float dLdi = dcelossdi * powPt + ceLoss * dpowptdi;
+            float grad = dO * dLdi;
+
+            if(alpha >= 0)
+            {
+                grad *= alpha_t;
+            }
+            grad /= divisor;
+            dinput[dinput_tv.get_tensor_view_idx(idx)] = static_cast<TIO>(grad);
         }
 
-        dinput[dinput_tv.get_tensor_view_idx(idx)] = static_cast<TIO>(grad);
+        if(dtarget)
+        {
+            float dcelossdt = -log(p) + log(1 - p);
+            float dpowptdt  = gamma * pow(1 - pT, gamma - 1) * (1 - 2 * p);
+            // L = ce_loss * pow_pt => dL/dt = dceloss/dt * pow_pt + ce_loss * dpowpt/dt
+            float dLdt       = dcelossdt * powPt + ceLoss * dpowptdt;
+            float gradTarget = dO * dLdt;
+
+            if(alpha >= 0)
+            {
+                // alpha_t * dL/dt + dalpha_t/dt * dL
+                gradTarget = alpha_t * dLdt + (2 * alpha - 1) * ceLoss * powPt;
+            }
+            gradTarget /= divisor;
+            dtarget[dtarget_tv.get_tensor_view_idx(idx)] = static_cast<TIO>(gradTarget);
+        }
     }
 }
 
@@ -253,6 +298,7 @@ public:
         miopenCreateTensorDescriptor(&outputDesc);
         miopenCreateTensorDescriptor(&doutputDesc);
         miopenCreateTensorDescriptor(&dinputDesc);
+        miopenCreateTensorDescriptor(&dtargetDesc);
 
         data_type = miopen_type<TIO>{};
     }
@@ -281,6 +327,7 @@ public:
         miopenDestroyTensorDescriptor(outputDesc);
         miopenDestroyTensorDescriptor(doutputDesc);
         miopenDestroyTensorDescriptor(dinputDesc);
+        miopenDestroyTensorDescriptor(dtargetDesc);
     }
 
 private:
@@ -291,12 +338,14 @@ private:
     miopenTensorDescriptor_t outputDesc;
     miopenTensorDescriptor_t doutputDesc;
     miopenTensorDescriptor_t dinputDesc;
+    miopenTensorDescriptor_t dtargetDesc;
 
     std::unique_ptr<GPUMem> input_dev;
     std::unique_ptr<GPUMem> target_dev;
     std::unique_ptr<GPUMem> output_dev;
     std::unique_ptr<GPUMem> doutput_dev;
     std::unique_ptr<GPUMem> dinput_dev;
+    std::unique_ptr<GPUMem> dtarget_dev;
     std::unique_ptr<GPUMem> workspace_dev;
 
     std::vector<TIO> input;
@@ -306,6 +355,8 @@ private:
     std::vector<TIO> doutput;
     std::vector<TIO> dinput;
     std::vector<TIO> dinputHost;
+    std::vector<TIO> dtarget;
+    std::vector<TIO> dtargetHost;
     std::vector<TIO> workspace;
 
     float alpha;
@@ -344,6 +395,7 @@ int SigmoidFocalLossDriver<TIO>::GetandSetData()
     SetTensorNd(targetDesc, inDims, inStride, data_type);
     SetTensorNd(doutputDesc, inDims, data_type);
     SetTensorNd(dinputDesc, inDims, data_type);
+    SetTensorNd(dtargetDesc, inDims, data_type);
 
     if(reduction == MIOPEN_LOSS_REDUCTION_NONE)
     {
@@ -407,6 +459,7 @@ int SigmoidFocalLossDriver<TIO>::AllocateBuffersAndCopy()
     size_t out_sz    = miopen::deref(outputDesc).GetElementSize();
     size_t dO_sz     = miopen::deref(doutputDesc).GetElementSize();
     size_t dI_sz     = miopen::deref(dinputDesc).GetElementSize();
+    size_t dT_sz     = miopen::deref(dtargetDesc).GetElementSize();
 
     uint32_t ctx = 0;
 
@@ -415,20 +468,23 @@ int SigmoidFocalLossDriver<TIO>::AllocateBuffersAndCopy()
     output_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, out_sz, sizeof(TIO)));
     doutput_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, dO_sz, sizeof(TIO)));
     dinput_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, dI_sz, sizeof(TIO)));
+    dtarget_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, dT_sz, sizeof(TIO)));
 
     miopenGetSigmoidFocalLossForwardWorkspaceSize(
         handle, inputDesc, targetDesc, outputDesc, reduction, &workSpaceSizeInBytes);
     workspace_dev =
         std::unique_ptr<GPUMem>(new GPUMem(ctx, workSpaceSizeInBytes / sizeof(TIO), sizeof(TIO)));
 
-    input      = std::vector<TIO>(in_sz, static_cast<TIO>(0));
-    target     = std::vector<TIO>(target_sz, static_cast<TIO>(0));
-    output     = std::vector<TIO>(out_sz, static_cast<TIO>(0));
-    outputHost = std::vector<TIO>(out_sz, static_cast<TIO>(0));
-    doutput    = std::vector<TIO>(dO_sz, static_cast<TIO>(0));
-    dinput     = std::vector<TIO>(dI_sz, static_cast<TIO>(0));
-    dinputHost = std::vector<TIO>(dI_sz, static_cast<TIO>(0));
-    workspace  = std::vector<TIO>(workSpaceSizeInBytes / sizeof(TIO), static_cast<TIO>(0));
+    input       = std::vector<TIO>(in_sz, static_cast<TIO>(0));
+    target      = std::vector<TIO>(target_sz, static_cast<TIO>(0));
+    output      = std::vector<TIO>(out_sz, static_cast<TIO>(0));
+    outputHost  = std::vector<TIO>(out_sz, static_cast<TIO>(0));
+    doutput     = std::vector<TIO>(dO_sz, static_cast<TIO>(0));
+    dinput      = std::vector<TIO>(dI_sz, static_cast<TIO>(0));
+    dinputHost  = std::vector<TIO>(dI_sz, static_cast<TIO>(0));
+    dtarget     = std::vector<TIO>(dT_sz, static_cast<TIO>(0));
+    dtargetHost = std::vector<TIO>(dT_sz, static_cast<TIO>(0));
+    workspace   = std::vector<TIO>(workSpaceSizeInBytes / sizeof(TIO), static_cast<TIO>(0));
 
     for(int i = 0; i < in_sz; i++)
     {
@@ -442,6 +498,7 @@ int SigmoidFocalLossDriver<TIO>::AllocateBuffersAndCopy()
 
     fill(output.begin(), output.end(), static_cast<TIO>(0));
     fill(dinput.begin(), dinput.end(), static_cast<TIO>(0));
+    fill(dtarget.begin(), dtarget.end(), static_cast<TIO>(0));
 
     if(input_dev->ToGPU(GetStream(), input.data()) != 0)
         std::cerr << "Error copying (in) to GPU, size: " << input_dev->GetSize() << std::endl;
@@ -457,6 +514,9 @@ int SigmoidFocalLossDriver<TIO>::AllocateBuffersAndCopy()
 
     if(dinput_dev->ToGPU(GetStream(), dinput.data()) != 0)
         std::cerr << "Error copying (dI) to GPU, size: " << dinput_dev->GetSize() << std::endl;
+
+    if(dtarget_dev->ToGPU(GetStream(), dtarget.data()) != 0)
+        std::cerr << "Error copying (dT) to GPU, size: " << dtarget_dev->GetSize() << std::endl;
 
     if(workspace_dev->ToGPU(GetStream(), workspace.data()) != 0)
         std::cerr << "Error copying (dI) to GPU, size: " << workspace_dev->GetSize() << std::endl;
@@ -566,6 +626,8 @@ int SigmoidFocalLossDriver<TIO>::RunBackwardGPU()
                                        doutput_dev->GetMem(),
                                        dinputDesc,
                                        dinput_dev->GetMem(),
+                                       dtargetDesc,
+                                       dtarget_dev->GetMem(),
                                        alpha,
                                        gamma,
                                        reduction);
@@ -594,6 +656,9 @@ int SigmoidFocalLossDriver<TIO>::RunBackwardGPU()
     if(dinput_dev->FromGPU(GetStream(), dinput.data()) != 0)
         std::cerr << "Error copying (dI_dev) from GPU, size: " << dinput_dev->GetSize()
                   << std::endl;
+    if(dtarget_dev->FromGPU(GetStream(), dtarget.data()) != 0)
+        std::cerr << "Error copying (dT_dev) from GPU, size: " << dtarget_dev->GetSize()
+                  << std::endl;
 
     return miopenStatusSuccess;
 }
@@ -612,6 +677,8 @@ int SigmoidFocalLossDriver<TIO>::RunBackwardCPU()
                                                     doutputDesc,
                                                     dinputHost.data(),
                                                     dinputDesc,
+                                                    dtargetHost.data(),
+                                                    dtargetDesc,
                                                     alpha,
                                                     gamma);
     }
@@ -625,6 +692,8 @@ int SigmoidFocalLossDriver<TIO>::RunBackwardCPU()
                                            doutputDesc,
                                            dinputHost.data(),
                                            dinputDesc,
+                                           dtargetHost.data(),
+                                           dtargetDesc,
                                            alpha,
                                            gamma,
                                            divisor);
@@ -670,22 +739,33 @@ int SigmoidFocalLossDriver<TIO>::VerifyBackward()
     {
         std::cout << dinput.data()[i] << " " << dinputHost.data()[i] << std::endl;
     }
+    for(int i = 0; i < miopen::deref(dtargetDesc).GetElementSize(); ++i)
+    {
+        std::cout << dtarget.data()[i] << " " << dtargetHost.data()[i] << std::endl;
+    }
 #endif
 
-    double tolerance = std::numeric_limits<TIO>::epsilon() * 10;
-    auto error       = miopen::rms_range(dinputHost, dinput);
+    double tolerance  = std::numeric_limits<TIO>::epsilon() * 10;
+    auto dinputError  = miopen::rms_range(dinputHost, dinput);
+    auto dtargetError = miopen::rms_range(dtargetHost, dtarget);
 
-    if(!std::isfinite(error) || error > tolerance)
+    if(!std::isfinite(dinputError) || dinputError > tolerance)
     {
-        std::cout << "Backward " << reduction << " Sigmoid Focal Loss FAILED: " << error << " > "
-                  << tolerance << std::endl;
+        std::cout << "Backward " << reduction << " Sigmoid Focal Loss FAILED: " << dinputError
+                  << " > " << tolerance << std::endl;
+        return EC_VerifyFwd;
+    }
+    else if(!std::isfinite(dtargetError) || dtargetError > tolerance)
+    {
+        std::cout << "Backward " << reduction << " Sigmoid Focal Loss FAILED: " << dtargetError
+                  << " > " << tolerance << std::endl;
         return EC_VerifyFwd;
     }
     else
     {
         std::cout << "Backward " << reduction
-                  << " Sigmoid Focal Loss Verifies OK on CPU reference (" << error << "< "
-                  << tolerance << ')' << std::endl;
+                  << " Sigmoid Focal Loss Verifies OK on CPU reference (dinput: " << dinputError
+                  << ", dtarget: " << dtargetError << "< " << tolerance << ')' << std::endl;
     }
 
     return miopenStatusSuccess;

@@ -120,12 +120,14 @@ miopenStatus_t SigmoidFocalLossBackward(Handle& handle,
                                         ConstData_t doutput,
                                         const TensorDescriptor& dinputDesc,
                                         Data_t dinput,
+                                        const TensorDescriptor& dtargetDesc,
+                                        Data_t dtarget,
                                         float alpha,
                                         float gamma,
                                         const miopenLossReductionMode_t reduction)
 {
     const auto problem = sigmoidfocalloss::SigmoidFocalLossBwdProblemDescription{
-        inputDesc, targetDesc, doutputDesc, dinputDesc, reduction};
+        inputDesc, targetDesc, doutputDesc, dinputDesc, dtargetDesc, reduction};
 
     const auto invoke_params = [&]() {
         auto tmp        = sigmoidfocalloss::BwdInvokeParams{};
@@ -133,10 +135,12 @@ miopenStatus_t SigmoidFocalLossBackward(Handle& handle,
         tmp.targetDesc  = &targetDesc;
         tmp.doutputDesc = &doutputDesc;
         tmp.dinputDesc  = &dinputDesc;
+        tmp.dtargetDesc = &dtargetDesc;
         tmp.input       = input;
         tmp.target      = target;
         tmp.doutput     = doutput;
         tmp.dinput      = dinput;
+        tmp.dtarget     = dtarget;
         tmp.alpha       = alpha;
         tmp.gamma       = gamma;
         tmp.reduction   = reduction;

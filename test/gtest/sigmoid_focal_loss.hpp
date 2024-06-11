@@ -89,9 +89,11 @@ struct SigmoidFocalLossTestCase
 inline std::vector<SigmoidFocalLossTestCase> SigmoidFocalLossTestConfigs()
 {
     return {
-        SigmoidFocalLossTestCase({4000}),                   // 1D cont
-        SigmoidFocalLossTestCase({100, 500}),               // 2D cont
-        SigmoidFocalLossTestCase({100, 500}, false),        // 2D non-cont
+        SigmoidFocalLossTestCase({4000}),            // 1D cont
+        SigmoidFocalLossTestCase({100, 500}),        // 2D cont
+        SigmoidFocalLossTestCase({100, 500}, false), // 2D non-cont
+        // SigmoidFocalLossTestCase({2, 2}), // 2D non-cont
+        // SigmoidFocalLossTestCase({2, 2}, false), // 2D non-cont
         SigmoidFocalLossTestCase({10, 20, 200}),            // 3D cont
         SigmoidFocalLossTestCase({10, 20, 200}, false),     // 3D non-cont
         SigmoidFocalLossTestCase({8, 3, 20, 100}),          // 4D cont
@@ -202,10 +204,17 @@ protected:
         dInputHost = tensor<TIO>{in_dims};
         std::fill(dInputHost.begin(), dInputHost.end(), 0);
 
+        dTarget = tensor<TIO>{in_dims};
+        std::fill(dInput.begin(), dInput.end(), 0);
+
+        dTargetHost = tensor<TIO>{in_dims};
+        std::fill(dTargetHost.begin(), dTargetHost.end(), 0);
+
         input_dev   = handle.Write(input.data);
         target_dev  = handle.Write(target.data);
         dOutput_dev = handle.Write(dOutput.data);
         dInput_dev  = handle.Write(dInput.data);
+        dTarget_dev = handle.Write(dTarget.data);
     }
 
     void RunTest()
@@ -223,26 +232,37 @@ protected:
                                                   dOutput_dev.get(),
                                                   dInput.desc,
                                                   dInput_dev.get(),
+                                                  dTarget.desc,
+                                                  dTarget_dev.get(),
                                                   config.alpha,
                                                   config.gamma,
                                                   config.reduction);
         cpu_sigmoid_focal_loss_unreduced_backward<TIO>(
-            input, target, dOutput, dInputHost, config.alpha, config.gamma);
+            input, target, dOutput, dInputHost, dTargetHost, config.alpha, config.gamma);
 
         EXPECT_EQ(status, miopenStatusSuccess);
 
-        dInput.data = handle.Read<TIO>(dInput_dev, dInput.data.size());
+        dInput.data  = handle.Read<TIO>(dInput_dev, dInput.data.size());
+        dTarget.data = handle.Read<TIO>(dTarget_dev, dTarget.data.size());
     }
 
     void Verify()
     {
         double threshold = std::numeric_limits<TIO>::epsilon();
 
-        auto error = miopen::rms_range(dInputHost, dInput);
+        auto dInputError = miopen::rms_range(dInputHost, dInput);
 
         EXPECT_TRUE(miopen::range_distance(dInputHost) == miopen::range_distance(dInput));
-        EXPECT_TRUE(error < threshold * 10) << "Error output beyond tolerance Error: " << error
-                                            << ",  Thresholdx10: " << threshold * 10;
+        EXPECT_TRUE(dInputError < threshold * 10)
+            << "dInput error output beyond tolerance Error: " << dInputError
+            << ",  Thresholdx10: " << threshold * 10;
+
+        auto dTargetError = miopen::rms_range(dTargetHost, dTarget);
+
+        EXPECT_TRUE(miopen::range_distance(dTargetHost) == miopen::range_distance(dTarget));
+        EXPECT_TRUE(dTargetError < threshold * 10)
+            << "dTarget error output beyond tolerance Error: " << dTargetError
+            << ",  Thresholdx10: " << threshold * 10;
     }
     SigmoidFocalLossTestCase config;
 
@@ -250,13 +270,16 @@ protected:
     tensor<TIO> target;
     tensor<TIO> dOutput;
     tensor<TIO> dInput;
+    tensor<TIO> dTarget;
 
     tensor<TIO> dInputHost;
+    tensor<TIO> dTargetHost;
 
     miopen::Allocator::ManageDataPtr input_dev;
     miopen::Allocator::ManageDataPtr target_dev;
     miopen::Allocator::ManageDataPtr dOutput_dev;
     miopen::Allocator::ManageDataPtr dInput_dev;
+    miopen::Allocator::ManageDataPtr dTarget_dev;
 };
 
 template <typename TIO>
@@ -383,8 +406,14 @@ protected:
         dInput = tensor<TIO>{in_dims};
         std::fill(dInput.begin(), dInput.end(), 0);
 
-        dinputHost = tensor<TIO>{in_dims};
-        std::fill(dinputHost.begin(), dinputHost.end(), 0);
+        dInputHost = tensor<TIO>{in_dims};
+        std::fill(dInputHost.begin(), dInputHost.end(), 0);
+
+        dTarget = tensor<TIO>{in_dims};
+        std::fill(dInput.begin(), dInput.end(), 0);
+
+        dTargetHost = tensor<TIO>{in_dims};
+        std::fill(dTargetHost.begin(), dTargetHost.end(), 0);
 
         divisor = 1;
         if(config.reduction == MIOPEN_LOSS_REDUCTION_MEAN)
@@ -395,6 +424,7 @@ protected:
         target_dev  = handle.Write(target.data);
         dOutput_dev = handle.Write(dOutput.data);
         dInput_dev  = handle.Write(dInput.data);
+        dTarget_dev = handle.Write(dTarget.data);
     }
 
     void RunTest()
@@ -412,26 +442,37 @@ protected:
                                                   dOutput_dev.get(),
                                                   dInput.desc,
                                                   dInput_dev.get(),
+                                                  dTarget.desc,
+                                                  dTarget_dev.get(),
                                                   config.alpha,
                                                   config.gamma,
                                                   config.reduction);
         cpu_sigmoid_focal_loss_backward<TIO>(
-            input, target, dOutput, dinputHost, config.alpha, config.gamma, divisor);
+            input, target, dOutput, dInputHost, dTargetHost, config.alpha, config.gamma, divisor);
 
         EXPECT_EQ(status, miopenStatusSuccess);
 
-        dInput.data = handle.Read<TIO>(dInput_dev, dInput.data.size());
+        dInput.data  = handle.Read<TIO>(dInput_dev, dInput.data.size());
+        dTarget.data = handle.Read<TIO>(dTarget_dev, dTarget.data.size());
     }
 
     void Verify()
     {
         double threshold = std::numeric_limits<TIO>::epsilon();
 
-        auto error = miopen::rms_range(dinputHost, dInput);
+        auto dInputError = miopen::rms_range(dInputHost, dInput);
 
-        EXPECT_TRUE(miopen::range_distance(dinputHost) == miopen::range_distance(dInput));
-        EXPECT_TRUE(error < threshold * 10) << "Error output beyond tolerance Error: " << error
-                                            << ",  Thresholdx10: " << threshold * 10;
+        EXPECT_TRUE(miopen::range_distance(dInputHost) == miopen::range_distance(dInput));
+        EXPECT_TRUE(dInputError < threshold * 10)
+            << "dInput error output beyond tolerance Error: " << dInputError
+            << ",  Thresholdx10: " << threshold * 10;
+
+        auto dTargetError = miopen::rms_range(dTargetHost, dTarget);
+
+        EXPECT_TRUE(miopen::range_distance(dTargetHost) == miopen::range_distance(dTarget));
+        EXPECT_TRUE(dTargetError < threshold * 10)
+            << "dTarget error output beyond tolerance Error: " << dTargetError
+            << ",  Thresholdx10: " << threshold * 10;
     }
     SigmoidFocalLossTestCase config;
 
@@ -439,13 +480,16 @@ protected:
     tensor<TIO> target;
     tensor<TIO> dOutput;
     tensor<TIO> dInput;
+    tensor<TIO> dTarget;
 
-    tensor<TIO> dinputHost;
+    tensor<TIO> dInputHost;
+    tensor<TIO> dTargetHost;
 
     miopen::Allocator::ManageDataPtr input_dev;
     miopen::Allocator::ManageDataPtr target_dev;
     miopen::Allocator::ManageDataPtr dOutput_dev;
     miopen::Allocator::ManageDataPtr dInput_dev;
+    miopen::Allocator::ManageDataPtr dTarget_dev;
 
     float divisor;
 };
