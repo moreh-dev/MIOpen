@@ -121,7 +121,6 @@ protected:
         fill(noise.begin(), noise.end(), 1.0f);
 
         ws_sizeInBytes = miopen::GetRReLUForwardWorkspaceSize(handle, input.desc);
-        // std::cout << "ws_sizeInBytes: " << ws_sizeInBytes << std::endl;
         if(ws_sizeInBytes == static_cast<size_t>(-1))
             GTEST_SKIP();
 
@@ -156,12 +155,7 @@ protected:
         output.data = handle.Read<T>(output_dev, output.data.size());
         noise.data  = handle.Read<float>(noise_dev, noise.data.size());
 
-        cpu_rrelu_forward<T>(input, noise, ref_output);
-
-        // std::cout << "Input: " << input.data << std::endl;
-        // std::cout << "Noise: " << noise.data << std::endl;
-        // std::cout << "Output: " << output.data << std::endl;
-        // std::cout << "Ref_Output: " << ref_output.data << std::endl;
+        cpu_rrelu_forward5d<T>(input, noise, ref_output);
     }
 
     void Verify()

@@ -24,23 +24,18 @@
  *
  *******************************************************************************/
 
-#pragma once
+#include "registry_driver_maker.hpp"
+#include "rrelu_driver.hpp"
 
-#include "tensor_holder.hpp"
-#include <miopen/rrelu/utils.hpp>
-
-template <class T>
-void cpu_rrelu_forward5d(const tensor<T> input, const tensor<float> noise, tensor<T>& ref_output)
+static Driver* makeDriver(const std::string& base_arg)
 {
-    auto input_tv  = miopen::solver::rrelu::get_inner_expanded_tv<5>(input.desc);
-    auto output_tv = miopen::solver::rrelu::get_inner_expanded_tv<5>(ref_output.desc);
-
-    int size = input.desc.GetElementSize();
-    par_ford(size)([&](int i) {
-        auto layout = tensor_layout_t<5>(input_tv, i);
-        auto Iidx   = input_tv.get_tensor_view_idx(layout);
-        auto Oidx   = output_tv.get_tensor_view_idx(layout);
-
-        ref_output[Oidx] = static_cast<T>(static_cast<float>(input[Iidx]) * noise[i]);
-    });
+    if(base_arg == "rrelu")
+        return new RReLUDriver<float, float>();
+    if(base_arg == "rrelufp16")
+        return new RReLUDriver<float16, float>();
+    if(base_arg == "rrelubfp16")
+        return new RReLUDriver<bfloat16, float>();
+    return nullptr;
 }
+
+REGISTER_DRIVER_MAKER(makeDriver);

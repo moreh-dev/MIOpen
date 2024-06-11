@@ -104,15 +104,15 @@ extern "C" __global__ void RReLUContiguous(const INPUT_TYPE* input,
 }
 
 template <typename TI, typename TO>
-__device__ void RReLU5d(const TI* input,
-                        TO* output,
-                        float* noise,
-                        const float lower,
-                        const float upper,
-                        const prngStates* state,
-                        const size_t N,
-                        const tensor_view_t<5> input_tv,
-                        const tensor_view_t<5> output_tv)
+__device__ void RReLU(const TI* input,
+                      TO* output,
+                      float* noise,
+                      const float lower,
+                      const float upper,
+                      const prngStates* state,
+                      const size_t N,
+                      const tensor_view_t<MAX_DIMS> input_tv,
+                      const tensor_view_t<MAX_DIMS> output_tv)
 {
     int gid = blockIdx.x * blockDim.x + threadIdx.x;
 
@@ -120,7 +120,7 @@ __device__ void RReLU5d(const TI* input,
 
     for(int i = gid; i < N; i += gridDim.x * blockDim.x)
     {
-        auto layout = tensor_layout_t<5>(input_tv, i);
+        auto layout = tensor_layout_t<MAX_DIMS>(input_tv, i);
         auto Iidx   = input_tv.get_tensor_view_idx(layout);
         auto Oidx   = output_tv.get_tensor_view_idx(layout);
 
@@ -135,17 +135,17 @@ __device__ void RReLU5d(const TI* input,
     }
 }
 
-extern "C" __global__ void RReLU5d(const INPUT_TYPE* input,
-                                   OUTPUT_TYPE* output,
-                                   float* noise,
-                                   const float lower,
-                                   const float upper,
-                                   const prngStates* state,
-                                   const size_t N,
-                                   const tensor_view_t<5> input_tv,
-                                   const tensor_view_t<5> output_tv)
+extern "C" __global__ void RReLU(const INPUT_TYPE* input,
+                                 OUTPUT_TYPE* output,
+                                 float* noise,
+                                 const float lower,
+                                 const float upper,
+                                 const prngStates* state,
+                                 const size_t N,
+                                 const tensor_view_t<MAX_DIMS> input_tv,
+                                 const tensor_view_t<MAX_DIMS> output_tv)
 {
     // instantiate the kernel
-    RReLU5d<INPUT_TYPE, OUTPUT_TYPE>(
+    RReLU<INPUT_TYPE, OUTPUT_TYPE>(
         input, output, noise, lower, upper, state, N, input_tv, output_tv);
 }

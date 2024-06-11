@@ -26,21 +26,29 @@
 
 #pragma once
 
-#include "tensor_holder.hpp"
+#include <../test/ford.hpp>
+
+#include <miopen/tensor.hpp>
 #include <miopen/rrelu/utils.hpp>
 
-template <class T>
-void cpu_rrelu_forward5d(const tensor<T> input, const tensor<float> noise, tensor<T>& ref_output)
+template <typename Tgpu, typename Tcheck>
+int32_t mloRReLUForward5dRunHost(const miopenTensorDescriptor_t inputDesc,
+                                 const miopenTensorDescriptor_t outputDesc,
+                                 const Tgpu* input,
+                                 const float* noise,
+                                 Tcheck* output_host)
 {
-    auto input_tv  = miopen::solver::rrelu::get_inner_expanded_tv<5>(input.desc);
-    auto output_tv = miopen::solver::rrelu::get_inner_expanded_tv<5>(ref_output.desc);
+    auto input_tv  = miopen::solver::rrelu::get_inner_expanded_tv<5>(miopen::deref(inputDesc));
+    auto output_tv = miopen::solver::rrelu::get_inner_expanded_tv<5>(miopen::deref(outputDesc));
 
-    int size = input.desc.GetElementSize();
+    int size = miopen::deref(inputDesc).GetElementSize();
     par_ford(size)([&](int i) {
         auto layout = tensor_layout_t<5>(input_tv, i);
         auto Iidx   = input_tv.get_tensor_view_idx(layout);
         auto Oidx   = output_tv.get_tensor_view_idx(layout);
 
-        ref_output[Oidx] = static_cast<T>(static_cast<float>(input[Iidx]) * noise[i]);
+        output_host[Oidx] = static_cast<Tcheck>(static_cast<float>(input[Iidx]) * noise[i]);
     });
+
+    return miopenStatusSuccess;
 }
