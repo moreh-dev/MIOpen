@@ -31,10 +31,6 @@
 #include "float_types.h"
 #include "tensor_view.hpp"
 
-#ifndef LOCAL_SIZE
-#define LOCAL_SIZE 256
-#endif
-
 template <typename TI, typename TO>
 __device__ void softmaxcrossentropywithlogitsForwardContiguous(const TI* __restrict__ input,
                                                                const TI* __restrict__ target,
@@ -50,8 +46,8 @@ __device__ void softmaxcrossentropywithlogitsForwardContiguous(const TI* __restr
     size_t num_class = input_tv.size[1];
 
     //   __local FLOAT_ACCUM lmax[LOCAL_SIZE], lsum[LOCAL_SIZE], lloss[LOCAL_SIZE];
-    FLOAT_ACCUM lmax[LOCAL_SIZE], lsum[LOCAL_SIZE], lloss[LOCAL_SIZE];
-    lmax[lid]           = -std::numeric_limits<FLOAT_ACCUM>::infinity();
+    __shared__ FLOAT_ACCUM lmax[LOCAL_SIZE], lsum[LOCAL_SIZE], lloss[LOCAL_SIZE];
+    lmax[lid]           = -INFINITY;
     lsum[lid]           = 0.0f;
     lloss[lid]          = 0.0f;
     size_t batch_offset = gid * num_class;
@@ -118,6 +114,11 @@ __device__ void softmaxcrossentropywithlogitsForwardContiguous(const TI* __restr
         FLOAT_ACCUM backprop_val   = exp(val - lmax[0]) / lsum[0] - label;
         backprop[i + batch_offset] = CVT_ACCUM2FLOAT(backprop_val);
     }
+
+    if(gid < 10)
+    {
+        printf("gid: %d, lmax: %f, lsum: %f, lloss: %f\n", gid, lmax[0], lsum[0], lloss[0]);
+    }
 }
 
 extern "C" __global__ void
@@ -153,12 +154,12 @@ __device__ void softmaxcrossentropywithlogitsBackwardContiguous(const TI* __rest
     size_t batch_offset = gid * num_class;
 
     // __local FSTYPE lmax[LOCAL_SIZE], lsum[LOCAL_SIZE];
-    FLOAT_ACCUM lmax[LOCAL_SIZE], lsum[LOCAL_SIZE];
-    lmax[lid] = -std::numeric_limits<FLOAT_ACCUM>::infinity();
+    __shared__ FLOAT_ACCUM lmax[LOCAL_SIZE], lsum[LOCAL_SIZE];
+    lmax[lid] = -INFINITY;
     lsum[lid] = 0.0f;
 
     // __local DTYPE output_grad_val;
-    FLOAT_ACCUM output_grad_val;
+    __shared__ FLOAT_ACCUM output_grad_val;
     if(lid == 0)
     {
         output_grad_val = CVT_FLOAT2ACCUM(output_grad[gid]);

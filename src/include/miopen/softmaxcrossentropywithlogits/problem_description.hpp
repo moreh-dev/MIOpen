@@ -51,7 +51,6 @@ struct FwdProblemDescription : ProblemDescriptionBase
     {
         IsValidLength();
         IsAllValidStride();
-        IsTargetProb();
     }
 
     const TensorDescriptor& GetInputDesc() const { return inputDesc; }
@@ -138,14 +137,6 @@ struct FwdProblemDescription : ProblemDescriptionBase
                isContiguous(backpropDesc);
     }
 
-    bool IsTargetProb() const
-    {
-        // check if each batch of target represents a valid probability distribution
-        // i.e. sum of each batch of target is 1 and each element is in [0, 1]
-
-        return true;
-    }
-
     NetworkConfig MakeNetworkConfig() const override;
 
 protected:
@@ -178,6 +169,7 @@ struct BwdProblemDescription : ProblemDescriptionBase
     const TensorDescriptor& GetInputGradDesc() const { return inputGradDesc; }
     const TensorDescriptor& GetTargetGradDesc() const { return targetGradDesc; }
 
+    size_t GetBatchSize() const { return inputDesc.GetLengths()[0]; }
     size_t GetNumClasses() const { return inputDesc.GetLengths()[1]; }
     size_t GetInputTotal() const { return inputDesc.GetElementSize(); }
 

@@ -653,12 +653,12 @@ inline SolverRegistrar::SolverRegistrar(IdRegistryData& registry)
     Register(registry,
              ++id,
              Primitive::SoftmaxCrossEntropyWithLogits,
-             softmaxcrossentropywithlogits::SoftmaxCrossEntropyWithLogitForwardContiguous{}
+             softmaxcrossentropywithlogits::SoftmaxCrossEntropyWithLogitsForwardContiguous{}
                  .SolverDbId());
     Register(registry,
              ++id,
              Primitive::SoftmaxCrossEntropyWithLogits,
-             softmaxcrossentropywithlogits::SoftmaxCrossEntropyWithLogitBackwardContiguous{}
+             softmaxcrossentropywithlogits::SoftmaxCrossEntropyWithLogitsBackwardContiguous{}
                  .SolverDbId());
     // IMPORTANT: New solvers should be added to the end of the function!
 }

@@ -34,6 +34,7 @@
 #include <miopen/softmaxcrossentropywithlogits.hpp>
 #include <miopen/target_properties.hpp>
 #include <miopen/tensor_view.hpp>
+#include <limits>
 
 #define LOCAL_SIZE_CON_FWD 1024
 
@@ -66,6 +67,7 @@ ConvSolution SoftmaxCrossEntropyWithLogitsForwardContiguous::GetSolution(
     {
         auto dtype     = problem.GetOutputDesc().GetType();
         size_t N_total = problem.GetBatchSize();
+        float infinity = std::numeric_limits<float>::max();
 
         auto kernel = KernelInfo{};
 
@@ -78,6 +80,7 @@ ConvSolution SoftmaxCrossEntropyWithLogitsForwardContiguous::GetSolution(
             {"OUTPUT_TYPE", output_dtype == "bfloat16" ? "ushort" : output_dtype},
             {"D_TYPE", output_dtype == "bfloat16" ? "ushort" : output_dtype},
             {"LOCAL_SIZE", LOCAL_SIZE_CON_FWD},
+            {"INFINITY", infinity},
         };
 
         result.construction_params.push_back(
