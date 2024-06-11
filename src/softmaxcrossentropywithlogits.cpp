@@ -35,261 +35,125 @@
 
 namespace miopen {
 
-size_t GetCosineEmbeddingLossUnreducedForwardWorkspaceSize(Handle& handle,
-                                                           const TensorDescriptor input1Desc,
-                                                           const TensorDescriptor input2Desc,
-                                                           const TensorDescriptor targetDesc,
-                                                           const TensorDescriptor outputDesc,
-                                                           const float margin)
+size_t GetSoftmaxCrossEntropyWithLogitsForwardWorkspaceSize(Handle& handle,
+                                                            const TensorDescriptor& inputDesc,
+                                                            const TensorDescriptor& targetDesc,
+                                                            const TensorDescriptor& outputDesc,
+                                                            const TensorDescriptor& backpropDesc)
 {
     auto ctx           = ExecutionContext{&handle};
-    const auto problem = cosineembeddingloss::FwdUnreducedProblemDescription{
-        input1Desc, input2Desc, targetDesc, outputDesc, margin};
+    const auto problem = softmaxcrossentropywithlogits::FwdProblemDescription{
+        inputDesc, targetDesc, outputDesc, backpropDesc};
 
-    const auto algo    = AlgorithmName{"CosineEmbeddingLossUnreducedForward"};
+    const auto algo    = AlgorithmName{"SoftmaxCrossEntropyWithLogitsForward"};
     const auto solvers = solver::SolverContainer<
-        solver::cosineembeddingloss::CosineEmbeddingLossUnreducedForward2d,
-        solver::cosineembeddingloss::CosineEmbeddingLossUnreducedForward2dNonSum>{};
+        solver::softmaxcrossentropywithlogits::SoftmaxCrossEntropyWithLogitsForwardContiguous>{};
 
     auto pair_size_vector = solvers.GetWorkspaceSizes(ctx, problem);
 
     return pair_size_vector.empty() ? static_cast<size_t>(-1) : pair_size_vector.front().second;
 }
 
-size_t GetCosineEmbeddingLossReducedForwardWorkspaceSize(Handle& handle,
-                                                         const TensorDescriptor input1Desc,
-                                                         const TensorDescriptor input2Desc,
-                                                         const TensorDescriptor targetDesc,
-                                                         const TensorDescriptor outputDesc,
-                                                         const float margin)
-{
-    auto ctx           = ExecutionContext{&handle};
-    const auto problem = cosineembeddingloss::FwdReducedProblemDescription{
-        input1Desc, input2Desc, targetDesc, outputDesc, margin};
-
-    const auto algo    = AlgorithmName{"CosineEmbeddingLossReducedForward"};
-    const auto solvers = solver::SolverContainer<
-        solver::cosineembeddingloss::CosineEmbeddingLossReducedForward2d,
-        solver::cosineembeddingloss::CosineEmbeddingLossReducedForward2dNonSum>{};
-
-    auto pair_size_vector = solvers.GetWorkspaceSizes(ctx, problem);
-
-    return pair_size_vector.empty() ? static_cast<size_t>(-1) : pair_size_vector.front().second;
-}
-
-miopenStatus_t CosineEmbeddingLossUnreducedForward(Handle& handle,
-                                                   Data_t workspace,
-                                                   size_t workspaceSizeInBytes,
-                                                   const TensorDescriptor& input1Desc,
-                                                   ConstData_t input1,
-                                                   const TensorDescriptor& input2Desc,
-                                                   ConstData_t input2,
-                                                   const TensorDescriptor& targetDesc,
-                                                   ConstData_t target,
-                                                   const TensorDescriptor& outputDesc,
-                                                   Data_t output,
-                                                   const float margin)
-{
-    const auto problem = cosineembeddingloss::FwdUnreducedProblemDescription{
-        input1Desc, input2Desc, targetDesc, outputDesc, margin};
-
-    const auto invoke_params = [&]() {
-        auto tmp       = cosineembeddingloss::FwdInvokeParams{};
-        tmp.input1Desc = &input1Desc;
-        tmp.input2Desc = &input2Desc;
-        tmp.targetDesc = &targetDesc;
-        tmp.outputDesc = &outputDesc;
-
-        tmp.input1 = input1;
-        tmp.input2 = input2;
-        tmp.target = target;
-        tmp.output = output;
-
-        tmp.workspace            = workspace;
-        tmp.workspaceSizeInBytes = workspaceSizeInBytes;
-
-        tmp.margin = margin;
-
-        return tmp;
-    }();
-    const auto algo    = AlgorithmName{"CosineEmbeddingLossUnreducedForward"};
-    const auto solvers = solver::SolverContainer<
-        solver::cosineembeddingloss::CosineEmbeddingLossUnreducedForward2d,
-        solver::cosineembeddingloss::CosineEmbeddingLossUnreducedForward2dNonSum>{};
-
-    solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
-
-    return miopenStatusSuccess;
-}
-
-miopenStatus_t CosineEmbeddingLossReducedForward(Handle& handle,
-                                                 Data_t workspace,
-                                                 size_t workspaceSizeInBytes,
-                                                 const TensorDescriptor& input1Desc,
-                                                 ConstData_t input1,
-                                                 const TensorDescriptor& input2Desc,
-                                                 ConstData_t input2,
-                                                 const TensorDescriptor& targetDesc,
-                                                 ConstData_t target,
-                                                 const TensorDescriptor& outputDesc,
-                                                 Data_t output,
-                                                 const float margin,
-                                                 const miopenLossReductionMode_t reduction)
-{
-    const auto problem = cosineembeddingloss::FwdReducedProblemDescription{
-        input1Desc, input2Desc, targetDesc, outputDesc, margin};
-
-    const auto invoke_params = [&]() {
-        auto tmp       = cosineembeddingloss::FwdInvokeParams{};
-        tmp.input1Desc = &input1Desc;
-        tmp.input2Desc = &input2Desc;
-        tmp.targetDesc = &targetDesc;
-        tmp.outputDesc = &outputDesc;
-
-        tmp.input1               = input1;
-        tmp.input2               = input2;
-        tmp.target               = target;
-        tmp.output               = output;
-        tmp.workspace            = workspace;
-        tmp.workspaceSizeInBytes = workspaceSizeInBytes;
-        tmp.margin               = margin;
-        tmp.reduction            = reduction;
-        return tmp;
-    }();
-
-    const auto algo    = AlgorithmName{"CosineEmbeddingLossReducedForward"};
-    const auto solvers = solver::SolverContainer<
-        solver::cosineembeddingloss::CosineEmbeddingLossReducedForward2d,
-        solver::cosineembeddingloss::CosineEmbeddingLossReducedForward2dNonSum>{};
-
-    solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
-
-    return miopenStatusSuccess;
-}
-
-size_t GetCosineEmbeddingLossBackwardWorkspaceSize(Handle& handle,
-                                                   const TensorDescriptor input1Desc,
-                                                   const TensorDescriptor input2Desc,
-                                                   const TensorDescriptor targetDesc,
-                                                   const TensorDescriptor outputGradDesc,
-                                                   const TensorDescriptor input1GradDesc,
-                                                   const TensorDescriptor input2GradDesc,
-                                                   const float margin)
-{
-    auto ctx           = ExecutionContext{&handle};
-    const auto problem = cosineembeddingloss::BwdUnreducedProblemDescription{
-        input1Desc, input2Desc, targetDesc, outputGradDesc, input1GradDesc, input2GradDesc, margin};
-
-    const auto algo    = AlgorithmName{"CosineEmbeddingLossBackward"};
-    const auto solvers = solver::SolverContainer<
-        solver::cosineembeddingloss::CosineEmbeddingLossUnreducedBackward2d,
-        solver::cosineembeddingloss::CosineEmbeddingLossUnreducedBackward2dNonSum>{};
-
-    auto pair_size_vector = solvers.GetWorkspaceSizes(ctx, problem);
-
-    return pair_size_vector.empty() ? static_cast<size_t>(-1) : pair_size_vector.front().second;
-}
-
-miopenStatus_t CosineEmbeddingLossUnreducedBackward(Handle& handle,
+miopenStatus_t SoftmaxCrossEntropyWithLogitsForward(Handle& handle,
                                                     Data_t workspace,
                                                     size_t workspaceSizeInBytes,
-                                                    const TensorDescriptor& input1Desc,
-                                                    ConstData_t input1,
-                                                    const TensorDescriptor& input2Desc,
-                                                    ConstData_t input2,
+                                                    const TensorDescriptor& inputDesc,
+                                                    ConstData_t input,
                                                     const TensorDescriptor& targetDesc,
                                                     ConstData_t target,
-                                                    const TensorDescriptor& outputGradDesc,
-                                                    ConstData_t output_grad,
-                                                    const TensorDescriptor& input1GradDesc,
-                                                    Data_t input1_grad,
-                                                    const TensorDescriptor& input2GradDesc,
-                                                    Data_t input2_grad,
-                                                    const float margin)
+                                                    const TensorDescriptor& outputDesc,
+                                                    Data_t output,
+                                                    const TensorDescriptor& backpropDesc,
+                                                    Data_t backprop)
 {
-    const auto problem = cosineembeddingloss::BwdUnreducedProblemDescription{
-        input1Desc, input2Desc, targetDesc, outputGradDesc, input1GradDesc, input2GradDesc, margin};
+    const auto problem = softmaxcrossentropywithlogits::FwdProblemDescription{
+        inputDesc, targetDesc, outputDesc, backpropDesc};
 
     const auto invoke_params = [&]() {
-        auto tmp           = cosineembeddingloss::BwdInvokeParams{};
-        tmp.input1Desc     = &input1Desc;
-        tmp.input2Desc     = &input2Desc;
-        tmp.targetDesc     = &targetDesc;
-        tmp.outputGradDesc = &outputGradDesc;
-        tmp.input1GradDesc = &input1GradDesc;
-        tmp.input2GradDesc = &input2GradDesc;
+        auto tmp         = softmaxcrossentropywithlogits::FwdInvokeParams{};
+        tmp.inputDesc    = &inputDesc;
+        tmp.targetDesc   = &targetDesc;
+        tmp.outputDesc   = &outputDesc;
+        tmp.backpropDesc = &backpropDesc;
 
-        tmp.input1      = input1;
-        tmp.input2      = input2;
-        tmp.target      = target;
-        tmp.output_grad = output_grad;
-        tmp.input1_grad = input1_grad;
-        tmp.input2_grad = input2_grad;
+        tmp.input    = input;
+        tmp.target   = target;
+        tmp.output   = output;
+        tmp.backprop = backprop;
 
         tmp.workspace            = workspace;
         tmp.workspaceSizeInBytes = workspaceSizeInBytes;
-        tmp.margin               = margin;
 
         return tmp;
     }();
-    const auto algo    = AlgorithmName{"CosineEmbeddingLossUnreducedBackward"};
+    const auto algo    = AlgorithmName{"SoftmaxCrossEntropyWithLogitsForward"};
     const auto solvers = solver::SolverContainer<
-        solver::cosineembeddingloss::CosineEmbeddingLossUnreducedBackward2d,
-        solver::cosineembeddingloss::CosineEmbeddingLossUnreducedBackward2dNonSum>{};
+        solver::softmaxcrossentropywithlogits::SoftmaxCrossEntropyWithLogitsForwardContiguous>{};
 
     solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
 
     return miopenStatusSuccess;
 }
 
-miopenStatus_t CosineEmbeddingLossReducedBackward(Handle& handle,
-                                                  Data_t workspace,
-                                                  size_t workspaceSizeInBytes,
-                                                  const TensorDescriptor& input1Desc,
-                                                  ConstData_t input1,
-                                                  const TensorDescriptor& input2Desc,
-                                                  ConstData_t input2,
-                                                  const TensorDescriptor& targetDesc,
-                                                  ConstData_t target,
-                                                  const TensorDescriptor& outputGradDesc,
-                                                  ConstData_t output_grad,
-                                                  const TensorDescriptor& input1GradDesc,
-                                                  Data_t input1_grad,
-                                                  const TensorDescriptor& input2GradDesc,
-                                                  Data_t input2_grad,
-                                                  const float margin,
-                                                  const miopenLossReductionMode_t reduction)
+size_t GetSoftmaxCrossEntropyWithLogitsBackwardWorkspaceSize(Handle& handle,
+                                                             const TensorDescriptor& outputGradDesc,
+                                                             const TensorDescriptor& backpropDesc,
+                                                             const TensorDescriptor& inputDesc,
+                                                             const TensorDescriptor& inputGradDesc,
+                                                             const TensorDescriptor& targetGradDesc)
 {
-    const auto problem = cosineembeddingloss::BwdReducedProblemDescription{
-        input1Desc, input2Desc, targetDesc, outputGradDesc, input1GradDesc, input2GradDesc, margin};
+    auto ctx           = ExecutionContext{&handle};
+    const auto problem = softmaxcrossentropywithlogits::BwdProblemDescription{
+        outputGradDesc, backpropDesc, inputDesc, inputGradDesc, targetGradDesc};
+
+    const auto algo    = AlgorithmName{"SoftmaxCrossEntropyWithLogitsBackward"};
+    const auto solvers = solver::SolverContainer<
+        solver::softmaxcrossentropywithlogits::SoftmaxCrossEntropyWithLogitsBackwardContiguous>{};
+
+    auto pair_size_vector = solvers.GetWorkspaceSizes(ctx, problem);
+
+    return pair_size_vector.empty() ? static_cast<size_t>(-1) : pair_size_vector.front().second;
+}
+
+miopenStatus_t SoftmaxCrossEntropyWithLogitsBackward(Handle& handle,
+                                                     Data_t workspace,
+                                                     size_t workspaceSizeInBytes,
+                                                     const TensorDescriptor& outputGradDesc,
+                                                     ConstData_t output_grad,
+                                                     const TensorDescriptor& backpropDesc,
+                                                     ConstData_t backprop,
+                                                     const TensorDescriptor& inputDesc,
+                                                     ConstData_t input,
+                                                     const TensorDescriptor& inputGradDesc,
+                                                     Data_t input_grad,
+                                                     const TensorDescriptor& targetGradDesc,
+                                                     Data_t target_grad)
+{
+    const auto problem = softmaxcrossentropywithlogits::BwdProblemDescription{
+        outputGradDesc, backpropDesc, inputDesc, inputGradDesc, targetGradDesc};
 
     const auto invoke_params = [&]() {
-        auto tmp           = cosineembeddingloss::BwdInvokeParams{};
-        tmp.input1Desc     = &input1Desc;
-        tmp.input2Desc     = &input2Desc;
-        tmp.targetDesc     = &targetDesc;
+        auto tmp           = softmaxcrossentropywithlogits::BwdInvokeParams{};
         tmp.outputGradDesc = &outputGradDesc;
-        tmp.input1GradDesc = &input1GradDesc;
-        tmp.input2GradDesc = &input2GradDesc;
+        tmp.backpropDesc   = &backpropDesc;
+        tmp.inputDesc      = &inputDesc;
+        tmp.inputGradDesc  = &inputGradDesc;
+        tmp.targetGradDesc = &targetGradDesc;
 
-        tmp.input1      = input1;
-        tmp.input2      = input2;
-        tmp.target      = target;
         tmp.output_grad = output_grad;
-        tmp.input1_grad = input1_grad;
-        tmp.input2_grad = input2_grad;
+        tmp.backprop    = backprop;
+        tmp.input       = input;
+        tmp.input_grad  = input_grad;
+        tmp.target_grad = target_grad;
 
         tmp.workspace            = workspace;
         tmp.workspaceSizeInBytes = workspaceSizeInBytes;
-        tmp.margin               = margin;
-        tmp.reduction            = reduction;
 
         return tmp;
     }();
-    const auto algo    = AlgorithmName{"CosineEmbeddingLossReducedBackward"};
+    const auto algo    = AlgorithmName{"SoftmaxCrossEntropyWithLogitsBackward"};
     const auto solvers = solver::SolverContainer<
-        solver::cosineembeddingloss::CosineEmbeddingLossReducedBackward2d,
-        solver::cosineembeddingloss::CosineEmbeddingLossReducedBackward2dNonSum>{};
+        solver::softmaxcrossentropywithlogits::SoftmaxCrossEntropyWithLogitsBackwardContiguous>{};
 
     solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
 

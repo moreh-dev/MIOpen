@@ -33,51 +33,45 @@ namespace miopen {
 struct Handle;
 struct TensorDescriptor;
 
-size_t GetSoftmaxCrossEntropyWithLogitsForwardWorkspaceSize(
-    Handle& handle,
-    const TensorDescriptor inputDesc,
-    const TensorDescriptor targetDesc,
-    const TensorDescriptor outputDesc,
-    const TensorDescriptor backpropDesc,
-    const miopenLossContiguousMode_t is_contiguous);
+size_t GetSoftmaxCrossEntropyWithLogitsForwardWorkspaceSize(Handle& handle,
+                                                            const TensorDescriptor& inputDesc,
+                                                            const TensorDescriptor& targetDesc,
+                                                            const TensorDescriptor& outputDesc,
+                                                            const TensorDescriptor& backpropDesc);
 
 miopenStatus_t SoftmaxCrossEntropyWithLogitsForward(Handle& handle,
                                                     Data_t workspace,
                                                     size_t workspaceSizeInBytes,
-                                                    const TensorDescriptor inputDesc,
+                                                    const TensorDescriptor& inputDesc,
                                                     ConstData_t input,
-                                                    const TensorDescriptor targetDesc,
+                                                    const TensorDescriptor& targetDesc,
                                                     ConstData_t target,
-                                                    const TensorDescriptor outputDesc,
+                                                    const TensorDescriptor& outputDesc,
                                                     Data_t output,
-                                                    const TensorDescriptor backpropDesc,
-                                                    Data_t backprop,
-                                                    const miopenLossContiguousMode_t is_contiguous);
+                                                    const TensorDescriptor& backpropDesc,
+                                                    Data_t backprop);
 
-size_t GetSoftmaxCrossEntropyWithLogitsBackwardWorkspaceSize(
-    Handle& handle,
-    const TensorDescriptor outputGradDesc,
-    const TensorDescriptor backpropDesc,
-    const TensorDescriptor inputDesc,
-    const TensorDescriptor inputGradDesc,
-    const TensorDescriptor targetGradDesc,
-    const miopenLossContiguousMode_t is_contiguous);
+size_t
+GetSoftmaxCrossEntropyWithLogitsBackwardWorkspaceSize(Handle& handle,
+                                                      const TensorDescriptor& outputGradDesc,
+                                                      const TensorDescriptor& backpropDesc,
+                                                      const TensorDescriptor& inputDesc,
+                                                      const TensorDescriptor& inputGradDesc,
+                                                      const TensorDescriptor& targetGradDesc);
 
-miopenStatus_t
-SoftmaxCrossEntropyWithLogitsBackward(Handle& handle,
-                                      Data_t workspace,
-                                      size_t workspaceSizeInBytes,
-                                      const TensorDescriptor& outputGradDesc,
-                                      ConstData_t output_grad,
-                                      const TensorDescriptor& backpropDesc,
-                                      ConstData_t backprop,
-                                      const TensorDescriptor& inputDesc,
-                                      ConstData_t input,
-                                      const TensorDescriptor& inputGradDesc,
-                                      Data_t input_grad,
-                                      const TensorDescriptor& targetGradDesc,
-                                      Data_t target_grad,
-                                      const miopenLossContiguousMode_t is_contiguous);
+miopenStatus_t SoftmaxCrossEntropyWithLogitsBackward(Handle& handle,
+                                                     Data_t workspace,
+                                                     size_t workspaceSizeInBytes,
+                                                     const TensorDescriptor& outputGradDesc,
+                                                     ConstData_t output_grad,
+                                                     const TensorDescriptor& backpropDesc,
+                                                     ConstData_t backprop,
+                                                     const TensorDescriptor& inputDesc,
+                                                     ConstData_t input,
+                                                     const TensorDescriptor& inputGradDesc,
+                                                     Data_t input_grad,
+                                                     const TensorDescriptor& targetGradDesc,
+                                                     Data_t target_grad);
 
 } // namespace miopen
 #endif // MIOPEN_SOFTMAXCROSSENTROPYWITHLOGITS_HPP_

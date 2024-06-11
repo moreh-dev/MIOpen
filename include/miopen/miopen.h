@@ -6585,17 +6585,6 @@ MIOPEN_EXPORT miopenStatus_t miopenBackendInitialize(miopenBackendDescriptor_t d
 
 #ifdef MIOPEN_BETA_API
 
-/*! @ingroup softmaxcrossentropywithlogits
- * @enum miopenLossContiguousMode_t
- * Contiguous modes for SoftmaxCrossEntropyWithLogits
- */
-
-typedef enum
-{
-    MIOPEN_LOSS_NON_CONTIGUOUS = 0,
-    MIOPEN_LOSS_CONTIGUOUS     = 1,
-} miopenLossContiguousMode_t;
-
 // SoftmaxCrossEntropyWithLogits APIs
 /** @addtogroup softmaxcrossentropywithlogits
  *
@@ -6611,7 +6600,6 @@ typedef enum
  * @param outputDesc               Tensor descriptor for output tensor (input)
  * @param backpropDesc             Tensor descriptor for backprop tensor (input)
  * @param sizeInBytes              Pointer to data to return the minimum workspace size (output)
- * @param is_contiguous            Contiguous or non-contiguous (input)
  * @return                         miopenStatus_t
  */
 MIOPEN_EXPORT miopenStatus_t miopenGetSoftmaxCrossEntropyWithLogitsForwardWorkspaceSize(
@@ -6620,8 +6608,7 @@ MIOPEN_EXPORT miopenStatus_t miopenGetSoftmaxCrossEntropyWithLogitsForwardWorksp
     const miopenTensorDescriptor_t targetDesc,
     const miopenTensorDescriptor_t outputDesc,
     const miopenTensorDescriptor_t backpropDesc,
-    size_t* sizeInBytes,
-    const miopenLossContiguousMode_t is_contiguous);
+    size_t* sizeInBytes);
 
 /*! @brief Execute a softmaxcrossentropywithlogits forward layer
  *
@@ -6636,7 +6623,6 @@ MIOPEN_EXPORT miopenStatus_t miopenGetSoftmaxCrossEntropyWithLogitsForwardWorksp
  * @param output                Data tensor output (output)
  * @param backpropDesc          Tensor descriptor for backprop tensor (input)
  * @param backprop              Data tensor backprop (output)
- * @param is_contiguous         Contiguous or non-contiguous (input)
  * @return                      miopenStatus_t
  */
 MIOPEN_EXPORT miopenStatus_t
@@ -6650,8 +6636,7 @@ miopenSoftmaxCrossEntropyWithLogitsForward(miopenHandle_t handle,
                                            const miopenTensorDescriptor_t outputDesc,
                                            void* output,
                                            const miopenTensorDescriptor_t backpropDesc,
-                                           void* backprop,
-                                           const miopenLossContiguousMode_t is_contiguous);
+                                           void* backprop);
 
 /*! @brief Helper function to query the minimum workspace size required by the
  * SoftmaxCrossEntropyWithLogits Backward call
@@ -6663,7 +6648,6 @@ miopenSoftmaxCrossEntropyWithLogitsForward(miopenHandle_t handle,
  * @param inputGradDesc            Tensor descriptor for input grad tensor (input)
  * @param targetGradDesc           Tensor descriptor for target grad tensor (input)
  * @param sizeInBytes              Pointer to data to return the minimum workspace size (output)
- * @param is_contiguous            Contiguous or non-contiguous (input)
  * @return                         miopenStatus_t
  */
 MIOPEN_EXPORT miopenStatus_t miopenGetSoftmaxCrossEntropyWithLogitsBackwardWorkspaceSize(
@@ -6673,8 +6657,7 @@ MIOPEN_EXPORT miopenStatus_t miopenGetSoftmaxCrossEntropyWithLogitsBackwardWorks
     const miopenTensorDescriptor_t inputDesc,
     const miopenTensorDescriptor_t inputGradDesc,
     const miopenTensorDescriptor_t targetGradDesc,
-    size_t* sizeInBytes,
-    const miopenLossContiguousMode_t is_contiguous);
+    size_t* sizeInBytes);
 
 /*! @brief Execute a softmaxcrossentropywithlogits backward layer
  *
@@ -6691,7 +6674,6 @@ MIOPEN_EXPORT miopenStatus_t miopenGetSoftmaxCrossEntropyWithLogitsBackwardWorks
  * @param input_grad               Data tensor input grad (output)
  * @param targetGradDesc           Tensor descriptor for target grad tensor (input)
  * @param target_grad              Data tensor target grad (output)
- * @param is_contiguous            Contiguous or non-contiguous (input)
  * @return                         miopenStatus_t
  */
 MIOPEN_EXPORT miopenStatus_t
@@ -6707,8 +6689,7 @@ miopenSoftmaxCrossEntropyWithLogitsBackward(miopenHandle_t handle,
                                             const miopenTensorDescriptor_t inputGradDesc,
                                             void* input_grad,
                                             const miopenTensorDescriptor_t targetGradDesc,
-                                            void* target_grad,
-                                            const miopenLossContiguousMode_t is_contiguous);
+                                            void* target_grad);
 
 /** @} */
 // CLOSEOUT SoftmaxCrossEntropyWithLogits DOXYGEN GROUP

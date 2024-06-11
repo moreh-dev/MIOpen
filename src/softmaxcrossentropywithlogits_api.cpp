@@ -45,8 +45,7 @@ inline std::ostream& operator<<(std::ostream& os, const std::vector<size_t>& v)
 }
 
 static void LogCmdSoftmaxCrossEntropyWithLogits(const miopenTensorDescriptor_t inputDesc,
-                                                bool is_fwd,
-                                                const miopenLossContiguousMode_t is_contiguous)
+                                                bool is_fwd)
 {
     if(miopen::IsLoggingCmd())
     {
@@ -65,12 +64,11 @@ static void LogCmdSoftmaxCrossEntropyWithLogits(const miopenTensorDescriptor_t i
             ss << "softmaxcrossentropywithlogitsbfp16";
         }
 
-        MIOPEN_LOG_FUNCTION(inputDesc, is_fwd, is_contiguous);
+        MIOPEN_LOG_FUNCTION(inputDesc, is_fwd);
         ss << " -D " << miopen::deref(inputDesc).GetLengths();
         ss << " -Si " << miopen::deref(inputDesc).GetStrides();
 
         ss << " -F " << ((is_fwd) ? "1" : "2");
-        ss << " -C " << is_contiguous;
 
         MIOPEN_LOG_DRIVER_CMD(ss.str());
     }
@@ -82,12 +80,10 @@ extern "C" miopenStatus_t miopenGetSoftmaxCrossEntropyWithLogitsForwardWorkspace
     const miopenTensorDescriptor_t targetDesc,
     const miopenTensorDescriptor_t outputDesc,
     const miopenTensorDescriptor_t backpropDesc,
-    size_t* sizeInBytes,
-    const miopenLossContiguousMode_t is_contiguous)
+    size_t* sizeInBytes)
 {
 
-    MIOPEN_LOG_FUNCTION(
-        handle, inputDesc, targetDesc, outputDesc, backpropDesc, sizeInBytes, is_contiguous);
+    MIOPEN_LOG_FUNCTION(handle, inputDesc, targetDesc, outputDesc, backpropDesc, sizeInBytes);
 
     return miopen::try_([&] {
         miopen::deref(sizeInBytes) = miopen::GetSoftmaxCrossEntropyWithLogitsForwardWorkspaceSize(
@@ -95,8 +91,7 @@ extern "C" miopenStatus_t miopenGetSoftmaxCrossEntropyWithLogitsForwardWorkspace
             miopen::deref(inputDesc),
             miopen::deref(targetDesc),
             miopen::deref(outputDesc),
-            miopen::deref(backpropDesc),
-            is_contiguous);
+            miopen::deref(backpropDesc));
     });
 }
 
@@ -111,8 +106,7 @@ miopenSoftmaxCrossEntropyWithLogitsForward(miopenHandle_t handle,
                                            const miopenTensorDescriptor_t outputDesc,
                                            void* output,
                                            const miopenTensorDescriptor_t backpropDesc,
-                                           void* backprop,
-                                           const miopenLossContiguousMode_t is_contiguous)
+                                           void* backprop)
 {
     MIOPEN_LOG_FUNCTION(handle,
                         workspace,
@@ -124,10 +118,9 @@ miopenSoftmaxCrossEntropyWithLogitsForward(miopenHandle_t handle,
                         outputDesc,
                         output,
                         backpropDesc,
-                        backprop,
-                        is_contiguous);
+                        backprop);
 
-    LogCmdSoftmaxCrossEntropyWithLogits(inputDesc, true, is_contiguous);
+    LogCmdSoftmaxCrossEntropyWithLogits(inputDesc, true);
 
     return miopen::try_([&] {
         miopen::SoftmaxCrossEntropyWithLogitsForward(miopen::deref(handle),
@@ -140,8 +133,7 @@ miopenSoftmaxCrossEntropyWithLogitsForward(miopenHandle_t handle,
                                                      miopen::deref(outputDesc),
                                                      DataCast(output),
                                                      miopen::deref(backpropDesc),
-                                                     DataCast(backprop),
-                                                     is_contiguous);
+                                                     DataCast(backprop));
     });
 }
 
@@ -152,8 +144,7 @@ extern "C" miopenStatus_t miopenGetSoftmaxCrossEntropyWithLogitsBackwardWorkspac
     const miopenTensorDescriptor_t inputDesc,
     const miopenTensorDescriptor_t inputGradDesc,
     const miopenTensorDescriptor_t targetGradDesc,
-    size_t* sizeInBytes,
-    const miopenLossContiguousMode_t is_contiguous)
+    size_t* sizeInBytes)
 {
 
     MIOPEN_LOG_FUNCTION(handle,
@@ -162,8 +153,7 @@ extern "C" miopenStatus_t miopenGetSoftmaxCrossEntropyWithLogitsBackwardWorkspac
                         inputDesc,
                         inputGradDesc,
                         targetGradDesc,
-                        sizeInBytes,
-                        is_contiguous);
+                        sizeInBytes);
 
     return miopen::try_([&] {
         miopen::deref(sizeInBytes) = miopen::GetSoftmaxCrossEntropyWithLogitsBackwardWorkspaceSize(
@@ -172,8 +162,7 @@ extern "C" miopenStatus_t miopenGetSoftmaxCrossEntropyWithLogitsBackwardWorkspac
             miopen::deref(backpropDesc),
             miopen::deref(inputDesc),
             miopen::deref(inputGradDesc),
-            miopen::deref(targetGradDesc),
-            is_contiguous);
+            miopen::deref(targetGradDesc));
     });
 }
 
@@ -190,8 +179,7 @@ miopenSoftmaxCrossEntropyWithLogitsBackward(miopenHandle_t handle,
                                             const miopenTensorDescriptor_t inputGradDesc,
                                             void* input_grad,
                                             const miopenTensorDescriptor_t targetGradDesc,
-                                            void* target_grad,
-                                            const miopenLossContiguousMode_t is_contiguous)
+                                            void* target_grad)
 {
     MIOPEN_LOG_FUNCTION(handle,
                         workspace,
@@ -205,10 +193,9 @@ miopenSoftmaxCrossEntropyWithLogitsBackward(miopenHandle_t handle,
                         inputGradDesc,
                         input_grad,
                         targetGradDesc,
-                        target_grad,
-                        is_contiguous);
+                        target_grad);
 
-    LogCmdSoftmaxCrossEntropyWithLogits(inputDesc, false, is_contiguous);
+    LogCmdSoftmaxCrossEntropyWithLogits(inputDesc, false);
 
     return miopen::try_([&] {
         miopen::SoftmaxCrossEntropyWithLogitsBackward(miopen::deref(handle),
@@ -223,7 +210,6 @@ miopenSoftmaxCrossEntropyWithLogitsBackward(miopenHandle_t handle,
                                                       miopen::deref(inputGradDesc),
                                                       DataCast(input_grad),
                                                       miopen::deref(targetGradDesc),
-                                                      DataCast(target_grad),
-                                                      is_contiguous);
+                                                      DataCast(target_grad));
     });
 }
