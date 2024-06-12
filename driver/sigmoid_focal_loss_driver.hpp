@@ -40,9 +40,6 @@
 #include <iostream>
 #include <vector>
 
-// #define DEBUGGING
-// #define COMPARE_WITH_ROCM
-
 template <typename TIO>
 void mloSigmoidFocalLossUnreducedFwdRunHost(TIO* input,
                                             miopenTensorDescriptor_t inputDesc,
@@ -363,6 +360,7 @@ private:
     float gamma;
     float divisor;
     bool isContiguous;
+    bool isTargetGradientComputed;
     miopenLossReductionMode_t reduction;
 
     size_t workSpaceSizeInBytes;
@@ -383,10 +381,11 @@ int SigmoidFocalLossDriver<TIO>::ParseCmdLineArgs(int argc, char* argv[])
 template <typename TIO>
 int SigmoidFocalLossDriver<TIO>::GetandSetData()
 {
-    auto inDims  = inflags.GetValueTensor("DimLengths").lengths;
+    auto inDims              = inflags.GetValueTensor("dim-lengths").lengths;
     alpha        = inflags.GetValueDouble("alpha");
     gamma        = inflags.GetValueDouble("gamma");
     isContiguous = inflags.GetValueInt("is-contiguous") == 1 ? true : false;
+    isTargetGradientComputed = inflags.GetValueInt("target-gradient") == 1 ? true : false;
     reduction    = static_cast<miopenLossReductionMode_t>(inflags.GetValueInt("reduction"));
 
     std::vector<int> inStride = ComputeStrides(inDims);
@@ -395,7 +394,13 @@ int SigmoidFocalLossDriver<TIO>::GetandSetData()
     SetTensorNd(targetDesc, inDims, inStride, data_type);
     SetTensorNd(doutputDesc, inDims, data_type);
     SetTensorNd(dinputDesc, inDims, data_type);
-    SetTensorNd(dtargetDesc, inDims, data_type);
+
+    std::vector<int> dtargetDim(0);
+    SetTensorNd(dtargetDesc, dtargetDim, data_type);
+    if(isTargetGradientComputed)
+    {
+        SetTensorNd(dtargetDesc, inDims, data_type);
+    }
 
     if(reduction == MIOPEN_LOSS_REDUCTION_NONE)
     {
@@ -436,12 +441,14 @@ int SigmoidFocalLossDriver<TIO>::AddCmdLineArgs()
 {
     inflags.AddInputFlag("forw", 'F', "1", "Run only Forward (Default=1)", "int");
     inflags.AddTensorFlag(
-        "DimLengths", 'D', "256x4x2", "The dimensional lengths of the input tensor");
+        "dim-lengths", 'D', "256x4x2", "The dimensional lengths of the input tensor");
     inflags.AddInputFlag("is-contiguous", 'c', "1", "is-contiguous (Default=1)", "int");
     inflags.AddInputFlag(
         "reduction", 'R', "0", "reduction mode: 0(default) - unreduced, 1 - sum, 2 -mean", "int");
     inflags.AddInputFlag("alpha", 'A', "0.25", "Alpha (Default=0.25)", "float");
     inflags.AddInputFlag("gamma", 'G', "2", "Gamma (Default=2)", "float");
+    inflags.AddInputFlag(
+        "target-gradient", 'T', "0", "Is target gradient computed (Default=0)", "int");
     inflags.AddInputFlag("iter", 'i', "10", "Number of Iterations (Default=10)", "int");
     inflags.AddInputFlag("verify", 'V', "1", "Verify Each Layer (Default=1)", "int");
     inflags.AddInputFlag("time", 't', "0", "Time Each Layer (Default=0)", "int");
@@ -616,6 +623,11 @@ int SigmoidFocalLossDriver<TIO>::RunBackwardGPU()
 
     for(int i = 0; i < inflags.GetValueInt("iter"); i++)
     {
+        void* p_dtarget = nullptr;
+        if(isTargetGradientComputed)
+        {
+            p_dtarget = dtarget_dev->GetMem();
+        }
 
         miopenSigmoidFocalLossBackward(GetHandle(),
                                        inputDesc,
@@ -627,7 +639,7 @@ int SigmoidFocalLossDriver<TIO>::RunBackwardGPU()
                                        dinputDesc,
                                        dinput_dev->GetMem(),
                                        dtargetDesc,
-                                       dtarget_dev->GetMem(),
+                                       p_dtarget,
                                        alpha,
                                        gamma,
                                        reduction);
@@ -656,7 +668,7 @@ int SigmoidFocalLossDriver<TIO>::RunBackwardGPU()
     if(dinput_dev->FromGPU(GetStream(), dinput.data()) != 0)
         std::cerr << "Error copying (dI_dev) from GPU, size: " << dinput_dev->GetSize()
                   << std::endl;
-    if(dtarget_dev->FromGPU(GetStream(), dtarget.data()) != 0)
+    if(isTargetGradientComputed && dtarget_dev->FromGPU(GetStream(), dtarget.data()) != 0)
         std::cerr << "Error copying (dT_dev) from GPU, size: " << dtarget_dev->GetSize()
                   << std::endl;
 
@@ -666,6 +678,11 @@ int SigmoidFocalLossDriver<TIO>::RunBackwardGPU()
 template <typename TIO>
 int SigmoidFocalLossDriver<TIO>::RunBackwardCPU()
 {
+    TIO* p_dtarget = nullptr;
+    if(isTargetGradientComputed)
+    {
+        p_dtarget = dtargetHost.data();
+    }
     if(reduction == MIOPEN_LOSS_REDUCTION_NONE)
     {
 
@@ -677,26 +694,26 @@ int SigmoidFocalLossDriver<TIO>::RunBackwardCPU()
                                                     doutputDesc,
                                                     dinputHost.data(),
                                                     dinputDesc,
-                                                    dtargetHost.data(),
+                                                    p_dtarget,
                                                     dtargetDesc,
                                                     alpha,
                                                     gamma);
     }
     else
     {
-        mloSigmoidFocalLossBwdRunHost<TIO>(input.data(),
-                                           inputDesc,
-                                           target.data(),
-                                           targetDesc,
-                                           doutput.data(),
-                                           doutputDesc,
-                                           dinputHost.data(),
-                                           dinputDesc,
-                                           dtargetHost.data(),
-                                           dtargetDesc,
-                                           alpha,
-                                           gamma,
-                                           divisor);
+            mloSigmoidFocalLossBwdRunHost<TIO>(input.data(),
+                                               inputDesc,
+                                               target.data(),
+                                               targetDesc,
+                                               doutput.data(),
+                                               doutputDesc,
+                                               dinputHost.data(),
+                                               dinputDesc,
+                                               p_dtarget,
+                                               dtargetDesc,
+                                               alpha,
+                                               gamma,
+                                               divisor);
     }
 
     return miopenStatusSuccess;
@@ -706,12 +723,7 @@ template <typename TIO>
 int SigmoidFocalLossDriver<TIO>::VerifyForward()
 {
     RunForwardCPU();
-#ifdef DEBUGGING
-    for(int i = 0; i < miopen::deref(outputDesc).GetElementSize(); ++i)
-    {
-        std::cout << output.data()[i] << " " << outputHost.data()[i] << std::endl;
-    }
-#endif
+
     double tolerance = std::numeric_limits<TIO>::epsilon() * 10;
     auto error       = miopen::rms_range(outputHost, output);
 
@@ -734,16 +746,6 @@ template <typename TIO>
 int SigmoidFocalLossDriver<TIO>::VerifyBackward()
 {
     RunBackwardCPU();
-#ifdef DEBUGGING
-    for(int i = 0; i < miopen::deref(dinputDesc).GetElementSize(); ++i)
-    {
-        std::cout << dinput.data()[i] << " " << dinputHost.data()[i] << std::endl;
-    }
-    for(int i = 0; i < miopen::deref(dtargetDesc).GetElementSize(); ++i)
-    {
-        std::cout << dtarget.data()[i] << " " << dtargetHost.data()[i] << std::endl;
-    }
-#endif
 
     double tolerance  = std::numeric_limits<TIO>::epsilon() * 10;
     auto dinputError  = miopen::rms_range(dinputHost, dinput);
@@ -755,7 +757,7 @@ int SigmoidFocalLossDriver<TIO>::VerifyBackward()
                   << " > " << tolerance << std::endl;
         return EC_VerifyFwd;
     }
-    else if(!std::isfinite(dtargetError) || dtargetError > tolerance)
+    else if(isTargetGradientComputed && (!std::isfinite(dtargetError) || dtargetError > tolerance))
     {
         std::cout << "Backward " << reduction << " Sigmoid Focal Loss FAILED: " << dtargetError
                   << " > " << tolerance << std::endl;

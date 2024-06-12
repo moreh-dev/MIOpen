@@ -50,7 +50,8 @@ struct SigmoidFocalLossProblemDescription : ProblemDescriptionBase
         : inputDesc(inputDesc_), targetDesc(targetDesc_), reduction(reduction_)
     {
         if(!checkSameLength(inputDesc, targetDesc))
-            MIOPEN_THROW(miopenStatusBadParm, "Loss: Input, target tensor sizes do not match.");
+            MIOPEN_THROW(miopenStatusBadParm,
+                         "SigmoidFocalLoss: Input, target tensor sizes do not match.");
     }
 
     const TensorDescriptor& GetInputDesc() const { return inputDesc; }
@@ -71,6 +72,10 @@ struct SigmoidFocalLossFwdProblemDescription : SigmoidFocalLossProblemDescriptio
         : SigmoidFocalLossProblemDescription(inputDesc_, targetDesc_, reduction_),
           outputDesc(outputDesc_)
     {
+        miopenDataType_t dtype = inputDesc.GetType();
+        if(dtype != targetDesc.GetType() || dtype != outputDesc.GetType())
+            MIOPEN_THROW(miopenStatusBadParm,
+                         "SigmoidFocalLoss: Input, target, output tensor type do not match.");
     }
 
     NetworkConfig MakeNetworkConfig() const override;
@@ -93,6 +98,12 @@ struct SigmoidFocalLossBwdProblemDescription : SigmoidFocalLossProblemDescriptio
           dinputDesc(dinputDesc_),
           dtargetDesc(dtargetDesc_)
     {
+        miopenDataType_t dtype = inputDesc.GetType();
+        if(dtype != targetDesc.GetType() || dtype != doutputDesc.GetType() ||
+           dtype != dinputDesc.GetType() || dtype != dtargetDesc.GetType())
+            MIOPEN_THROW(miopenStatusBadParm,
+                         "SigmoidFocalLoss: Input, target, doutput, dinput, dtarget tensor type do "
+                         "not match.");
     }
 
     NetworkConfig MakeNetworkConfig() const override;

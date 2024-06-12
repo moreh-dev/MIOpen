@@ -34,9 +34,21 @@
 #define TEST_FWD_UNREDUCED
 #define TEST_BWD_UNREDUCED
 
+MIOPEN_DECLARE_ENV_VAR_STR(MIOPEN_TEST_FLOAT_ARG)
 MIOPEN_DECLARE_ENV_VAR_BOOL(MIOPEN_TEST_ALL)
 
 namespace sigmoidfocalloss {
+
+std::string GetFloatArg()
+{
+    const auto& tmp = miopen::GetStringEnv(ENV(MIOPEN_TEST_FLOAT_ARG));
+    if(tmp.empty())
+    {
+        return "";
+    }
+    return tmp;
+}
+
 struct SigmoidFocalLossForwardTestFloat32 : SigmoidFocalLossFwdTest<float>
 {
 };
@@ -91,7 +103,8 @@ using namespace sigmoidfocalloss;
 #ifdef TEST_FWD_REDUCED
 TEST_P(SigmoidFocalLossForwardTestFloat32, SigmoidFocalLossForwardTest)
 {
-    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
+    if(miopen::IsUnset(ENV(MIOPEN_TEST_ALL)) ||
+       (miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && (GetFloatArg() == "--float")))
     {
         RunTest();
         Verify();
@@ -108,7 +121,8 @@ INSTANTIATE_TEST_SUITE_P(SigmoidFocalLossForwardTestSet,
 
 TEST_P(SigmoidFocalLossForwardTestFloat16, SigmoidFocalLossForwardTest)
 {
-    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
+    if(miopen::IsUnset(ENV(MIOPEN_TEST_ALL)) ||
+       (miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && (GetFloatArg() == "--half")))
     {
         RunTest();
         Verify();
@@ -125,7 +139,8 @@ INSTANTIATE_TEST_SUITE_P(SigmoidFocalLossForwardTestSet,
 
 TEST_P(SigmoidFocalLossForwardTestBFloat16, SigmoidFocalLossForwardTest)
 {
-    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
+    if(miopen::IsUnset(ENV(MIOPEN_TEST_ALL)) ||
+       (miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && (GetFloatArg() == "--bfloat16")))
     {
         RunTest();
         Verify();
@@ -144,7 +159,8 @@ INSTANTIATE_TEST_SUITE_P(SigmoidFocalLossForwardTestSet,
 #ifdef TEST_BWD_REDUCED
 TEST_P(SigmoidFocalLossBackwardTestFloat32, SigmoidFocalLossBackwardTest)
 {
-    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
+    if(miopen::IsUnset(ENV(MIOPEN_TEST_ALL)) ||
+       (miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && (GetFloatArg() == "--float")))
     {
         RunTest();
         Verify();
@@ -161,7 +177,8 @@ INSTANTIATE_TEST_SUITE_P(SigmoidFocalLossBackwardTestSet,
 
 TEST_P(SigmoidFocalLossBackwardTestFloat16, SigmoidFocalLossBackwardTest)
 {
-    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
+    if(miopen::IsUnset(ENV(MIOPEN_TEST_ALL)) ||
+       (miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && (GetFloatArg() == "--half")))
     {
         RunTest();
         Verify();
@@ -178,7 +195,8 @@ INSTANTIATE_TEST_SUITE_P(SigmoidFocalLossBackwardTestSet,
 
 TEST_P(SigmoidFocalLossBackwardTestBFloat16, SigmoidFocalLossBackwardTest)
 {
-    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
+    if(miopen::IsUnset(ENV(MIOPEN_TEST_ALL)) ||
+       (miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && (GetFloatArg() == "--bfloat16")))
     {
         RunTest();
         Verify();
@@ -197,7 +215,8 @@ INSTANTIATE_TEST_SUITE_P(SigmoidFocalLossBackwardTestSet,
 #ifdef TEST_FWD_UNREDUCED
 TEST_P(SigmoidFocalLossUnreducedForwardTestFloat32, SigmoidFocalLossUnreducedForwardTest)
 {
-    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
+    if(miopen::IsUnset(ENV(MIOPEN_TEST_ALL)) ||
+       (miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && (GetFloatArg() == "--float")))
     {
         RunTest();
         Verify();
@@ -214,7 +233,8 @@ INSTANTIATE_TEST_SUITE_P(SigmoidFocalLossUnreducedForwardTestSet,
 
 TEST_P(SigmoidFocalLossUnreducedForwardTestFloat16, SigmoidFocalLossUnreducedForwardTest)
 {
-    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
+    if(miopen::IsUnset(ENV(MIOPEN_TEST_ALL)) ||
+       (miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && (GetFloatArg() == "--half")))
     {
         RunTest();
         Verify();
@@ -231,7 +251,8 @@ INSTANTIATE_TEST_SUITE_P(SigmoidFocalLossUnreducedForwardTestSet,
 
 TEST_P(SigmoidFocalLossUnreducedForwardTestBFloat16, SigmoidFocalLossUnreducedForwardTest)
 {
-    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
+    if(miopen::IsUnset(ENV(MIOPEN_TEST_ALL)) ||
+       (miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && (GetFloatArg() == "--bfloat16")))
     {
         RunTest();
         Verify();
@@ -250,7 +271,8 @@ INSTANTIATE_TEST_SUITE_P(SigmoidFocalLossUnreducedForwardTestSet,
 #ifdef TEST_BWD_UNREDUCED
 TEST_P(SigmoidFocalLossUnreducedBackwardTestFloat32, SigmoidFocalLossUnreducedBackwardTest)
 {
-    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
+    if(miopen::IsUnset(ENV(MIOPEN_TEST_ALL)) ||
+       (miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && (GetFloatArg() == "--float")))
     {
         RunTest();
         Verify();
@@ -267,7 +289,8 @@ INSTANTIATE_TEST_SUITE_P(SigmoidFocalLossUnreducedBackwardTestSet,
 
 TEST_P(SigmoidFocalLossUnreducedBackwardTestFloat16, SigmoidFocalLossUnreducedBackwardTest)
 {
-    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
+    if(miopen::IsUnset(ENV(MIOPEN_TEST_ALL)) ||
+       (miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && (GetFloatArg() == "--half")))
     {
         RunTest();
         Verify();
@@ -284,7 +307,8 @@ INSTANTIATE_TEST_SUITE_P(SigmoidFocalLossUnreducedBackwardTestSet,
 
 TEST_P(SigmoidFocalLossUnreducedBackwardTestBFloat16, SigmoidFocalLossUnreducedBackwardTest)
 {
-    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
+    if(miopen::IsUnset(ENV(MIOPEN_TEST_ALL)) ||
+       (miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && (GetFloatArg() == "--bfloat16")))
     {
         RunTest();
         Verify();
