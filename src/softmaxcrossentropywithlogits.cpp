@@ -35,28 +35,7 @@
 
 namespace miopen {
 
-size_t GetSoftmaxCrossEntropyWithLogitsForwardWorkspaceSize(Handle& handle,
-                                                            const TensorDescriptor& inputDesc,
-                                                            const TensorDescriptor& targetDesc,
-                                                            const TensorDescriptor& outputDesc,
-                                                            const TensorDescriptor& backpropDesc)
-{
-    auto ctx           = ExecutionContext{&handle};
-    const auto problem = softmaxcrossentropywithlogits::FwdProblemDescription{
-        inputDesc, targetDesc, outputDesc, backpropDesc};
-
-    const auto algo    = AlgorithmName{"SoftmaxCrossEntropyWithLogitsForward"};
-    const auto solvers = solver::SolverContainer<
-        solver::softmaxcrossentropywithlogits::SoftmaxCrossEntropyWithLogitsForwardContiguous>{};
-
-    auto pair_size_vector = solvers.GetWorkspaceSizes(ctx, problem);
-
-    return pair_size_vector.empty() ? static_cast<size_t>(-1) : pair_size_vector.front().second;
-}
-
 miopenStatus_t SoftmaxCrossEntropyWithLogitsForward(Handle& handle,
-                                                    Data_t workspace,
-                                                    size_t workspaceSizeInBytes,
                                                     const TensorDescriptor& inputDesc,
                                                     ConstData_t input,
                                                     const TensorDescriptor& targetDesc,
@@ -81,9 +60,6 @@ miopenStatus_t SoftmaxCrossEntropyWithLogitsForward(Handle& handle,
         tmp.output   = output;
         tmp.backprop = backprop;
 
-        tmp.workspace            = workspace;
-        tmp.workspaceSizeInBytes = workspaceSizeInBytes;
-
         return tmp;
     }();
     const auto algo    = AlgorithmName{"SoftmaxCrossEntropyWithLogitsForward"};
@@ -95,29 +71,7 @@ miopenStatus_t SoftmaxCrossEntropyWithLogitsForward(Handle& handle,
     return miopenStatusSuccess;
 }
 
-size_t GetSoftmaxCrossEntropyWithLogitsBackwardWorkspaceSize(Handle& handle,
-                                                             const TensorDescriptor& outputGradDesc,
-                                                             const TensorDescriptor& backpropDesc,
-                                                             const TensorDescriptor& inputDesc,
-                                                             const TensorDescriptor& inputGradDesc,
-                                                             const TensorDescriptor& targetGradDesc)
-{
-    auto ctx           = ExecutionContext{&handle};
-    const auto problem = softmaxcrossentropywithlogits::BwdProblemDescription{
-        outputGradDesc, backpropDesc, inputDesc, inputGradDesc, targetGradDesc};
-
-    const auto algo    = AlgorithmName{"SoftmaxCrossEntropyWithLogitsBackward"};
-    const auto solvers = solver::SolverContainer<
-        solver::softmaxcrossentropywithlogits::SoftmaxCrossEntropyWithLogitsBackwardContiguous>{};
-
-    auto pair_size_vector = solvers.GetWorkspaceSizes(ctx, problem);
-
-    return pair_size_vector.empty() ? static_cast<size_t>(-1) : pair_size_vector.front().second;
-}
-
 miopenStatus_t SoftmaxCrossEntropyWithLogitsBackward(Handle& handle,
-                                                     Data_t workspace,
-                                                     size_t workspaceSizeInBytes,
                                                      const TensorDescriptor& outputGradDesc,
                                                      ConstData_t output_grad,
                                                      const TensorDescriptor& backpropDesc,
@@ -145,9 +99,6 @@ miopenStatus_t SoftmaxCrossEntropyWithLogitsBackward(Handle& handle,
         tmp.input       = input;
         tmp.input_grad  = input_grad;
         tmp.target_grad = target_grad;
-
-        tmp.workspace            = workspace;
-        tmp.workspaceSizeInBytes = workspaceSizeInBytes;
 
         return tmp;
     }();

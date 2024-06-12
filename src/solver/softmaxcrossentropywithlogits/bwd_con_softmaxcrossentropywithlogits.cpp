@@ -36,7 +36,7 @@
 #include <miopen/tensor_view.hpp>
 #include <limits>
 
-#define LOCAL_SIZE_CON_BWD 1024
+#define LOCAL_SIZE_CON_BWD 128
 
 namespace miopen {
 

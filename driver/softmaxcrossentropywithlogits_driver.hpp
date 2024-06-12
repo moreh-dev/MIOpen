@@ -121,8 +121,6 @@ private:
     std::unique_ptr<GPUMem> out_dev;
     std::unique_ptr<GPUMem> backprop_dev;
 
-    std::unique_ptr<GPUMem> workspace_dev_fwd;
-    std::unique_ptr<GPUMem> workspace_dev_bwd;
     std::unique_ptr<GPUMem> out_grad_dev;
     std::unique_ptr<GPUMem> in_grad_dev;
     std::unique_ptr<GPUMem> target_grad_dev;
@@ -139,9 +137,6 @@ private:
     std::vector<Tgpu> target_grad;
     std::vector<Tref> in_grad_host;
     std::vector<Tref> target_grad_host;
-
-    size_t ws_sizeInBytes_fwd = 0;
-    size_t ws_sizeInBytes_bwd = 0;
 
     std::vector<int> input_sizes;
 };
@@ -255,12 +250,6 @@ int SoftmaxCrossEntropyWithLogitsDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     out_dev      = std::unique_ptr<GPUMem>(new GPUMem(ctx, out_sz, sizeof(Tgpu)));
     backprop_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, backprop_sz, sizeof(Tgpu)));
 
-    workspace_dev_fwd =
-        std::unique_ptr<GPUMem>(new GPUMem(ctx, ws_sizeInBytes_fwd, sizeof(std::byte)));
-
-    workspace_dev_bwd =
-        std::unique_ptr<GPUMem>(new GPUMem(ctx, ws_sizeInBytes_bwd, sizeof(std::byte)));
-
     out_grad_dev    = std::unique_ptr<GPUMem>(new GPUMem(ctx, out_sz, sizeof(Tgpu)));
     in_grad_dev     = std::unique_ptr<GPUMem>(new GPUMem(ctx, in_sz, sizeof(Tgpu)));
     target_grad_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, target_sz, sizeof(Tgpu)));
@@ -332,8 +321,6 @@ int SoftmaxCrossEntropyWithLogitsDriver<Tgpu, Tref>::RunForwardGPU()
     for(int i = 0; i < inflags.GetValueInt("iter"); i++)
     {
         miopenSoftmaxCrossEntropyWithLogitsForward(GetHandle(),
-                                                   workspace_dev_fwd->GetMem(),
-                                                   ws_sizeInBytes_fwd,
                                                    inputDesc,
                                                    in_dev->GetMem(),
                                                    targetDesc,
@@ -397,8 +384,6 @@ int SoftmaxCrossEntropyWithLogitsDriver<Tgpu, Tref>::RunBackwardGPU()
     for(int i = 0; i < inflags.GetValueInt("iter"); i++)
     {
         miopenSoftmaxCrossEntropyWithLogitsBackward(GetHandle(),
-                                                    workspace_dev_bwd->GetMem(),
-                                                    ws_sizeInBytes_bwd,
                                                     outputGradDesc,
                                                     out_grad_dev->GetMem(),
                                                     backpropDesc,

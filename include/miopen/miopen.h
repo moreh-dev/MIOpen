@@ -6591,30 +6591,9 @@ MIOPEN_EXPORT miopenStatus_t miopenBackendInitialize(miopenBackendDescriptor_t d
  *  @{
  */
 
-/*! @brief Helper function to query the minimum workspace size required by the
- * SoftmaxCrossEntropyWithLogits Forward call
- *
- * @param handle                   MIOpen Handle (input)
- * @param inputDesc                Tensor descriptor for input tensor (input)
- * @param targetDesc               Tensor descriptor for target tensor (input)
- * @param outputDesc               Tensor descriptor for output tensor (input)
- * @param backpropDesc             Tensor descriptor for backprop tensor (input)
- * @param sizeInBytes              Pointer to data to return the minimum workspace size (output)
- * @return                         miopenStatus_t
- */
-MIOPEN_EXPORT miopenStatus_t miopenGetSoftmaxCrossEntropyWithLogitsForwardWorkspaceSize(
-    miopenHandle_t handle,
-    const miopenTensorDescriptor_t inputDesc,
-    const miopenTensorDescriptor_t targetDesc,
-    const miopenTensorDescriptor_t outputDesc,
-    const miopenTensorDescriptor_t backpropDesc,
-    size_t* sizeInBytes);
-
 /*! @brief Execute a softmaxcrossentropywithlogits forward layer
  *
  * @param handle                MIOpen handle (input)
- * @param workspace             Pointer to workspace (input)
- * @param workspaceSizeInBytes  Size of workspace buffer (input)
  * @param inputDesc             Tensor descriptor for input  tensor (input)
  * @param input                 Data tensor input  (input)
  * @param targetDesc            Tensor descriptor for target tensor (input)
@@ -6627,8 +6606,6 @@ MIOPEN_EXPORT miopenStatus_t miopenGetSoftmaxCrossEntropyWithLogitsForwardWorksp
  */
 MIOPEN_EXPORT miopenStatus_t
 miopenSoftmaxCrossEntropyWithLogitsForward(miopenHandle_t handle,
-                                           void* workspace,
-                                           size_t workspaceSizeInBytes,
                                            const miopenTensorDescriptor_t inputDesc,
                                            const void* input,
                                            const miopenTensorDescriptor_t targetDesc,
@@ -6638,32 +6615,9 @@ miopenSoftmaxCrossEntropyWithLogitsForward(miopenHandle_t handle,
                                            const miopenTensorDescriptor_t backpropDesc,
                                            void* backprop);
 
-/*! @brief Helper function to query the minimum workspace size required by the
- * SoftmaxCrossEntropyWithLogits Backward call
- *
- * @param handle                   MIOpen Handle (input)
- * @param outputGradDesc           Tensor descriptor for output grad tensor (input)
- * @param backpropDesc             Tensor descriptor for backprop tensor (input)
- * @param inputDesc                Tensor descriptor for input tensor (input)
- * @param inputGradDesc            Tensor descriptor for input grad tensor (input)
- * @param targetGradDesc           Tensor descriptor for target grad tensor (input)
- * @param sizeInBytes              Pointer to data to return the minimum workspace size (output)
- * @return                         miopenStatus_t
- */
-MIOPEN_EXPORT miopenStatus_t miopenGetSoftmaxCrossEntropyWithLogitsBackwardWorkspaceSize(
-    miopenHandle_t handle,
-    const miopenTensorDescriptor_t outputGradDesc,
-    const miopenTensorDescriptor_t backpropDesc,
-    const miopenTensorDescriptor_t inputDesc,
-    const miopenTensorDescriptor_t inputGradDesc,
-    const miopenTensorDescriptor_t targetGradDesc,
-    size_t* sizeInBytes);
-
 /*! @brief Execute a softmaxcrossentropywithlogits backward layer
  *
  * @param handle                   MIOpen handle (input)
- * @param workspace                Pointer to workspace (input)
- * @param workspaceSizeInBytes     Size of workspace buffer (input)
  * @param outputGradDesc           Tensor descriptor for output grad tensor (input)
  * @param output_grad              Data tensor output grad (input)
  * @param backpropDesc             Tensor descriptor for backprop tensor (input)
@@ -6678,8 +6632,6 @@ MIOPEN_EXPORT miopenStatus_t miopenGetSoftmaxCrossEntropyWithLogitsBackwardWorks
  */
 MIOPEN_EXPORT miopenStatus_t
 miopenSoftmaxCrossEntropyWithLogitsBackward(miopenHandle_t handle,
-                                            void* workspace,
-                                            size_t workspaceSizeInBytes,
                                             const miopenTensorDescriptor_t outputGradDesc,
                                             const void* output_grad,
                                             const miopenTensorDescriptor_t backpropDesc,

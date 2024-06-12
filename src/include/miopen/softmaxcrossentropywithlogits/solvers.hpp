@@ -79,8 +79,6 @@ struct SoftmaxCrossEntropyWithLogitsForwardContiguous final : SoftmaxCrossEntrop
     ConvSolution GetSolution(
         const ExecutionContext& context,
         const miopen::softmaxcrossentropywithlogits::FwdProblemDescription& problem) const override;
-
-    bool MayNeedWorkspace() const override { return true; }
 };
 
 // BACKWARD CONTIGUOUS
@@ -99,8 +97,6 @@ struct SoftmaxCrossEntropyWithLogitsBackwardContiguous final
     ConvSolution GetSolution(
         const ExecutionContext& context,
         const miopen::softmaxcrossentropywithlogits::BwdProblemDescription& problem) const override;
-
-    bool MayNeedWorkspace() const override { return true; }
 };
 
 } // namespace softmaxcrossentropywithlogits

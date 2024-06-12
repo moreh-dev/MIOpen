@@ -51,11 +51,8 @@ struct FwdInvokeParams : public miopen::InvokeParams
     Data_t output      = nullptr;
     Data_t backprop    = nullptr;
 
-    size_t workspaceSizeInBytes = 0;
-    Data_t workspace            = nullptr;
-
-    std::size_t GetWorkspaceSize() const { return workspaceSizeInBytes; }
-    Data_t GetWorkspace() const { return workspace; }
+    std::size_t GetWorkspaceSize() const { return 0; }
+    Data_t GetWorkspace() const { return nullptr; }
 };
 
 struct BwdInvokeParams : public miopen::InvokeParams
@@ -75,11 +72,8 @@ struct BwdInvokeParams : public miopen::InvokeParams
     Data_t input_grad       = nullptr;
     Data_t target_grad      = nullptr;
 
-    size_t workspaceSizeInBytes = 0;
-    Data_t workspace            = nullptr;
-
-    std::size_t GetWorkspaceSize() const { return workspaceSizeInBytes; }
-    Data_t GetWorkspace() const { return workspace; }
+    std::size_t GetWorkspaceSize() const { return 0; }
+    Data_t GetWorkspace() const { return nullptr; }
 };
 
 } // namespace softmaxcrossentropywithlogits

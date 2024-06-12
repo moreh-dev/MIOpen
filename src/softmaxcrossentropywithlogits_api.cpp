@@ -74,31 +74,8 @@ static void LogCmdSoftmaxCrossEntropyWithLogits(const miopenTensorDescriptor_t i
     }
 }
 
-extern "C" miopenStatus_t miopenGetSoftmaxCrossEntropyWithLogitsForwardWorkspaceSize(
-    miopenHandle_t handle,
-    const miopenTensorDescriptor_t inputDesc,
-    const miopenTensorDescriptor_t targetDesc,
-    const miopenTensorDescriptor_t outputDesc,
-    const miopenTensorDescriptor_t backpropDesc,
-    size_t* sizeInBytes)
-{
-
-    MIOPEN_LOG_FUNCTION(handle, inputDesc, targetDesc, outputDesc, backpropDesc, sizeInBytes);
-
-    return miopen::try_([&] {
-        miopen::deref(sizeInBytes) = miopen::GetSoftmaxCrossEntropyWithLogitsForwardWorkspaceSize(
-            miopen::deref(handle),
-            miopen::deref(inputDesc),
-            miopen::deref(targetDesc),
-            miopen::deref(outputDesc),
-            miopen::deref(backpropDesc));
-    });
-}
-
 extern "C" miopenStatus_t
 miopenSoftmaxCrossEntropyWithLogitsForward(miopenHandle_t handle,
-                                           void* workspace,
-                                           size_t workspaceSizeInBytes,
                                            const miopenTensorDescriptor_t inputDesc,
                                            const void* input,
                                            const miopenTensorDescriptor_t targetDesc,
@@ -108,24 +85,13 @@ miopenSoftmaxCrossEntropyWithLogitsForward(miopenHandle_t handle,
                                            const miopenTensorDescriptor_t backpropDesc,
                                            void* backprop)
 {
-    MIOPEN_LOG_FUNCTION(handle,
-                        workspace,
-                        workspaceSizeInBytes,
-                        inputDesc,
-                        input,
-                        targetDesc,
-                        target,
-                        outputDesc,
-                        output,
-                        backpropDesc,
-                        backprop);
+    MIOPEN_LOG_FUNCTION(
+        handle, inputDesc, input, targetDesc, target, outputDesc, output, backpropDesc, backprop);
 
     LogCmdSoftmaxCrossEntropyWithLogits(inputDesc, true);
 
     return miopen::try_([&] {
         miopen::SoftmaxCrossEntropyWithLogitsForward(miopen::deref(handle),
-                                                     DataCast(workspace),
-                                                     workspaceSizeInBytes,
                                                      miopen::deref(inputDesc),
                                                      DataCast(input),
                                                      miopen::deref(targetDesc),
@@ -137,39 +103,8 @@ miopenSoftmaxCrossEntropyWithLogitsForward(miopenHandle_t handle,
     });
 }
 
-extern "C" miopenStatus_t miopenGetSoftmaxCrossEntropyWithLogitsBackwardWorkspaceSize(
-    miopenHandle_t handle,
-    const miopenTensorDescriptor_t outputGradDesc,
-    const miopenTensorDescriptor_t backpropDesc,
-    const miopenTensorDescriptor_t inputDesc,
-    const miopenTensorDescriptor_t inputGradDesc,
-    const miopenTensorDescriptor_t targetGradDesc,
-    size_t* sizeInBytes)
-{
-
-    MIOPEN_LOG_FUNCTION(handle,
-                        outputGradDesc,
-                        backpropDesc,
-                        inputDesc,
-                        inputGradDesc,
-                        targetGradDesc,
-                        sizeInBytes);
-
-    return miopen::try_([&] {
-        miopen::deref(sizeInBytes) = miopen::GetSoftmaxCrossEntropyWithLogitsBackwardWorkspaceSize(
-            miopen::deref(handle),
-            miopen::deref(outputGradDesc),
-            miopen::deref(backpropDesc),
-            miopen::deref(inputDesc),
-            miopen::deref(inputGradDesc),
-            miopen::deref(targetGradDesc));
-    });
-}
-
 extern "C" miopenStatus_t
 miopenSoftmaxCrossEntropyWithLogitsBackward(miopenHandle_t handle,
-                                            void* workspace,
-                                            size_t workspaceSizeInBytes,
                                             const miopenTensorDescriptor_t outputGradDesc,
                                             const void* output_grad,
                                             const miopenTensorDescriptor_t backpropDesc,
@@ -182,8 +117,6 @@ miopenSoftmaxCrossEntropyWithLogitsBackward(miopenHandle_t handle,
                                             void* target_grad)
 {
     MIOPEN_LOG_FUNCTION(handle,
-                        workspace,
-                        workspaceSizeInBytes,
                         outputGradDesc,
                         output_grad,
                         backpropDesc,
@@ -199,8 +132,6 @@ miopenSoftmaxCrossEntropyWithLogitsBackward(miopenHandle_t handle,
 
     return miopen::try_([&] {
         miopen::SoftmaxCrossEntropyWithLogitsBackward(miopen::deref(handle),
-                                                      DataCast(workspace),
-                                                      workspaceSizeInBytes,
                                                       miopen::deref(outputGradDesc),
                                                       DataCast(output_grad),
                                                       miopen::deref(backpropDesc),

@@ -151,8 +151,6 @@ protected:
         cpu_softmaxcrossentropywithlogits_forward<T>(input, target, ref_output, ref_backprop);
 
         status = miopen::SoftmaxCrossEntropyWithLogitsForward(handle,
-                                                              workspace_dev.get(),
-                                                              ws_sizeInBytes,
                                                               input.desc,
                                                               input_dev.get(),
                                                               target.desc,
@@ -193,16 +191,11 @@ protected:
     tensor<T> ref_output;
     tensor<T> backprop;
     tensor<T> ref_backprop;
-    tensor<T> workspace;
-    tensor<T> ref_workspace;
 
     miopen::Allocator::ManageDataPtr input_dev;
     miopen::Allocator::ManageDataPtr target_dev;
-    miopen::Allocator::ManageDataPtr workspace_dev;
     miopen::Allocator::ManageDataPtr output_dev;
     miopen::Allocator::ManageDataPtr backprop_dev;
-
-    size_t ws_sizeInBytes = 0;
 };
 
 // BACKWARD TEST
@@ -274,8 +267,6 @@ protected:
             output_grad, backprop, input, ref_input_grad, ref_target_grad, true, true);
 
         status = miopen::SoftmaxCrossEntropyWithLogitsBackward(handle,
-                                                               workspace_dev.get(),
-                                                               ws_sizeInBytes,
                                                                output_grad.desc,
                                                                output_grad_dev.get(),
                                                                backprop.desc,
@@ -319,18 +310,13 @@ protected:
     tensor<T> input;
     tensor<T> input_grad;
     tensor<T> target_grad;
-    tensor<T> workspace;
 
     tensor<T> ref_input_grad;
     tensor<T> ref_target_grad;
-    tensor<T> ref_workspace;
 
     miopen::Allocator::ManageDataPtr output_grad_dev;
     miopen::Allocator::ManageDataPtr backprop_dev;
     miopen::Allocator::ManageDataPtr input_dev;
     miopen::Allocator::ManageDataPtr input_grad_dev;
     miopen::Allocator::ManageDataPtr target_grad_dev;
-    miopen::Allocator::ManageDataPtr workspace_dev;
-
-    size_t ws_sizeInBytes = 0;
 };
