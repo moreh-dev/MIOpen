@@ -32,7 +32,11 @@
 #include <miopen/rrelu/utils.hpp>
 
 #define MAX_DIMS 5
+
 #define LOCAL_SIZE_PRNG_STATE 256
+#define LOCAL_MAX_PRNG_STATE (LOCAL_SIZE_PRNG_STATE * 128)
+
+#define LOCAL_SIZE_CONTIGUOUS 256
 
 namespace miopen {
 
@@ -40,26 +44,46 @@ namespace solver {
 
 namespace rrelu {
 
-void InitPRNGState(size_t prng_stateSizeInBytes, ConvSolution& result)
+size_t GetNumStates(const ExecutionContext& context,
+                    const miopen::rrelu::ForwardProblemDescription& problem)
 {
-    auto states_num = prng_stateSizeInBytes / sizeof(prngStates);
-    size_t nthreads = std::min((unsigned long)MAX_PRNG_STATE, states_num);
+    return std::min({size_t(LOCAL_MAX_PRNG_STATE),
+                     context.GetStream().GetImage3dMaxWidth(),
+                     problem.GetInputDesc().GetElementSize()});
+}
 
+size_t GetNumThreads(const ExecutionContext& context,
+                     const miopen::rrelu::ForwardProblemDescription& problem)
+{
+    size_t size = problem.GetInputDesc().GetElementSize();
+    if(size == GetNumStates(context, problem))
+        return size;
+    size_t divisor = 1;
+    while((1ul << divisor) * divisor <= size)
+        ++divisor;
+    --divisor;
+    return (1ul << divisor);
+}
+
+void InitPRNGState(const ExecutionContext& context,
+                   const miopen::rrelu::ForwardProblemDescription& problem,
+                   ConvSolution& result)
+{
+    auto num_states   = GetNumStates(context, problem);
     auto build_params = KernelBuildParameters{
         {"RUN_INIT_PRNG", 1},
     };
-
-    result.construction_params.push_back(make_hip_kernel(
-        {LOCAL_SIZE_PRNG_STATE}, {nthreads}, "MIOpenDropout.cl", "InitKernelState", build_params));
+    result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE_PRNG_STATE},
+                                                         {num_states},
+                                                         "MIOpenDropout.cl",
+                                                         "InitKernelState",
+                                                         build_params));
 }
 
 size_t Forward::GetWorkspaceSize(const ExecutionContext& context,
                                  const miopen::rrelu::ForwardProblemDescription& problem) const
 {
-    return std::min({size_t(MAX_PRNG_STATE),
-                     context.GetStream().GetImage3dMaxWidth(),
-                     problem.GetInputDesc().GetElementSize()}) *
-           sizeof(prngStates);
+    return GetNumStates(context, problem) * sizeof(prngStates);
 }
 
 bool ContiguouseForward::IsApplicable(const ExecutionContext& /*context*/,
@@ -80,7 +104,7 @@ ContiguouseForward::GetSolution(const ExecutionContext& context,
 
     /* Phase 1: Init Pseudo random number generator states */
     {
-        InitPRNGState(GetWorkspaceSize(context, problem), result);
+        InitPRNGState(context, problem, result);
     }
 
     /* Phase 2: RReLU */
@@ -99,9 +123,8 @@ ContiguouseForward::GetSolution(const ExecutionContext& context,
             {"MAX_DIMS", MAX_DIMS},
         };
 
-        auto states_num = GetWorkspaceSize(context, problem) / sizeof(prngStates);
-        size_t nthreads = std::min((unsigned long)MAX_PRNG_STATE, states_num);
-        result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE_PRNG_STATE},
+        auto nthreads = GetNumThreads(context, problem);
+        result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE_CONTIGUOUS},
                                                              {nthreads},
                                                              "MIOpenRReLU.cpp",
                                                              "RReLUContiguous",
@@ -121,20 +144,19 @@ ContiguouseForward::GetSolution(const ExecutionContext& context,
             {
                 reset_profiling_state = true;
                 handle_.EnableProfiling(false);
-                hipStreamSynchronize(handle_.GetStream());
                 start = miopen::make_hip_event();
                 stop  = miopen::make_hip_event();
                 hipEventRecord(start.get(), handle_.GetStream());
             }
 
-            int kernelCnt   = 0;
-            auto prng_state = params.workspace;
+            int kernelCnt     = 0;
+            auto prng_state   = params.workspace;
+            size_t num_states = params.workspace_size / sizeof(prngStates);
 
             /* Phase 1: Init Pseudo random number generator states */
             {
-                unsigned long long states_num = params.workspace_size / sizeof(prngStates);
-                auto kernel                   = handle_.Run(kernels[kernelCnt++]);
-                kernel(prng_state, (ulong)0, (ulong)states_num);
+                auto kernel = handle_.Run(kernels[kernelCnt++]);
+                kernel(prng_state, (ulong)0, (ulong)num_states);
             }
 
             /* Phase 2: RReLU */
@@ -146,8 +168,9 @@ ContiguouseForward::GetSolution(const ExecutionContext& context,
                        params.noise,
                        params.lower,
                        params.upper,
+                       size,
                        prng_state,
-                       size);
+                       num_states);
             }
 
             if(reset_profiling_state)
@@ -187,7 +210,7 @@ nonContiguouseForward::GetSolution(const ExecutionContext& context,
 
     /* Phase 1: Init Pseudo random number generator states */
     {
-        InitPRNGState(GetWorkspaceSize(context, problem), result);
+        InitPRNGState(context, problem, result);
     }
 
     /* Phase 2: RReLU */
@@ -206,10 +229,9 @@ nonContiguouseForward::GetSolution(const ExecutionContext& context,
             {"MAX_DIMS", MAX_DIMS},
         };
 
-        auto states_num = GetWorkspaceSize(context, problem) / sizeof(prngStates);
-        size_t nthreads = std::min((unsigned long)MAX_PRNG_STATE, states_num);
+        auto nthreads = GetNumThreads(context, problem);
         result.construction_params.push_back(make_hip_kernel(
-            {LOCAL_SIZE_PRNG_STATE}, {nthreads}, "MIOpenRReLU.cpp", "RReLU", build_params));
+            {LOCAL_SIZE_CONTIGUOUS}, {nthreads}, "MIOpenRReLU.cpp", "RReLU", build_params));
     }
 
     result.invoker_factory = [](const std::vector<Kernel>& kernels) {
@@ -225,20 +247,19 @@ nonContiguouseForward::GetSolution(const ExecutionContext& context,
             {
                 reset_profiling_state = true;
                 handle_.EnableProfiling(false);
-                hipStreamSynchronize(handle_.GetStream());
                 start = miopen::make_hip_event();
                 stop  = miopen::make_hip_event();
                 hipEventRecord(start.get(), handle_.GetStream());
             }
 
-            int kernelCnt   = 0;
-            auto prng_state = params.workspace;
+            int kernelCnt     = 0;
+            auto prng_state   = params.workspace;
+            size_t num_states = params.workspace_size / sizeof(prngStates);
 
             /* Phase 1: Init Pseudo random number generator states */
             {
-                unsigned long long states_num = params.workspace_size / sizeof(prngStates);
-                auto kernel                   = handle_.Run(kernels[kernelCnt++]);
-                kernel(prng_state, 0, states_num);
+                auto kernel = handle_.Run(kernels[kernelCnt++]);
+                kernel(prng_state, 0, num_states);
             }
 
             /* Phase 2: RReLU */
@@ -253,10 +274,11 @@ nonContiguouseForward::GetSolution(const ExecutionContext& context,
                        params.noise,
                        params.lower,
                        params.upper,
-                       prng_state,
                        size,
                        input_tv,
-                       output_tv);
+                       output_tv,
+                       prng_state,
+                       num_states);
             }
 
             if(reset_profiling_state)

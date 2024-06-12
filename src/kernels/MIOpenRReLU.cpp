@@ -71,12 +71,13 @@ __device__ void RReLUContiguous(const TI* input,
                                 float* noise,
                                 const float lower,
                                 const float upper,
+                                const size_t N,
                                 const prngStates* state,
-                                const size_t N)
+                                const size_t num_states)
 {
     int gid = blockIdx.x * blockDim.x + threadIdx.x;
 
-    prngStates curState = state[gid];
+    prngStates curState = state[gid % num_states];
 
     for(int i = gid; i < N; i += gridDim.x * blockDim.x)
     {
@@ -96,11 +97,13 @@ extern "C" __global__ void RReLUContiguous(const INPUT_TYPE* input,
                                            float* noise,
                                            const float lower,
                                            const float upper,
+                                           const size_t N,
                                            const prngStates* state,
-                                           const size_t N)
+                                           const size_t num_states)
 {
     // instantiate the kernel
-    RReLUContiguous<INPUT_TYPE, OUTPUT_TYPE>(input, output, noise, lower, upper, state, N);
+    RReLUContiguous<INPUT_TYPE, OUTPUT_TYPE>(
+        input, output, noise, lower, upper, N, state, num_states);
 }
 
 template <typename TI, typename TO>
@@ -109,14 +112,15 @@ __device__ void RReLU(const TI* input,
                       float* noise,
                       const float lower,
                       const float upper,
-                      const prngStates* state,
                       const size_t N,
                       const tensor_view_t<MAX_DIMS> input_tv,
-                      const tensor_view_t<MAX_DIMS> output_tv)
+                      const tensor_view_t<MAX_DIMS> output_tv,
+                      const prngStates* state,
+                      const size_t num_states)
 {
     int gid = blockIdx.x * blockDim.x + threadIdx.x;
 
-    prngStates curState = state[gid];
+    prngStates curState = state[gid % num_states];
 
     for(int i = gid; i < N; i += gridDim.x * blockDim.x)
     {
@@ -140,12 +144,13 @@ extern "C" __global__ void RReLU(const INPUT_TYPE* input,
                                  float* noise,
                                  const float lower,
                                  const float upper,
-                                 const prngStates* state,
                                  const size_t N,
                                  const tensor_view_t<MAX_DIMS> input_tv,
-                                 const tensor_view_t<MAX_DIMS> output_tv)
+                                 const tensor_view_t<MAX_DIMS> output_tv,
+                                 const prngStates* state,
+                                 const size_t num_states)
 {
     // instantiate the kernel
     RReLU<INPUT_TYPE, OUTPUT_TYPE>(
-        input, output, noise, lower, upper, state, N, input_tv, output_tv);
+        input, output, noise, lower, upper, N, input_tv, output_tv, state, num_states);
 }
