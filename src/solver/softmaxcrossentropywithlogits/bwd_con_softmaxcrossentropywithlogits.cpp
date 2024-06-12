@@ -66,7 +66,7 @@ ConvSolution SoftmaxCrossEntropyWithLogitsBackwardContiguous::GetSolution(
 
     {
         auto dtype     = problem.GetInputGradDesc().GetType();
-        size_t N_total = problem.GetBatchSize();
+        size_t N_total = problem.GetBatchSize() * LOCAL_SIZE_CON_BWD;
         float infinity = std::numeric_limits<float>::max();
 
         auto kernel = KernelInfo{};

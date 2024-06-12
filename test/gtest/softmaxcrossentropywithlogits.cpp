@@ -46,26 +46,25 @@ struct SoftmaxCrossEntropyWithLogitsTestFloat : SoftmaxCrossEntropyWithLogitsTes
 {
 };
 
-// struct SoftmaxCrossEntropyWithLogitsTestHalf : SoftmaxCrossEntropyWithLogitsTest<half>
-// {
-// };
+struct SoftmaxCrossEntropyWithLogitsTestHalf : SoftmaxCrossEntropyWithLogitsTest<half>
+{
+};
 
-// struct SoftmaxCrossEntropyWithLogitsTestBFloat16 : SoftmaxCrossEntropyWithLogitsTest<bfloat16>
-// {
-// };
+struct SoftmaxCrossEntropyWithLogitsTestBFloat16 : SoftmaxCrossEntropyWithLogitsTest<bfloat16>
+{
+};
 
-// struct SoftmaxCrossEntropyWithLogitsTestFloatBwd : SoftmaxCrossEntropyWithLogitsTestBwd<float>
-// {
-// };
+struct SoftmaxCrossEntropyWithLogitsTestFloatBwd : SoftmaxCrossEntropyWithLogitsTestBwd<float>
+{
+};
 
-// struct SoftmaxCrossEntropyWithLogitsTestHalfBwd : SoftmaxCrossEntropyWithLogitsTestBwd<half>
-// {
-// };
+struct SoftmaxCrossEntropyWithLogitsTestHalfBwd : SoftmaxCrossEntropyWithLogitsTestBwd<half>
+{
+};
 
-// struct SoftmaxCrossEntropyWithLogitsTestBFloat16Bwd :
-// SoftmaxCrossEntropyWithLogitsTestBwd<bfloat16>
-// {
-// };
+struct SoftmaxCrossEntropyWithLogitsTestBFloat16Bwd : SoftmaxCrossEntropyWithLogitsTestBwd<bfloat16>
+{
+};
 
 } // namespace softmaxcrossentropywithlogits
 using namespace softmaxcrossentropywithlogits;
@@ -85,93 +84,93 @@ TEST_P(SoftmaxCrossEntropyWithLogitsTestFloat, SoftmaxCrossEntropyWithLogitsTest
     }
 };
 
-// TEST_P(SoftmaxCrossEntropyWithLogitsTestHalf, SoftmaxCrossEntropyWithLogitsTest)
-// {
-//     if((miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && GetFloatArg() == "--half") ||
-//        GetFloatArg() == "--testall")
-//     {
-//         RunTest();
-//         Verify();
-//     }
-//     else
-//     {
-//         GTEST_SKIP();
-//     }
-// };
+TEST_P(SoftmaxCrossEntropyWithLogitsTestHalf, SoftmaxCrossEntropyWithLogitsTest)
+{
+    if((miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && GetFloatArg() == "--half") ||
+       GetFloatArg() == "--testall")
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
 
-// TEST_P(SoftmaxCrossEntropyWithLogitsTestBFloat16, SoftmaxCrossEntropyWithLogitsTest)
-// {
-//     if((miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && GetFloatArg() == "--bfloat16") ||
-//        GetFloatArg() == "--testall")
-//     {
-//         RunTest();
-//         Verify();
-//     }
-//     else
-//     {
-//         GTEST_SKIP();
-//     }
-// };
+TEST_P(SoftmaxCrossEntropyWithLogitsTestBFloat16, SoftmaxCrossEntropyWithLogitsTest)
+{
+    if((miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && GetFloatArg() == "--bfloat16") ||
+       GetFloatArg() == "--testall")
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
 
 INSTANTIATE_TEST_SUITE_P(SoftmaxCrossEntropyWithLogitsTestSet,
                          SoftmaxCrossEntropyWithLogitsTestFloat,
                          testing::ValuesIn(SoftmaxCrossEntropyWithLogitsTestConfigs()));
-// INSTANTIATE_TEST_SUITE_P(SoftmaxCrossEntropyWithLogitsTestSet,
-//                          SoftmaxCrossEntropyWithLogitsTestHalf,
-//                          testing::ValuesIn(SoftmaxCrossEntropyWithLogitsTestConfigs()));
-// INSTANTIATE_TEST_SUITE_P(SoftmaxCrossEntropyWithLogitsTestSet,
-//                          SoftmaxCrossEntropyWithLogitsTestBFloat16,
-//                          testing::ValuesIn(SoftmaxCrossEntropyWithLogitsTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(SoftmaxCrossEntropyWithLogitsTestSet,
+                         SoftmaxCrossEntropyWithLogitsTestHalf,
+                         testing::ValuesIn(SoftmaxCrossEntropyWithLogitsTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(SoftmaxCrossEntropyWithLogitsTestSet,
+                         SoftmaxCrossEntropyWithLogitsTestBFloat16,
+                         testing::ValuesIn(SoftmaxCrossEntropyWithLogitsTestConfigs()));
 
-// // BACKWARD TEST
-// TEST_P(SoftmaxCrossEntropyWithLogitsTestFloatBwd, SoftmaxCrossEntropyWithLogitsTestBwd)
-// {
-//     if((miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && GetFloatArg() == "--float") ||
-//        GetFloatArg() == "--testall")
-//     {
-//         RunTest();
-//         Verify();
-//     }
-//     else
-//     {
-//         GTEST_SKIP();
-//     }
-// };
+// BACKWARD TEST
+TEST_P(SoftmaxCrossEntropyWithLogitsTestFloatBwd, SoftmaxCrossEntropyWithLogitsTestBwd)
+{
+    if((miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && GetFloatArg() == "--float") ||
+       GetFloatArg() == "--testall")
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
 
-// TEST_P(SoftmaxCrossEntropyWithLogitsTestHalfBwd, SoftmaxCrossEntropyWithLogitsTestBwd)
-// {
-//     if((miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && GetFloatArg() == "--half") ||
-//        GetFloatArg() == "--testall")
-//     {
-//         RunTest();
-//         Verify();
-//     }
-//     else
-//     {
-//         GTEST_SKIP();
-//     }
-// };
+TEST_P(SoftmaxCrossEntropyWithLogitsTestHalfBwd, SoftmaxCrossEntropyWithLogitsTestBwd)
+{
+    if((miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && GetFloatArg() == "--half") ||
+       GetFloatArg() == "--testall")
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
 
-// TEST_P(SoftmaxCrossEntropyWithLogitsTestBFloat16Bwd, SoftmaxCrossEntropyWithLogitsTestBwd)
-// {
-//     if((miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && GetFloatArg() == "--bfloat16") ||
-//        GetFloatArg() == "--testall")
-//     {
-//         RunTest();
-//         Verify();
-//     }
-//     else
-//     {
-//         GTEST_SKIP();
-//     }
-// };
+TEST_P(SoftmaxCrossEntropyWithLogitsTestBFloat16Bwd, SoftmaxCrossEntropyWithLogitsTestBwd)
+{
+    if((miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && GetFloatArg() == "--bfloat16") ||
+       GetFloatArg() == "--testall")
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
 
-// INSTANTIATE_TEST_SUITE_P(SoftmaxCrossEntropyWithLogitsTestSet,
-//                          SoftmaxCrossEntropyWithLogitsTestFloatBwd,
-//                          testing::ValuesIn(SoftmaxCrossEntropyWithLogitsTestConfigs()));
-// INSTANTIATE_TEST_SUITE_P(SoftmaxCrossEntropyWithLogitsTestSet,
-//                          SoftmaxCrossEntropyWithLogitsTestHalfBwd,
-//                          testing::ValuesIn(SoftmaxCrossEntropyWithLogitsTestConfigs()));
-// INSTANTIATE_TEST_SUITE_P(SoftmaxCrossEntropyWithLogitsTestSet,
-//                          SoftmaxCrossEntropyWithLogitsTestBFloat16Bwd,
-//                          testing::ValuesIn(SoftmaxCrossEntropyWithLogitsTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(SoftmaxCrossEntropyWithLogitsTestSet,
+                         SoftmaxCrossEntropyWithLogitsTestFloatBwd,
+                         testing::ValuesIn(SoftmaxCrossEntropyWithLogitsTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(SoftmaxCrossEntropyWithLogitsTestSet,
+                         SoftmaxCrossEntropyWithLogitsTestHalfBwd,
+                         testing::ValuesIn(SoftmaxCrossEntropyWithLogitsTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(SoftmaxCrossEntropyWithLogitsTestSet,
+                         SoftmaxCrossEntropyWithLogitsTestBFloat16Bwd,
+                         testing::ValuesIn(SoftmaxCrossEntropyWithLogitsTestConfigs()));

@@ -41,7 +41,7 @@ __device__ void softmaxcrossentropywithlogitsForwardContiguous(const TI* __restr
                                                                tensor_view_1d_t output_tv,
                                                                tensor_view_2d_t backprop_tv)
 {
-    uint64_t gid     = threadIdx.x + blockIdx.x * blockDim.x;
+    uint64_t gid     = blockIdx.x;
     uint64_t lid     = threadIdx.x;
     size_t num_class = input_tv.size[1];
 
@@ -114,11 +114,6 @@ __device__ void softmaxcrossentropywithlogitsForwardContiguous(const TI* __restr
         FLOAT_ACCUM backprop_val   = exp(val - lmax[0]) / lsum[0] - label;
         backprop[i + batch_offset] = CVT_ACCUM2FLOAT(backprop_val);
     }
-
-    if(gid < 10)
-    {
-        printf("gid: %d, lmax: %f, lsum: %f, lloss: %f\n", gid, lmax[0], lsum[0], lloss[0]);
-    }
 }
 
 extern "C" __global__ void
@@ -147,7 +142,7 @@ __device__ void softmaxcrossentropywithlogitsBackwardContiguous(const TI* __rest
                                                                 tensor_view_2d_t input_grad_tv,
                                                                 tensor_view_2d_t target_grad_tv)
 {
-    uint64_t gid     = threadIdx.x + blockIdx.x * blockDim.x;
+    uint64_t gid     = blockIdx.x;
     uint64_t lid     = threadIdx.x;
     size_t num_class = input_tv.size[1];
 

@@ -65,9 +65,9 @@ struct SoftmaxCrossEntropyWithLogitsTestCase
 inline std::vector<SoftmaxCrossEntropyWithLogitsTestCase> SoftmaxCrossEntropyWithLogitsTestConfigs()
 {
     return {
-        {{20, 30}, true},
-        // {{768, 200}, true},
-        // {{768, 128}, true},
+        // {{2000, 3000}, true},
+        {{768, 200}, true},
+        {{768, 128}, true},
     };
 }
 
@@ -175,21 +175,11 @@ protected:
         double threshold = std::numeric_limits<T>::epsilon();
 
         auto error = miopen::rms_range(ref_output, output);
-        for(int i = 0; i < output.data.size(); i++)
-        {
-            std::cout << "CPU output: " << ref_output[i] << " GPU output: " << output[i]
-                      << std::endl;
-        }
         EXPECT_TRUE(miopen::range_distance(ref_output) == miopen::range_distance(output));
         EXPECT_TRUE(error < threshold * 10) << "Error output beyond tolerance Error:" << error
                                             << ",  Thresholdx10: " << threshold * 10;
 
         auto backprop_error = miopen::rms_range(ref_backprop, backprop);
-        for(int i = 0; i < backprop.data.size(); i++)
-        {
-            std::cout << "CPU backprop: " << ref_backprop[i] << " GPU backprop: " << backprop[i]
-                      << std::endl;
-        }
         EXPECT_TRUE(miopen::range_distance(ref_backprop) == miopen::range_distance(backprop));
         EXPECT_TRUE(backprop_error < threshold * 10)
             << "Error backprop beyond tolerance Error:" << backprop_error
