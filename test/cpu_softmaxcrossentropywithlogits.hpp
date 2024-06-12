@@ -100,8 +100,6 @@ void cpu_softmaxcrossentropywithlogits_backward(tensor<T> output_grad,
     auto dO_tv = get_inner_expanded_tv_1d(output_grad.desc);
     auto B_tv  = get_inner_expanded_tv_2d(backprop.desc);
     auto I_tv  = get_inner_expanded_tv_2d(input.desc);
-    auto dI_tv = get_inner_expanded_tv_2d(input_grad.desc);
-    auto dT_tv = get_inner_expanded_tv_2d(target_grad.desc);
 
     size_t num_batches = I_tv.size[0];
     size_t num_class   = I_tv.size[1];
@@ -113,6 +111,8 @@ void cpu_softmaxcrossentropywithlogits_backward(tensor<T> output_grad,
 
         if(input_grad_out)
         {
+            auto dI_tv = get_inner_expanded_tv_2d(input_grad.desc);
+
             for(size_t i = 0; i < num_class; ++i)
             {
                 size_t Bidx        = TV2D_IDX(B_tv, gid, i);
@@ -124,6 +124,8 @@ void cpu_softmaxcrossentropywithlogits_backward(tensor<T> output_grad,
 
         if(target_grad_out)
         {
+            auto dT_tv = get_inner_expanded_tv_2d(target_grad.desc);
+
             float max_val = -std::numeric_limits<float>::infinity();
             for(size_t i = 0; i < num_class; ++i)
             {
