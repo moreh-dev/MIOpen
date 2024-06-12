@@ -89,11 +89,9 @@ struct SigmoidFocalLossTestCase
 inline std::vector<SigmoidFocalLossTestCase> SigmoidFocalLossTestConfigs()
 {
     return {
-        SigmoidFocalLossTestCase({4000}),            // 1D cont
-        SigmoidFocalLossTestCase({100, 500}),        // 2D cont
-        SigmoidFocalLossTestCase({100, 500}, false), // 2D non-cont
-        // SigmoidFocalLossTestCase({2, 2}), // 2D non-cont
-        // SigmoidFocalLossTestCase({2, 2}, false), // 2D non-cont
+        SigmoidFocalLossTestCase({4000}),                   // 1D cont
+        SigmoidFocalLossTestCase({100, 500}),               // 2D cont
+        SigmoidFocalLossTestCase({100, 500}, false),        // 2D non-cont
         SigmoidFocalLossTestCase({10, 20, 200}),            // 3D cont
         SigmoidFocalLossTestCase({10, 20, 200}, false),     // 3D non-cont
         SigmoidFocalLossTestCase({8, 3, 20, 100}),          // 4D cont
@@ -205,7 +203,7 @@ protected:
         std::fill(dInputHost.begin(), dInputHost.end(), 0);
 
         dTarget = tensor<TIO>{in_dims};
-        std::fill(dInput.begin(), dInput.end(), 0);
+        std::fill(dTarget.begin(), dTarget.end(), 0);
 
         dTargetHost = tensor<TIO>{in_dims};
         std::fill(dTargetHost.begin(), dTargetHost.end(), 0);
@@ -410,7 +408,7 @@ protected:
         std::fill(dInputHost.begin(), dInputHost.end(), 0);
 
         dTarget = tensor<TIO>{in_dims};
-        std::fill(dInput.begin(), dInput.end(), 0);
+        std::fill(dTarget.begin(), dTarget.end(), 0);
 
         dTargetHost = tensor<TIO>{in_dims};
         std::fill(dTargetHost.begin(), dTargetHost.end(), 0);
