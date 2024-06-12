@@ -382,11 +382,11 @@ template <typename TIO>
 int SigmoidFocalLossDriver<TIO>::GetandSetData()
 {
     auto inDims              = inflags.GetValueTensor("dim-lengths").lengths;
-    alpha        = inflags.GetValueDouble("alpha");
-    gamma        = inflags.GetValueDouble("gamma");
-    isContiguous = inflags.GetValueInt("is-contiguous") == 1 ? true : false;
+    alpha                    = inflags.GetValueDouble("alpha");
+    gamma                    = inflags.GetValueDouble("gamma");
+    isContiguous             = inflags.GetValueInt("is-contiguous") == 1 ? true : false;
     isTargetGradientComputed = inflags.GetValueInt("target-gradient") == 1 ? true : false;
-    reduction    = static_cast<miopenLossReductionMode_t>(inflags.GetValueInt("reduction"));
+    reduction = static_cast<miopenLossReductionMode_t>(inflags.GetValueInt("reduction"));
 
     std::vector<int> inStride = ComputeStrides(inDims);
 
@@ -701,19 +701,19 @@ int SigmoidFocalLossDriver<TIO>::RunBackwardCPU()
     }
     else
     {
-            mloSigmoidFocalLossBwdRunHost<TIO>(input.data(),
-                                               inputDesc,
-                                               target.data(),
-                                               targetDesc,
-                                               doutput.data(),
-                                               doutputDesc,
-                                               dinputHost.data(),
-                                               dinputDesc,
-                                               p_dtarget,
-                                               dtargetDesc,
-                                               alpha,
-                                               gamma,
-                                               divisor);
+        mloSigmoidFocalLossBwdRunHost<TIO>(input.data(),
+                                           inputDesc,
+                                           target.data(),
+                                           targetDesc,
+                                           doutput.data(),
+                                           doutputDesc,
+                                           dinputHost.data(),
+                                           dinputDesc,
+                                           p_dtarget,
+                                           dtargetDesc,
+                                           alpha,
+                                           gamma,
+                                           divisor);
     }
 
     return miopenStatusSuccess;
