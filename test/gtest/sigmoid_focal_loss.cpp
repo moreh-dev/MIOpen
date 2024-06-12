@@ -24,7 +24,7 @@
  *
  *******************************************************************************/
 
-    #include "sigmoid_focal_loss.hpp"
+#include "sigmoid_focal_loss.hpp"
 #include "miopen/bfloat16.hpp"
 #include "tensor_holder.hpp"
 #include <miopen/env.hpp>
