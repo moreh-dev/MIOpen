@@ -65,7 +65,7 @@ struct SoftmaxCrossEntropyWithLogitsTestCase
 inline std::vector<SoftmaxCrossEntropyWithLogitsTestCase> SoftmaxCrossEntropyWithLogitsTestConfigs()
 {
     return {
-        // {{2000, 3000}, true},
+        {{2000, 3000}, true},
         {{768, 200}, true},
         {{768, 128}, true},
     };

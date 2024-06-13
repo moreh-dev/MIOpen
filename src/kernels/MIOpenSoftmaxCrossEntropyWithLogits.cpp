@@ -29,23 +29,17 @@
 #endif
 
 #include "float_types.h"
-#include "tensor_view.hpp"
 
 template <typename TI, typename TO>
 __device__ void softmaxcrossentropywithlogitsForwardContiguous(const TI* __restrict__ input,
                                                                const TI* __restrict__ target,
                                                                TO* __restrict__ output,
                                                                TO* __restrict__ backprop,
-                                                               tensor_view_2d_t input_tv,
-                                                               tensor_view_2d_t target_tv,
-                                                               tensor_view_1d_t output_tv,
-                                                               tensor_view_2d_t backprop_tv)
+                                                               size_t num_class)
 {
-    uint64_t gid     = blockIdx.x;
-    uint64_t lid     = threadIdx.x;
-    size_t num_class = input_tv.size[1];
+    uint64_t gid = blockIdx.x;
+    uint64_t lid = threadIdx.x;
 
-    //   __local FLOAT_ACCUM lmax[LOCAL_SIZE], lsum[LOCAL_SIZE], lloss[LOCAL_SIZE];
     __shared__ FLOAT_ACCUM lmax[LOCAL_SIZE], lsum[LOCAL_SIZE], lloss[LOCAL_SIZE];
     lmax[lid]           = -INFINITY;
     lsum[lid]           = 0.0f;
@@ -121,13 +115,10 @@ SoftmaxCrossEntropyWithLogitsForwardContiguous(const INPUT_TYPE* __restrict__ in
                                                const INPUT_TYPE* __restrict__ target,
                                                OUTPUT_TYPE* __restrict__ output,
                                                OUTPUT_TYPE* __restrict__ backprop,
-                                               tensor_view_2d_t input_tv,
-                                               tensor_view_2d_t target_tv,
-                                               tensor_view_1d_t output_tv,
-                                               tensor_view_2d_t backprop_tv)
+                                               size_t num_class)
 {
     softmaxcrossentropywithlogitsForwardContiguous<INPUT_TYPE, OUTPUT_TYPE>(
-        input, target, output, backprop, input_tv, target_tv, output_tv, backprop_tv);
+        input, target, output, backprop, num_class);
 }
 
 template <typename TI, typename TO>
@@ -136,24 +127,17 @@ __device__ void softmaxcrossentropywithlogitsBackwardContiguous(const TI* __rest
                                                                 const TI* __restrict__ input,
                                                                 TO* __restrict__ input_grad,
                                                                 TO* __restrict__ target_grad,
-                                                                tensor_view_1d_t output_grad_tv,
-                                                                tensor_view_2d_t backprop_tv,
-                                                                tensor_view_2d_t input_tv,
-                                                                tensor_view_2d_t input_grad_tv,
-                                                                tensor_view_2d_t target_grad_tv)
+                                                                size_t num_class)
 {
-    uint64_t gid     = blockIdx.x;
-    uint64_t lid     = threadIdx.x;
-    size_t num_class = input_tv.size[1];
+    uint64_t gid = blockIdx.x;
+    uint64_t lid = threadIdx.x;
 
     size_t batch_offset = gid * num_class;
 
-    // __local FSTYPE lmax[LOCAL_SIZE], lsum[LOCAL_SIZE];
     __shared__ FLOAT_ACCUM lmax[LOCAL_SIZE], lsum[LOCAL_SIZE];
     lmax[lid] = -INFINITY;
     lsum[lid] = 0.0f;
 
-    // __local DTYPE output_grad_val;
     __shared__ FLOAT_ACCUM output_grad_val;
     if(lid == 0)
     {
@@ -220,20 +204,8 @@ SoftmaxCrossEntropyWithLogitsBackwardContiguous(const INPUT_TYPE* __restrict__ o
                                                 const INPUT_TYPE* __restrict__ input,
                                                 OUTPUT_TYPE* __restrict__ input_grad,
                                                 OUTPUT_TYPE* __restrict__ target_grad,
-                                                tensor_view_1d_t output_grad_tv,
-                                                tensor_view_2d_t backprop_tv,
-                                                tensor_view_2d_t input_tv,
-                                                tensor_view_2d_t input_grad_tv,
-                                                tensor_view_2d_t target_grad_tv)
+                                                size_t num_class)
 {
-    softmaxcrossentropywithlogitsBackwardContiguous<INPUT_TYPE, OUTPUT_TYPE>(output_grad,
-                                                                             backprop,
-                                                                             input,
-                                                                             input_grad,
-                                                                             target_grad,
-                                                                             output_grad_tv,
-                                                                             backprop_tv,
-                                                                             input_tv,
-                                                                             input_grad_tv,
-                                                                             target_grad_tv);
+    softmaxcrossentropywithlogitsBackwardContiguous<INPUT_TYPE, OUTPUT_TYPE>(
+        output_grad, backprop, input, input_grad, target_grad, num_class);
 }

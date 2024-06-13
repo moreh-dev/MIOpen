@@ -78,7 +78,6 @@ ConvSolution SoftmaxCrossEntropyWithLogitsBackwardContiguous::GetSolution(
             {"MIOPEN_USE_BFP16", static_cast<int>(dtype == miopenBFloat16)},
             {"INPUT_TYPE", input_dtype == "bfloat16" ? "ushort" : input_dtype},
             {"OUTPUT_TYPE", output_dtype == "bfloat16" ? "ushort" : output_dtype},
-            {"D_TYPE", output_dtype == "bfloat16" ? "ushort" : output_dtype},
             {"LOCAL_SIZE", LOCAL_SIZE_CON_BWD},
             {"INFINITY", infinity},
         };
@@ -97,22 +96,15 @@ ConvSolution SoftmaxCrossEntropyWithLogitsBackwardContiguous::GetSolution(
             decltype(auto) params =
                 raw_params.CastTo<miopen::softmaxcrossentropywithlogits::BwdInvokeParams>();
 
-            auto output_grad_tv = get_inner_expanded_tv_1d(deref(params.outputGradDesc));
-            auto backprop_tv    = get_inner_expanded_tv_2d(deref(params.backpropDesc));
             auto input_tv       = get_inner_expanded_tv_2d(deref(params.inputDesc));
-            auto input_grad_tv  = get_inner_expanded_tv_2d(deref(params.inputGradDesc));
-            auto target_grad_tv = get_inner_expanded_tv_2d(deref(params.targetGradDesc));
+            size_t num_class = input_tv.size[1];
 
             kernel(params.output_grad,
                    params.backprop,
                    params.input,
                    params.input_grad,
                    params.target_grad,
-                   output_grad_tv,
-                   backprop_tv,
-                   input_tv,
-                   input_grad_tv,
-                   target_grad_tv);
+                   num_class);
         };
     };
 
