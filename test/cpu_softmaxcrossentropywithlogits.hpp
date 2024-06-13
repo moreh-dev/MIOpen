@@ -61,8 +61,13 @@ void cpu_softmaxcrossentropywithlogits_forward(tensor<T> input,
             sum += std::exp(static_cast<float>(input[Iidx]) - max_val);
         }
 
-        float log_sum = std::log(sum);
-        float loss    = 0.0f;
+        float log_sum;
+        if(sum != 0)
+            log_sum = std::log(sum);
+        else
+            log_sum = std::log(std::numeric_limits<float>::epsilon());
+
+        float loss = 0.0f;
         for(size_t i = 0; i < num_class; ++i)
         {
             size_t Iidx = TV2D_IDX(I_tv, gid, i);
@@ -142,7 +147,12 @@ void cpu_softmaxcrossentropywithlogits_backward(tensor<T> output_grad,
                 sum += std::exp(val - max_val);
             }
 
-            float log_val = std::log(sum);
+            float log_val;
+            if(sum != 0)
+                log_val = std::log(sum);
+            else
+                log_val = std::log(std::numeric_limits<float>::epsilon());
+
             for(size_t i = 0; i < num_class; ++i)
             {
                 size_t Iidx     = TV2D_IDX(I_tv, gid, i);
