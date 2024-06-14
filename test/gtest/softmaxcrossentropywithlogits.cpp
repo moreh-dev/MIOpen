@@ -73,7 +73,7 @@ using namespace softmaxcrossentropywithlogits;
 TEST_P(SoftmaxCrossEntropyWithLogitsTestFloat, SoftmaxCrossEntropyWithLogitsTest)
 {
     if((miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && GetFloatArg() == "--float") ||
-       GetFloatArg() == "--testall")
+       miopen::IsUnset(ENV(MIOPEN_TEST_ALL)))
     {
         RunTest();
         Verify();
@@ -87,7 +87,7 @@ TEST_P(SoftmaxCrossEntropyWithLogitsTestFloat, SoftmaxCrossEntropyWithLogitsTest
 TEST_P(SoftmaxCrossEntropyWithLogitsTestHalf, SoftmaxCrossEntropyWithLogitsTest)
 {
     if((miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && GetFloatArg() == "--half") ||
-       GetFloatArg() == "--testall")
+       miopen::IsUnset(ENV(MIOPEN_TEST_ALL)))
     {
         RunTest();
         Verify();
@@ -101,7 +101,7 @@ TEST_P(SoftmaxCrossEntropyWithLogitsTestHalf, SoftmaxCrossEntropyWithLogitsTest)
 TEST_P(SoftmaxCrossEntropyWithLogitsTestBFloat16, SoftmaxCrossEntropyWithLogitsTest)
 {
     if((miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && GetFloatArg() == "--bfloat16") ||
-       GetFloatArg() == "--testall")
+       miopen::IsUnset(ENV(MIOPEN_TEST_ALL)))
     {
         RunTest();
         Verify();
@@ -126,7 +126,7 @@ INSTANTIATE_TEST_SUITE_P(SoftmaxCrossEntropyWithLogitsTestSet,
 TEST_P(SoftmaxCrossEntropyWithLogitsTestFloatBwd, SoftmaxCrossEntropyWithLogitsTestBwd)
 {
     if((miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && GetFloatArg() == "--float") ||
-       GetFloatArg() == "--testall")
+       miopen::IsUnset(ENV(MIOPEN_TEST_ALL)))
     {
         RunTest();
         Verify();
@@ -140,7 +140,7 @@ TEST_P(SoftmaxCrossEntropyWithLogitsTestFloatBwd, SoftmaxCrossEntropyWithLogitsT
 TEST_P(SoftmaxCrossEntropyWithLogitsTestHalfBwd, SoftmaxCrossEntropyWithLogitsTestBwd)
 {
     if((miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && GetFloatArg() == "--half") ||
-       GetFloatArg() == "--testall")
+       miopen::IsUnset(ENV(MIOPEN_TEST_ALL)))
     {
         RunTest();
         Verify();
@@ -154,7 +154,7 @@ TEST_P(SoftmaxCrossEntropyWithLogitsTestHalfBwd, SoftmaxCrossEntropyWithLogitsTe
 TEST_P(SoftmaxCrossEntropyWithLogitsTestBFloat16Bwd, SoftmaxCrossEntropyWithLogitsTestBwd)
 {
     if((miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && GetFloatArg() == "--bfloat16") ||
-       GetFloatArg() == "--testall")
+       miopen::IsUnset(ENV(MIOPEN_TEST_ALL)))
     {
         RunTest();
         Verify();
