@@ -106,46 +106,40 @@ miopenStatus_t InstanceNormForward(Handle& handle,
 }
 
 miopenStatus_t InstanceNormBackward(Handle& handle,
-                                   const TensorDescriptor& inputDesc,
-                                   ConstData_t input,
+                                    const TensorDescriptor& inputDesc,
+                                    ConstData_t input,
                                     const TensorDescriptor& weightDesc,
-                                   ConstData_t weight,
+                                    ConstData_t weight,
                                     const TensorDescriptor& dinputDesc,
-                                   Data_t dinput,
-                                   const TensorDescriptor& doutputDesc,
-                                   ConstData_t doutput,
-                                   const TensorDescriptor& dweightDesc,
-                                   Data_t dweight,
+                                    Data_t dinput,
+                                    const TensorDescriptor& doutputDesc,
+                                    ConstData_t doutput,
+                                    const TensorDescriptor& dweightDesc,
+                                    Data_t dweight,
                                     const TensorDescriptor& dbiasDesc,
-                                   Data_t dbias,
-                                   const TensorDescriptor& meanVarDesc,
-                                   Data_t meanVar)
+                                    Data_t dbias,
+                                    const TensorDescriptor& meanVarDesc,
+                                    Data_t meanVar)
 {
     const auto problem = instancenorm::InstanceNormBwdProblemDescription{
-        inputDesc,
-        doutputDesc,
-        weightDesc,
-        meanVarDesc,
-        dinputDesc,
-        dweightDesc,
-        dbiasDesc};
+        inputDesc, doutputDesc, weightDesc, meanVarDesc, dinputDesc, dweightDesc, dbiasDesc};
 
     const auto invoke_params = [&]() {
         auto tmp          = instancenorm::InvokeParams{};
-        tmp.inputDesc   = &inputDesc;
-        tmp.doutputDesc = &doutputDesc;
-        tmp.weightDesc = &weightDesc;
-        tmp.meanVarDesc = &meanVarDesc;
-        tmp.dinputDesc = &dinputDesc;
+        tmp.inputDesc     = &inputDesc;
+        tmp.doutputDesc   = &doutputDesc;
+        tmp.weightDesc    = &weightDesc;
+        tmp.meanVarDesc   = &meanVarDesc;
+        tmp.dinputDesc    = &dinputDesc;
         tmp.scaleGradDesc = &dweightDesc;
-        tmp.biasGradDesc = &dbiasDesc;
+        tmp.biasGradDesc  = &dbiasDesc;
         tmp.input         = input;
-        tmp.doutput        = doutput;
+        tmp.doutput       = doutput;
         tmp.weight        = weight;
-        tmp.meanVar          = meanVar;
+        tmp.meanVar       = meanVar;
         tmp.dinput        = dinput;
-        tmp.scaleGrad         = dweight;
-        tmp.biasGrad       = dbias;
+        tmp.scaleGrad     = dweight;
+        tmp.biasGrad      = dbias;
         return tmp;
     }();
 

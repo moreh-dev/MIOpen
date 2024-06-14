@@ -60,13 +60,13 @@ struct InvokeParams : public miopen::InvokeParams
     Data_t meanVar     = nullptr;
 
     const TensorDescriptor* doutputDesc   = nullptr;
-    const TensorDescriptor* dinputDesc   = nullptr;
-    const TensorDescriptor* scaleGradDesc   = nullptr;
-    const TensorDescriptor* biasGradDesc   = nullptr;
-    ConstData_t doutput     = nullptr;
-    Data_t dinput      = nullptr;
-    Data_t scaleGrad     = nullptr;
-    Data_t biasGrad    = nullptr;
+    const TensorDescriptor* dinputDesc    = nullptr;
+    const TensorDescriptor* scaleGradDesc = nullptr;
+    const TensorDescriptor* biasGradDesc  = nullptr;
+    ConstData_t doutput                   = nullptr;
+    Data_t dinput                         = nullptr;
+    Data_t scaleGrad                      = nullptr;
+    Data_t biasGrad                       = nullptr;
 
     float epsilon      = 1e-05f;
     float momentum     = 0.1f;

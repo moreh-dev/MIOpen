@@ -56,7 +56,6 @@ struct InstanceNormBackwardTestBFloat16 : InstanceNormBwdTest<bfloat16>
 {
 };
 
-
 }; // namespace instancenorm
 using namespace instancenorm;
 // TEST_P(InstanceNormForwardTestFloat32, InstanceNormForwardTest)

@@ -128,7 +128,6 @@ private:
     std::unique_ptr<GPUMem> dweight_dev;
     std::unique_ptr<GPUMem> dbias_dev;
 
-
     std::vector<T> input;
     std::vector<T> output;
     std::vector<T> weight;
@@ -266,10 +265,9 @@ int InstanceNormDriver<T>::AllocateBuffersAndCopy()
     size_t meanVar_sz = GetTensorSize(meanVarDesc);
 
     size_t doutput_sz = GetTensorSize(doutputDesc);
-    size_t dinput_sz = GetTensorSize(dinputDesc);
+    size_t dinput_sz  = GetTensorSize(dinputDesc);
     size_t dweight_sz = GetTensorSize(dweightDesc);
-    size_t dbias_sz = GetTensorSize(dbiasDesc);
-
+    size_t dbias_sz   = GetTensorSize(dbiasDesc);
 
     uint32_t ctx = 0;
 
@@ -280,11 +278,11 @@ int InstanceNormDriver<T>::AllocateBuffersAndCopy()
     meanIn_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, meanIn_sz, sizeof(T)));
     varIn_dev   = std::unique_ptr<GPUMem>(new GPUMem(ctx, varIn_sz, sizeof(T)));
     meanVar_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, meanVar_sz, sizeof(T)));
-    
+
     doutput_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, doutput_sz, sizeof(T)));
-    dinput_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, dinput_sz, sizeof(T)));
+    dinput_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, dinput_sz, sizeof(T)));
     dweight_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, dweight_sz, sizeof(T)));
-    dbias_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, dbias_sz, sizeof(T)));
+    dbias_dev   = std::unique_ptr<GPUMem>(new GPUMem(ctx, dbias_sz, sizeof(T)));
 
     input   = std::vector<T>(input_sz, static_cast<T>(0.0f));
     output  = std::vector<T>(output_sz, static_cast<T>(0.0f));
@@ -295,19 +293,19 @@ int InstanceNormDriver<T>::AllocateBuffersAndCopy()
     meanVar = std::vector<T>(meanVar_sz, static_cast<T>(0.0f));
 
     doutput = std::vector<T>(doutput_sz, static_cast<T>(1.0f));
-    dinput = std::vector<T>(dinput_sz, static_cast<T>(0.0f));
+    dinput  = std::vector<T>(dinput_sz, static_cast<T>(0.0f));
     dweight = std::vector<T>(dweight_sz, static_cast<T>(0.0f));
-    dbias = std::vector<T>(dbias_sz, static_cast<T>(0.0f));
+    dbias   = std::vector<T>(dbias_sz, static_cast<T>(0.0f));
 
     output_host  = std::vector<T>(output_sz, static_cast<T>(0.0f));
     meanIn_host  = std::vector<T>(meanIn_sz, static_cast<T>(0.0f));
     varIn_host   = std::vector<T>(varIn_sz, static_cast<T>(1.0f));
     meanVar_host = std::vector<T>(meanVar_sz, static_cast<T>(0.0f));
 
-    doutput_host  = std::vector<T>(doutput_sz, static_cast<T>(0.0f));
+    doutput_host = std::vector<T>(doutput_sz, static_cast<T>(0.0f));
     dinput_host  = std::vector<T>(dinput_sz, static_cast<T>(0.0f));
-    dweight_host   = std::vector<T>(dweight_sz, static_cast<T>(0.0f));
-    dbias_host = std::vector<T>(dbias_sz, static_cast<T>(0.0f));
+    dweight_host = std::vector<T>(dweight_sz, static_cast<T>(0.0f));
+    dbias_host   = std::vector<T>(dbias_sz, static_cast<T>(0.0f));
 
     int status;
 
@@ -334,7 +332,6 @@ int InstanceNormDriver<T>::AllocateBuffersAndCopy()
     status |= dinput_dev->ToGPU(GetStream(), dinput.data());
     status |= dweight_dev->ToGPU(GetStream(), dweight.data());
     status |= dbias_dev->ToGPU(GetStream(), dbias.data());
-
 
     if(status != 0)
         std::cout << "Instance Norm Driver Error copying data to GPU\n" << std::endl;
@@ -400,10 +397,10 @@ int InstanceNormDriver<T>::RunForwardGPU()
     if(output_dev->FromGPU(GetStream(), output.data()) != 0)
         std::cerr << "Error copying (out_dev) from GPU, size: " << output_dev->GetSize()
                   << std::endl;
-    if (useInputStats)
+    if(useInputStats)
         if(meanVar_dev->FromGPU(GetStream(), meanVar.data()) != 0)
             std::cerr << "Error copying (meanVar_dev) from GPU, size: " << meanVar_dev->GetSize()
-                    << std::endl;
+                      << std::endl;
 
     return miopenStatusSuccess;
 }
@@ -411,46 +408,46 @@ int InstanceNormDriver<T>::RunForwardGPU()
 template <typename T>
 int InstanceNormDriver<T>::RunForwardCPU()
 {
-    if (useInputStats)
+    if(useInputStats)
     {
         mloInstanceNormTrainRunHost<T>(input.data(),
-                                inputDesc,
-                                output_host.data(),
-                                outputDesc,
-                                weight.data(),
-                                weightDesc,
-                                bias.data(),
-                                biasDesc,
-                                meanIn_host.data(),
-                                meanInDesc,
-                                varIn_host.data(),
-                                varInDesc,
-                                meanIn_host.data(),
-                                meanInDesc,
-                                varIn_host.data(),
-                                varInDesc,
-                                meanVar_host.data(),
-                                meanVarDesc,
-                                epsilon,
-                                momentum,
-                                useInputStats);
+                                       inputDesc,
+                                       output_host.data(),
+                                       outputDesc,
+                                       weight.data(),
+                                       weightDesc,
+                                       bias.data(),
+                                       biasDesc,
+                                       meanIn_host.data(),
+                                       meanInDesc,
+                                       varIn_host.data(),
+                                       varInDesc,
+                                       meanIn_host.data(),
+                                       meanInDesc,
+                                       varIn_host.data(),
+                                       varInDesc,
+                                       meanVar_host.data(),
+                                       meanVarDesc,
+                                       epsilon,
+                                       momentum,
+                                       useInputStats);
     }
     else
     {
         mloInstanceNormTestRunHost<T>(input.data(),
-                                inputDesc,
-                                output_host.data(),
-                                outputDesc,
-                                weight.data(),
-                                weightDesc,
-                                bias.data(),
-                                biasDesc,
-                                meanIn_host.data(),
-                                meanInDesc,
-                                varIn_host.data(),
-                                varInDesc,
-                                epsilon,
-                                useInputStats);
+                                      inputDesc,
+                                      output_host.data(),
+                                      outputDesc,
+                                      weight.data(),
+                                      weightDesc,
+                                      bias.data(),
+                                      biasDesc,
+                                      meanIn_host.data(),
+                                      meanInDesc,
+                                      varIn_host.data(),
+                                      varInDesc,
+                                      epsilon,
+                                      useInputStats);
     }
 
     return miopenStatusSuccess;
@@ -468,20 +465,20 @@ int InstanceNormDriver<T>::RunBackwardGPU()
     for(int i = 0; i < inflags.GetValueInt("iter"); i++)
     {
         miopenInstanceNormBackward(GetHandle(),
-                                  inputDesc,
-                                  input_dev->GetMem(),
-                                  weightDesc,
-                                  weight_dev->GetMem(),
-                                  dinputDesc,
-                                  dinput_dev->GetMem(),
-                                  doutputDesc,
-                                  doutput_dev->GetMem(),
-                                  dweightDesc,
-                                  dweight_dev->GetMem(),
-                                  dbiasDesc,
-                                  dbias_dev->GetMem(),
-                                  meanVarDesc,
-                                  meanVar_dev->GetMem());
+                                   inputDesc,
+                                   input_dev->GetMem(),
+                                   weightDesc,
+                                   weight_dev->GetMem(),
+                                   dinputDesc,
+                                   dinput_dev->GetMem(),
+                                   doutputDesc,
+                                   doutput_dev->GetMem(),
+                                   dweightDesc,
+                                   dweight_dev->GetMem(),
+                                   dbiasDesc,
+                                   dbias_dev->GetMem(),
+                                   meanVarDesc,
+                                   meanVar_dev->GetMem());
 
         float time = 0.0;
         miopenGetKernelTime(GetHandle(), &time);
@@ -522,19 +519,19 @@ template <typename T>
 int InstanceNormDriver<T>::RunBackwardCPU()
 {
     mloInstanceNormBackwardRunHost<T>(input.data(),
-                                 inputDesc,
-                                weight.data(),
-                                 weightDesc,
-                                dinput_host.data(),
-                                 dinputDesc,
-                                doutput.data(),
-                                 doutputDesc,
-                                dweight_host.data(),
-                                 dweightDesc,
-                                dbias_host.data(),
-                                 dbiasDesc,
-                                meanVar.data(),
-                                 meanVarDesc);
+                                      inputDesc,
+                                      weight.data(),
+                                      weightDesc,
+                                      dinput_host.data(),
+                                      dinputDesc,
+                                      doutput.data(),
+                                      doutputDesc,
+                                      dweight_host.data(),
+                                      dweightDesc,
+                                      dbias_host.data(),
+                                      dbiasDesc,
+                                      meanVar.data(),
+                                      meanVarDesc);
     return miopenStatusSuccess;
 }
 
@@ -560,16 +557,17 @@ int InstanceNormDriver<T>::VerifyForward()
     auto error_mean_var   = miopen::rms_range(meanVar_host, meanVar);
 
     if(!std::isfinite(error_output) || error_output > tolerance ||
-     ((!std::isfinite(error_mean_var) || error_mean_var > tolerance) && useInputStats))
+       ((!std::isfinite(error_mean_var) || error_mean_var > tolerance) && useInputStats))
     {
-        if (useInputStats)
+        if(useInputStats)
         {
             std::cout << "Forward Instance Norm FAILED: {" << error_output << "," << error_mean_var
-                    << "} > " << tolerance << std::endl;
+                      << "} > " << tolerance << std::endl;
         }
-        else 
+        else
         {
-            std::cout << "Forward Instance Norm FAILED: {" << error_output << "} > " << tolerance << std::endl;
+            std::cout << "Forward Instance Norm FAILED: {" << error_output << "} > " << tolerance
+                      << std::endl;
         }
         return EC_VerifyFwd;
     }
@@ -587,20 +585,20 @@ int InstanceNormDriver<T>::VerifyBackward()
     RunBackwardCPU();
     const float tolerance = GetTolerance();
     auto error_dinput     = miopen::rms_range(dinput_host, dinput);
-    auto error_dweight   = miopen::rms_range(dweight_host, dweight);
-    auto error_dbias   = miopen::rms_range(dbias_host, dbias);
+    auto error_dweight    = miopen::rms_range(dweight_host, dweight);
+    auto error_dbias      = miopen::rms_range(dbias_host, dbias);
 
-    if(!std::isfinite(error_dinput) || error_dinput > tolerance ||
-     !std::isfinite(error_dweight) || error_dweight > tolerance ||
-     !std::isfinite(error_dbias) || error_dbias > tolerance)
+    if(!std::isfinite(error_dinput) || error_dinput > tolerance || !std::isfinite(error_dweight) ||
+       error_dweight > tolerance || !std::isfinite(error_dbias) || error_dbias > tolerance)
     {
-        std::cout << "Backward Instance Norm FAILED: {" << error_dinput << "," << error_dweight << "," << error_dbias
-                << "} > " << tolerance << std::endl;
+        std::cout << "Backward Instance Norm FAILED: {" << error_dinput << "," << error_dweight
+                  << "," << error_dbias << "} > " << tolerance << std::endl;
         return EC_VerifyFwd;
     }
     else
     {
-        std::cout << "Backward Instance Norm Verifies OK on CPU reference ({" << error_dinput << "," << error_dweight << "," << error_dbias << "} < " << tolerance << ')' << std::endl;
+        std::cout << "Backward Instance Norm Verifies OK on CPU reference ({" << error_dinput << ","
+                  << error_dweight << "," << error_dbias << "} < " << tolerance << ')' << std::endl;
     }
     return miopenStatusSuccess;
 }

@@ -95,37 +95,36 @@ ConvSolution InstanceNormBwd::GetSolution(
     result.invoker_factory = [](const std::vector<Kernel>& kernels) {
         return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
             decltype(auto) kernel = handle_.Run(kernels.front());
-            decltype(auto) params =
-                raw_params.CastTo<miopen::instancenorm::InvokeParams>();
-                
-            auto x_tv                = get_inner_expanded_tv<5>(deref(params.inputDesc));
-            auto dy_tv                = get_inner_expanded_tv<5>(deref(params.doutputDesc));
-            auto scale_tv                = get_inner_expanded_tv<1>(deref(params.weightDesc));
-            auto mean_var_tv                = get_inner_expanded_tv<2>(deref(params.meanVarDesc));
-            auto dx_tv                = get_inner_expanded_tv<5>(deref(params.dinputDesc));
-            auto scale_grad_tv                = get_inner_expanded_tv<1>(deref(params.scaleGradDesc));
-            auto bias_grad_tv                = get_inner_expanded_tv<1>(deref(params.biasGradDesc));
-            auto input_dims          = deref(params.inputDesc).GetLengths();
-            auto outer_size          = input_dims[0];
-            auto inner_size          = std::accumulate(
+            decltype(auto) params = raw_params.CastTo<miopen::instancenorm::InvokeParams>();
+
+            auto x_tv          = get_inner_expanded_tv<5>(deref(params.inputDesc));
+            auto dy_tv         = get_inner_expanded_tv<5>(deref(params.doutputDesc));
+            auto scale_tv      = get_inner_expanded_tv<1>(deref(params.weightDesc));
+            auto mean_var_tv   = get_inner_expanded_tv<2>(deref(params.meanVarDesc));
+            auto dx_tv         = get_inner_expanded_tv<5>(deref(params.dinputDesc));
+            auto scale_grad_tv = get_inner_expanded_tv<1>(deref(params.scaleGradDesc));
+            auto bias_grad_tv  = get_inner_expanded_tv<1>(deref(params.biasGradDesc));
+            auto input_dims    = deref(params.inputDesc).GetLengths();
+            auto outer_size    = input_dims[0];
+            auto inner_size    = std::accumulate(
                 input_dims.begin() + 2, input_dims.end(), 1UL, std::multiplies<size_t>());
 
             kernel(params.input,
-                params.doutput,
-                params.weight,
-                params.meanVar,
-                params.dinput,
-                params.scaleGrad,
-                params.biasGrad,
-                outer_size,
-                inner_size,
-                x_tv,
-                dy_tv,
-                scale_tv,
-                mean_var_tv,
-                dx_tv,
-                scale_grad_tv,
-                bias_grad_tv);
+                   params.doutput,
+                   params.weight,
+                   params.meanVar,
+                   params.dinput,
+                   params.scaleGrad,
+                   params.biasGrad,
+                   outer_size,
+                   inner_size,
+                   x_tv,
+                   dy_tv,
+                   scale_tv,
+                   mean_var_tv,
+                   dx_tv,
+                   scale_grad_tv,
+                   bias_grad_tv);
         };
     };
 

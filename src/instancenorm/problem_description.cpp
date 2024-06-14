@@ -51,7 +51,7 @@ NetworkConfig InstanceNormFwdProblemDescription::MakeNetworkConfig() const
     auto output_dtype  = outputDesc.GetType();
     auto size          = inputDesc.GetElementSize();
     auto dim_num       = inputDesc.GetSize();
-    auto target_size = inputDesc.GetLengths()[1];
+    auto target_size   = inputDesc.GetLengths()[1];
     auto mean_in_size  = meanInDesc.GetElementSize();
     auto mean_var_size = meanVarDesc.GetElementSize();
 
@@ -72,11 +72,11 @@ NetworkConfig InstanceNormFwdProblemDescription::MakeNetworkConfig() const
 
 NetworkConfig InstanceNormBwdProblemDescription::MakeNetworkConfig() const
 {
-    auto input_dtype   = inputDesc.GetType();
-    auto output_dtype  = doutputDesc.GetType();
-    auto size          = inputDesc.GetElementSize();
-    auto dim_num       = inputDesc.GetSize();
-    auto target_size = inputDesc.GetLengths()[1];
+    auto input_dtype  = inputDesc.GetType();
+    auto output_dtype = doutputDesc.GetType();
+    auto size         = inputDesc.GetElementSize();
+    auto dim_num      = inputDesc.GetSize();
+    auto target_size  = inputDesc.GetLengths()[1];
 
     std::ostringstream ss;
 

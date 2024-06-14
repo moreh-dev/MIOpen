@@ -111,9 +111,8 @@ ConvSolution InstanceNormFwd::GetSolution(
     result.invoker_factory = [](const std::vector<Kernel>& kernels) {
         return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
             decltype(auto) kernel = handle_.Run(kernels.front());
-            decltype(auto) params =
-                raw_params.CastTo<miopen::instancenorm::InvokeParams>();
-                
+            decltype(auto) params = raw_params.CastTo<miopen::instancenorm::InvokeParams>();
+
             auto x_tv                = get_inner_expanded_tv<5>(deref(params.inputDesc));
             auto y_tv                = get_inner_expanded_tv<5>(deref(params.outputDesc));
             auto scale_tv            = get_inner_expanded_tv<1>(deref(params.weightDesc));
@@ -127,49 +126,49 @@ ConvSolution InstanceNormFwd::GetSolution(
             auto outer_size          = input_dims[0];
             auto inner_size          = std::accumulate(
                 input_dims.begin() + 2, input_dims.end(), 1UL, std::multiplies<size_t>());
-            if (params.useInputStats)
+            if(params.useInputStats)
             {
                 kernel(params.input,
-                    params.output,
-                    params.weight,
-                    params.bias,
-                    params.meanIn,
-                    params.varIn,
-                    params.meanOut,
-                    params.varOut,
-                    params.meanVar,
-                    params.epsilon,
-                    params.momentum,
-                    outer_size,
-                    inner_size,
-                    x_tv,
-                    y_tv,
-                    scale_tv,
-                    bias_tv,
-                    running_mean_in_tv,
-                    running_var_in_tv,
-                    running_mean_out_tv,
-                    running_var_out_tv,
-                    mean_var_tv);
-            } else 
-            {
-                kernel(params.input,
-                    params.output,
-                    params.weight,
-                    params.bias,
-                    params.meanIn,
-                    params.varIn,
-                    params.epsilon,
-                    outer_size,
-                    inner_size,
-                    x_tv,
-                    y_tv,
-                    scale_tv,
-                    bias_tv,
-                    running_mean_in_tv,
-                    running_var_in_tv);
+                       params.output,
+                       params.weight,
+                       params.bias,
+                       params.meanIn,
+                       params.varIn,
+                       params.meanOut,
+                       params.varOut,
+                       params.meanVar,
+                       params.epsilon,
+                       params.momentum,
+                       outer_size,
+                       inner_size,
+                       x_tv,
+                       y_tv,
+                       scale_tv,
+                       bias_tv,
+                       running_mean_in_tv,
+                       running_var_in_tv,
+                       running_mean_out_tv,
+                       running_var_out_tv,
+                       mean_var_tv);
             }
-
+            else
+            {
+                kernel(params.input,
+                       params.output,
+                       params.weight,
+                       params.bias,
+                       params.meanIn,
+                       params.varIn,
+                       params.epsilon,
+                       outer_size,
+                       inner_size,
+                       x_tv,
+                       y_tv,
+                       scale_tv,
+                       bias_tv,
+                       running_mean_in_tv,
+                       running_var_in_tv);
+            }
         };
     };
 

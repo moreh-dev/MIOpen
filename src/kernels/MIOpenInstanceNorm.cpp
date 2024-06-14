@@ -224,20 +224,20 @@ extern "C" __global__ void InstanceNormFwdTrain(const IN_OUT_TYPE* x,
 
 template <typename TIO>
 __device__ void instanceNormFwdTest(const TIO* x,
-                                     TIO* y,
-                                     const TIO* scale,
-                                     const TIO* bias,
-                                     const TIO* running_mean_in,
-                                     const TIO* running_var_in,
-                                     float eps,
-                                     uint64_t outer_size,
-                                     uint64_t inner_size,
-                                     tensor_view_t<5> x_tv,
-                                     tensor_view_t<5> y_tv,
-                                     tensor_view_t<1> scale_tv,
-                                     tensor_view_t<1> bias_tv,
-                                     tensor_view_t<1> running_mean_in_tv,
-                                     tensor_view_t<1> running_var_in_tv)
+                                    TIO* y,
+                                    const TIO* scale,
+                                    const TIO* bias,
+                                    const TIO* running_mean_in,
+                                    const TIO* running_var_in,
+                                    float eps,
+                                    uint64_t outer_size,
+                                    uint64_t inner_size,
+                                    tensor_view_t<5> x_tv,
+                                    tensor_view_t<5> y_tv,
+                                    tensor_view_t<1> scale_tv,
+                                    tensor_view_t<1> bias_tv,
+                                    tensor_view_t<1> running_mean_in_tv,
+                                    tensor_view_t<1> running_var_in_tv)
 {
     /*
      * Each group works on a single channel.
@@ -254,10 +254,12 @@ __device__ void instanceNormFwdTest(const TIO* x,
     const uint64_t lid = threadIdx.x;
 
     FLOAT_ACCUM pmean = CVT_FLOAT2ACCUM(running_mean_in[running_mean_in_tv.stride[0] * gid]);
-    FLOAT_ACCUM pvar  =  CVT_FLOAT2ACCUM(running_var_in[running_var_in_tv.stride[0] * gid]);
+    FLOAT_ACCUM pvar  = CVT_FLOAT2ACCUM(running_var_in[running_var_in_tv.stride[0] * gid]);
 
-    FLOAT_ACCUM pscale = scale ? CVT_FLOAT2ACCUM(scale[scale_tv.stride[0] * gid]) : static_cast<FLOAT_ACCUM>(1.0f);
-    FLOAT_ACCUM pbias = bias ? CVT_FLOAT2ACCUM(bias[bias_tv.stride[0] * gid]) : static_cast<FLOAT_ACCUM>(0.0f);
+    FLOAT_ACCUM pscale =
+        scale ? CVT_FLOAT2ACCUM(scale[scale_tv.stride[0] * gid]) : static_cast<FLOAT_ACCUM>(1.0f);
+    FLOAT_ACCUM pbias =
+        bias ? CVT_FLOAT2ACCUM(bias[bias_tv.stride[0] * gid]) : static_cast<FLOAT_ACCUM>(0.0f);
     for(uint64_t i = 0; i < outer_size; ++i)
     {
         for(uint64_t j = lid; j < inner_size; j += LOCAL_SIZE)
@@ -282,36 +284,36 @@ __device__ void instanceNormFwdTest(const TIO* x,
 }
 
 extern "C" __global__ void InstanceNormFwdTest(const IN_OUT_TYPE* x,
-                                                IN_OUT_TYPE* y,
-                                                const IN_OUT_TYPE* scale,
-                                                const IN_OUT_TYPE* bias,
-                                                const IN_OUT_TYPE* running_mean_in,
-                                                const IN_OUT_TYPE* running_var_in,
-                                                float eps,
-                                                uint64_t outer_size,
-                                                uint64_t inner_size,
-                                                tensor_view_t<5> x_tv,
-                                                tensor_view_t<5> y_tv,
-                                                tensor_view_t<1> scale_tv,
-                                                tensor_view_t<1> bias_tv,
-                                                tensor_view_t<1> running_mean_in_tv,
-                                                tensor_view_t<1> running_var_in_tv)
+                                               IN_OUT_TYPE* y,
+                                               const IN_OUT_TYPE* scale,
+                                               const IN_OUT_TYPE* bias,
+                                               const IN_OUT_TYPE* running_mean_in,
+                                               const IN_OUT_TYPE* running_var_in,
+                                               float eps,
+                                               uint64_t outer_size,
+                                               uint64_t inner_size,
+                                               tensor_view_t<5> x_tv,
+                                               tensor_view_t<5> y_tv,
+                                               tensor_view_t<1> scale_tv,
+                                               tensor_view_t<1> bias_tv,
+                                               tensor_view_t<1> running_mean_in_tv,
+                                               tensor_view_t<1> running_var_in_tv)
 {
     instanceNormFwdTest<IN_OUT_TYPE>(x,
-                                      y,
-                                      scale,
-                                      bias,
-                                      running_mean_in,
-                                      running_var_in,
-                                      eps,
-                                      outer_size,
-                                      inner_size,
-                                      x_tv,
-                                      y_tv,
-                                      scale_tv,
-                                      bias_tv,
-                                      running_mean_in_tv,
-                                      running_var_in_tv);
+                                     y,
+                                     scale,
+                                     bias,
+                                     running_mean_in,
+                                     running_var_in,
+                                     eps,
+                                     outer_size,
+                                     inner_size,
+                                     x_tv,
+                                     y_tv,
+                                     scale_tv,
+                                     bias_tv,
+                                     running_mean_in_tv,
+                                     running_var_in_tv);
 }
 
 template <typename TIO>
@@ -332,39 +334,42 @@ __device__ void instanceNormBwd(const TIO* x,
                                 tensor_view_t<1> scale_grad_tv,
                                 tensor_view_t<1> bias_grad_tv)
 {
-  /*
-   * Each group works on a single channel.
-   * Example)
-   * x dim = {N, C, L}
-   * => gws = {C * LOCAL_SIZE}, lws = {LOCAL_SIZE}
-   *    outer_size = N, target_size = C, inner_size = L
-   */
+    /*
+     * Each group works on a single channel.
+     * Example)
+     * x dim = {N, C, L}
+     * => gws = {C * LOCAL_SIZE}, lws = {LOCAL_SIZE}
+     *    outer_size = N, target_size = C, inner_size = L
+     */
 
-  /*
-   * var is actually rsqrt(var + eps)
-   *
-   * InstanceNorm backward formula
-   * bias_grad = sum(dy_i)
-   * scale_grad = sum(dy_i * normalized_x)
-   *            = sum(dy_i * (x_i - mean) * var)
-   * dx_i = (M * dy_i - bias_grad - normalized_x * scale_grad) * scale *
-   * var / M
-   */
+    /*
+     * var is actually rsqrt(var + eps)
+     *
+     * InstanceNorm backward formula
+     * bias_grad = sum(dy_i)
+     * scale_grad = sum(dy_i * normalized_x)
+     *            = sum(dy_i * (x_i - mean) * var)
+     * dx_i = (M * dy_i - bias_grad - normalized_x * scale_grad) * scale *
+     * var / M
+     */
     const uint64_t gid = blockIdx.x;
     const uint64_t lid = threadIdx.x;
 
-    FLOAT_ACCUM pscale = scale ? CVT_FLOAT2ACCUM(scale[scale_tv.stride[0] * gid]) : static_cast<FLOAT_ACCUM>(1.0f);
+    FLOAT_ACCUM pscale =
+        scale ? CVT_FLOAT2ACCUM(scale[scale_tv.stride[0] * gid]) : static_cast<FLOAT_ACCUM>(1.0f);
     __shared__ FLOAT_ACCUM ltmp1[LOCAL_SIZE];
     __shared__ FLOAT_ACCUM ltmp2[LOCAL_SIZE];
 
-    FLOAT_ACCUM sbias_grad = static_cast<FLOAT_ACCUM>(0.0f);
+    FLOAT_ACCUM sbias_grad  = static_cast<FLOAT_ACCUM>(0.0f);
     FLOAT_ACCUM sscale_grad = static_cast<FLOAT_ACCUM>(0.0f);
     for(uint64_t i = 0; i < outer_size; ++i)
     {
-        FLOAT_ACCUM pmean = CVT_FLOAT2ACCUM(mean_var[mean_var_tv.stride[1] * (gid * 2) + mean_var_tv.stride[0] * i]);
-        FLOAT_ACCUM pvar = CVT_FLOAT2ACCUM(mean_var[mean_var_tv.stride[1] * (gid * 2 + 1) + mean_var_tv.stride[0] * i]);
+        FLOAT_ACCUM pmean = CVT_FLOAT2ACCUM(
+            mean_var[mean_var_tv.stride[1] * (gid * 2) + mean_var_tv.stride[0] * i]);
+        FLOAT_ACCUM pvar = CVT_FLOAT2ACCUM(
+            mean_var[mean_var_tv.stride[1] * (gid * 2 + 1) + mean_var_tv.stride[0] * i]);
 
-        FLOAT_ACCUM pbias_grad = static_cast<FLOAT_ACCUM>(0.0f);
+        FLOAT_ACCUM pbias_grad  = static_cast<FLOAT_ACCUM>(0.0f);
         FLOAT_ACCUM pscale_grad = static_cast<FLOAT_ACCUM>(0.0f);
         for(uint64_t j = lid; j < inner_size; j += LOCAL_SIZE)
         {
@@ -379,9 +384,9 @@ __device__ void instanceNormBwd(const TIO* x,
             uint64_t dyidx2 = dyidx23 / dy_tv.size[3], dyidx3 = dyidx23 % dy_tv.size[3];
             uint64_t dyidx0 = i, dyidx1 = gid;
             uint64_t dyidx = dy_tv.stride[4] * dyidx4 + dy_tv.stride[3] * dyidx3 +
-                            dy_tv.stride[2] * dyidx2 + dy_tv.stride[1] * dyidx1 +
-                            dy_tv.stride[0] * dyidx0;
-            FLOAT_ACCUM xi = CVT_FLOAT2ACCUM(x[xidx]);
+                             dy_tv.stride[2] * dyidx2 + dy_tv.stride[1] * dyidx1 +
+                             dy_tv.stride[0] * dyidx0;
+            FLOAT_ACCUM xi  = CVT_FLOAT2ACCUM(x[xidx]);
             FLOAT_ACCUM dyi = CVT_FLOAT2ACCUM(dy[dyidx]);
             pbias_grad += dyi;
             pscale_grad += dyi * (xi - pmean) * pvar;
@@ -390,7 +395,7 @@ __device__ void instanceNormBwd(const TIO* x,
         ltmp1[lid] = pbias_grad;
         ltmp2[lid] = pscale_grad;
         __syncthreads();
-         for(uint32_t j = LOCAL_SIZE >> 1; j > 0; j >>= 1)
+        for(uint32_t j = LOCAL_SIZE >> 1; j > 0; j >>= 1)
         {
             if(lid < j)
             {
@@ -399,34 +404,43 @@ __device__ void instanceNormBwd(const TIO* x,
             }
             __syncthreads();
         }
-        pbias_grad = ltmp1[0];
+        pbias_grad  = ltmp1[0];
         pscale_grad = ltmp2[0];
         __syncthreads();
 
-        if (lid == 0) {
+        if(lid == 0)
+        {
             sbias_grad += pbias_grad;
             sscale_grad += pscale_grad;
         }
 
-        if (!dx) continue;
+        if(!dx)
+            continue;
 
-        for (uint64_t j = lid; j < inner_size; j += LOCAL_SIZE) {
+        for(uint64_t j = lid; j < inner_size; j += LOCAL_SIZE)
+        {
             uint64_t xidx23 = j / x_tv.size[4], xidx4 = j % x_tv.size[4];
             uint64_t xidx2 = xidx23 / x_tv.size[3], xidx3 = xidx23 % x_tv.size[3];
             uint64_t xidx0 = i, xidx1 = gid;
-            uint64_t xidx = x_tv.stride[4] * xidx4 + x_tv.stride[3] * xidx3 + x_tv.stride[2] * xidx2 + x_tv.stride[1] * xidx1 + x_tv.stride[0] * xidx0;
+            uint64_t xidx = x_tv.stride[4] * xidx4 + x_tv.stride[3] * xidx3 +
+                            x_tv.stride[2] * xidx2 + x_tv.stride[1] * xidx1 +
+                            x_tv.stride[0] * xidx0;
 
             uint64_t dyidx23 = j / dy_tv.size[4], dyidx4 = j % dy_tv.size[4];
             uint64_t dyidx2 = dyidx23 / dy_tv.size[3], dyidx3 = dyidx23 % dy_tv.size[3];
             uint64_t dyidx0 = i, dyidx1 = gid;
-            uint64_t dyidx = dy_tv.stride[4] * dyidx4 + dy_tv.stride[3] * dyidx3 + dy_tv.stride[2] * dyidx2 + dy_tv.stride[1] * dyidx1 + dy_tv.stride[0] * dyidx0;
+            uint64_t dyidx = dy_tv.stride[4] * dyidx4 + dy_tv.stride[3] * dyidx3 +
+                             dy_tv.stride[2] * dyidx2 + dy_tv.stride[1] * dyidx1 +
+                             dy_tv.stride[0] * dyidx0;
 
             uint64_t dxidx23 = j / dx_tv.size[4], dxidx4 = j % dx_tv.size[4];
             uint64_t dxidx2 = dxidx23 / dx_tv.size[3], dxidx3 = dxidx23 % dx_tv.size[3];
             uint64_t dxidx0 = i, dxidx1 = gid;
-            uint64_t dxidx = dx_tv.stride[4] * dxidx4 + dx_tv.stride[3] * dxidx3 + dx_tv.stride[2] * dxidx2 + dx_tv.stride[1] * dxidx1 + dx_tv.stride[0] * dxidx0;
+            uint64_t dxidx = dx_tv.stride[4] * dxidx4 + dx_tv.stride[3] * dxidx3 +
+                             dx_tv.stride[2] * dxidx2 + dx_tv.stride[1] * dxidx1 +
+                             dx_tv.stride[0] * dxidx0;
 
-            uint64_t M = inner_size;
+            uint64_t M      = inner_size;
             FLOAT_ACCUM dyi = CVT_FLOAT2ACCUM(dy[dyidx]);
             FLOAT_ACCUM nxi = (CVT_FLOAT2ACCUM(x[xidx]) - pmean) * pvar;
             dx[dxidx] =
@@ -434,10 +448,12 @@ __device__ void instanceNormBwd(const TIO* x,
         }
     }
 
-    if (lid == 0)
+    if(lid == 0)
     {
-        if (bias_grad) bias_grad[bias_grad_tv.stride[0] * gid] = CVT_ACCUM2FLOAT(sbias_grad);
-        if (scale_grad) scale_grad[scale_grad_tv.stride[0] * gid] = CVT_ACCUM2FLOAT(sscale_grad);
+        if(bias_grad)
+            bias_grad[bias_grad_tv.stride[0] * gid] = CVT_ACCUM2FLOAT(sbias_grad);
+        if(scale_grad)
+            scale_grad[scale_grad_tv.stride[0] * gid] = CVT_ACCUM2FLOAT(sscale_grad);
     }
 }
 
@@ -445,33 +461,33 @@ extern "C" __global__ void InstanceNormBwd(const IN_OUT_TYPE* x,
                                            const IN_OUT_TYPE* dy,
                                            const IN_OUT_TYPE* scale,
                                            IN_OUT_TYPE* mean_var,
-                                            IN_OUT_TYPE* dx,
-                                            IN_OUT_TYPE* scale_grad,
-                                            IN_OUT_TYPE* bias_grad,
-                                            uint64_t outer_size,
-                                            uint64_t inner_size,
-                                            tensor_view_t<5> x_tv,
-                                            tensor_view_t<5> dy_tv,
-                                            tensor_view_t<1> scale_tv,
-                                            tensor_view_t<2> mean_var_tv,
-                                            tensor_view_t<5> dx_tv,
-                                            tensor_view_t<1> scale_grad_tv,
-                                            tensor_view_t<1> bias_grad_tv)
+                                           IN_OUT_TYPE* dx,
+                                           IN_OUT_TYPE* scale_grad,
+                                           IN_OUT_TYPE* bias_grad,
+                                           uint64_t outer_size,
+                                           uint64_t inner_size,
+                                           tensor_view_t<5> x_tv,
+                                           tensor_view_t<5> dy_tv,
+                                           tensor_view_t<1> scale_tv,
+                                           tensor_view_t<2> mean_var_tv,
+                                           tensor_view_t<5> dx_tv,
+                                           tensor_view_t<1> scale_grad_tv,
+                                           tensor_view_t<1> bias_grad_tv)
 {
     instanceNormBwd<IN_OUT_TYPE>(x,
-                                dy,
-                                scale,
-                                mean_var,
-                                dx,
-                                scale_grad,
-                                bias_grad,
-                                outer_size,
-                                inner_size,
-                                x_tv,
-                                dy_tv,
-                                scale_tv,
-                                mean_var_tv,
-                                dx_tv,
-                                scale_grad_tv,
-                                bias_grad_tv);
+                                 dy,
+                                 scale,
+                                 mean_var,
+                                 dx,
+                                 scale_grad,
+                                 bias_grad,
+                                 outer_size,
+                                 inner_size,
+                                 x_tv,
+                                 dy_tv,
+                                 scale_tv,
+                                 mean_var_tv,
+                                 dx_tv,
+                                 scale_grad_tv,
+                                 bias_grad_tv);
 }

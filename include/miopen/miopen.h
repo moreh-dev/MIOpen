@@ -5939,20 +5939,20 @@ MIOPEN_EXPORT miopenStatus_t miopenInstanceNormForward(miopenHandle_t handle,
  * @return               miopenStatus_t
  */
 MIOPEN_EXPORT miopenStatus_t miopenInstanceNormBackward(miopenHandle_t handle,
-                                                       const miopenTensorDescriptor_t inputDesc,
-                                                       const void* input,
-                                                       const miopenTensorDescriptor_t weightDesc,
-                                                       const void* weight,
-                                                       const miopenTensorDescriptor_t dinputDesc,
-                                                       void* dinput,
-                                                       const miopenTensorDescriptor_t doutputDesc,
-                                                       const void* doutput,
-                                                       const miopenTensorDescriptor_t dweightDesc,
-                                                       void* dweight,
-                                                       const miopenTensorDescriptor_t dbiasDesc,
-                                                       void* dbias,
-                                                       const miopenTensorDescriptor_t meanVarDesc,
-                                                       void* meanVar);
+                                                        const miopenTensorDescriptor_t inputDesc,
+                                                        const void* input,
+                                                        const miopenTensorDescriptor_t weightDesc,
+                                                        const void* weight,
+                                                        const miopenTensorDescriptor_t dinputDesc,
+                                                        void* dinput,
+                                                        const miopenTensorDescriptor_t doutputDesc,
+                                                        const void* doutput,
+                                                        const miopenTensorDescriptor_t dweightDesc,
+                                                        void* dweight,
+                                                        const miopenTensorDescriptor_t dbiasDesc,
+                                                        void* dbias,
+                                                        const miopenTensorDescriptor_t meanVarDesc,
+                                                        void* meanVar);
 /** @} */
 // CLOSEOUT instancenorm DOXYGEN GROUP
 #endif

@@ -57,20 +57,20 @@ miopenStatus_t InstanceNormForward(Handle& handle,
                                    bool useInputStats);
 
 miopenStatus_t InstanceNormBackward(Handle& handle,
-                                   const TensorDescriptor& inputDesc,
-                                   ConstData_t input,
+                                    const TensorDescriptor& inputDesc,
+                                    ConstData_t input,
                                     const TensorDescriptor& weightDesc,
-                                   ConstData_t weight,
-                                   const TensorDescriptor& dinputDesc,
-                                   Data_t dinput,
-                                   const TensorDescriptor& doutputDesc,
-                                   ConstData_t doutput,
+                                    ConstData_t weight,
+                                    const TensorDescriptor& dinputDesc,
+                                    Data_t dinput,
+                                    const TensorDescriptor& doutputDesc,
+                                    ConstData_t doutput,
                                     const TensorDescriptor& dweightDesc,
-                                   Data_t dweight,
-                                   const TensorDescriptor& dbiasDesc,
-                                   Data_t dbias,
-                                   const TensorDescriptor& meanVarDesc,
-                                   Data_t meanVar);
+                                    Data_t dweight,
+                                    const TensorDescriptor& dbiasDesc,
+                                    Data_t dbias,
+                                    const TensorDescriptor& meanVarDesc,
+                                    Data_t meanVar);
 
 } // namespace miopen
 #endif // MIOPEN_INSTANCE_NORM_HPP_

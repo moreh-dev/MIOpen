@@ -63,7 +63,7 @@ struct InstanceNormFwdProblemDescription : ProblemDescriptionBase
           meanVarDesc(meanVarDesc_),
           useInputStats(useInputStats_)
     {
-        //TODO: duongle fillin this
+        // TODO: duongle fillin this
     }
 
     const TensorDescriptor& GetInputDesc() const { return inputDesc; }
@@ -109,7 +109,7 @@ struct InstanceNormBwdProblemDescription : ProblemDescriptionBase
           dweightDesc(dweightDesc_),
           dbiasDesc(biasGradDesc_)
     {
-        //TODO: duongle fillin this
+        // TODO: duongle fillin this
     }
 
     const TensorDescriptor& GetInputDesc() const { return inputDesc; }
