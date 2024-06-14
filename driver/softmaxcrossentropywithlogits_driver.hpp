@@ -139,6 +139,7 @@ private:
     std::vector<Tref> target_grad_host;
 
     std::vector<int> input_sizes;
+    bool is_compute_tar_grad = true;
 };
 
 template <typename Tgpu, typename Tref>
@@ -186,17 +187,24 @@ std::vector<int> SoftmaxCrossEntropyWithLogitsDriver<Tgpu, Tref>::GetInputTensor
 template <typename Tgpu, typename Tref>
 int SoftmaxCrossEntropyWithLogitsDriver<Tgpu, Tref>::GetandSetData()
 {
-    input_sizes = GetInputTensorDimsFromCmd();
+    input_sizes         = GetInputTensorDimsFromCmd();
+    is_compute_tar_grad = inflags.GetValueInt("compute_target_grad") == 1;
 
-    std::vector<int> in_len       = input_sizes;
-    std::vector<int> target_len   = input_sizes;
-    std::vector<int> out_len      = std::vector<int>{in_len[0]};
-    std::vector<int> backprop_len = input_sizes;
+    std::vector<int> in_len          = input_sizes;
+    std::vector<int> target_len      = input_sizes;
+    std::vector<int> out_len         = std::vector<int>{in_len[0]};
+    std::vector<int> backprop_len    = input_sizes;
+    std::vector<int> target_grad_len = input_sizes;
+    if(!is_compute_tar_grad)
+    {
+        target_grad_len = std::vector<int>{0};
+    }
 
     auto in_strides       = GetStrides(in_len, inflags.GetValueInt("contiguous"));
     auto tar_strides      = GetStrides(target_len, 1);
     auto output_strides   = GetStrides(out_len, 1);
     auto backprop_strides = GetStrides(backprop_len, 1);
+    auto tar_grad_strides = GetStrides(target_grad_len, 1);
 
     SetTensorNd(inputDesc, in_len, in_strides, data_type);
     SetTensorNd(targetDesc, target_len, tar_strides, data_type);
@@ -205,7 +213,7 @@ int SoftmaxCrossEntropyWithLogitsDriver<Tgpu, Tref>::GetandSetData()
 
     SetTensorNd(outputGradDesc, out_len, output_strides, data_type);
     SetTensorNd(inputGradDesc, in_len, in_strides, data_type);
-    SetTensorNd(targetGradDesc, target_len, tar_strides, data_type);
+    SetTensorNd(targetGradDesc, target_grad_len, tar_grad_strides, data_type);
 
     return miopenStatusSuccess;
 }
@@ -220,6 +228,8 @@ int SoftmaxCrossEntropyWithLogitsDriver<Tgpu, Tref>::AddCmdLineArgs()
                          "16,21",
                          "The dimensional lengths of the input tensor: N,C. Example: 16,64.",
                          "string");
+    inflags.AddInputFlag(
+        "compute_target_grad", 'T', "1", "Compute Target Gradient (Default=1)", "int");
     inflags.AddInputFlag("contiguous",
                          'c',
                          "1",
@@ -243,6 +253,10 @@ int SoftmaxCrossEntropyWithLogitsDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     size_t out_sz      = GetTensorSize(outputDesc);
     size_t backprop_sz = GetTensorSize(backpropDesc);
 
+    size_t out_grad_sz    = GetTensorSize(outputGradDesc);
+    size_t in_grad_sz     = GetTensorSize(inputGradDesc);
+    size_t target_grad_sz = GetTensorSize(targetGradDesc);
+
     uint32_t ctx = 0;
 
     in_dev       = std::unique_ptr<GPUMem>(new GPUMem(ctx, in_sz, sizeof(Tgpu)));
@@ -250,9 +264,16 @@ int SoftmaxCrossEntropyWithLogitsDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     out_dev      = std::unique_ptr<GPUMem>(new GPUMem(ctx, out_sz, sizeof(Tgpu)));
     backprop_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, backprop_sz, sizeof(Tgpu)));
 
-    out_grad_dev    = std::unique_ptr<GPUMem>(new GPUMem(ctx, out_sz, sizeof(Tgpu)));
-    in_grad_dev     = std::unique_ptr<GPUMem>(new GPUMem(ctx, in_sz, sizeof(Tgpu)));
-    target_grad_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, target_sz, sizeof(Tgpu)));
+    out_grad_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, out_grad_sz, sizeof(Tgpu)));
+    in_grad_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, in_grad_sz, sizeof(Tgpu)));
+    if(!is_compute_tar_grad)
+    {
+        target_grad_dev = std::unique_ptr<GPUMem>(nullptr);
+    }
+    else
+    {
+        target_grad_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, target_grad_sz, sizeof(Tgpu)));
+    }
 
     in            = std::vector<Tgpu>(in_sz, static_cast<Tgpu>(0));
     target        = std::vector<Tgpu>(target_sz, static_cast<Tgpu>(0));
@@ -261,11 +282,11 @@ int SoftmaxCrossEntropyWithLogitsDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     out_host      = std::vector<Tref>(out_sz, static_cast<Tref>(0));
     backprop_host = std::vector<Tref>(backprop_sz, static_cast<Tref>(0));
 
-    out_grad         = std::vector<Tgpu>(out_sz, static_cast<Tgpu>(0));
-    in_grad          = std::vector<Tgpu>(in_sz, static_cast<Tgpu>(0));
-    target_grad      = std::vector<Tgpu>(in_sz, static_cast<Tgpu>(0));
-    in_grad_host     = std::vector<Tref>(in_sz, static_cast<Tref>(0));
-    target_grad_host = std::vector<Tref>(in_sz, static_cast<Tref>(0));
+    out_grad         = std::vector<Tgpu>(out_grad_sz, static_cast<Tgpu>(0));
+    in_grad          = std::vector<Tgpu>(in_grad_sz, static_cast<Tgpu>(0));
+    in_grad_host     = std::vector<Tref>(in_grad_sz, static_cast<Tref>(0));
+    target_grad      = std::vector<Tgpu>(target_grad_sz, static_cast<Tgpu>(0));
+    target_grad_host = std::vector<Tref>(target_grad_sz, static_cast<Tref>(0));
 
     int status;
 
@@ -289,15 +310,16 @@ int SoftmaxCrossEntropyWithLogitsDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     }
 
     status |= target_dev->ToGPU(q, target.data());
-
     status |= out_dev->ToGPU(q, out.data());
-
     status |= backprop_dev->ToGPU(q, backprop.data());
 
     status |= in_grad_dev->ToGPU(q, in_grad.data());
-    status |= target_grad_dev->ToGPU(q, target_grad.data());
+    if(is_compute_tar_grad)
+    {
+        status |= target_grad_dev->ToGPU(q, target_grad.data());
+    }
 
-    for(int i = 0; i < out_sz; i++)
+    for(int i = 0; i < out_grad_sz; i++)
     {
         out_grad[i] = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(-10.0), static_cast<Tgpu>(10.0));
     }
@@ -383,6 +405,11 @@ int SoftmaxCrossEntropyWithLogitsDriver<Tgpu, Tref>::RunBackwardGPU()
 
     for(int i = 0; i < inflags.GetValueInt("iter"); i++)
     {
+        void* p_dtarget = nullptr;
+        if(is_compute_tar_grad)
+        {
+            p_dtarget = target_grad_dev->GetMem();
+        }
         miopenSoftmaxCrossEntropyWithLogitsBackward(GetHandle(),
                                                     outputGradDesc,
                                                     out_grad_dev->GetMem(),
@@ -393,7 +420,7 @@ int SoftmaxCrossEntropyWithLogitsDriver<Tgpu, Tref>::RunBackwardGPU()
                                                     inputGradDesc,
                                                     in_grad_dev->GetMem(),
                                                     targetGradDesc,
-                                                    target_grad_dev->GetMem());
+                                                    p_dtarget);
 
         float time = 0.0;
         miopenGetKernelTime(GetHandle(), &time);
@@ -417,7 +444,8 @@ int SoftmaxCrossEntropyWithLogitsDriver<Tgpu, Tref>::RunBackwardGPU()
     }
 
     in_grad_dev->FromGPU(GetStream(), in_grad.data());
-    target_grad_dev->FromGPU(GetStream(), target_grad.data());
+    if(is_compute_tar_grad)
+        target_grad_dev->FromGPU(GetStream(), target_grad.data());
 
     return miopenStatusSuccess;
 }
@@ -425,6 +453,11 @@ int SoftmaxCrossEntropyWithLogitsDriver<Tgpu, Tref>::RunBackwardGPU()
 template <typename Tgpu, typename Tref>
 int SoftmaxCrossEntropyWithLogitsDriver<Tgpu, Tref>::RunBackwardCPU()
 {
+    Tref* p_dtarget = nullptr;
+    if(is_compute_tar_grad)
+    {
+        p_dtarget = target_grad_host.data();
+    }
     mloSoftmaxCrossEntropyWithLogitsBackward<Tgpu, Tref>(outputGradDesc,
                                                          backpropDesc,
                                                          inputDesc,
@@ -434,9 +467,9 @@ int SoftmaxCrossEntropyWithLogitsDriver<Tgpu, Tref>::RunBackwardCPU()
                                                          backprop.data(),
                                                          in.data(),
                                                          in_grad_host.data(),
-                                                         target_grad_host.data(),
+                                                         p_dtarget,
                                                          true,
-                                                         true);
+                                                         is_compute_tar_grad);
 
     return miopenStatusSuccess;
 }
@@ -495,19 +528,22 @@ int SoftmaxCrossEntropyWithLogitsDriver<Tgpu, Tref>::VerifyBackward()
                error1);
     }
 
-    auto error2 = miopen::rms_range(target_grad_host, target_grad);
+    if(is_compute_tar_grad)
+    {
+        auto error2 = miopen::rms_range(target_grad_host, target_grad);
 
-    if(!std::isfinite(error2) || error2 > tolerance)
-    {
-        std::cout << "Backward SoftmaxCrossEntropyWithLogits in Target Grad FAILED: " << error2
-                  << " while tolerance: " << tolerance << std::endl;
-        return EC_VerifyFwd;
-    }
-    else
-    {
-        printf("Backward SoftmaxCrossEntropyWithLogits Verifies in Target Grad on CPU and GPU "
-               "(err=%f)\n",
-               error2);
+        if(!std::isfinite(error2) || error2 > tolerance)
+        {
+            std::cout << "Backward SoftmaxCrossEntropyWithLogits in Target Grad FAILED: " << error2
+                      << " while tolerance: " << tolerance << std::endl;
+            return EC_VerifyFwd;
+        }
+        else
+        {
+            printf("Backward SoftmaxCrossEntropyWithLogits Verifies in Target Grad on CPU and GPU "
+                   "(err=%f)\n",
+                   error2);
+        }
     }
 
     return miopenStatusSuccess;

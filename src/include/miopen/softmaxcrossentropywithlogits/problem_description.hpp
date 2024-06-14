@@ -64,6 +64,18 @@ struct FwdProblemDescription : ProblemDescriptionBase
 
     bool IsValidLength() const
     {
+        if(inputDesc.GetSize() != 2 || targetDesc.GetSize() != 2 || backpropDesc.GetSize() != 2)
+        {
+            MIOPEN_THROW(miopenStatusBadParm,
+                         "SoftmaxCrossEntropyWithLogits: Input, target, and backprop tensors size "
+                         "!= 2 is not valid.");
+        }
+
+        if(outputDesc.GetSize() != 1)
+        {
+            MIOPEN_THROW(miopenStatusBadParm,
+                         "SoftmaxCrossEntropyWithLogits: Output tensor size != 1 is not valid.");
+        }
         if(inputDesc.GetLengths()[0] != outputDesc.GetLengths()[0])
         {
             MIOPEN_THROW(miopenStatusBadParm,
@@ -77,17 +89,6 @@ struct FwdProblemDescription : ProblemDescriptionBase
                 MIOPEN_THROW(miopenStatusBadParm,
                              "SoftmaxCrossEntropyWithLogits: Tensor sizes do not match.");
             }
-        }
-        if(inputDesc.GetSize() > 2 || targetDesc.GetSize() > 2 || backpropDesc.GetSize() > 2)
-        {
-            MIOPEN_THROW(miopenStatusBadParm,
-                         "SoftmaxCrossEntropyWithLogits: Input tensors size > 2 is not valid.");
-        }
-
-        if(outputDesc.GetSize() > 1)
-        {
-            MIOPEN_THROW(miopenStatusBadParm,
-                         "SoftmaxCrossEntropyWithLogits: Output tensor size > 1 is not valid.");
         }
         return true;
     }
@@ -175,6 +176,22 @@ struct BwdProblemDescription : ProblemDescriptionBase
 
     bool IsValidLength() const
     {
+        if(backpropDesc.GetSize() != 2 || inputDesc.GetSize() != 2 || inputGradDesc.GetSize() != 2)
+        {
+            MIOPEN_THROW(miopenStatusBadParm,
+                         "SoftmaxCrossEntropyWithLogits: Input tensor size != 2 is not valid.");
+        }
+        if(targetGradDesc.GetSize() != 0 && targetGradDesc.GetSize() != 2)
+        {
+            MIOPEN_THROW(miopenStatusBadParm,
+                         "SoftmaxCrossEntropyWithLogits: Target Grad tensor sizes is not valid.");
+        }
+        if(outputGradDesc.GetSize() != 1)
+        {
+            MIOPEN_THROW(
+                miopenStatusBadParm,
+                "SoftmaxCrossEntropyWithLogits: Output grad tensor size != 1 is not valid.");
+        }
         if(inputDesc.GetLengths()[0] != outputGradDesc.GetLengths()[0])
         {
             MIOPEN_THROW(miopenStatusBadParm,
@@ -183,25 +200,20 @@ struct BwdProblemDescription : ProblemDescriptionBase
         for(int i = 0; i < inputDesc.GetSize(); ++i)
         {
             if(inputDesc.GetLengths()[i] != backpropDesc.GetLengths()[i] ||
-               inputDesc.GetLengths()[i] != inputGradDesc.GetLengths()[i] ||
-               inputDesc.GetLengths()[i] != targetGradDesc.GetLengths()[i])
+               inputDesc.GetLengths()[i] != inputGradDesc.GetLengths()[i])
             {
                 MIOPEN_THROW(miopenStatusBadParm,
                              "SoftmaxCrossEntropyWithLogits: Tensor sizes do not match.");
             }
         }
-        if(backpropDesc.GetSize() > 2 || inputDesc.GetSize() > 2 || inputGradDesc.GetSize() > 2 ||
-           targetGradDesc.GetSize() > 2)
+        if(targetGradDesc.GetSize() == 2)
         {
-            MIOPEN_THROW(miopenStatusBadParm,
-                         "SoftmaxCrossEntropyWithLogits: Input tensor size > 2 is not valid.");
-        }
-
-        if(outputGradDesc.GetSize() > 1)
-        {
-            MIOPEN_THROW(
-                miopenStatusBadParm,
-                "SoftmaxCrossEntropyWithLogits: Output grad tensor size > 1 is not valid.");
+            if(inputDesc.GetLengths()[0] != targetGradDesc.GetLengths()[0] ||
+               inputDesc.GetLengths()[1] != targetGradDesc.GetLengths()[1])
+            {
+                MIOPEN_THROW(miopenStatusBadParm,
+                             "SoftmaxCrossEntropyWithLogits: Tensor sizes do not match.");
+            }
         }
         return true;
     }

@@ -96,7 +96,7 @@ ConvSolution SoftmaxCrossEntropyWithLogitsBackwardContiguous::GetSolution(
             decltype(auto) params =
                 raw_params.CastTo<miopen::softmaxcrossentropywithlogits::BwdInvokeParams>();
 
-            auto input_tv       = get_inner_expanded_tv_2d(deref(params.inputDesc));
+            auto input_tv    = get_inner_expanded_tv_2d(deref(params.inputDesc));
             size_t num_class = input_tv.size[1];
 
             kernel(params.output_grad,
