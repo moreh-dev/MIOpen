@@ -72,7 +72,7 @@ miopenStatus_t InstanceNormForward(Handle& handle,
                                                                          useInputStats};
 
     const auto invoke_params = [&]() {
-        auto tmp          = instancenorm::InstanceNormInvokeParams{};
+        auto tmp          = instancenorm::InvokeParams{};
         tmp.inputDesc     = &inputDesc;
         tmp.outputDesc    = &outputDesc;
         tmp.weightDesc    = &weightDesc;
@@ -99,6 +99,58 @@ miopenStatus_t InstanceNormForward(Handle& handle,
 
     const auto algo    = AlgorithmName{"InstanceNormFwd"};
     const auto solvers = solver::SolverContainer<solver::instancenorm::InstanceNormFwd>{};
+
+    solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
+
+    return miopenStatusSuccess;
+}
+
+miopenStatus_t InstanceNormBackward(Handle& handle,
+                                   const TensorDescriptor& inputDesc,
+                                   ConstData_t input,
+                                    const TensorDescriptor& weightDesc,
+                                   ConstData_t weight,
+                                    const TensorDescriptor& dinputDesc,
+                                   Data_t dinput,
+                                   const TensorDescriptor& doutputDesc,
+                                   ConstData_t doutput,
+                                   const TensorDescriptor& dweightDesc,
+                                   Data_t dweight,
+                                    const TensorDescriptor& dbiasDesc,
+                                   Data_t dbias,
+                                   const TensorDescriptor& meanVarDesc,
+                                   Data_t meanVar)
+{
+    const auto problem = instancenorm::InstanceNormBwdProblemDescription{
+        inputDesc,
+        doutputDesc,
+        weightDesc,
+        meanVarDesc,
+        dinputDesc,
+        dweightDesc,
+        dbiasDesc};
+
+    const auto invoke_params = [&]() {
+        auto tmp          = instancenorm::InvokeParams{};
+        tmp.inputDesc   = &inputDesc;
+        tmp.doutputDesc = &doutputDesc;
+        tmp.weightDesc = &weightDesc;
+        tmp.meanVarDesc = &meanVarDesc;
+        tmp.dinputDesc = &dinputDesc;
+        tmp.scaleGradDesc = &dweightDesc;
+        tmp.biasGradDesc = &dbiasDesc;
+        tmp.input         = input;
+        tmp.doutput        = doutput;
+        tmp.weight        = weight;
+        tmp.meanVar          = meanVar;
+        tmp.dinput        = dinput;
+        tmp.scaleGrad         = dweight;
+        tmp.biasGrad       = dbias;
+        return tmp;
+    }();
+
+    const auto algo    = AlgorithmName{"InstanceNormBwd"};
+    const auto solvers = solver::SolverContainer<solver::instancenorm::InstanceNormBwd>{};
 
     solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
 

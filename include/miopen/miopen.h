@@ -5917,6 +5917,42 @@ MIOPEN_EXPORT miopenStatus_t miopenInstanceNormForward(miopenHandle_t handle,
                                                        float epsilon,
                                                        float momentum,
                                                        bool useInputStats);
+
+/*! @brief Execute a instancenorm backward layer
+ *
+ * @param handle         MIOpen handle (input)
+ * @param inputDesc      Tensor descriptor for data input tensor input (input)
+ * @param input          Data tensor input (input)
+ * @param weightDesc      Tensor descriptor for data input tensor weight (input)
+ * @param weight          Data tensor weight (input)
+ * @param dinputDesc      Tensor descriptor for data input tensor dinput (output)
+ * @param dinput          Data tensor dinput (output)
+ * @param doutputDesc      Tensor descriptor for data input tensor doutput (input)
+ * @param doputput          Data tensor dout (input)
+ * @param dweightDesc       Tensor descriptor for output data tensor weight grad (output)
+ * @param dweight           Data tensor weight grad (output)
+ * @param dbiasDesc       Tensor descriptor for output data tensor bias grad (output)
+ * @param dbias           Data tensor bias grad (output)
+ * @param meanVarDesc       Tensor descriptor for output data tensor mean var (input)
+ * @param meanVar           Data tensor mean var (input)
+ * tensors or use the precomputed mean and var tensors (input)
+ * @return               miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t miopenInstanceNormBackward(miopenHandle_t handle,
+                                                       const miopenTensorDescriptor_t inputDesc,
+                                                       const void* input,
+                                                       const miopenTensorDescriptor_t weightDesc,
+                                                       const void* weight,
+                                                       const miopenTensorDescriptor_t dinputDesc,
+                                                       void* dinput,
+                                                       const miopenTensorDescriptor_t doutputDesc,
+                                                       const void* doutput,
+                                                       const miopenTensorDescriptor_t dweightDesc,
+                                                       void* dweight,
+                                                       const miopenTensorDescriptor_t dbiasDesc,
+                                                       void* dbias,
+                                                       const miopenTensorDescriptor_t meanVarDesc,
+                                                       void* meanVar);
 /** @} */
 // CLOSEOUT instancenorm DOXYGEN GROUP
 #endif

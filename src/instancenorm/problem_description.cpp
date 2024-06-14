@@ -51,8 +51,8 @@ NetworkConfig InstanceNormFwdProblemDescription::MakeNetworkConfig() const
     auto output_dtype  = outputDesc.GetType();
     auto size          = inputDesc.GetElementSize();
     auto dim_num       = inputDesc.GetSize();
+    auto target_size = inputDesc.GetLengths()[1];
     auto mean_in_size  = meanInDesc.GetElementSize();
-    auto mean_out_size = meanOutDesc.GetElementSize();
     auto mean_var_size = meanVarDesc.GetElementSize();
 
     std::ostringstream ss;
@@ -62,10 +62,30 @@ NetworkConfig InstanceNormFwdProblemDescription::MakeNetworkConfig() const
     ss << "o_dtype" << output_dtype;
     ss << "dim_num" << dim_num;
     ss << "size" << size;
+    ss << "target_size" << target_size;
     ss << "mean_in_num" << mean_in_size;
-    ss << "mean_out_num" << mean_out_size;
     ss << "mean_var_num" << mean_var_size;
     ss << "use_input_stats" << (useInputStats ? "true" : "false");
+
+    return NetworkConfig{ss.str()};
+}
+
+NetworkConfig InstanceNormBwdProblemDescription::MakeNetworkConfig() const
+{
+    auto input_dtype   = inputDesc.GetType();
+    auto output_dtype  = doutputDesc.GetType();
+    auto size          = inputDesc.GetElementSize();
+    auto dim_num       = inputDesc.GetSize();
+    auto target_size = inputDesc.GetLengths()[1];
+
+    std::ostringstream ss;
+
+    ss << "instnorm_bwd";
+    ss << "i_dtype" << input_dtype;
+    ss << "o_dtype" << output_dtype;
+    ss << "dim_num" << dim_num;
+    ss << "size" << size;
+    ss << "target_size" << target_size;
 
     return NetworkConfig{ss.str()};
 }

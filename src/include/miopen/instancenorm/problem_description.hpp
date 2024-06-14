@@ -63,6 +63,7 @@ struct InstanceNormFwdProblemDescription : ProblemDescriptionBase
           meanVarDesc(meanVarDesc_),
           useInputStats(useInputStats_)
     {
+        //TODO: duongle fillin this
     }
 
     const TensorDescriptor& GetInputDesc() const { return inputDesc; }
@@ -89,6 +90,46 @@ public:
     TensorDescriptor varOutDesc;
     TensorDescriptor meanVarDesc;
     bool useInputStats;
+};
+
+struct InstanceNormBwdProblemDescription : ProblemDescriptionBase
+{
+    InstanceNormBwdProblemDescription(const TensorDescriptor& inputDesc_,
+                                      const TensorDescriptor& doutputDesc_,
+                                      const TensorDescriptor& weightDesc_,
+                                      const TensorDescriptor& meanVarDesc_,
+                                      const TensorDescriptor& dinputDesc_,
+                                      const TensorDescriptor& dweightDesc_,
+                                      const TensorDescriptor& biasGradDesc_)
+        : inputDesc(inputDesc_),
+          doutputDesc(doutputDesc_),
+          weightDesc(weightDesc_),
+          meanVarDesc(meanVarDesc_),
+          dinputDesc(dinputDesc_),
+          dweightDesc(dweightDesc_),
+          dbiasDesc(biasGradDesc_)
+    {
+        //TODO: duongle fillin this
+    }
+
+    const TensorDescriptor& GetInputDesc() const { return inputDesc; }
+    const TensorDescriptor& GetDoutputDesc() const { return doutputDesc; }
+    const TensorDescriptor& GetWeightDesc() const { return weightDesc; }
+    const TensorDescriptor& GetMeanVarDesc() const { return meanVarDesc; }
+    const TensorDescriptor& GetDinputDesc() const { return dinputDesc; }
+    const TensorDescriptor& GetScaleGradDesc() const { return dweightDesc; }
+    const TensorDescriptor& GetBiasGradDesc() const { return dbiasDesc; }
+
+    NetworkConfig MakeNetworkConfig() const override;
+
+public:
+    TensorDescriptor inputDesc;
+    TensorDescriptor doutputDesc;
+    TensorDescriptor weightDesc;
+    TensorDescriptor meanVarDesc;
+    TensorDescriptor dinputDesc;
+    TensorDescriptor dweightDesc;
+    TensorDescriptor dbiasDesc;
 };
 
 } // namespace instancenorm

@@ -52,6 +52,22 @@ struct InstanceNormFwd final : InstanceNormFwdSolverBase
         const miopen::instancenorm::InstanceNormFwdProblemDescription& problem) const override;
 };
 
+using InstanceNormBwdSolverBase =
+    NonTunableSolverBase<ExecutionContext, miopen::instancenorm::InstanceNormBwdProblemDescription>;
+
+struct InstanceNormBwd final : InstanceNormBwdSolverBase
+{
+    const std::string& SolverDbId() const override { return GetSolverDbId<InstanceNormBwd>(); }
+
+    bool IsApplicable(
+        const ExecutionContext& context,
+        const miopen::instancenorm::InstanceNormBwdProblemDescription& problem) const override;
+
+    ConvSolution GetSolution(
+        const ExecutionContext& context,
+        const miopen::instancenorm::InstanceNormBwdProblemDescription& problem) const override;
+};
+
 } // namespace instancenorm
 
 } // namespace solver

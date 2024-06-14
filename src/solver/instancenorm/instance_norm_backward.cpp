@@ -42,44 +42,28 @@ namespace solver {
 
 namespace instancenorm {
 
-std::size_t
-sizeof_kernel_FLOAT_ACCUM(const miopen::instancenorm::InstanceNormFwdProblemDescription& problem)
-{
-    const auto datatype = problem.GetMeanInDesc().GetType();
-    return get_data_size(datatype);
-}
-
-std::size_t
-sizeof_local_memory(const miopen::instancenorm::InstanceNormFwdProblemDescription& problem)
-{
-    return LOCAL_SIZE * sizeof_kernel_FLOAT_ACCUM(problem) * 2;
-}
-
-bool InstanceNormFwd::IsApplicable(
+bool InstanceNormBwd::IsApplicable(
     [[maybe_unused]] const ExecutionContext& /*context*/,
-    const miopen::instancenorm::InstanceNormFwdProblemDescription& problem) const
+    const miopen::instancenorm::InstanceNormBwdProblemDescription& problem) const
 {
-    if(!(sizeof_local_memory(problem) <= TargetProperties::GetMaxLocalMemorySize()))
-        return false;
     return true;
 }
 
-ConvSolution InstanceNormFwd::GetSolution(
+ConvSolution InstanceNormBwd::GetSolution(
     [[maybe_unused]] const ExecutionContext& context,
-    const miopen::instancenorm::InstanceNormFwdProblemDescription& problem) const
+    const miopen::instancenorm::InstanceNormBwdProblemDescription& problem) const
 {
     std::ignore = context;
     auto result = ConvSolution{miopenStatusSuccess};
 
     auto in_dtype    = miopen::GetDataType(problem.GetInputDesc().GetType());
-    auto dtype       = problem.GetOutputDesc().GetType();
+    auto dtype       = problem.GetDoutputDesc().GetType();
     auto input_dims  = problem.GetInputDesc().GetLengths();
     auto target_size = input_dims[1];
     {
         auto kernel        = KernelInfo{};
         kernel.kernel_file = "MIOpenInstanceNorm.cpp";
-        kernel.kernel_name =
-            problem.IsUseInputStats() ? "InstanceNormFwdTrain" : "InstanceNormFwdTest";
+        kernel.kernel_name = "InstanceNormBwd";
 
         const auto build_params = KernelBuildParameters{
             {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
@@ -115,61 +99,33 @@ ConvSolution InstanceNormFwd::GetSolution(
                 raw_params.CastTo<miopen::instancenorm::InvokeParams>();
                 
             auto x_tv                = get_inner_expanded_tv<5>(deref(params.inputDesc));
-            auto y_tv                = get_inner_expanded_tv<5>(deref(params.outputDesc));
-            auto scale_tv            = get_inner_expanded_tv<1>(deref(params.weightDesc));
-            auto bias_tv             = get_inner_expanded_tv<1>(deref(params.biasDesc));
-            auto running_mean_in_tv  = get_inner_expanded_tv<1>(deref(params.meanInDesc));
-            auto running_var_in_tv   = get_inner_expanded_tv<1>(deref(params.varInDesc));
-            auto running_mean_out_tv = get_inner_expanded_tv<1>(deref(params.meanOutDesc));
-            auto running_var_out_tv  = get_inner_expanded_tv<1>(deref(params.varOutDesc));
-            auto mean_var_tv         = get_inner_expanded_tv<2>(deref(params.meanVarDesc));
+            auto dy_tv                = get_inner_expanded_tv<5>(deref(params.doutputDesc));
+            auto scale_tv                = get_inner_expanded_tv<1>(deref(params.weightDesc));
+            auto mean_var_tv                = get_inner_expanded_tv<2>(deref(params.meanVarDesc));
+            auto dx_tv                = get_inner_expanded_tv<5>(deref(params.dinputDesc));
+            auto scale_grad_tv                = get_inner_expanded_tv<1>(deref(params.scaleGradDesc));
+            auto bias_grad_tv                = get_inner_expanded_tv<1>(deref(params.biasGradDesc));
             auto input_dims          = deref(params.inputDesc).GetLengths();
             auto outer_size          = input_dims[0];
             auto inner_size          = std::accumulate(
                 input_dims.begin() + 2, input_dims.end(), 1UL, std::multiplies<size_t>());
-            if (params.useInputStats)
-            {
-                kernel(params.input,
-                    params.output,
-                    params.weight,
-                    params.bias,
-                    params.meanIn,
-                    params.varIn,
-                    params.meanOut,
-                    params.varOut,
-                    params.meanVar,
-                    params.epsilon,
-                    params.momentum,
-                    outer_size,
-                    inner_size,
-                    x_tv,
-                    y_tv,
-                    scale_tv,
-                    bias_tv,
-                    running_mean_in_tv,
-                    running_var_in_tv,
-                    running_mean_out_tv,
-                    running_var_out_tv,
-                    mean_var_tv);
-            } else 
-            {
-                kernel(params.input,
-                    params.output,
-                    params.weight,
-                    params.bias,
-                    params.meanIn,
-                    params.varIn,
-                    params.epsilon,
-                    outer_size,
-                    inner_size,
-                    x_tv,
-                    y_tv,
-                    scale_tv,
-                    bias_tv,
-                    running_mean_in_tv,
-                    running_var_in_tv);
-            }
 
+            kernel(params.input,
+                params.doutput,
+                params.weight,
+                params.meanVar,
+                params.dinput,
+                params.scaleGrad,
+                params.biasGrad,
+                outer_size,
+                inner_size,
+                x_tv,
+                dy_tv,
+                scale_tv,
+                mean_var_tv,
+                dx_tv,
+                scale_grad_tv,
+                bias_grad_tv);
         };
     };
 

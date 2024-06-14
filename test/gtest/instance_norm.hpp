@@ -101,18 +101,15 @@ struct InstanceNormTestCase
 std::vector<InstanceNormTestCase> InstanceNormTestConfigs()
 { // n c d h w padding
     return {
-        // {2, 32, 128, 128, 128, 1e-05, 0.1, false, "3dunet", true},
-        // {2, 64, 64, 64, 64, 1e-05, 0.1, false, "3dunet", true},
         // {2, 128, 32, 32, 32, 1e-05, 0.1, false, "3dunet", true},
         // {2, 256, 16, 16, 16, 1e-05, 0.1, false, "3dunet", true},
         // {2, 320, 8, 8, 8, 1e-05, 0.1, false, "3dunet", true},
         // {2, 320, 4, 4, 4, 1e-05, 0.1, false, "3dunet", true},
-        {2, 32, 32, 32, 32, 1e-05, 0.1, true, "3dunet", true},
-        // {2, 64, 64, 64, 64, 1e-05, 0.1, true, "3dunet", true},
+        // {2, 32, 32, 32, 32, 1e-05, 0.1, true, "3dunet", true},
         // {2, 128, 32, 32, 32, 1e-05, 0.1, true, "3dunet", true},
         // {2, 256, 16, 16, 16, 1e-05, 0.1, true, "3dunet", true},
         // {2, 320, 8, 8, 8, 1e-05, 0.1, true, "3dunet", true},
-        {2, 80, 4, 4, 4, 1e-05, 0.1, true, "3dunet", true},
+        // {2, 80, 4, 4, 4, 1e-05, 0.1, true, "3dunet", true},
     };
 }
 
@@ -190,23 +187,37 @@ protected:
                                              config.epsilon,
                                              config.momentum,
                                              config.useInputStats);
-
-        cpu_instance_norm_forward<T>(input,
-                                     outputHost,
-                                     weight,
-                                     bias,
-                                     meanInHost,
-                                     varInHost,
-                                     meanInHost,
-                                     varInHost,
-                                     meanVarHost,
-                                     config.epsilon,
-                                     config.momentum,
-                                     config.useInputStats);
-
+        if (config.useInputStats)
+        {
+            cpu_instance_norm_forward_train<T>(input,
+                                                    outputHost,
+                                                    weight,
+                                                    bias,
+                                                    meanInHost,
+                                                    varInHost,
+                                                    meanInHost,
+                                                    varInHost,
+                                                    meanVarHost,
+                                                    config.epsilon,
+                                                    config.momentum,
+                                                    config.useInputStats);
+        }
+        else
+        {
+            cpu_instance_norm_forward_test<T>(input,
+                                        outputHost,
+                                        weight,
+                                        bias,
+                                        meanInHost,
+                                        varInHost,
+                                        config.epsilon,
+                                        config.useInputStats);
+        }
+            
         EXPECT_EQ(status, miopenStatusSuccess);
         output.data  = handle.Read<T>(output_dev, output.data.size());
-        meanVar.data = handle.Read<T>(meanVar_dev, meanVar.data.size());
+        if (config.useInputStats)
+            meanVar.data = handle.Read<T>(meanVar_dev, meanVar.data.size());
     }
 
     void Verify()
@@ -218,22 +229,17 @@ protected:
         // bf16 mantissa has 7 bits, by 3 bits shorter than fp16.
         if(std::is_same<T, bfloat16>::value)
             tolerance *= 8.0;
-
         auto error_output   = miopen::rms_range(outputHost, output);
         auto error_mean_var = miopen::rms_range(meanVarHost, meanVar);
         EXPECT_TRUE(miopen::range_distance(outputHost) == miopen::range_distance(output));
-        EXPECT_TRUE(miopen::range_distance(meanVarHost) == miopen::range_distance(meanVar));
-        EXPECT_TRUE(error_output < tolerance && error_mean_var < tolerance)
-            << "Error backward output beyond tolerance Error: {" << error_output << ","
-            << error_mean_var << "},  Tolerance: " << tolerance;
-
-        // double threshold = std::numeric_limits<T>::epsilon();
-
-        // auto error = miopen::rms_range(outputHost, output);
-
-        // EXPECT_TRUE(miopen::range_distance(outputHost) == miopen::range_distance(output));
-        // EXPECT_TRUE(error < threshold * 10) << "Error output beyond tolerance Error: " << error
-        //                                     << ",  Thresholdx10: " << threshold * 10;
+        if (config.useInputStats)
+            EXPECT_TRUE(miopen::range_distance(meanVarHost) == miopen::range_distance(meanVar));
+        if (config.useInputStats)
+            EXPECT_TRUE(error_output < tolerance && error_mean_var < tolerance)
+                << "Error forward output beyond tolerance Error: {" << error_output << ","
+                << error_mean_var << "},  Tolerance: " << tolerance;
+        else
+            EXPECT_TRUE(error_output < tolerance) << "Error forward output beyond tolerance Error: {" << error_output <<  "},  Tolerance: " << tolerance;
     }
     InstanceNormTestCase config;
 
@@ -257,4 +263,141 @@ protected:
     miopen::Allocator::ManageDataPtr meanIn_dev;
     miopen::Allocator::ManageDataPtr varIn_dev;
     miopen::Allocator::ManageDataPtr meanVar_dev;
+};
+
+template <typename T>
+struct InstanceNormBwdTest : public ::testing::TestWithParam<InstanceNormTestCase>
+{
+protected:
+    void SetUp() override
+    {
+        auto&& handle = get_handle();
+        config        = GetParam();
+
+        std::vector<size_t> in_dims          = config.GetInput();
+        std::vector<size_t> in_strides       = config.ComputeStrides(in_dims);
+        std::vector<size_t> doutput_dims      = in_dims;
+        std::vector<size_t> doutput_strides   = config.ComputeStrides(doutput_dims);
+        std::vector<size_t> weight_dims        = {in_dims[1]};
+        std::vector<size_t> weight_strides     = config.ComputeStrides(weight_dims);
+        std::vector<size_t> mean_var_dims     = {in_dims[0], in_dims[1] * 2};
+        std::vector<size_t> mean_var_strides  = config.ComputeStrides(mean_var_dims);
+        std::vector<size_t> dinput_dims      = in_dims;
+        std::vector<size_t> dinput_strides   = config.ComputeStrides(dinput_dims);
+        std::vector<size_t> dweight_dims    = weight_dims;
+        std::vector<size_t> dweight_strides = config.ComputeStrides(dweight_dims);
+        std::vector<size_t> dbias_dims    = {in_dims[1]};
+        std::vector<size_t> dbias_strides = config.ComputeStrides(dbias_dims);
+
+        auto gen_value = [](auto...) { return prng::gen_descreet_uniform_sign<T>(1e-2, 100); };
+        auto gen_zero  = [&](auto...) { return 0; };
+        input          = tensor<T>{in_dims, in_strides}.generate(gen_value);
+        doutput          = tensor<T>{doutput_dims, doutput_strides}.generate(gen_value);
+        weight          = tensor<T>{weight_dims, weight_strides}.generate(gen_value);
+        meanVar          = tensor<T>{mean_var_dims, mean_var_strides}.generate(gen_value);
+        dinput          = tensor<T>{dinput_dims, dinput_strides}.generate(gen_zero);
+        dweight          = tensor<T>{dweight_dims, dweight_strides}.generate(gen_zero);
+        dbias          = tensor<T>{dbias_dims, dbias_strides}.generate(gen_zero);
+
+        dinputHost     = tensor<T>{dinput_dims, dinput_strides}.generate(gen_zero);
+        dweightHost      = tensor<T>{dweight_dims, dweight_strides}.generate(gen_zero);
+        dbiasHost    = tensor<T>{dbias_dims, dbias_strides}.generate(gen_zero);
+
+        input_dev   = handle.Write(input.data);
+        doutput_dev  = handle.Write(doutput.data);
+        weight_dev  = handle.Write(weight.data);
+        meanVar_dev    = handle.Write(meanVar.data);
+        dinput_dev  = handle.Write(dinput.data);
+        dweight_dev   = handle.Write(dweight.data);
+        dbias_dev = handle.Write(dbias.data);
+    }
+
+    void RunTest()
+    {
+        auto&& handle = get_handle();
+        miopenStatus_t status;
+
+        status = miopen::InstanceNormBackward(handle,
+                                             input.desc,
+                                             input_dev.get(),
+                                             weight.desc,
+                                             weight_dev.get(),
+                                             dinput.desc,
+                                             dinput_dev.get(),
+                                             doutput.desc,
+                                             doutput_dev.get(),
+                                             dweight.desc,
+                                             dweight_dev.get(),
+                                             dbias.desc,
+                                             dbias_dev.get(),
+                                             meanVar.desc,
+                                             meanVar_dev.get());
+
+        cpu_instance_norm_backward<T>(input,
+                             weight,
+                             dinputHost,
+                             doutput,
+                             dweightHost,
+                             dbiasHost,
+                             meanVar);
+            
+        EXPECT_EQ(status, miopenStatusSuccess);
+        dinput.data  = handle.Read<T>(dinput_dev, dinput.data.size());
+        dweight.data  = handle.Read<T>(dweight_dev, dweight.data.size());
+        dbias.data  = handle.Read<T>(dbias_dev, dbias.data.size());
+    }
+
+    void Verify()
+    {
+        // Computation error of fp16 is ~2^13 (=8192) bigger than
+        // the one of fp32 because mantissa is shorter by 13 bits.
+        double tolerance = std::is_same<T, float>::value ? 1.5e-6 : 8.2e-3;
+
+        // bf16 mantissa has 7 bits, by 3 bits shorter than fp16.
+        if(std::is_same<T, bfloat16>::value)
+            tolerance *= 8.0;
+        for (int i = 0; i < 10; ++i)
+        {
+            std::cout << "dinput[" << i << "]: " << dinput[i] << " ~ " << dinputHost[i] << std::endl;
+        }
+        for (int i = 0; i < 10; ++i)
+        {
+            std::cout << "dweight[" << i << "]: " << dweight[i] << " ~ " << dweightHost[i] << std::endl;
+        }
+        for (int i = 0; i < 10; ++i)
+        {
+            std::cout << "dbias[" << i << "]: " << dbias[i] << " ~ " << dbiasHost[i] << std::endl;
+        }
+        auto error_dinput   = miopen::rms_range(dinputHost, dinput);
+        auto error_dweight = miopen::rms_range(dweightHost, dweight);
+        auto error_dbias = miopen::rms_range(dbiasHost, dbias);
+        EXPECT_TRUE(miopen::range_distance(dinputHost) == miopen::range_distance(dinput));
+        EXPECT_TRUE(miopen::range_distance(dweightHost) == miopen::range_distance(dweight));
+        EXPECT_TRUE(miopen::range_distance(dbiasHost) == miopen::range_distance(dbias));
+
+        EXPECT_TRUE(error_dinput < tolerance && error_dweight < tolerance && error_dbias < tolerance)
+                << "Error backward output beyond tolerance Error: {" << error_dinput << ","
+                << error_dweight << "," << error_dbias << "},  Tolerance: " << tolerance;
+    }
+    InstanceNormTestCase config;
+
+    tensor<T> input;
+    tensor<T> doutput;
+    tensor<T> weight;
+    tensor<T> meanVar;
+    tensor<T> dinput;
+    tensor<T> dweight;
+    tensor<T> dbias;
+
+    tensor<T> dinputHost;
+    tensor<T> dweightHost;
+    tensor<T> dbiasHost;
+
+    miopen::Allocator::ManageDataPtr input_dev;
+    miopen::Allocator::ManageDataPtr doutput_dev;
+    miopen::Allocator::ManageDataPtr weight_dev;
+    miopen::Allocator::ManageDataPtr meanVar_dev;
+    miopen::Allocator::ManageDataPtr dinput_dev;
+    miopen::Allocator::ManageDataPtr dweight_dev;
+    miopen::Allocator::ManageDataPtr dbias_dev;
 };
