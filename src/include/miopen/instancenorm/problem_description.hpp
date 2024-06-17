@@ -40,6 +40,8 @@ struct NetworkConfig;
 
 namespace instancenorm {
 
+bool checkSameLength(const TensorDescriptor& x, const TensorDescriptor& y);
+
 struct InstanceNormFwdProblemDescription : ProblemDescriptionBase
 {
     InstanceNormFwdProblemDescription(const TensorDescriptor& inputDesc_,
@@ -63,7 +65,71 @@ struct InstanceNormFwdProblemDescription : ProblemDescriptionBase
           meanVarDesc(meanVarDesc_),
           useInputStats(useInputStats_)
     {
-        // TODO: duongle fillin this
+
+        IsValidSize();
+        IsValidLength();
+    }
+
+    bool IsValidSize() const
+    {
+        if(inputDesc.GetSize() < 2 || inputDesc.GetSize() > 5)
+        {
+#if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+            MIOPEN_THROW(miopenStatusBadParm, "Instance Norm: The input tensor dimension should be in range [2, 5].");
+#else
+            return false;
+#endif
+        }
+        return true;
+    }
+
+    bool IsValidLength() const
+    {
+        auto input_dims = inputDesc.GetLengths();
+        if(weightDesc.GetSize() != 1 ||
+            biasDesc.GetSize() != 1 ||
+            weightDesc.GetLengths()[0] != input_dims[1] ||
+            biasDesc.GetLengths()[0] != input_dims[1])
+        {
+#if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+            MIOPEN_THROW(miopenStatusBadParm, "Instance Norm: The input tensor and weight, bias tensor size don't match.");
+#else
+            return false;
+#endif
+        }
+        if(meanInDesc.GetSize() != 1 ||
+            varInDesc.GetSize() != 1 ||
+            meanInDesc.GetLengths()[0] != input_dims[1] ||
+            varInDesc.GetLengths()[0] != input_dims[1])
+        {
+#if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+            MIOPEN_THROW(miopenStatusBadParm, "Instance Norm: The input tensor and running_mean_in, running_var_in tensor size don't match.");
+#else
+            return false;
+#endif
+        }
+        if(meanOutDesc.GetSize() != 1 ||
+            varOutDesc.GetSize() != 1 ||
+            meanOutDesc.GetLengths()[0] != input_dims[1] ||
+            varOutDesc.GetLengths()[0] != input_dims[1])
+        {
+#if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+            MIOPEN_THROW(miopenStatusBadParm, "Instance Norm: The input tensor and running_mean_out, running_var_out tensor size don't match.");
+#else
+            return false;
+#endif
+        }
+        if(meanVarDesc.GetSize() != 2 ||
+            meanVarDesc.GetLengths()[0] != input_dims[0] ||
+            meanVarDesc.GetLengths()[1] != (input_dims[1] * 2))
+        {
+#if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+            MIOPEN_THROW(miopenStatusBadParm, "The input tensor and mean, var tensor size don't match.");
+#else
+            return false;
+#endif
+        }
+        return true;
     }
 
     const TensorDescriptor& GetInputDesc() const { return inputDesc; }
@@ -109,7 +175,81 @@ struct InstanceNormBwdProblemDescription : ProblemDescriptionBase
           dweightDesc(dweightDesc_),
           dbiasDesc(biasGradDesc_)
     {
-        // TODO: duongle fillin this
+        IsValidSize();
+        IsValidLength();
+    }
+
+    bool IsValidSize() const
+    {
+        if(inputDesc.GetSize() < 2 || inputDesc.GetSize() > 5)
+        {
+#if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+            MIOPEN_THROW(miopenStatusBadParm, "Instance Norm: The input tensor dimension should be in range [2, 5].");
+#else
+            return false;
+#endif
+        }
+        if (!checkSameLength(inputDesc, doutputDesc))
+        {
+#if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+            MIOPEN_THROW(miopenStatusBadParm, "Instance Norm: The input tensor and output grad tensor size don't match.");
+#else
+            return false;
+#endif
+        }
+        if (!checkSameLength(inputDesc, dinputDesc))
+        {
+#if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+            MIOPEN_THROW(miopenStatusBadParm, "Instance Norm: The input tensor and input grad tensor size don't match.");
+#else
+            return false;
+#endif
+        }
+        return true;
+    }
+
+    
+    bool IsValidLength() const
+    {
+        auto input_dims = inputDesc.GetLengths();
+        if(weightDesc.GetSize() != 1 ||
+            weightDesc.GetLengths()[0] != input_dims[1])
+        {
+#if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+            MIOPEN_THROW(miopenStatusBadParm, "Instance Norm: The weight_tensor has invalid size.");
+#else
+            return false;
+#endif
+        }
+        if(dweightDesc.GetSize() != 1 ||
+            dweightDesc.GetLengths()[0] != input_dims[1])
+        {
+#if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+            MIOPEN_THROW(miopenStatusBadParm, "Instance Norm: The weight_grad_tensor has invalid size.");
+#else
+            return false;
+#endif
+        }
+        if(dbiasDesc.GetSize() != 1 ||
+            dbiasDesc.GetLengths()[0] != input_dims[1])
+        {
+#if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+            MIOPEN_THROW(miopenStatusBadParm, "Instance Norm: The bias_grad_tensor has invalid size.");
+#else
+            return false;
+#endif
+        }
+        if(meanVarDesc.GetSize() != 2 ||
+            meanVarDesc.GetLengths()[0] != input_dims[0] ||
+            meanVarDesc.GetLengths()[1] != (input_dims[1] * 2))
+        {
+#if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
+            MIOPEN_THROW(miopenStatusBadParm, "The input tensor and mean, var tensor size don't match.");
+#else
+            return false;
+#endif
+        }
+        return true;
     }
 
     const TensorDescriptor& GetInputDesc() const { return inputDesc; }

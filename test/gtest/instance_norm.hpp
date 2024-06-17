@@ -101,15 +101,15 @@ struct InstanceNormTestCase
 std::vector<InstanceNormTestCase> InstanceNormTestConfigs()
 { // n c d h w padding
     return {
-        // {2, 128, 32, 32, 32, 1e-05, 0.1, false, "3dunet", true},
-        // {2, 256, 16, 16, 16, 1e-05, 0.1, false, "3dunet", true},
-        // {2, 320, 8, 8, 8, 1e-05, 0.1, false, "3dunet", true},
-        // {2, 320, 4, 4, 4, 1e-05, 0.1, false, "3dunet", true},
-        // {2, 32, 32, 32, 32, 1e-05, 0.1, true, "3dunet", true},
-        // {2, 128, 32, 32, 32, 1e-05, 0.1, true, "3dunet", true},
-        // {2, 256, 16, 16, 16, 1e-05, 0.1, true, "3dunet", true},
-        // {2, 320, 8, 8, 8, 1e-05, 0.1, true, "3dunet", true},
-        // {2, 80, 4, 4, 4, 1e-05, 0.1, true, "3dunet", true},
+        {2, 128, 32, 32, 32, 1e-05, 0.1, false, "3dunet", true},
+        {2, 256, 16, 16, 16, 1e-05, 0.1, false, "3dunet", true},
+        {2, 320, 8, 8, 8, 1e-05, 0.1, false, "3dunet", true},
+        {2, 320, 4, 4, 4, 1e-05, 0.1, false, "3dunet", true},
+        {2, 32, 32, 32, 32, 1e-05, 0.1, true, "3dunet", true},
+        {2, 128, 32, 32, 32, 1e-05, 0.1, true, "3dunet", true},
+        {2, 256, 16, 16, 16, 1e-05, 0.1, true, "3dunet", true},
+        {2, 320, 8, 8, 8, 1e-05, 0.1, true, "3dunet", true},
+        {2, 80, 4, 4, 4, 1e-05, 0.1, true, "3dunet", true},
     };
 }
 
@@ -353,20 +353,6 @@ protected:
         // bf16 mantissa has 7 bits, by 3 bits shorter than fp16.
         if(std::is_same<T, bfloat16>::value)
             tolerance *= 8.0;
-        for(int i = 0; i < 10; ++i)
-        {
-            std::cout << "dinput[" << i << "]: " << dinput[i] << " ~ " << dinputHost[i]
-                      << std::endl;
-        }
-        for(int i = 0; i < 10; ++i)
-        {
-            std::cout << "dweight[" << i << "]: " << dweight[i] << " ~ " << dweightHost[i]
-                      << std::endl;
-        }
-        for(int i = 0; i < 10; ++i)
-        {
-            std::cout << "dbias[" << i << "]: " << dbias[i] << " ~ " << dbiasHost[i] << std::endl;
-        }
         auto error_dinput  = miopen::rms_range(dinputHost, dinput);
         auto error_dweight = miopen::rms_range(dweightHost, dweight);
         auto error_dbias   = miopen::rms_range(dbiasHost, dbias);

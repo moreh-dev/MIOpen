@@ -58,56 +58,56 @@ struct InstanceNormBackwardTestBFloat16 : InstanceNormBwdTest<bfloat16>
 
 }; // namespace instancenorm
 using namespace instancenorm;
-// TEST_P(InstanceNormForwardTestFloat32, InstanceNormForwardTest)
-// {
-//     if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
-//     {
-//         RunTest();
-//         Verify();
-//     }
-//     else
-//     {
-//         GTEST_SKIP();
-//     }
-// };
+TEST_P(InstanceNormForwardTestFloat32, InstanceNormForwardTest)
+{
+    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
 
-// INSTANTIATE_TEST_SUITE_P(InstanceNormForwardTestSet,
-//                          InstanceNormForwardTestFloat32,
-//                          testing::ValuesIn(InstanceNormTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(InstanceNormForwardTestSet,
+                         InstanceNormForwardTestFloat32,
+                         testing::ValuesIn(InstanceNormTestConfigs()));
 
-// TEST_P(InstanceNormForwardTestFloat16, InstanceNormForwardTest)
-// {
-//     if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
-//     {
-//         RunTest();
-//         Verify();
-//     }
-//     else
-//     {
-//         GTEST_SKIP();
-//     }
-// };
+TEST_P(InstanceNormForwardTestFloat16, InstanceNormForwardTest)
+{
+    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
 
-// INSTANTIATE_TEST_SUITE_P(InstanceNormForwardTestSet,
-//                          InstanceNormForwardTestFloat16,
-//                          testing::ValuesIn(InstanceNormTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(InstanceNormForwardTestSet,
+                         InstanceNormForwardTestFloat16,
+                         testing::ValuesIn(InstanceNormTestConfigs()));
 
-// TEST_P(InstanceNormForwardTestBFloat16, InstanceNormForwardTest)
-// {
-//     if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
-//     {
-//         RunTest();
-//         Verify();
-//     }
-//     else
-//     {
-//         GTEST_SKIP();
-//     }
-// };
+TEST_P(InstanceNormForwardTestBFloat16, InstanceNormForwardTest)
+{
+    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
 
-// INSTANTIATE_TEST_SUITE_P(InstanceNormForwardTestSet,
-//                          InstanceNormForwardTestBFloat16,
-//                          testing::ValuesIn(InstanceNormTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(InstanceNormForwardTestSet,
+                         InstanceNormForwardTestBFloat16,
+                         testing::ValuesIn(InstanceNormTestConfigs()));
 
 TEST_P(InstanceNormBackwardTestFloat32, InstanceNormBackwardTest)
 {
