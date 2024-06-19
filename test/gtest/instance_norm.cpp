@@ -43,19 +43,6 @@ struct InstanceNormForwardTestFloat16 : InstanceNormFwdTest<half>
 struct InstanceNormForwardTestBFloat16 : InstanceNormFwdTest<bfloat16>
 {
 };
-
-struct InstanceNormBackwardTestFloat32 : InstanceNormBwdTest<float>
-{
-};
-
-struct InstanceNormBackwardTestFloat16 : InstanceNormBwdTest<half>
-{
-};
-
-struct InstanceNormBackwardTestBFloat16 : InstanceNormBwdTest<bfloat16>
-{
-};
-
 }; // namespace instancenorm
 using namespace instancenorm;
 TEST_P(InstanceNormForwardTestFloat32, InstanceNormForwardTest)
@@ -107,55 +94,4 @@ TEST_P(InstanceNormForwardTestBFloat16, InstanceNormForwardTest)
 
 INSTANTIATE_TEST_SUITE_P(InstanceNormForwardTestSet,
                          InstanceNormForwardTestBFloat16,
-                         testing::ValuesIn(InstanceNormTestConfigs()));
-
-TEST_P(InstanceNormBackwardTestFloat32, InstanceNormBackwardTest)
-{
-    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
-    {
-        RunTest();
-        Verify();
-    }
-    else
-    {
-        GTEST_SKIP();
-    }
-};
-
-INSTANTIATE_TEST_SUITE_P(InstanceNormBackwardTestSet,
-                         InstanceNormBackwardTestFloat32,
-                         testing::ValuesIn(InstanceNormTestConfigs()));
-
-TEST_P(InstanceNormBackwardTestFloat16, InstanceNormBackwardTest)
-{
-    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
-    {
-        RunTest();
-        Verify();
-    }
-    else
-    {
-        GTEST_SKIP();
-    }
-};
-
-INSTANTIATE_TEST_SUITE_P(InstanceNormBackwardTestSet,
-                         InstanceNormBackwardTestFloat16,
-                         testing::ValuesIn(InstanceNormTestConfigs()));
-
-TEST_P(InstanceNormBackwardTestBFloat16, InstanceNormBackwardTest)
-{
-    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)))
-    {
-        RunTest();
-        Verify();
-    }
-    else
-    {
-        GTEST_SKIP();
-    }
-};
-
-INSTANTIATE_TEST_SUITE_P(InstanceNormBackwardTestSet,
-                         InstanceNormBackwardTestBFloat16,
                          testing::ValuesIn(InstanceNormTestConfigs()));

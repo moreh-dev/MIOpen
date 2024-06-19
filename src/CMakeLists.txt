@@ -263,7 +263,6 @@ set( MIOpen_Source
     solver/gemm_wrw.cpp
     solver/groupnorm/forward_groupnorm.cpp
     solver/instancenorm/instance_norm_forward.cpp
-    solver/instancenorm/instance_norm_backward.cpp
     solver/layernorm/forward_layernorm.cpp
     solver/layernorm/forward_layernorm2d_ck.cpp
     solver/layernorm/forward_layernorm4d_ck.cpp

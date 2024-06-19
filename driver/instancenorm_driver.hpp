@@ -456,82 +456,12 @@ int InstanceNormDriver<Tgpu, Tref>::RunForwardCPU()
 template <typename Tgpu, typename Tref>
 int InstanceNormDriver<Tgpu, Tref>::RunBackwardGPU()
 {
-    float kernel_total_time = 0;
-    float kernel_first_time = 0;
-
-    Timer t;
-    START_TIME
-
-    for(int i = 0; i < inflags.GetValueInt("iter"); i++)
-    {
-        miopenInstanceNormBackward(GetHandle(),
-                                   inputDesc,
-                                   input_dev->GetMem(),
-                                   weightDesc,
-                                   weight_dev->GetMem(),
-                                   dinputDesc,
-                                   dinput_dev->GetMem(),
-                                   doutputDesc,
-                                   doutput_dev->GetMem(),
-                                   dweightDesc,
-                                   dweight_dev->GetMem(),
-                                   dbiasDesc,
-                                   dbias_dev->GetMem(),
-                                   meanVarDesc,
-                                   meanVar_dev->GetMem());
-
-        float time = 0.0;
-        miopenGetKernelTime(GetHandle(), &time);
-        kernel_total_time += time;
-        if(i == 0)
-            kernel_first_time = time;
-    }
-
-    if(inflags.GetValueInt("time") == 1)
-    {
-        STOP_TIME
-        int iter = inflags.GetValueInt("iter");
-        if(WALL_CLOCK)
-            std::cout << "Wall-clock Time Instance Norm Backward Elapsed: " << t.gettime_ms() / iter
-                      << " ms" << std::endl;
-
-        float kernel_average_time =
-            iter > 1 ? (kernel_total_time - kernel_first_time) / (iter - 1) : kernel_first_time;
-        std::cout << "GPU Kernel Time Instance Norm Backward Elapsed: " << kernel_average_time
-                  << " ms" << std::endl;
-    }
-
-    if(dinput_dev->FromGPU(GetStream(), dinput.data()) != 0)
-        std::cerr << "Error copying (dinput_dev) from GPU, size: " << dinput_dev->GetSize()
-                  << std::endl;
-
-    if(dweight_dev->FromGPU(GetStream(), dweight.data()) != 0)
-        std::cerr << "Error copying (dinput_dev) from GPU, size: " << dweight_dev->GetSize()
-                  << std::endl;
-    if(dbias_dev->FromGPU(GetStream(), dbias.data()) != 0)
-        std::cerr << "Error copying (dinput_dev) from GPU, size: " << dbias_dev->GetSize()
-                  << std::endl;
-
     return miopenStatusSuccess;
 }
 
 template <typename Tgpu, typename Tref>
 int InstanceNormDriver<Tgpu, Tref>::RunBackwardCPU()
 {
-    mloInstanceNormBackwardRunHost<Tgpu, Tref>(input.data(),
-                                               inputDesc,
-                                               weight.data(),
-                                               weightDesc,
-                                               dinput_host.data(),
-                                               dinputDesc,
-                                               doutput.data(),
-                                               doutputDesc,
-                                               dweight_host.data(),
-                                               dweightDesc,
-                                               dbias_host.data(),
-                                               dbiasDesc,
-                                               meanVar.data(),
-                                               meanVarDesc);
     return miopenStatusSuccess;
 }
 
@@ -582,24 +512,6 @@ int InstanceNormDriver<Tgpu, Tref>::VerifyForward()
 template <typename Tgpu, typename Tref>
 int InstanceNormDriver<Tgpu, Tref>::VerifyBackward()
 {
-    RunBackwardCPU();
-    const Tref tolerance = GetTolerance();
-    auto error_dinput    = miopen::rms_range(dinput_host, dinput);
-    auto error_dweight   = miopen::rms_range(dweight_host, dweight);
-    auto error_dbias     = miopen::rms_range(dbias_host, dbias);
-
-    if(!std::isfinite(error_dinput) || error_dinput > tolerance || !std::isfinite(error_dweight) ||
-       error_dweight > tolerance || !std::isfinite(error_dbias) || error_dbias > tolerance)
-    {
-        std::cout << "Backward Instance Norm FAILED: {" << error_dinput << "," << error_dweight
-                  << "," << error_dbias << "} > " << tolerance << std::endl;
-        return EC_VerifyFwd;
-    }
-    else
-    {
-        std::cout << "Backward Instance Norm Verifies OK on CPU reference ({" << error_dinput << ","
-                  << error_dweight << "," << error_dbias << "} < " << tolerance << ')' << std::endl;
-    }
     return miopenStatusSuccess;
 }
 
