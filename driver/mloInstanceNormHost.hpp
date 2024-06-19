@@ -33,24 +33,24 @@
 #include <vector>
 #include <miopen/tensor.hpp>
 
-template <typename T>
-int32_t mloInstanceNormTrainRunHost(T* input,
+template <typename Tgpu, typename Tcheck>
+int32_t mloInstanceNormTrainRunHost(Tgpu* input,
                                     const miopenTensorDescriptor_t inputDesc,
-                                    T* ref_output,
+                                    Tcheck* ref_output,
                                     const miopenTensorDescriptor_t ref_outputDesc,
-                                    T* scale,
+                                    Tgpu* scale,
                                     const miopenTensorDescriptor_t scaleDesc,
-                                    T* bias,
+                                    Tgpu* bias,
                                     const miopenTensorDescriptor_t biasDesc,
-                                    T* ref_meanIn,
+                                    Tcheck* ref_meanIn,
                                     const miopenTensorDescriptor_t ref_meanInDesc,
-                                    T* ref_varIn,
+                                    Tcheck* ref_varIn,
                                     const miopenTensorDescriptor_t ref_varInDesc,
-                                    T* ref_meanOut,
+                                    Tcheck* ref_meanOut,
                                     const miopenTensorDescriptor_t ref_meanOutDesc,
-                                    T* ref_varOut,
+                                    Tcheck* ref_varOut,
                                     const miopenTensorDescriptor_t ref_varOutDesc,
-                                    T* ref_meanVar,
+                                    Tcheck* ref_meanVar,
                                     const miopenTensorDescriptor_t ref_meanVarDesc,
                                     const float eps          = 1e-05f,
                                     const float momentum     = 0.1,
@@ -144,7 +144,7 @@ int32_t mloInstanceNormTrainRunHost(T* input,
                                     y_tv.stride[0] * yidx0;
 
                     ref_output[yidx] =
-                        static_cast<T>((static_cast<float>(input[xidx]) - pmean[lid]) *
+                        static_cast<Tcheck>((static_cast<float>(input[xidx]) - pmean[lid]) *
                                            (1 / sqrt(pvar[lid] + eps)) * pscale[lid] +
                                        pbias[lid]);
                 }
@@ -153,10 +153,10 @@ int32_t mloInstanceNormTrainRunHost(T* input,
 
         smean = smean / (outer_size * inner_size);
         svar  = svar / (outer_size * inner_size) - smean * smean;
-        ref_meanOut[running_mean_out_tv.stride[0] * gid] = static_cast<T>(
+        ref_meanOut[running_mean_out_tv.stride[0] * gid] = static_cast<Tcheck>(
             (1 - momentum) * static_cast<float>(ref_meanIn[running_mean_in_tv.stride[0] * gid]) +
             momentum * smean);
-        ref_varOut[running_var_out_tv.stride[0] * gid] = static_cast<T>(
+        ref_varOut[running_var_out_tv.stride[0] * gid] = static_cast<Tcheck>(
             (1 - momentum) * static_cast<float>(ref_varIn[running_var_in_tv.stride[0] * gid]) +
             momentum * svar);
     });
@@ -164,18 +164,18 @@ int32_t mloInstanceNormTrainRunHost(T* input,
     return miopenStatusSuccess;
 }
 
-template <typename T>
-int32_t mloInstanceNormTestRunHost(T* input,
+template <typename Tgpu, typename Tcheck>
+int32_t mloInstanceNormTestRunHost(Tgpu* input,
                                    const miopenTensorDescriptor_t inputDesc,
-                                   T* ref_output,
+                                   Tcheck* ref_output,
                                    const miopenTensorDescriptor_t ref_outputDesc,
-                                   T* scale,
+                                   Tgpu* scale,
                                    const miopenTensorDescriptor_t scaleDesc,
-                                   T* bias,
+                                   Tgpu* bias,
                                    const miopenTensorDescriptor_t biasDesc,
-                                   T* ref_meanIn,
+                                   Tcheck* ref_meanIn,
                                    const miopenTensorDescriptor_t ref_meanInDesc,
-                                   T* ref_varIn,
+                                   Tcheck* ref_varIn,
                                    const miopenTensorDescriptor_t ref_varInDesc,
                                    const float eps          = 1e-05f,
                                    const bool useInputStats = true)
@@ -218,7 +218,7 @@ int32_t mloInstanceNormTestRunHost(T* input,
                                     y_tv.stride[2] * yidx2 + y_tv.stride[1] * yidx1 +
                                     y_tv.stride[0] * yidx0;
 
-                    ref_output[yidx] = static_cast<T>((static_cast<float>(input[xidx]) - pmean) *
+                    ref_output[yidx] = static_cast<Tcheck>((static_cast<float>(input[xidx]) - pmean) *
                                                           (1 / sqrt(pvar + eps)) * pscale +
                                                       pbias);
                 }
@@ -229,20 +229,20 @@ int32_t mloInstanceNormTestRunHost(T* input,
     return miopenStatusSuccess;
 }
 
-template <typename T>
-int32_t mloInstanceNormBackwardRunHost(T* input,
+template <typename Tgpu, typename Tcheck>
+int32_t mloInstanceNormBackwardRunHost(Tgpu* input,
                                        const miopenTensorDescriptor_t inputDesc,
-                                       T* scale,
+                                       Tgpu* scale,
                                        const miopenTensorDescriptor_t scaleDesc,
-                                       T* ref_dinput,
+                                       Tcheck* ref_dinput,
                                        const miopenTensorDescriptor_t ref_dinputDesc,
-                                       T* doutput,
+                                       Tgpu* doutput,
                                        const miopenTensorDescriptor_t doutputDesc,
-                                       T* ref_dscale,
+                                       Tcheck* ref_dscale,
                                        const miopenTensorDescriptor_t ref_dscaleDesc,
-                                       T* ref_dbias,
+                                       Tcheck* ref_dbias,
                                        const miopenTensorDescriptor_t ref_dbiasDesc,
-                                       T* meanVar,
+                                       Tgpu* meanVar,
                                        const miopenTensorDescriptor_t meanVarDesc)
 {
     auto x_tv          = miopen::get_inner_expanded_tv<5>(miopen::deref(inputDesc));
@@ -354,14 +354,14 @@ int32_t mloInstanceNormBackwardRunHost(T* input,
                     float dyi  = static_cast<float>(doutput[dyidx]);
                     float nxi  = (static_cast<float>(input[xidx]) - pmean[lid]) * pvar[lid];
                     ref_dinput[dxidx] =
-                        static_cast<T>((M * dyi - pbias_grad[lid] - nxi * pscale_grad[lid]) *
+                        static_cast<Tcheck>((M * dyi - pbias_grad[lid] - nxi * pscale_grad[lid]) *
                                        pscale * pvar[lid] / M);
                 }
             });
         });
 
-        ref_dbias[bias_grad_tv.stride[0] * gid]   = static_cast<T>(sbias_grad);
-        ref_dscale[scale_grad_tv.stride[0] * gid] = static_cast<T>(sscale_grad);
+        ref_dbias[bias_grad_tv.stride[0] * gid]   = static_cast<Tcheck>(sbias_grad);
+        ref_dscale[scale_grad_tv.stride[0] * gid] = static_cast<Tcheck>(sscale_grad);
     });
 
     return miopenStatusSuccess;

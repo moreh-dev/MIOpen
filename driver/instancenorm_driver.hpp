@@ -43,7 +43,7 @@
 #include <miopen/tensor.hpp>
 #include <vector>
 
-template <typename T>
+template <typename Tgpu, typename Tref>
 class InstanceNormDriver : public Driver
 {
 public:
@@ -61,7 +61,7 @@ public:
         miopenCreateTensorDescriptor(&dweightDesc);
         miopenCreateTensorDescriptor(&dbiasDesc);
 
-        data_type = miopen_type<T>{};
+        data_type = miopen_type<Tgpu>{};
     }
 
     int AddCmdLineArgs() override;
@@ -79,7 +79,7 @@ public:
     int RunBackwardGPU() override;
     int RunBackwardCPU();
 
-    float GetTolerance();
+    Tref GetTolerance();
     int VerifyBackward() override;
     int VerifyForward() override;
     ~InstanceNormDriver() override
@@ -128,36 +128,36 @@ private:
     std::unique_ptr<GPUMem> dweight_dev;
     std::unique_ptr<GPUMem> dbias_dev;
 
-    std::vector<T> input;
-    std::vector<T> output;
-    std::vector<T> weight;
-    std::vector<T> bias;
-    std::vector<T> meanIn;
-    std::vector<T> varIn;
-    std::vector<T> meanVar;
+    std::vector<Tgpu> input;
+    std::vector<Tgpu> output;
+    std::vector<Tgpu> weight;
+    std::vector<Tgpu> bias;
+    std::vector<Tgpu> meanIn;
+    std::vector<Tgpu> varIn;
+    std::vector<Tgpu> meanVar;
 
-    std::vector<T> doutput;
-    std::vector<T> dinput;
-    std::vector<T> dweight;
-    std::vector<T> dbias;
+    std::vector<Tgpu> doutput;
+    std::vector<Tgpu> dinput;
+    std::vector<Tgpu> dweight;
+    std::vector<Tgpu> dbias;
 
-    std::vector<T> output_host;
-    std::vector<T> meanIn_host;
-    std::vector<T> varIn_host;
-    std::vector<T> meanVar_host;
+    std::vector<Tref> output_host;
+    std::vector<Tref> meanIn_host;
+    std::vector<Tref> varIn_host;
+    std::vector<Tref> meanVar_host;
 
-    std::vector<T> doutput_host;
-    std::vector<T> dinput_host;
-    std::vector<T> dweight_host;
-    std::vector<T> dbias_host;
+    std::vector<Tref> doutput_host;
+    std::vector<Tref> dinput_host;
+    std::vector<Tref> dweight_host;
+    std::vector<Tref> dbias_host;
 
     float epsilon;
     float momentum;
     bool useInputStats;
 };
 
-template <typename T>
-int InstanceNormDriver<T>::ParseCmdLineArgs(int argc, char* argv[])
+template <typename Tgpu, typename Tref>
+int InstanceNormDriver<Tgpu, Tref>::ParseCmdLineArgs(int argc, char* argv[])
 {
     inflags.Parse(argc, argv);
 
@@ -168,8 +168,8 @@ int InstanceNormDriver<T>::ParseCmdLineArgs(int argc, char* argv[])
     return miopenStatusSuccess;
 }
 
-template <typename T>
-int InstanceNormDriver<T>::GetandSetData()
+template <typename Tgpu, typename Tref>
+int InstanceNormDriver<Tgpu, Tref>::GetandSetData()
 {
     std::vector<int> input_length = GetTensorLengthsFromCmdLine();
     epsilon                       = inflags.GetValueDouble("epsilon");
@@ -202,8 +202,8 @@ int InstanceNormDriver<T>::GetandSetData()
     return miopenStatusSuccess;
 }
 
-template <typename T>
-int InstanceNormDriver<T>::AddCmdLineArgs()
+template <typename Tgpu, typename Tref>
+int InstanceNormDriver<Tgpu, Tref>::AddCmdLineArgs()
 {
     inflags.AddInputFlag("forw", 'F', "1", "Run only Instance Norm Forward (Default=1)", "int");
     inflags.AddInputFlag("DimLengths",
@@ -223,8 +223,8 @@ int InstanceNormDriver<T>::AddCmdLineArgs()
     return miopenStatusSuccess;
 }
 
-template <typename T>
-std::vector<int> InstanceNormDriver<T>::GetTensorLengthsFromCmdLine()
+template <typename Tgpu, typename Tref>
+std::vector<int> InstanceNormDriver<Tgpu, Tref>::GetTensorLengthsFromCmdLine()
 {
     std::string lengthsStr = inflags.GetValueStr("DimLengths");
 
@@ -253,8 +253,8 @@ std::vector<int> InstanceNormDriver<T>::GetTensorLengthsFromCmdLine()
     return (lengths);
 }
 
-template <typename T>
-int InstanceNormDriver<T>::AllocateBuffersAndCopy()
+template <typename Tgpu, typename Tref>
+int InstanceNormDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
 {
     size_t input_sz   = GetTensorSize(inputDesc);
     size_t output_sz  = GetTensorSize(outputDesc);
@@ -271,54 +271,54 @@ int InstanceNormDriver<T>::AllocateBuffersAndCopy()
 
     uint32_t ctx = 0;
 
-    input_dev   = std::unique_ptr<GPUMem>(new GPUMem(ctx, input_sz, sizeof(T)));
-    output_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, output_sz, sizeof(T)));
-    weight_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, weight_sz, sizeof(T)));
-    bias_dev    = std::unique_ptr<GPUMem>(new GPUMem(ctx, bias_sz, sizeof(T)));
-    meanIn_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, meanIn_sz, sizeof(T)));
-    varIn_dev   = std::unique_ptr<GPUMem>(new GPUMem(ctx, varIn_sz, sizeof(T)));
-    meanVar_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, meanVar_sz, sizeof(T)));
+    input_dev   = std::unique_ptr<GPUMem>(new GPUMem(ctx, input_sz, sizeof(Tgpu)));
+    output_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, output_sz, sizeof(Tgpu)));
+    weight_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, weight_sz, sizeof(Tgpu)));
+    bias_dev    = std::unique_ptr<GPUMem>(new GPUMem(ctx, bias_sz, sizeof(Tgpu)));
+    meanIn_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, meanIn_sz, sizeof(Tgpu)));
+    varIn_dev   = std::unique_ptr<GPUMem>(new GPUMem(ctx, varIn_sz, sizeof(Tgpu)));
+    meanVar_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, meanVar_sz, sizeof(Tgpu)));
 
-    doutput_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, doutput_sz, sizeof(T)));
-    dinput_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, dinput_sz, sizeof(T)));
-    dweight_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, dweight_sz, sizeof(T)));
-    dbias_dev   = std::unique_ptr<GPUMem>(new GPUMem(ctx, dbias_sz, sizeof(T)));
+    doutput_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, doutput_sz, sizeof(Tgpu)));
+    dinput_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, dinput_sz, sizeof(Tgpu)));
+    dweight_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, dweight_sz, sizeof(Tgpu)));
+    dbias_dev   = std::unique_ptr<GPUMem>(new GPUMem(ctx, dbias_sz, sizeof(Tgpu)));
 
-    input   = std::vector<T>(input_sz, static_cast<T>(0.0f));
-    output  = std::vector<T>(output_sz, static_cast<T>(0.0f));
-    weight  = std::vector<T>(weight_sz, static_cast<T>(0.0f));
-    bias    = std::vector<T>(bias_sz, static_cast<T>(0.0f));
-    meanIn  = std::vector<T>(meanIn_sz, static_cast<T>(0.0f));
-    varIn   = std::vector<T>(varIn_sz, static_cast<T>(1.0f));
-    meanVar = std::vector<T>(meanVar_sz, static_cast<T>(0.0f));
+    input   = std::vector<Tgpu>(input_sz, static_cast<Tgpu>(0.0f));
+    output  = std::vector<Tgpu>(output_sz, static_cast<Tgpu>(0.0f));
+    weight  = std::vector<Tgpu>(weight_sz, static_cast<Tgpu>(0.0f));
+    bias    = std::vector<Tgpu>(bias_sz, static_cast<Tgpu>(0.0f));
+    meanIn  = std::vector<Tgpu>(meanIn_sz, static_cast<Tgpu>(0.0f));
+    varIn   = std::vector<Tgpu>(varIn_sz, static_cast<Tgpu>(1.0f));
+    meanVar = std::vector<Tgpu>(meanVar_sz, static_cast<Tgpu>(0.0f));
 
-    doutput = std::vector<T>(doutput_sz, static_cast<T>(1.0f));
-    dinput  = std::vector<T>(dinput_sz, static_cast<T>(0.0f));
-    dweight = std::vector<T>(dweight_sz, static_cast<T>(0.0f));
-    dbias   = std::vector<T>(dbias_sz, static_cast<T>(0.0f));
+    doutput = std::vector<Tgpu>(doutput_sz, static_cast<Tgpu>(1.0f));
+    dinput  = std::vector<Tgpu>(dinput_sz, static_cast<Tgpu>(0.0f));
+    dweight = std::vector<Tgpu>(dweight_sz, static_cast<Tgpu>(0.0f));
+    dbias   = std::vector<Tgpu>(dbias_sz, static_cast<Tgpu>(0.0f));
 
-    output_host  = std::vector<T>(output_sz, static_cast<T>(0.0f));
-    meanIn_host  = std::vector<T>(meanIn_sz, static_cast<T>(0.0f));
-    varIn_host   = std::vector<T>(varIn_sz, static_cast<T>(1.0f));
-    meanVar_host = std::vector<T>(meanVar_sz, static_cast<T>(0.0f));
+    output_host  = std::vector<Tref>(output_sz, static_cast<Tref>(0.0f));
+    meanIn_host  = std::vector<Tref>(meanIn_sz, static_cast<Tref>(0.0f));
+    varIn_host   = std::vector<Tref>(varIn_sz, static_cast<Tref>(1.0f));
+    meanVar_host = std::vector<Tref>(meanVar_sz, static_cast<Tref>(0.0f));
 
-    doutput_host = std::vector<T>(doutput_sz, static_cast<T>(0.0f));
-    dinput_host  = std::vector<T>(dinput_sz, static_cast<T>(0.0f));
-    dweight_host = std::vector<T>(dweight_sz, static_cast<T>(0.0f));
-    dbias_host   = std::vector<T>(dbias_sz, static_cast<T>(0.0f));
+    doutput_host = std::vector<Tref>(doutput_sz, static_cast<Tref>(0.0f));
+    dinput_host  = std::vector<Tref>(dinput_sz, static_cast<Tref>(0.0f));
+    dweight_host = std::vector<Tref>(dweight_sz, static_cast<Tref>(0.0f));
+    dbias_host   = std::vector<Tref>(dbias_sz, static_cast<Tref>(0.0f));
 
     int status;
 
     for(int i = 0; i < input_sz; i++)
-        input[i] = prng::gen_A_to_B<T>(static_cast<T>(0.0), static_cast<T>(1.0));
+        input[i] = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.0), static_cast<Tgpu>(1.0));
     status = input_dev->ToGPU(GetStream(), input.data());
 
     for(int i = 0; i < weight_sz; i++)
-        weight[i] = prng::gen_A_to_B<T>(static_cast<T>(0.0), static_cast<T>(1.0));
+        weight[i] = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.0), static_cast<Tgpu>(1.0));
     status |= weight_dev->ToGPU(GetStream(), weight.data());
     for(int i = 0; i < bias_sz; i++)
     {
-        bias[i] = prng::gen_A_to_B<T>(static_cast<T>(0.0), static_cast<T>(1.0));
+        bias[i] = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.0), static_cast<Tgpu>(1.0));
     }
     status |= bias_dev->ToGPU(GetStream(), bias.data());
     status |= meanIn_dev->ToGPU(GetStream(), meanIn.data());
@@ -326,7 +326,7 @@ int InstanceNormDriver<T>::AllocateBuffersAndCopy()
     status |= meanVar_dev->ToGPU(GetStream(), meanVar.data());
     for(int i = 0; i < doutput_sz; i++)
     {
-        doutput[i] = prng::gen_A_to_B<T>(static_cast<T>(0.0), static_cast<T>(1.0));
+        doutput[i] = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.0), static_cast<Tgpu>(1.0));
     }
     status |= doutput_dev->ToGPU(GetStream(), doutput.data());
     status |= dinput_dev->ToGPU(GetStream(), dinput.data());
@@ -339,8 +339,8 @@ int InstanceNormDriver<T>::AllocateBuffersAndCopy()
     return miopenStatusSuccess;
 }
 
-template <typename T>
-int InstanceNormDriver<T>::RunForwardGPU()
+template <typename Tgpu, typename Tref>
+int InstanceNormDriver<Tgpu, Tref>::RunForwardGPU()
 {
     float kernel_total_time = 0;
     float kernel_first_time = 0;
@@ -405,12 +405,12 @@ int InstanceNormDriver<T>::RunForwardGPU()
     return miopenStatusSuccess;
 }
 
-template <typename T>
-int InstanceNormDriver<T>::RunForwardCPU()
+template <typename Tgpu, typename Tref>
+int InstanceNormDriver<Tgpu, Tref>::RunForwardCPU()
 {
     if(useInputStats)
     {
-        mloInstanceNormTrainRunHost<T>(input.data(),
+        mloInstanceNormTrainRunHost<Tgpu, Tref>(input.data(),
                                        inputDesc,
                                        output_host.data(),
                                        outputDesc,
@@ -434,7 +434,7 @@ int InstanceNormDriver<T>::RunForwardCPU()
     }
     else
     {
-        mloInstanceNormTestRunHost<T>(input.data(),
+        mloInstanceNormTestRunHost<Tgpu, Tref>(input.data(),
                                       inputDesc,
                                       output_host.data(),
                                       outputDesc,
@@ -453,8 +453,8 @@ int InstanceNormDriver<T>::RunForwardCPU()
     return miopenStatusSuccess;
 }
 
-template <typename T>
-int InstanceNormDriver<T>::RunBackwardGPU()
+template <typename Tgpu, typename Tref>
+int InstanceNormDriver<Tgpu, Tref>::RunBackwardGPU()
 {
     float kernel_total_time = 0;
     float kernel_first_time = 0;
@@ -515,10 +515,10 @@ int InstanceNormDriver<T>::RunBackwardGPU()
     return miopenStatusSuccess;
 }
 
-template <typename T>
-int InstanceNormDriver<T>::RunBackwardCPU()
+template <typename Tgpu, typename Tref>
+int InstanceNormDriver<Tgpu, Tref>::RunBackwardCPU()
 {
-    mloInstanceNormBackwardRunHost<T>(input.data(),
+    mloInstanceNormBackwardRunHost<Tgpu, Tref>(input.data(),
                                       inputDesc,
                                       weight.data(),
                                       weightDesc,
@@ -535,24 +535,24 @@ int InstanceNormDriver<T>::RunBackwardCPU()
     return miopenStatusSuccess;
 }
 
-template <typename T>
-float InstanceNormDriver<T>::GetTolerance()
+template <typename Tgpu, typename Tref>
+Tref InstanceNormDriver<Tgpu, Tref>::GetTolerance()
 {
     // Computation error of fp16 is ~2^13 (=8192) bigger than
     // the one of fp32 because mantissa is shorter by 13 bits.
-    auto tolerance = std::is_same<T, float>::value ? 1.5e-6 : 8.2e-3;
+    auto tolerance = std::is_same<Tgpu, float>::value ? 1.5e-6 : 8.2e-3;
 
     // bf16 mantissa has 7 bits, by 3 bits shorter than fp16.
-    if(std::is_same<T, bfloat16>::value)
+    if(std::is_same<Tgpu, bfloat16>::value)
         tolerance *= 8.0;
     return tolerance;
 }
 
-template <typename T>
-int InstanceNormDriver<T>::VerifyForward()
+template <typename Tgpu, typename Tref>
+int InstanceNormDriver<Tgpu, Tref>::VerifyForward()
 {
     RunForwardCPU();
-    const float tolerance = GetTolerance();
+    const Tref tolerance = GetTolerance();
     auto error_output     = miopen::rms_range(output_host, output);
     auto error_mean_var   = miopen::rms_range(meanVar_host, meanVar);
 
@@ -579,11 +579,11 @@ int InstanceNormDriver<T>::VerifyForward()
     return miopenStatusSuccess;
 }
 
-template <typename T>
-int InstanceNormDriver<T>::VerifyBackward()
+template <typename Tgpu, typename Tref>
+int InstanceNormDriver<Tgpu, Tref>::VerifyBackward()
 {
     RunBackwardCPU();
-    const float tolerance = GetTolerance();
+    const Tref tolerance = GetTolerance();
     auto error_dinput     = miopen::rms_range(dinput_host, dinput);
     auto error_dweight    = miopen::rms_range(dweight_host, dweight);
     auto error_dbias      = miopen::rms_range(dbias_host, dbias);

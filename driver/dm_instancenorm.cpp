@@ -30,11 +30,11 @@
 static Driver* makeDriver(const std::string& base_arg)
 {
     if(base_arg == "instancenorm")
-        return new InstanceNormDriver<float>();
+        return new InstanceNormDriver<float, float>();
     if(base_arg == "instancenormfp16")
-        return new InstanceNormDriver<float16>();
+        return new InstanceNormDriver<float16, float>();
     if(base_arg == "instancenormbfp16")
-        return new InstanceNormDriver<bfloat16>();
+        return new InstanceNormDriver<bfloat16, float>();
     return nullptr;
 }
 
