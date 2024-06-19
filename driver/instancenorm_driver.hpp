@@ -411,43 +411,43 @@ int InstanceNormDriver<Tgpu, Tref>::RunForwardCPU()
     if(useInputStats)
     {
         mloInstanceNormTrainRunHost<Tgpu, Tref>(input.data(),
-                                       inputDesc,
-                                       output_host.data(),
-                                       outputDesc,
-                                       weight.data(),
-                                       weightDesc,
-                                       bias.data(),
-                                       biasDesc,
-                                       meanIn_host.data(),
-                                       meanInDesc,
-                                       varIn_host.data(),
-                                       varInDesc,
-                                       meanIn_host.data(),
-                                       meanInDesc,
-                                       varIn_host.data(),
-                                       varInDesc,
-                                       meanVar_host.data(),
-                                       meanVarDesc,
-                                       epsilon,
-                                       momentum,
-                                       useInputStats);
+                                                inputDesc,
+                                                output_host.data(),
+                                                outputDesc,
+                                                weight.data(),
+                                                weightDesc,
+                                                bias.data(),
+                                                biasDesc,
+                                                meanIn_host.data(),
+                                                meanInDesc,
+                                                varIn_host.data(),
+                                                varInDesc,
+                                                meanIn_host.data(),
+                                                meanInDesc,
+                                                varIn_host.data(),
+                                                varInDesc,
+                                                meanVar_host.data(),
+                                                meanVarDesc,
+                                                epsilon,
+                                                momentum,
+                                                useInputStats);
     }
     else
     {
         mloInstanceNormTestRunHost<Tgpu, Tref>(input.data(),
-                                      inputDesc,
-                                      output_host.data(),
-                                      outputDesc,
-                                      weight.data(),
-                                      weightDesc,
-                                      bias.data(),
-                                      biasDesc,
-                                      meanIn_host.data(),
-                                      meanInDesc,
-                                      varIn_host.data(),
-                                      varInDesc,
-                                      epsilon,
-                                      useInputStats);
+                                               inputDesc,
+                                               output_host.data(),
+                                               outputDesc,
+                                               weight.data(),
+                                               weightDesc,
+                                               bias.data(),
+                                               biasDesc,
+                                               meanIn_host.data(),
+                                               meanInDesc,
+                                               varIn_host.data(),
+                                               varInDesc,
+                                               epsilon,
+                                               useInputStats);
     }
 
     return miopenStatusSuccess;
@@ -519,19 +519,19 @@ template <typename Tgpu, typename Tref>
 int InstanceNormDriver<Tgpu, Tref>::RunBackwardCPU()
 {
     mloInstanceNormBackwardRunHost<Tgpu, Tref>(input.data(),
-                                      inputDesc,
-                                      weight.data(),
-                                      weightDesc,
-                                      dinput_host.data(),
-                                      dinputDesc,
-                                      doutput.data(),
-                                      doutputDesc,
-                                      dweight_host.data(),
-                                      dweightDesc,
-                                      dbias_host.data(),
-                                      dbiasDesc,
-                                      meanVar.data(),
-                                      meanVarDesc);
+                                               inputDesc,
+                                               weight.data(),
+                                               weightDesc,
+                                               dinput_host.data(),
+                                               dinputDesc,
+                                               doutput.data(),
+                                               doutputDesc,
+                                               dweight_host.data(),
+                                               dweightDesc,
+                                               dbias_host.data(),
+                                               dbiasDesc,
+                                               meanVar.data(),
+                                               meanVarDesc);
     return miopenStatusSuccess;
 }
 
@@ -553,8 +553,8 @@ int InstanceNormDriver<Tgpu, Tref>::VerifyForward()
 {
     RunForwardCPU();
     const Tref tolerance = GetTolerance();
-    auto error_output     = miopen::rms_range(output_host, output);
-    auto error_mean_var   = miopen::rms_range(meanVar_host, meanVar);
+    auto error_output    = miopen::rms_range(output_host, output);
+    auto error_mean_var  = miopen::rms_range(meanVar_host, meanVar);
 
     if(!std::isfinite(error_output) || error_output > tolerance ||
        ((!std::isfinite(error_mean_var) || error_mean_var > tolerance) && useInputStats))
@@ -584,9 +584,9 @@ int InstanceNormDriver<Tgpu, Tref>::VerifyBackward()
 {
     RunBackwardCPU();
     const Tref tolerance = GetTolerance();
-    auto error_dinput     = miopen::rms_range(dinput_host, dinput);
-    auto error_dweight    = miopen::rms_range(dweight_host, dweight);
-    auto error_dbias      = miopen::rms_range(dbias_host, dbias);
+    auto error_dinput    = miopen::rms_range(dinput_host, dinput);
+    auto error_dweight   = miopen::rms_range(dweight_host, dweight);
+    auto error_dbias     = miopen::rms_range(dbias_host, dbias);
 
     if(!std::isfinite(error_dinput) || error_dinput > tolerance || !std::isfinite(error_dweight) ||
        error_dweight > tolerance || !std::isfinite(error_dbias) || error_dbias > tolerance)

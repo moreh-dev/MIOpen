@@ -145,8 +145,8 @@ int32_t mloInstanceNormTrainRunHost(Tgpu* input,
 
                     ref_output[yidx] =
                         static_cast<Tcheck>((static_cast<float>(input[xidx]) - pmean[lid]) *
-                                           (1 / sqrt(pvar[lid] + eps)) * pscale[lid] +
-                                       pbias[lid]);
+                                                (1 / sqrt(pvar[lid] + eps)) * pscale[lid] +
+                                            pbias[lid]);
                 }
             });
         });
@@ -218,9 +218,10 @@ int32_t mloInstanceNormTestRunHost(Tgpu* input,
                                     y_tv.stride[2] * yidx2 + y_tv.stride[1] * yidx1 +
                                     y_tv.stride[0] * yidx0;
 
-                    ref_output[yidx] = static_cast<Tcheck>((static_cast<float>(input[xidx]) - pmean) *
-                                                          (1 / sqrt(pvar + eps)) * pscale +
-                                                      pbias);
+                    ref_output[yidx] =
+                        static_cast<Tcheck>((static_cast<float>(input[xidx]) - pmean) *
+                                                (1 / sqrt(pvar + eps)) * pscale +
+                                            pbias);
                 }
             });
         });
@@ -355,7 +356,7 @@ int32_t mloInstanceNormBackwardRunHost(Tgpu* input,
                     float nxi  = (static_cast<float>(input[xidx]) - pmean[lid]) * pvar[lid];
                     ref_dinput[dxidx] =
                         static_cast<Tcheck>((M * dyi - pbias_grad[lid] - nxi * pscale_grad[lid]) *
-                                       pscale * pvar[lid] / M);
+                                            pscale * pvar[lid] / M);
                 }
             });
         });
