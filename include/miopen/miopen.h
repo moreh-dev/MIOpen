@@ -6161,21 +6161,22 @@ MIOPEN_EXPORT miopenStatus_t miopenT5LayerNormBackward(miopenHandle_t handle,
  *
  *  @{
  */
-/*! @brief Execute a cat forward layer
+/*! @brief Execute a outer forward layer
  *
  * @param handle         MIOpen handle (input)
- * @param xCount         Number of input tensor x (input)
- * @param xDescs         Tensor descriptor of input tensor x (input)
- * @param xs             Source data tensor x (input)
+ * @param xDesc1         Tensor descriptor of input tensor x1 (input)
+ * @param x1             Source data tensor x1 (input)
+ * @param xDesc2         Tensor descriptor of input tensor x2 (input)
+ * @param x2             Source data tensor x2 (input)
  * @param yDesc          Tensor descriptor of output tensor y (input)
  * @param y              Data tensor y (output)
- * @param dim            Concatenation dimension (input)
  * @return               miopenStatus_t
  */
 MIOPEN_EXPORT miopenStatus_t miopenOuterForward(miopenHandle_t handle,
-                                              const int32_t xCount,
-                                              const miopenTensorDescriptor_t* xDescs,
-                                              void* x,
+                                              const miopenTensorDescriptor_t x1Desc,
+                                              const void* x1,
+                                              const miopenTensorDescriptor_t x2Desc,
+                                              const void* x2,
                                               const miopenTensorDescriptor_t yDesc,
                                               void* y);
 

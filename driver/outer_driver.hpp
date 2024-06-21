@@ -46,18 +46,20 @@
 #define MLO_SUMMHOST_H_
 
 template <typename Tgpu, typename Tcheck>
-int32_t mloSumForwardRunHost(miopenTensorDescriptor_t inputDesc,
-                             miopenTensorDescriptor_t yDesc,
-                             Tgpu* input,
-                             Tcheck* outputhost,
-                             int32_t dim,
-                             miopenSumNanPropagation_t nanPropagation)
+int32_t mloSumForwardRunHost(miopenTensorDescriptor_t input1Desc,
+                            miopenTensorDescriptor_t input2Desc,
+                            miopenTensorDescriptor_t yDesc,
+                            Tgpu* input1,
+                            Tgpu* input2,
+                            Tcheck* outputhost,
+                            miopenSumNanPropagation_t nanPropagation)
 {
-    auto input_dims  = miopen::deref(inputDesc).GetLengths();
+    auto input1_dims  = miopen::deref(input1Desc).GetLengths();
+    auto input2_dims  = miopen::deref(input2Desc).GetLengths();
     auto output_dims = miopen::deref(yDesc).GetLengths();
 
-    size_t in_n = input_dims[0];
-    size_t in_m = input_dims[0];
+    size_t in_n = input1_dims[0];
+    size_t in_m = input2_dims[0];
 
     int32_t ret = 0;
 
@@ -67,7 +69,7 @@ int32_t mloSumForwardRunHost(miopenTensorDescriptor_t inputDesc,
         for(size_t j=0;j<in_m;j++)
         {
             outputhost[cnt] = 0;
-            outputhost[cnt++] = input[i] * input[in_n + j];
+            outputhost[cnt++] = input1[i] * input2[j];
         }
     }
     return ret;
@@ -80,7 +82,8 @@ class OuterDriver : public Driver
 public:
     OuterDriver() : Driver()
     {
-        miopenCreateTensorDescriptor(&inputDesc);
+        miopenCreateTensorDescriptor(&input1Desc);
+        miopenCreateTensorDescriptor(&input2Desc);
         miopenCreateTensorDescriptor(&yDesc);
 
         data_type = miopen_type<Tgpu>{};
@@ -105,7 +108,8 @@ public:
     int VerifyForward() override;
     ~OuterDriver() override
     {
-        miopenDestroyTensorDescriptor(inputDesc);
+        miopenDestroyTensorDescriptor(input1Desc);
+        miopenDestroyTensorDescriptor(input1Desc);
         miopenDestroyTensorDescriptor(yDesc);
     }
 
@@ -114,20 +118,23 @@ private:
 
     int forw;
 
-    miopenTensorDescriptor_t inputDesc;
+    miopenTensorDescriptor_t input1Desc;
+    miopenTensorDescriptor_t input2Desc;
     miopenTensorDescriptor_t yDesc;
 
-    std::unique_ptr<GPUMem> in_dev;
+    std::unique_ptr<GPUMem> in1_dev;
+    std::unique_ptr<GPUMem> in2_dev;
     std::unique_ptr<GPUMem> out_dev;
     std::unique_ptr<GPUMem> workspace_dev;
 
-    std::vector<Tgpu> in;
+    std::vector<Tgpu> in1;
+    std::vector<Tgpu> in2;
+
     std::vector<Tgpu> out;
     std::vector<Tref> outhost;
 
     size_t ws_sizeInBytes;
 
-    int dim;
     miopenSumNanPropagation_t nanPropagation;
 };
 
@@ -142,12 +149,16 @@ int OuterDriver<Tgpu, Tref>::ParseCmdLineArgs(int argc, char* argv[])
 template <typename Tgpu, typename Tref>
 int OuterDriver<Tgpu, Tref>::GetandSetData()
 {
-    std::vector<int> in_len = GetInputTensorLengthsFromCmdLine();
+    std::vector<int> in_lens = GetInputTensorLengthsFromCmdLine();
 
     int in_n = inflags.GetValueInt("in_n");
     int in_m = inflags.GetValueInt("in_m");
 
-    SetTensorNd(inputDesc, in_len, data_type);
+    auto lens1 = std::vector <int> ({in_lens[0]});
+    auto lens2 = std::vector <int> ({in_lens[1]});
+
+    SetTensorNd(input1Desc, lens1, data_type);
+    SetTensorNd(input2Desc, lens2, data_type);
 
     std::vector<int> out_len({in_n, in_m});
 
@@ -178,7 +189,7 @@ std::vector<int> OuterDriver<Tgpu, Tref>::GetInputTensorLengthsFromCmdLine()
 
     if((in_n != 0) && (in_m != 0))
     {
-        return std::vector<int>({in_n + in_m});
+        return std::vector<int>({in_n, in_m});
     }
     else
     {
@@ -190,7 +201,8 @@ std::vector<int> OuterDriver<Tgpu, Tref>::GetInputTensorLengthsFromCmdLine()
 template <typename Tgpu, typename Tref>
 int OuterDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
 {
-    size_t in_sz  = GetTensorSize(inputDesc);
+    size_t in1_sz = GetTensorSize(input1Desc);
+    size_t in2_sz = GetTensorSize(input2Desc);
     size_t out_sz = GetTensorSize(yDesc);
 
     if(ws_sizeInBytes == static_cast<size_t>(-1))
@@ -198,20 +210,30 @@ int OuterDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
 
     uint32_t ctx = 0;
 
-    in_dev        = std::unique_ptr<GPUMem>(new GPUMem(ctx, in_sz, sizeof(Tgpu)));
+    in1_dev       = std::unique_ptr<GPUMem>(new GPUMem(ctx, in1_sz, sizeof(Tgpu)));
+    in2_dev       = std::unique_ptr<GPUMem>(new GPUMem(ctx, in2_sz, sizeof(Tgpu)));
     out_dev       = std::unique_ptr<GPUMem>(new GPUMem(ctx, out_sz, sizeof(Tgpu)));
 
-    in      = std::vector<Tgpu>(in_sz, static_cast<Tgpu>(0));
+    in1     = std::vector<Tgpu>(in1_sz, static_cast<Tgpu>(0));
+    in2     = std::vector<Tgpu>(in2_sz, static_cast<Tgpu>(0));
     out     = std::vector<Tgpu>(out_sz, static_cast<Tgpu>(0));
     outhost = std::vector<Tref>(out_sz, static_cast<Tref>(0));
 
-    for(int i = 0; i < in_sz; i++)
+    for(int i = 0; i < in1_sz; i++)
     {
-        in[i] = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.0), static_cast<Tgpu>(1.0));
+        in1[i] = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.0), static_cast<Tgpu>(1.0));
     }
 
-    if(in_dev->ToGPU(GetStream(), in.data()) != 0)
-        std::cerr << "Error copying (in) to GPU, size: " << in_dev->GetSize() << std::endl;
+    for(int i = 0; i < in2_sz; i++)
+    {
+        in2[i] = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.0), static_cast<Tgpu>(1.0));
+    }
+
+    if(in1_dev->ToGPU(GetStream(), in1.data()) != 0)
+        std::cerr << "Error copying (in1) to GPU, size: " << in1_dev->GetSize() << std::endl;
+
+    if(in2_dev->ToGPU(GetStream(), in2.data()) != 0)
+        std::cerr << "Error copying (in1) to GPU, size: " << in2_dev->GetSize() << std::endl;
 
     if(out_dev->ToGPU(GetStream(), out.data()) != 0)
         std::cerr << "Error copying (out) to GPU, size: " << out_dev->GetSize() << std::endl;
@@ -223,6 +245,17 @@ template <typename Tgpu, typename Tref>
 int OuterDriver<Tgpu, Tref>::RunForwardGPU()
 {
     std::cout << "RunForwardGPU is called" << std::endl;
+
+    miopenOuterForward(
+        GetHandle(),
+        input1Desc,
+        in1_dev->GetMem(),
+        input2Desc,
+        in2_dev->GetMem(),
+        yDesc,
+        out_dev->GetMem()
+    );
+
     return miopenStatusSuccess;
 }
 
@@ -230,7 +263,7 @@ template <typename Tgpu, typename Tref>
 int OuterDriver<Tgpu, Tref>::RunForwardCPU()
 {
     mloSumForwardRunHost<Tgpu, Tref>(
-        inputDesc, yDesc, in.data(), outhost.data(), dim, nanPropagation);
+        input1Desc, input2Desc, yDesc, in1.data(), in2.data(), outhost.data(), nanPropagation);
 
     return miopenStatusSuccess;
 }
