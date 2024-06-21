@@ -34,8 +34,8 @@
 
 int main(int argc, char* argv[])
 {
-
     std::string base_arg = ParseBaseArg(argc, argv);
+    std::cout << "base_arg" << base_arg << std::endl;
 
     if(base_arg == "--version")
     {
@@ -88,6 +88,7 @@ int main(int argc, char* argv[])
 
     if(fargval & 1 || fargval == 0 || bnFwdInVer)
     {
+        printf("run forward");
         rc = drv->RunForwardGPU();
         cumulative_rc |= rc;
         if(rc != 0)
@@ -99,6 +100,7 @@ int main(int argc, char* argv[])
 
     if(fargval != 1)
     {
+        printf("run backward");
         rc = drv->RunBackwardGPU();
         cumulative_rc |= rc;
         if(rc != 0)
