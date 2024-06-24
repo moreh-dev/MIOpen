@@ -32,18 +32,29 @@ namespace miopen {
 struct Handle;
 struct TensorDescriptor;
 
-size_t GetRReLUForwardWorkspaceSize(Handle& handle, const TensorDescriptor& inputDesc);
+size_t GetRReLUStatesSize(Handle& handle);
+
+miopenStatus_t
+RReLUStatesInit(Handle& handle, Data_t states, size_t stateSizeInBytes, uint64_t seed);
 
 miopenStatus_t RReLUForward(Handle& handle,
-                            Data_t workspace,
-                            size_t workspaceSizeInBytes,
+                            ConstData_t states,
+                            size_t stateSizeInBytes,
                             const TensorDescriptor& inputDesc,
                             ConstData_t input,
                             const TensorDescriptor& outputDesc,
                             Data_t output,
-                            const TensorDescriptor& noiseDesc,
-                            Data_t noise,
                             float lower,
                             float upper);
+
+miopenStatus_t RReLUBackward(Handle& handle,
+                             ConstData_t states,
+                             size_t stateSizeInBytes,
+                             const TensorDescriptor& doutputDesc,
+                             ConstData_t doutput,
+                             const TensorDescriptor& dinputDesc,
+                             Data_t dinput,
+                             float lower,
+                             float upper);
 
 } // namespace miopen

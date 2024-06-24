@@ -31,23 +31,54 @@
 #include <miopen/tensor.hpp>
 #include <miopen/rrelu/utils.hpp>
 
+#include "dropout_gpu_emulator.hpp"
+
 template <typename Tgpu, typename Tcheck>
-int32_t mloRReLUForward5dRunHost(const miopenTensorDescriptor_t inputDesc,
+int32_t mloRReLUForward5dRunHost(const std::vector<prngStates>& states,
+                                 const miopenTensorDescriptor_t inputDesc,
                                  const miopenTensorDescriptor_t outputDesc,
                                  const Tgpu* input,
-                                 const float* noise,
-                                 Tcheck* output_host)
+                                 Tcheck* output_host,
+                                 const float lower,
+                                 const float upper)
 {
     auto input_tv  = miopen::solver::rrelu::get_inner_expanded_tv<5>(miopen::deref(inputDesc));
     auto output_tv = miopen::solver::rrelu::get_inner_expanded_tv<5>(miopen::deref(outputDesc));
 
-    int size = miopen::deref(inputDesc).GetElementSize();
-    par_ford(size)([&](int i) {
-        auto layout = tensor_layout_t<5>(input_tv, i);
-        auto Iidx   = input_tv.get_tensor_view_idx(layout);
-        auto Oidx   = output_tv.get_tensor_view_idx(layout);
+    int num_states = states.size();
 
-        output_host[Oidx] = static_cast<Tcheck>(static_cast<float>(input[Iidx]) * noise[i]);
+    int num_threads;
+    {
+        size_t size = miopen::deref(inputDesc).GetElementSize();
+        if(size <= num_states)
+            num_threads = size;
+        else
+        {
+            size_t divisor = 1;
+            while((1ul << divisor) * divisor <= size)
+                ++divisor;
+            --divisor;
+            num_threads = (1ul << divisor);
+        }
+    }
+    num_threads = AlignUp(num_threads, 256);
+
+    par_ford(num_threads)([&](int gid) {
+        prngStates curState = states[gid % num_states];
+        for(int i = gid; i < miopen::deref(inputDesc).GetElementSize(); i += num_threads)
+        {
+            auto layout = tensor_layout_t<5>(input_tv, i);
+            auto Iidx   = input_tv.get_tensor_view_idx(layout);
+            auto Oidx   = output_tv.get_tensor_view_idx(layout);
+            auto x      = static_cast<float>(input[Iidx]);
+
+            float alpha = 1.0f;
+            if(x < 0.0f)
+                // This part is copied from Dropout operation
+                alpha = uniform_distribution_emu(xorwow_next(&curState)) * (upper - lower) + lower;
+
+            output_host[Oidx] = static_cast<Tcheck>(x * alpha);
+        }
     });
 
     return miopenStatusSuccess;

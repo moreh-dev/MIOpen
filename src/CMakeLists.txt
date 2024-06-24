@@ -273,7 +273,8 @@ set( MIOpen_Source
     solver/pooling/backwardNd.cpp
     solver/reduce/forward_argmax.cpp
     solver/reduce/forward_sum.cpp
-    solver/rrelu/forward_rrelu.cpp
+    solver/rrelu/forward_rrelu_nonpacked.cpp
+    solver/rrelu/forward_rrelu_packed.cpp
     solver/rrelu/utils.cpp
     solver/softmax/attn_softmax.cpp
     solver/softmax/softmax.cpp

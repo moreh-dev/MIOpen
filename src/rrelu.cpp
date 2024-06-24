@@ -33,33 +33,30 @@
 
 namespace miopen {
 
-size_t GetRReLUForwardWorkspaceSize(Handle& handle, const TensorDescriptor& inputDesc)
+size_t GetRReLUStatesSize(Handle& handle)
 {
-    auto ctx           = ExecutionContext{&handle};
-    const auto problem = rrelu::ForwardProblemDescription{inputDesc, inputDesc, inputDesc, false};
+    return std::min(size_t(MAX_PRNG_STATE), handle.GetImage3dMaxWidth()) * sizeof(prngStates);
+}
 
-    const auto solvers = solver::SolverContainer<solver::rrelu::ContiguouseForward,
-                                                 solver::rrelu::nonContiguouseForward>{};
+miopenStatus_t
+RReLUStatesInit(Handle& handle, Data_t states, size_t stateSizeInBytes, uint64_t seed)
+{
+    DropoutDescriptor{}.InitPRNGState(handle, states, stateSizeInBytes, seed);
 
-    auto pair_size_vector = solvers.GetWorkspaceSizes(ctx, problem);
-
-    return pair_size_vector.empty() ? static_cast<size_t>(-1) : pair_size_vector.front().second;
+    return miopenStatusSuccess;
 }
 
 miopenStatus_t RReLUForward(Handle& handle,
-                            Data_t workspace,
-                            size_t workspaceSizeInBytes,
+                            ConstData_t states,
+                            size_t stateSizeInBytes,
                             const TensorDescriptor& inputDesc,
                             ConstData_t input,
                             const TensorDescriptor& outputDesc,
                             Data_t output,
-                            const TensorDescriptor& noiseDesc,
-                            Data_t noise,
                             const float lower,
                             const float upper)
 {
-    const auto problem =
-        rrelu::ForwardProblemDescription{inputDesc, outputDesc, noiseDesc, noise != nullptr};
+    const auto problem = rrelu::ForwardProblemDescription{inputDesc, outputDesc};
 
     const auto invoke_params = [&]() {
         auto tmp           = rrelu::InvokeParams{};
@@ -68,12 +65,10 @@ miopenStatus_t RReLUForward(Handle& handle,
         tmp.input          = input;
         tmp.outputDesc     = &outputDesc;
         tmp.output         = output;
-        tmp.noiseDesc      = &noiseDesc;
-        tmp.noise          = noise;
         tmp.lower          = lower;
         tmp.upper          = upper;
-        tmp.workspace      = workspace;
-        tmp.workspace_size = workspaceSizeInBytes;
+        tmp.states         = states;
+        tmp.state_size     = stateSizeInBytes;
         return tmp;
     }();
 

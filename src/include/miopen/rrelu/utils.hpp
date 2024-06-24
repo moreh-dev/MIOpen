@@ -31,6 +31,7 @@
 #include <miopen/problem_description_base.hpp>
 #include <miopen/tensor.hpp>
 #include <miopen/solver.hpp>
+#include <miopen/rrelu/problem_description.hpp>
 
 namespace miopen {
 namespace solver {
@@ -81,6 +82,9 @@ KernelInfo make_hip_kernel(std::vector<size_t> localsize,
                            std::string kernel_file,
                            std::string kernel_name,
                            KernelBuildParameters build_params);
+
+size_t GetNumThreads(const ExecutionContext& context,
+                     const miopen::rrelu::ForwardProblemDescription& problem);
 
 } // namespace rrelu
 } // namespace solver

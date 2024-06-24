@@ -66,91 +66,85 @@ __device__ float uniform_distribution(uint v)
 }
 
 template <typename TI, typename TO>
-__device__ void RReLUContiguous(const TI* input,
-                                TO* output,
-                                float* noise,
-                                const float lower,
-                                const float upper,
-                                const size_t N,
-                                const prngStates* state,
-                                const size_t num_states)
+__device__ void RReLUForwardContiguous(const TI* input,
+                                       TO* output,
+                                       const float lower,
+                                       const float upper,
+                                       const size_t N,
+                                       const prngStates* states,
+                                       const size_t num_states)
 {
     int gid = blockIdx.x * blockDim.x + threadIdx.x;
 
-    prngStates curState = state[gid % num_states];
+    prngStates curState = states[gid % num_states];
 
     for(int i = gid; i < N; i += gridDim.x * blockDim.x)
     {
         FLOAT_ACCUM x = CVT_FLOAT2ACCUM(input[i]);
         float alpha   = 1.0f;
-        if(x < 0)
+        if(x < 0.0f)
+            // This part is copied from Dropout operation
             alpha = uniform_distribution(xorwow_lite_next(&curState)) * (upper - lower) + lower;
 
         output[i] = CVT_ACCUM2FLOAT(alpha * x);
-        if(noise)
-            noise[i] = alpha;
     }
 }
 
-extern "C" __global__ void RReLUContiguous(const INPUT_TYPE* input,
-                                           OUTPUT_TYPE* output,
-                                           float* noise,
-                                           const float lower,
-                                           const float upper,
-                                           const size_t N,
-                                           const prngStates* state,
-                                           const size_t num_states)
+extern "C" __global__ void RReLUForwardContiguous(const INPUT_TYPE* input,
+                                                  OUTPUT_TYPE* output,
+                                                  const float lower,
+                                                  const float upper,
+                                                  const size_t N,
+                                                  const prngStates* states,
+                                                  const size_t num_states)
 {
     // instantiate the kernel
-    RReLUContiguous<INPUT_TYPE, OUTPUT_TYPE>(
-        input, output, noise, lower, upper, N, state, num_states);
+    RReLUForwardContiguous<INPUT_TYPE, OUTPUT_TYPE>(
+        input, output, lower, upper, N, states, num_states);
 }
 
-template <typename TI, typename TO>
-__device__ void RReLU(const TI* input,
-                      TO* output,
-                      float* noise,
-                      const float lower,
-                      const float upper,
-                      const size_t N,
-                      const tensor_view_t<MAX_DIMS> input_tv,
-                      const tensor_view_t<MAX_DIMS> output_tv,
-                      const prngStates* state,
-                      const size_t num_states)
+template <typename TI, typename TO, unsigned NDIMS>
+__device__ void RReLUForwardNd(const TI* input,
+                               TO* output,
+                               const float lower,
+                               const float upper,
+                               const size_t N,
+                               const tensor_view_t<NDIMS> input_tv,
+                               const tensor_view_t<NDIMS> output_tv,
+                               const prngStates* states,
+                               const size_t num_states)
 {
     int gid = blockIdx.x * blockDim.x + threadIdx.x;
 
-    prngStates curState = state[gid % num_states];
+    prngStates curState = states[gid % num_states];
 
     for(int i = gid; i < N; i += gridDim.x * blockDim.x)
     {
-        auto layout = tensor_layout_t<MAX_DIMS>(input_tv, i);
+        auto layout = tensor_layout_t<NDIMS>(input_tv, i);
         auto Iidx   = input_tv.get_tensor_view_idx(layout);
         auto Oidx   = output_tv.get_tensor_view_idx(layout);
 
         FLOAT_ACCUM x = CVT_FLOAT2ACCUM(input[Iidx]);
         float alpha   = 1.0f;
         if(x < 0)
+            // This part is copied from Dropout operation
             alpha = uniform_distribution(xorwow_lite_next(&curState)) * (upper - lower) + lower;
 
         output[Oidx] = CVT_ACCUM2FLOAT(alpha * x);
-        if(noise)
-            noise[i] = alpha;
     }
 }
 
-extern "C" __global__ void RReLU(const INPUT_TYPE* input,
-                                 OUTPUT_TYPE* output,
-                                 float* noise,
-                                 const float lower,
-                                 const float upper,
-                                 const size_t N,
-                                 const tensor_view_t<MAX_DIMS> input_tv,
-                                 const tensor_view_t<MAX_DIMS> output_tv,
-                                 const prngStates* state,
-                                 const size_t num_states)
+extern "C" __global__ void RReLUForwardNd(const INPUT_TYPE* input,
+                                          OUTPUT_TYPE* output,
+                                          const float lower,
+                                          const float upper,
+                                          const size_t N,
+                                          const tensor_view_t<VIEW_DIMS> input_tv,
+                                          const tensor_view_t<VIEW_DIMS> output_tv,
+                                          const prngStates* states,
+                                          const size_t num_states)
 {
     // instantiate the kernel
-    RReLU<INPUT_TYPE, OUTPUT_TYPE>(
-        input, output, noise, lower, upper, N, input_tv, output_tv, state, num_states);
+    RReLUForwardNd<INPUT_TYPE, OUTPUT_TYPE, VIEW_DIMS>(
+        input, output, lower, upper, N, input_tv, output_tv, states, num_states);
 }

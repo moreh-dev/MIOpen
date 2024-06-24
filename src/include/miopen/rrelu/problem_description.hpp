@@ -40,29 +40,16 @@ bool checkSameStride(const TensorDescriptor& x, const TensorDescriptor& y);
 struct ForwardProblemDescription : ProblemDescriptionBase
 {
     ForwardProblemDescription(const TensorDescriptor& inputDesc_,
-                              const TensorDescriptor& outputDesc_,
-                              const TensorDescriptor& noiseDesc_,
-                              bool hasNoise)
-        : inputDesc(inputDesc_), outputDesc(outputDesc_), noiseDesc(noiseDesc_)
+                              const TensorDescriptor& outputDesc_)
+        : inputDesc(inputDesc_), outputDesc(outputDesc_)
     {
         if(!IsSameLength())
             MIOPEN_THROW(miopenStatusBadParm,
                          "RReLU: Input and Output tensor must have same size.");
-        if(hasNoise)
-        {
-            if(inputDesc.GetElementSize() != noiseDesc.GetElementSize())
-                MIOPEN_THROW(miopenStatusBadParm,
-                             "RReLU: Input and Noise tensor must have same size.");
-            if(!noiseDesc.IsPacked())
-                MIOPEN_THROW(miopenStatusBadParm, "RReLU: Noise tensor must be packed.");
-            if(noiseDesc.GetType() != miopenFloat)
-                MIOPEN_THROW(miopenStatusBadParm, "RReLU: Noise tensor only works with float32.");
-        }
     }
 
     const TensorDescriptor& GetInputDesc() const { return inputDesc; }
     const TensorDescriptor& GetOutputDesc() const { return outputDesc; }
-    const TensorDescriptor& GetNoiseDesc() const { return noiseDesc; }
 
     bool IsAllPacked() const
     {
@@ -92,7 +79,6 @@ struct ForwardProblemDescription : ProblemDescriptionBase
 private:
     TensorDescriptor inputDesc;
     TensorDescriptor outputDesc;
-    TensorDescriptor noiseDesc;
 
     NetworkConfig MakeForwardNetworkConfig() const;
 };

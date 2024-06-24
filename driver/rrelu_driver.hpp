@@ -60,7 +60,6 @@ public:
     {
         miopenCreateTensorDescriptor(&inputDesc);
         miopenCreateTensorDescriptor(&outputDesc);
-        miopenCreateTensorDescriptor(&noiseDesc);
 
         data_type = miopen_type<Tgpu>{};
     }
@@ -87,7 +86,6 @@ public:
     {
         miopenDestroyTensorDescriptor(inputDesc);
         miopenDestroyTensorDescriptor(outputDesc);
-        miopenDestroyTensorDescriptor(noiseDesc);
     }
 
 private:
@@ -97,20 +95,18 @@ private:
 
     miopenTensorDescriptor_t inputDesc;
     miopenTensorDescriptor_t outputDesc;
-    miopenTensorDescriptor_t noiseDesc;
 
     std::unique_ptr<GPUMem> input_dev;
     std::unique_ptr<GPUMem> output_dev;
-    std::unique_ptr<GPUMem> noise_dev;
-    std::unique_ptr<GPUMem> workspace_dev;
+    std::unique_ptr<GPUMem> states_dev;
 
     std::vector<Tgpu> input;
     std::vector<Tgpu> output;
-    std::vector<float> noise;
+    std::vector<prngStates> states;
 
     std::vector<Tref> output_host;
 
-    size_t ws_sizeInBytes;
+    size_t states_sizeInBytes;
 
     float lower;
     float upper;
@@ -144,7 +140,6 @@ int RReLUDriver<Tgpu, Tref>::GetandSetData()
 
     SetTensorNd(inputDesc, length, input_strides, data_type);
     SetTensorNd(outputDesc, length, data_type);
-    SetTensorNd(noiseDesc, length, miopen_type<float>{});
 
     return miopenStatusSuccess;
 }
@@ -214,23 +209,21 @@ int RReLUDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
 {
     size_t input_sz  = GetTensorSize(inputDesc);
     size_t output_sz = GetTensorSize(outputDesc);
-    size_t noise_sz  = GetTensorSize(noiseDesc);
 
-    miopenGetRReLUForwardWorkspaceSize(GetHandle(), inputDesc, &ws_sizeInBytes);
+    miopenGetRReLUStatesSize(GetHandle(), &states_sizeInBytes);
 
-    if(ws_sizeInBytes == static_cast<size_t>(-1))
+    if(states_sizeInBytes == static_cast<size_t>(-1))
         return miopenStatusAllocFailed;
 
     uint32_t ctx = 0;
 
     input_dev     = std::unique_ptr<GPUMem>(new GPUMem(ctx, input_sz, sizeof(Tgpu)));
     output_dev    = std::unique_ptr<GPUMem>(new GPUMem(ctx, output_sz, sizeof(Tgpu)));
-    noise_dev     = std::unique_ptr<GPUMem>(new GPUMem(ctx, noise_sz, sizeof(float)));
-    workspace_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, ws_sizeInBytes, sizeof(std::byte)));
+    states_dev    = std::unique_ptr<GPUMem>(new GPUMem(ctx, states_sizeInBytes, sizeof(std::byte)));
 
     input  = std::vector<Tgpu>(input_sz);
     output = std::vector<Tgpu>(output_sz);
-    noise  = std::vector<float>(noise_sz, std::numeric_limits<float>::quiet_NaN());
+    states = std::vector<prngStates>(states_sizeInBytes / sizeof(prngStates));
 
     output_host = std::vector<Tref>(output_sz, std::numeric_limits<Tref>::quiet_NaN());
 
@@ -239,6 +232,11 @@ int RReLUDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
 
     if(input_dev->ToGPU(GetStream(), input.data()) != 0)
         std::cerr << "Error copying (input) to GPU, size: " << input_dev->GetSize() << std::endl;
+
+    miopenRReLUStatesInit(GetHandle(), states_dev->GetMem(), states_sizeInBytes, 2024);
+    if(states_dev->FromGPU(GetStream(), states.data()) != 0)
+        std::cerr << "Error copying (PRNG states) from GPU, size: " << states_dev->GetSize()
+                  << std::endl;
 
     return miopenStatusSuccess;
 }
@@ -255,14 +253,12 @@ int RReLUDriver<Tgpu, Tref>::RunForwardGPU()
     for(int i = 0; i < inflags.GetValueInt("iter"); i++)
     {
         miopenRReLUForward(GetHandle(),
-                           workspace_dev->GetMem(),
-                           ws_sizeInBytes,
+                           states_dev->GetMem(),
+                           states_sizeInBytes,
                            inputDesc,
                            input_dev->GetMem(),
                            outputDesc,
                            output_dev->GetMem(),
-                           noiseDesc,
-                           nullptr,
                            lower,
                            upper);
 
@@ -286,27 +282,9 @@ int RReLUDriver<Tgpu, Tref>::RunForwardGPU()
         std::cout << "GPU Kernel Time Forward RReLU Elapsed: " << kernel_average_time << " ms\n";
     }
 
-    // Require another GPU run to get noise values for CPU run
-    if(inflags.GetValueInt("verify") != 0)
-    {
-        miopenRReLUForward(GetHandle(),
-                           workspace_dev->GetMem(),
-                           ws_sizeInBytes,
-                           inputDesc,
-                           input_dev->GetMem(),
-                           outputDesc,
-                           output_dev->GetMem(),
-                           noiseDesc,
-                           noise_dev->GetMem(),
-                           lower,
-                           upper);
-        if(noise_dev->FromGPU(GetStream(), noise.data()) != 0)
-            std::cerr << "Error copying (noise_dev) from GPU, size: " << noise_dev->GetSize()
-                      << std::endl;
-        if(output_dev->FromGPU(GetStream(), output.data()) != 0)
-            std::cerr << "Error copying (output_dev) from GPU, size: " << output_dev->GetSize()
-                      << std::endl;
-    }
+    if(output_dev->FromGPU(GetStream(), output.data()) != 0)
+        std::cerr << "Error copying (output_dev) from GPU, size: " << output_dev->GetSize()
+                  << std::endl;
 
     return miopenStatusSuccess;
 }
@@ -315,7 +293,7 @@ template <typename Tgpu, typename Tref>
 int RReLUDriver<Tgpu, Tref>::RunForwardCPU()
 {
     mloRReLUForward5dRunHost<Tgpu, Tref>(
-        inputDesc, outputDesc, input.data(), noise.data(), output_host.data());
+        states, inputDesc, outputDesc, input.data(), output_host.data(), lower, upper);
 
     return miopenStatusSuccess;
 }

@@ -24,6 +24,7 @@
  *
  *******************************************************************************/
 
+#include <miopen/dropout.hpp>
 #include <miopen/rrelu/utils.hpp>
 
 namespace miopen {
@@ -46,6 +47,23 @@ KernelInfo make_hip_kernel(std::vector<size_t> localsize,
         globalsize[i] = AlignUp(globalsize[i], localsize[i]);
     return KernelInfo{
         build_params.GenerateFor(kbp::HIP{}), localsize, globalsize, kernel_file, kernel_name};
+}
+
+size_t GetNumThreads(const ExecutionContext& context,
+                     const miopen::rrelu::ForwardProblemDescription& problem)
+{
+    // This line must be up to date with miopenDropoutGetStatesSize in src/dropout_api.cpp
+    size_t num_states = std::min(size_t(MAX_PRNG_STATE), context.GetStream().GetImage3dMaxWidth());
+
+    size_t size = problem.GetInputDesc().GetElementSize();
+    if(size <= num_states)
+        return size;
+    size_t divisor = 1;
+    while((1ul << divisor) * divisor <= size)
+        ++divisor;
+    --divisor;
+
+    return (1ul << divisor);
 }
 
 } // namespace rrelu

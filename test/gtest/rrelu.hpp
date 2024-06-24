@@ -65,6 +65,9 @@ struct RReLUTestCase
 inline std::vector<RReLUTestCase> RReLUTestConfigs()
 {
     std::vector<RReLUTestCase> tcs;
+    tcs.push_back({{10}, 1.0f / 8, 1.0f / 3, true});
+    tcs.push_back({{10}, 1.0f / 8, 1.0f / 3, false});
+
     tcs.push_back({{512, 64, 112}, 1.0f / 8, 1.0f / 3, true});
     tcs.push_back({{512, 64, 112}, 1.0f / 8, 1.0f / 3, false});
 
@@ -117,45 +120,43 @@ protected:
         fill(output.begin(), output.end(), 1.0f);
         ref_output = tensor<T>{lengths, out_strides};
 
-        noise = tensor<float>{lengths};
-        fill(noise.begin(), noise.end(), 1.0f);
-
-        ws_sizeInBytes = miopen::GetRReLUForwardWorkspaceSize(handle, input.desc);
-        if(ws_sizeInBytes == static_cast<size_t>(-1))
+        state_sizeInBytes = miopen::GetRReLUStatesSize(handle);
+        if(state_sizeInBytes == static_cast<size_t>(-1))
             GTEST_SKIP();
 
-        if(ws_sizeInBytes != 0)
+        if(state_sizeInBytes != 0)
         {
-            std::vector<char> fake_workspace(ws_sizeInBytes);
-            workspace_dev = handle.Write(fake_workspace);
+            states     = std::vector<prngStates>(state_sizeInBytes / sizeof(prngStates));
+            states_dev = handle.Write(states);
+            auto status =
+                miopen::RReLUStatesInit(handle, states_dev.get(), state_sizeInBytes, 2024);
+            EXPECT_EQ(status, miopenStatusSuccess);
+            states = handle.Read<prngStates>(states_dev, states.size());
         }
 
         input_dev  = handle.Write(input.data);
         output_dev = handle.Write(output.data);
-        noise_dev  = handle.Write(noise.data);
     }
 
     void RunTest()
     {
+        cpu_rrelu_forward5d<T>(states, input, ref_output, rrelu_config.lower, rrelu_config.upper);
+
         auto&& handle = get_handle();
         miopenStatus_t status;
 
         status = miopen::RReLUForward(handle,
-                                      workspace_dev.get(),
-                                      ws_sizeInBytes,
+                                      states_dev.get(),
+                                      state_sizeInBytes,
                                       input.desc,
                                       input_dev.get(),
                                       output.desc,
                                       output_dev.get(),
-                                      noise.desc,
-                                      noise_dev.get(),
                                       rrelu_config.lower,
                                       rrelu_config.upper);
+
         EXPECT_EQ(status, miopenStatusSuccess);
         output.data = handle.Read<T>(output_dev, output.data.size());
-        noise.data  = handle.Read<float>(noise_dev, noise.data.size());
-
-        cpu_rrelu_forward5d<T>(input, noise, ref_output);
     }
 
     void Verify()
@@ -179,14 +180,13 @@ protected:
 
     tensor<T> input;
     tensor<T> output;
-    tensor<float> noise;
+    std::vector<prngStates> states;
 
     tensor<T> ref_output;
 
     miopen::Allocator::ManageDataPtr input_dev;
     miopen::Allocator::ManageDataPtr output_dev;
-    miopen::Allocator::ManageDataPtr noise_dev;
-    miopen::Allocator::ManageDataPtr workspace_dev;
+    miopen::Allocator::ManageDataPtr states_dev;
 
-    size_t ws_sizeInBytes;
+    size_t state_sizeInBytes;
 };

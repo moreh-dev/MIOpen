@@ -41,8 +41,10 @@ inline std::ostream& operator<<(std::ostream& os, const std::vector<size_t>& v)
     return os;
 }
 
-static void
-LogCmdRReLU(const miopenTensorDescriptor_t inputDesc, const float lower, const float upper)
+static void LogCmdRReLU(const miopenTensorDescriptor_t inputDesc,
+                        const float lower,
+                        const float upper,
+                        bool is_fwd)
 {
     if(miopen::IsLoggingCmd())
     {
@@ -64,49 +66,80 @@ LogCmdRReLU(const miopenTensorDescriptor_t inputDesc, const float lower, const f
         MIOPEN_LOG_FUNCTION(inputDesc);
         ss << " -T " << miopen::deref(inputDesc).GetLengths();
         ss << " -r (" << lower << "," << upper << ")";
+        ss << " -F " << ((is_fwd) ? "1" : "2");
 
         MIOPEN_LOG_DRIVER_CMD(ss.str());
     }
 }
 
-extern "C" miopenStatus_t miopenGetRReLUForwardWorkspaceSize(
-    miopenHandle_t handle, const miopenTensorDescriptor_t inputDesc, size_t* sizeInBytes)
+extern "C" miopenStatus_t miopenGetRReLUStatesSize(miopenHandle_t handle, size_t* stateSizeInBytes)
 {
-
-    MIOPEN_LOG_FUNCTION(handle, sizeInBytes);
-
+    MIOPEN_LOG_FUNCTION(handle, stateSizeInBytes);
     return miopen::try_([&] {
-        miopen::deref(sizeInBytes) =
-            miopen::GetRReLUForwardWorkspaceSize(miopen::deref(handle), miopen::deref(inputDesc));
+        miopen::deref(stateSizeInBytes) = miopen::GetRReLUStatesSize(miopen::deref(handle));
+    });
+}
+
+extern "C" miopenStatus_t miopenRReLUStatesInit(miopenHandle_t handle,
+                                                void* states,
+                                                const size_t stateSizeInBytes,
+                                                const uint64_t seed)
+{
+    MIOPEN_LOG_FUNCTION(handle, states, stateSizeInBytes, seed);
+    return miopen::try_([&] {
+        miopen::RReLUStatesInit(miopen::deref(handle), DataCast(states), stateSizeInBytes, seed);
     });
 }
 
 extern "C" miopenStatus_t miopenRReLUForward(miopenHandle_t handle,
-                                             void* workspace,
-                                             const size_t workspaceSizeInBytes,
+                                             const void* states,
+                                             const size_t stateSizeInBytes,
                                              const miopenTensorDescriptor_t inputDesc,
                                              const void* input,
                                              const miopenTensorDescriptor_t outputDesc,
                                              void* output,
-                                             const miopenTensorDescriptor_t noiseDesc,
-                                             void* noise,
                                              const float lower,
                                              const float upper)
 {
     MIOPEN_LOG_FUNCTION(
-        handle, inputDesc, input, outputDesc, output, noiseDesc, noise, lower, upper);
-    LogCmdRReLU(inputDesc, lower, upper);
+        handle, states, stateSizeInBytes, inputDesc, input, outputDesc, output, lower, upper);
+    LogCmdRReLU(inputDesc, lower, upper, true);
     return miopen::try_([&] {
         miopen::RReLUForward(miopen::deref(handle),
-                             DataCast(workspace),
-                             workspaceSizeInBytes,
+                             DataCast(states),
+                             stateSizeInBytes,
                              miopen::deref(inputDesc),
                              DataCast(input),
                              miopen::deref(outputDesc),
                              DataCast(output),
-                             miopen::deref(noiseDesc),
-                             DataCast(noise),
                              lower,
                              upper);
     });
+}
+
+extern "C" miopenStatus_t miopenRReLUBackward(miopenHandle_t handle,
+                                              const void* states,
+                                              const size_t stateSizeInBytes,
+                                              const miopenTensorDescriptor_t doutputDesc,
+                                              const void* doutput,
+                                              const miopenTensorDescriptor_t dinputDesc,
+                                              void* dinput,
+                                              const float lower,
+                                              const float upper)
+{
+    // MIOPEN_LOG_FUNCTION(
+    //     handle, states, stateSizeInBytes, doutputDesc, doutput, dinputDesc, dinput, lower,
+    //     upper);
+    // LogCmdRReLU(dinputDesc, lower, upper, false);
+    // return miopen::try_([&] {
+    //     miopen::RReLUBackward(miopen::deref(handle),
+    //                          DataCast(states),
+    //                          stateSizeInBytes,
+    //                          miopen::deref(doutputDesc),
+    //                          DataCast(doutput),
+    //                          miopen::deref(dinputDesc),
+    //                          DataCast(dinput),
+    //                          lower,
+    //                          upper);
+    // });
 }

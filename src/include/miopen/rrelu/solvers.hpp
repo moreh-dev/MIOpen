@@ -39,10 +39,6 @@ using ForwardSolverBase =
 
 struct Forward : ForwardSolverBase
 {
-    std::size_t
-    GetWorkspaceSize(const ExecutionContext& context,
-                     const miopen::rrelu::ForwardProblemDescription& problem) const override;
-    bool MayNeedWorkspace() const override { return true; }
 };
 
 struct ContiguouseForward final : Forward
