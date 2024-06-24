@@ -157,6 +157,7 @@ set( MIOpen_Source
     op_args.cpp
     operator.cpp
     outer_api.cpp
+    outer/problem_description.cpp
     performance_config.cpp
     pooling/problem_description.cpp
     pooling_api.cpp
