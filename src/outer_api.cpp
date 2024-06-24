@@ -76,18 +76,15 @@ extern "C" miopenStatus_t miopenOuterForward(miopenHandle_t handle,
 
     std::cout << "miopenOuterForward is called" << std::endl;
 
-    return miopenStatusSuccess;
-    /*
+    
     return miopen::try_([&] {
-        miopen::SumForward(miopen::deref(handle),
-                           DataCast(workspace),
-                           workspaceSizeInBytes,
-                           miopen::deref(xDesc),
-                           DataCast(x),
+        miopen::OuterForward(miopen::deref(handle),
+                           miopen::deref(x1Desc),
+                           DataCast(x1),
+                           miopen::deref(x2Desc),
+                           DataCast(x2),
                            miopen::deref(yDesc),
-                           DataCast(y),
-                           nanPropagation,
-                           dim);
+                           DataCast(y)
+                        );
     });
-    */
 }

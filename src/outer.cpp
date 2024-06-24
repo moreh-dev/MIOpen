@@ -23,24 +23,29 @@
  * SOFTWARE.
  *
  *******************************************************************************/
-#ifndef MIOPEN_OUTER_HPP_
-#define MIOPEN_OUTER_HPP_
 
-#include <miopen/common.hpp>
+#include <miopen/datatype.hpp>
+#include <miopen/find_solution.hpp>
+#include <miopen/float_equal.hpp>
+#include <miopen/kernel_cache.hpp>
+#include <miopen/reduce/invoke_params.hpp>
+#include <miopen/reduce/solvers.hpp>
+#include <miopen/outer.hpp>
+#include <miopen/tensor.hpp>
 
 namespace miopen {
 
-struct Handle;
-struct TensorDescriptor;
-
-MIOPEN_INTERNALS_EXPORT miopenStatus_t OuterForward(Handle& handle,
-                                        const TensorDescriptor& x1Desc,
-                                        ConstData_t x1,
-                                        const TensorDescriptor& x2Desc,
-                                        ConstData_t x2,
-                                        const TensorDescriptor& yDesc,
-                                        ConstData_t y
-                                    );
+miopenStatus_t OuterForward(Handle& handle,
+                            const TensorDescriptor& x1Desc,
+                            ConstData_t x1,
+                            const TensorDescriptor& x2Desc,
+                            ConstData_t x2,
+                            const TensorDescriptor& yDesc,
+                            ConstData_t y
+                        )
+{
+    std::cout << "outerforward is called" << std::endl;
+    return miopenStatusSuccess;
+}
 
 } // namespace miopen
-#endif // _MIOPEN_OUTER_HPP_
