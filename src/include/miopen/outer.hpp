@@ -39,7 +39,7 @@ MIOPEN_INTERNALS_EXPORT miopenStatus_t OuterForward(Handle& handle,
                                         const TensorDescriptor& x2Desc,
                                         ConstData_t x2,
                                         const TensorDescriptor& yDesc,
-                                        ConstData_t y
+                                        Data_t y
                                     );
 
 } // namespace miopen

@@ -41,25 +41,14 @@ miopenStatus_t OuterForward(Handle& handle,
                             const TensorDescriptor& x2Desc,
                             ConstData_t x2,
                             const TensorDescriptor& yDesc,
-                            ConstData_t y
+                            Data_t y
                         )
 {   
     std::cout << "outerforward is called" << std::endl;
-    /*
-    const auto problem = reduce::ProblemDescription(x1Decs, x2Decs, yDesc);
-    const auto invoke_params = [&]() {
-        auto tmp           = reduce::InvokeParams{};
-        tmp.type           = InvokeType::Run;
-        tmp.x1Desc         = &x1Desc;
-        tmp.x2Desc         = &x2Desc;
-        tmp.yDesc          = &yDesc;
-        tmp.x1             = x1;
-        tmp.x2             = x2;
-        tmp.y              = y;
-        return tmp;
-    }();
-
+    const auto problem = outer::ProblemDescription(x1Desc, x2Desc, yDesc);
+    const auto invoke_params = outer::InvokeParams{x1Desc, x1, x2Desc, x2, yDesc, y};
     const auto algo = AlgorithmName{"OuterForward"};
+    /*
     */
     return miopenStatusSuccess;
 }
