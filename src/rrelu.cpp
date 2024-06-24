@@ -59,16 +59,16 @@ miopenStatus_t RReLUForward(Handle& handle,
     const auto problem = rrelu::ForwardProblemDescription{inputDesc, outputDesc};
 
     const auto invoke_params = [&]() {
-        auto tmp           = rrelu::InvokeParams{};
-        tmp.type           = InvokeType::Run;
-        tmp.inputDesc      = &inputDesc;
-        tmp.input          = input;
-        tmp.outputDesc     = &outputDesc;
-        tmp.output         = output;
-        tmp.lower          = lower;
-        tmp.upper          = upper;
-        tmp.states         = states;
-        tmp.state_size     = stateSizeInBytes;
+        auto tmp       = rrelu::InvokeParams{};
+        tmp.type       = InvokeType::Run;
+        tmp.inputDesc  = &inputDesc;
+        tmp.input      = input;
+        tmp.outputDesc = &outputDesc;
+        tmp.output     = output;
+        tmp.lower      = lower;
+        tmp.upper      = upper;
+        tmp.states     = states;
+        tmp.state_size = stateSizeInBytes;
         return tmp;
     }();
 
