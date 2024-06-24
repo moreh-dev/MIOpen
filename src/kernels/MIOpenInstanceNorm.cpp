@@ -32,14 +32,6 @@
 #include "float_types.h"
 #include "tensor_view.hpp"
 
-#ifndef IN_OUT_TYPE
-#define IN_OUT_TYPE float
-#endif
-
-#ifndef LOCAL_SIZE
-#define LOCAL_SIZE 256
-#endif
-
 template <typename TIO>
 __device__ void instanceNormFwdTrain(const TIO* x,
                                      TIO* y,
