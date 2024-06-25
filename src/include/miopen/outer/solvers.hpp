@@ -30,3 +30,30 @@
 #include <miopen/outer/problem_description.hpp>
 
 #include <utility>
+
+namespace miopen {
+
+namespace solver {
+
+namespace outer {
+
+using OuterSolver = NonTunableSolverBase<ExecutionContext, miopen::outer::ProblemDescription>;
+
+struct OuterForward final : OuterSolver
+{
+    const std::string& SolverDbId() const override { return GetSolverDbId<OuterForward>(); }
+
+    bool IsApplicable(const ExecutionContext& context,
+                      const miopen::outer::ProblemDescription& problem) const override;
+    ConvSolution GetSolution(const ExecutionContext& context,
+                             const miopen::outer::ProblemDescription& problem) const override;
+    std::size_t GetWorkspaceSize(const ExecutionContext& context,
+                                 const miopen::outer::ProblemDescription& problem) const override;
+    bool MayNeedWorkspace() const override { return true; }
+};
+
+} // namespace outer
+
+} // namespace solver
+
+} // namespace miopen
