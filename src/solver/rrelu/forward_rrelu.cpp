@@ -72,7 +72,6 @@ ConvSolution Forward::GetSolution(const ExecutionContext& context,
     {
         auto dtype     = problem.GetInputDesc().GetType();
         auto data_type = GetDataType(problem.GetInputDesc().GetType());
-        auto size      = problem.GetInputDesc().GetElementSize();
 
         auto build_params = KernelBuildParameters{
             {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
@@ -83,6 +82,7 @@ ConvSolution Forward::GetSolution(const ExecutionContext& context,
             {"VIEW_DIMS", VIEW_DIMS},
         };
 
+        auto size = problem.GetInputDesc().GetElementSize();
         result.construction_params.push_back(make_hip_kernel(
             {LOCAL_SIZE_DATA_ASSIGN}, {size}, "MIOpenAssign.cpp", "Assign", build_params));
     }
@@ -106,7 +106,7 @@ ConvSolution Forward::GetSolution(const ExecutionContext& context,
         result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE_FWD_CONTIGUOUS},
                                                              {nthreads},
                                                              "MIOpenRReLU.cpp",
-                                                             "RReLUForward",
+                                                             "RReLUForwardContiguous",
                                                              build_params));
     }
 
@@ -114,7 +114,6 @@ ConvSolution Forward::GetSolution(const ExecutionContext& context,
     {
         auto dtype     = problem.GetOutputDesc().GetType();
         auto data_type = GetDataType(problem.GetOutputDesc().GetType());
-        auto size      = problem.GetOutputDesc().GetElementSize();
 
         auto build_params = KernelBuildParameters{
             {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
@@ -125,6 +124,7 @@ ConvSolution Forward::GetSolution(const ExecutionContext& context,
             {"VIEW_DIMS", VIEW_DIMS},
         };
 
+        auto size = problem.GetOutputDesc().GetElementSize();
         result.construction_params.push_back(make_hip_kernel(
             {LOCAL_SIZE_DATA_ASSIGN}, {size}, "MIOpenAssign.cpp", "Assign", build_params));
     }

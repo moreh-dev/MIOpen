@@ -66,14 +66,14 @@ __device__ float uniform_distribution(uint v)
 }
 
 template <typename TI, typename TO>
-__device__ void RReLUForward(const prngStates* __restrict__ states,
-                             const size_t num_states,
-                             const TI* __restrict__ input,
-                             TO* __restrict__ output,
-                             float* __restrict__ noise,
-                             const float lower,
-                             const float upper,
-                             const size_t N)
+__device__ void RReLUForwardContiguous(const prngStates* __restrict__ states,
+                                       const size_t num_states,
+                                       const TI* __restrict__ input,
+                                       TO* __restrict__ output,
+                                       float* __restrict__ noise,
+                                       const float lower,
+                                       const float upper,
+                                       const size_t N)
 {
     int gid = blockIdx.x * blockDim.x + threadIdx.x;
 
@@ -93,17 +93,17 @@ __device__ void RReLUForward(const prngStates* __restrict__ states,
     }
 }
 
-extern "C" __global__ void RReLUForward(const prngStates* __restrict__ states,
-                                        const size_t num_states,
-                                        const INPUT_TYPE* __restrict__ input,
-                                        OUTPUT_TYPE* __restrict__ output,
-                                        float* __restrict__ noise,
-                                        const float lower,
-                                        const float upper,
-                                        const size_t N)
+extern "C" __global__ void RReLUForwardContiguous(const prngStates* __restrict__ states,
+                                                  const size_t num_states,
+                                                  const INPUT_TYPE* __restrict__ input,
+                                                  OUTPUT_TYPE* __restrict__ output,
+                                                  float* __restrict__ noise,
+                                                  const float lower,
+                                                  const float upper,
+                                                  const size_t N)
 {
     // instantiate the kernel
-    RReLUForward<INPUT_TYPE, OUTPUT_TYPE>(
+    RReLUForwardContiguous<INPUT_TYPE, OUTPUT_TYPE>(
         states, num_states, input, output, noise, lower, upper, N);
 }
 
