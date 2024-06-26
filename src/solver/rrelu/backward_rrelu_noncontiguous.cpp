@@ -33,7 +33,7 @@
 
 #define VIEW_DIMS 5
 
-#define LOCAL_SIZE_CONTIGUOUS 256
+#define LOCAL_SIZE_BWD_NONCONTIGUOUS 256
 
 namespace miopen {
 
@@ -41,25 +41,25 @@ namespace solver {
 
 namespace rrelu {
 
-bool nonContiguouseForward::IsApplicable(
+bool nonContiguousBackward::IsApplicable(
     const ExecutionContext& /*context*/,
-    const miopen::rrelu::ForwardProblemDescription& problem) const
+    const miopen::rrelu::BackwardProblemDescription& problem) const
 {
-    if(problem.GetInputDesc().GetVectorLength() > VIEW_DIMS)
+    if(problem.GetdInputDesc().GetVectorLength() > VIEW_DIMS)
         return false;
     return true;
 }
 
 ConvSolution
-nonContiguouseForward::GetSolution(const ExecutionContext& context,
-                                   const miopen::rrelu::ForwardProblemDescription& problem) const
+nonContiguousBackward::GetSolution(const ExecutionContext& /*context*/,
+                                   const miopen::rrelu::BackwardProblemDescription& problem) const
 {
     auto result = ConvSolution{miopenStatusSuccess};
 
     {
-        auto dtype        = problem.GetOutputDesc().GetType();
-        auto input_dtype  = miopen::GetDataType(problem.GetInputDesc().GetType());
-        auto output_dtype = miopen::GetDataType(problem.GetOutputDesc().GetType());
+        auto dtype        = problem.GetdInputDesc().GetType();
+        auto input_dtype  = miopen::GetDataType(problem.GetdInputDesc().GetType());
+        auto output_dtype = miopen::GetDataType(problem.GetdOutputDesc().GetType());
 
         auto build_params = KernelBuildParameters{
             {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
@@ -71,36 +71,24 @@ nonContiguouseForward::GetSolution(const ExecutionContext& context,
             {"VIEW_DIMS", VIEW_DIMS},
         };
 
-        auto nthreads = GetNumThreads(context, problem);
-        result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE_CONTIGUOUS},
-                                                             {nthreads},
+        auto size = problem.GetdInputDesc().GetElementSize();
+        result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE_BWD_NONCONTIGUOUS},
+                                                             {size},
                                                              "MIOpenRReLU.cpp",
-                                                             "RReLUForwardNd",
+                                                             "RReLUBackwardNd",
                                                              build_params));
     }
 
     result.invoker_factory = [](const std::vector<Kernel>& kernels) {
         return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
-            auto params = raw_params.CastTo<miopen::rrelu::InvokeParams>();
-
-            auto prng_states  = params.states;
-            size_t num_states = params.state_size / sizeof(prngStates);
+            auto params = raw_params.CastTo<miopen::rrelu::BackwardInvokeParams>();
 
             {
-                auto input_tv  = get_inner_expanded_tv<VIEW_DIMS>(deref(params.inputDesc));
-                auto output_tv = get_inner_expanded_tv<VIEW_DIMS>(deref(params.outputDesc));
+                auto doutput_tv = get_inner_expanded_tv<VIEW_DIMS>(deref(params.doutputDesc));
+                auto dinput_tv  = get_inner_expanded_tv<VIEW_DIMS>(deref(params.dinputDesc));
 
-                auto size   = deref(params.inputDesc).GetElementSize();
                 auto kernel = handle_.Run(kernels.front());
-                kernel(params.input,
-                       params.output,
-                       params.lower,
-                       params.upper,
-                       size,
-                       input_tv,
-                       output_tv,
-                       prng_states,
-                       num_states);
+                kernel(params.noise, params.doutput, params.dinput, doutput_tv, dinput_tv);
             }
         };
     };

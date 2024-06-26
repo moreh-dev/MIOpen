@@ -39,6 +39,7 @@ int32_t mloRReLUForward5dRunHost(const std::vector<prngStates>& states,
                                  const miopenTensorDescriptor_t outputDesc,
                                  const Tgpu* input,
                                  Tcheck* output_host,
+                                 float* noise_host,
                                  const float lower,
                                  const float upper)
 {
@@ -78,7 +79,30 @@ int32_t mloRReLUForward5dRunHost(const std::vector<prngStates>& states,
                 alpha = uniform_distribution_emu(xorwow_next(&curState)) * (upper - lower) + lower;
 
             output_host[Oidx] = static_cast<Tcheck>(x * alpha);
+            noise_host[i]     = alpha;
         }
+    });
+
+    return miopenStatusSuccess;
+}
+
+template <typename Tgpu, typename Tcheck>
+int32_t mloRReLUBackward5dRunHost(const miopenTensorDescriptor_t doutputDesc,
+                                  const miopenTensorDescriptor_t dinputDesc,
+                                  const float* noise,
+                                  const Tgpu* doutput,
+                                  Tcheck* dinput_host)
+{
+    auto doutput_tv = miopen::solver::rrelu::get_inner_expanded_tv<5>(miopen::deref(doutputDesc));
+    auto dinput_tv  = miopen::solver::rrelu::get_inner_expanded_tv<5>(miopen::deref(dinputDesc));
+
+    int size = miopen::deref(doutputDesc).GetElementSize();
+    par_ford(size)([&](int i) {
+        auto layout = tensor_layout_t<5>(dinput_tv, i);
+        auto dIidx  = dinput_tv.get_tensor_view_idx(layout);
+        auto dOidx  = doutput_tv.get_tensor_view_idx(layout);
+
+        dinput_host[dIidx] = static_cast<Tcheck>(static_cast<float>(doutput[dOidx]) / noise[i]);
     });
 
     return miopenStatusSuccess;

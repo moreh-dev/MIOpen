@@ -43,22 +43,34 @@ std::string GetFloatArg()
     return tmp;
 }
 
-struct RReLUTestFloat : RReLUTest<float>
+struct RReLUTestFwdFloat : RReLUTestFwd<float>
 {
 };
 
-struct RReLUTestHalf : RReLUTest<half>
+struct RReLUTestFwdHalf : RReLUTestFwd<half>
 {
 };
 
-struct RReLUTestBfloat16 : RReLUTest<bfloat16>
+struct RReLUTestFwdBfloat16 : RReLUTestFwd<bfloat16>
+{
+};
+
+struct RReLUTestBwdFloat : RReLUTestBwd<float>
+{
+};
+
+struct RReLUTestBwdHalf : RReLUTestBwd<half>
+{
+};
+
+struct RReLUTestBwdBfloat16 : RReLUTestBwd<bfloat16>
 {
 };
 
 } // namespace rrelu
 using namespace rrelu;
 
-TEST_P(RReLUTestFloat, RReLUTest)
+TEST_P(RReLUTestFwdFloat, RReLUTestFwd)
 {
     if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) || (GetFloatArg() == "--float"))
     {
@@ -71,7 +83,7 @@ TEST_P(RReLUTestFloat, RReLUTest)
     }
 };
 
-TEST_P(RReLUTestHalf, RReLUTest)
+TEST_P(RReLUTestFwdHalf, RReLUTestFwd)
 {
     if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) || (GetFloatArg() == "--half"))
     {
@@ -84,7 +96,7 @@ TEST_P(RReLUTestHalf, RReLUTest)
     }
 };
 
-TEST_P(RReLUTestBfloat16, RReLUTest)
+TEST_P(RReLUTestFwdBfloat16, RReLUTestFwd)
 {
     if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) || (GetFloatArg() == "--bfloat16"))
     {
@@ -97,6 +109,48 @@ TEST_P(RReLUTestBfloat16, RReLUTest)
     }
 };
 
-INSTANTIATE_TEST_SUITE_P(RReLUTestSet, RReLUTestFloat, testing::ValuesIn(RReLUTestConfigs()));
-INSTANTIATE_TEST_SUITE_P(RReLUTestSet, RReLUTestHalf, testing::ValuesIn(RReLUTestConfigs()));
-INSTANTIATE_TEST_SUITE_P(RReLUTestSet, RReLUTestBfloat16, testing::ValuesIn(RReLUTestConfigs()));
+TEST_P(RReLUTestBwdFloat, RReLUTestBwd)
+{
+    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) || (GetFloatArg() == "--float"))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
+
+TEST_P(RReLUTestBwdHalf, RReLUTestBwd)
+{
+    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) || (GetFloatArg() == "--half"))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
+
+TEST_P(RReLUTestBwdBfloat16, RReLUTestBwd)
+{
+    if(miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) || (GetFloatArg() == "--bfloat16"))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
+
+INSTANTIATE_TEST_SUITE_P(RReLUTestSet, RReLUTestFwdFloat, testing::ValuesIn(RReLUTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(RReLUTestSet, RReLUTestFwdHalf, testing::ValuesIn(RReLUTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(RReLUTestSet, RReLUTestFwdBfloat16, testing::ValuesIn(RReLUTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(RReLUTestSet, RReLUTestBwdFloat, testing::ValuesIn(RReLUTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(RReLUTestSet, RReLUTestBwdHalf, testing::ValuesIn(RReLUTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(RReLUTestSet, RReLUTestBwdBfloat16, testing::ValuesIn(RReLUTestConfigs()));

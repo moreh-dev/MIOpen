@@ -45,14 +45,14 @@ bool checkSameLength(const TensorDescriptor& x, const TensorDescriptor& y)
     return true;
 }
 
-bool checkSameStride(const TensorDescriptor& x, const TensorDescriptor& y)
+bool checkContiguous(const TensorDescriptor& x)
 {
-    if(x.GetSize() != y.GetSize())
-        return false;
-    for(int32_t i = 0; i < x.GetSize(); ++i)
+    size_t s = 1;
+    for(int i = x.GetSize() - 1; i >= 0; --i)
     {
-        if(x.GetStrides()[i] != y.GetStrides()[i])
+        if(s != x.GetStrides()[i])
             return false;
+        s *= x.GetLengths()[i];
     }
     return true;
 }
@@ -65,11 +65,29 @@ NetworkConfig ForwardProblemDescription::MakeNetworkConfig() const
 
     std::ostringstream ss;
 
+    ss << "rrelu_fwd";
     ss << "idtype" << input_dtype;
     ss << "odtype" << output_dtype;
     ss << "size" << size;
-    ss << "allpacked" << IsAllPacked();
-    ss << "samestride" << IsSameStride();
+    ss << "Iconti" << checkContiguous(inputDesc);
+    ss << "Oconti" << checkContiguous(outputDesc);
+
+    return NetworkConfig{ss.str()};
+}
+
+NetworkConfig BackwardProblemDescription::MakeNetworkConfig() const
+{
+    auto dinput_dtype  = dinputDesc.GetType();
+    auto doutput_dtype = doutputDesc.GetType();
+    auto size          = dinputDesc.GetElementSize();
+
+    std::ostringstream ss;
+
+    ss << "rrelu_bwd";
+    ss << "idtype" << dinput_dtype;
+    ss << "odtype" << doutput_dtype;
+    ss << "size" << size;
+    ss << "allcontiguous" << IsAllContiguous();
 
     return NetworkConfig{ss.str()};
 }

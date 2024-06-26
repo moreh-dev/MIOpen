@@ -6613,9 +6613,24 @@ MIOPEN_EXPORT miopenStatus_t miopenRReLUStatesInit(miopenHandle_t handle,
                                                    size_t stateSizeInBytes,
                                                    uint64_t seed);
 
+/*! @brief Helper function to query the minimum workspace size required by the RReLU forward call
+ *
+ * @param handle                   MIOpen Handle (input)
+ * @param inputDesc                Tensor descriptor for input tensor (input)
+ * @param outputDesc               Tensor descriptor for output tensor (input)
+ * @param sizeInBytes              Pointer to data to return the minimum workspace size
+ * @return                         miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t miopenGetRReLUForwardWorkspaceSize(miopenHandle_t handle,
+                                                                miopenTensorDescriptor_t inputDesc,
+                                                                miopenTensorDescriptor_t outputDesc,
+                                                                size_t* sizeInBytes);
+
 /*! @brief Execute a RReLU forward layer
  *
  * @param handle                   MIOpen handle (input)
+ * @param workspace                Address of the allocated workspace data (input)
+ * @param workspaceSizeInBytes     Size in bytes of the allocated workspace data (input)
  * @param states                   Pointer to memory that holds random number generator states
  * (input)
  * @param stateSizeInBytes         Number of bytes provided for random generator states (input)
@@ -6623,43 +6638,44 @@ MIOPEN_EXPORT miopenStatus_t miopenRReLUStatesInit(miopenHandle_t handle,
  * @param input                    Data tensor input (input)
  * @param outputDesc               Tensor descriptor for output tensor (input)
  * @param output                   Data tensor output (output)
+ * @param noiseDesc                Tensor descriptor for noise tensor (input)
+ * @param noise                    Data tensor noise (optional output)
  * @param lower                    Lower bound of the uniform distribution (input)
  * @param upper                    Upper bound of the uniform distribution (input)
  * @return                         miopenStatus_t
  */
 MIOPEN_EXPORT miopenStatus_t miopenRReLUForward(miopenHandle_t handle,
+                                                void* workspace,
+                                                size_t workspaceSizeInBytes,
                                                 const void* states,
                                                 size_t stateSizeInBytes,
                                                 miopenTensorDescriptor_t inputDesc,
                                                 const void* input,
                                                 miopenTensorDescriptor_t outputDesc,
                                                 void* output,
+                                                miopenTensorDescriptor_t noiseDesc,
+                                                void* noise,
                                                 float lower,
                                                 float upper);
 
 /*! @brief Execute a RReLU backward layer
  *
  * @param handle                   MIOpen handle (input)
- * @param states                   Pointer to memory that holds random number generator states
- * (input)
- * @param stateSizeInBytes         Number of bytes provided for random generator states (input)
+ * @param noiseDesc                Tensor descriptor for noise tensor (input)
+ * @param noise                    Data tensor noise (input)
  * @param doutputDesc              Tensor descriptor for output gradient tensor (input)
  * @param doutput                  Data tensor output (input)
  * @param dinputDesc               Tensor descriptor for input gradient tensor (input)
  * @param dinput                   Data tensor input (output)
- * @param lower                    Lower bound of the uniform distribution (input)
- * @param upper                    Upper bound of the uniform distribution (input)
  * @return                         miopenStatus_t
  */
 MIOPEN_EXPORT miopenStatus_t miopenRReLUBackward(miopenHandle_t handle,
-                                                 const void* states,
-                                                 size_t stateSizeInBytes,
+                                                 miopenTensorDescriptor_t noiseDesc,
+                                                 const void* noise,
                                                  miopenTensorDescriptor_t doutputDesc,
                                                  const void* doutput,
                                                  miopenTensorDescriptor_t dinputDesc,
-                                                 void* dinput,
-                                                 float lower,
-                                                 float upper);
+                                                 void* dinput);
 
 /** @} */
 // CLOSEOUT ReLU DOXYGEN GROUP

@@ -59,7 +59,10 @@ public:
     RReLUDriver() : Driver()
     {
         miopenCreateTensorDescriptor(&inputDesc);
+        miopenCreateTensorDescriptor(&dinputDesc);
         miopenCreateTensorDescriptor(&outputDesc);
+        miopenCreateTensorDescriptor(&doutputDesc);
+        miopenCreateTensorDescriptor(&noiseDesc);
 
         data_type = miopen_type<Tgpu>{};
     }
@@ -85,7 +88,10 @@ public:
     ~RReLUDriver() override
     {
         miopenDestroyTensorDescriptor(inputDesc);
+        miopenDestroyTensorDescriptor(dinputDesc);
         miopenDestroyTensorDescriptor(outputDesc);
+        miopenDestroyTensorDescriptor(doutputDesc);
+        miopenDestroyTensorDescriptor(noiseDesc);
     }
 
 private:
@@ -94,19 +100,32 @@ private:
     int forw;
 
     miopenTensorDescriptor_t inputDesc;
+    miopenTensorDescriptor_t dinputDesc;
     miopenTensorDescriptor_t outputDesc;
+    miopenTensorDescriptor_t doutputDesc;
+    miopenTensorDescriptor_t noiseDesc;
 
     std::unique_ptr<GPUMem> input_dev;
+    std::unique_ptr<GPUMem> dinput_dev;
     std::unique_ptr<GPUMem> output_dev;
+    std::unique_ptr<GPUMem> doutput_dev;
     std::unique_ptr<GPUMem> states_dev;
+    std::unique_ptr<GPUMem> noise_dev;
+    std::unique_ptr<GPUMem> workspace_dev;
 
     std::vector<Tgpu> input;
+    std::vector<Tgpu> dinput;
     std::vector<Tgpu> output;
+    std::vector<Tgpu> doutput;
     std::vector<prngStates> states;
+    std::vector<float> noise;
 
     std::vector<Tref> output_host;
+    std::vector<Tref> dinput_host;
+    std::vector<float> noise_host;
 
     size_t states_sizeInBytes;
+    size_t ws_sizeInBytes;
 
     float lower;
     float upper;
@@ -136,10 +155,14 @@ int RReLUDriver<Tgpu, Tref>::GetandSetData()
         std::cout << "Tensor must not be empty";
         return miopenStatusInvalidValue;
     }
-    auto input_strides = GetStrides(length, inflags.GetValueInt("Contiguous"));
 
-    SetTensorNd(inputDesc, length, input_strides, data_type);
-    SetTensorNd(outputDesc, length, data_type);
+    auto strides = GetStrides(length, inflags.GetValueInt("Contiguous"));
+
+    SetTensorNd(inputDesc, length, strides, data_type);
+    SetTensorNd(dinputDesc, length, strides, data_type);
+    SetTensorNd(outputDesc, length, strides, data_type);
+    SetTensorNd(doutputDesc, length, strides, data_type);
+    SetTensorNd(noiseDesc, length, miopen_type<float>{});
 
     return miopenStatusSuccess;
 }
@@ -207,36 +230,67 @@ std::vector<int> RReLUDriver<Tgpu, Tref>::GetTensorLengthsFromCmdLine()
 template <typename Tgpu, typename Tref>
 int RReLUDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
 {
-    size_t input_sz  = GetTensorSize(inputDesc);
-    size_t output_sz = GetTensorSize(outputDesc);
+    size_t input_sz   = GetTensorSize(inputDesc);
+    size_t dinput_sz  = GetTensorSize(dinputDesc);
+    size_t output_sz  = GetTensorSize(outputDesc);
+    size_t doutput_sz = GetTensorSize(doutputDesc);
+    size_t noise_sz   = GetTensorSize(noiseDesc);
 
     miopenGetRReLUStatesSize(GetHandle(), &states_sizeInBytes);
-
     if(states_sizeInBytes == static_cast<size_t>(-1))
+        return miopenStatusAllocFailed;
+
+    miopenGetRReLUForwardWorkspaceSize(GetHandle(), inputDesc, outputDesc, &ws_sizeInBytes);
+    if(ws_sizeInBytes == static_cast<size_t>(-1))
         return miopenStatusAllocFailed;
 
     uint32_t ctx = 0;
 
-    input_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, input_sz, sizeof(Tgpu)));
-    output_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, output_sz, sizeof(Tgpu)));
-    states_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, states_sizeInBytes, sizeof(std::byte)));
+    input_dev     = std::unique_ptr<GPUMem>(new GPUMem(ctx, input_sz, sizeof(Tgpu)));
+    dinput_dev    = std::unique_ptr<GPUMem>(new GPUMem(ctx, dinput_sz, sizeof(Tgpu)));
+    output_dev    = std::unique_ptr<GPUMem>(new GPUMem(ctx, output_sz, sizeof(Tgpu)));
+    doutput_dev   = std::unique_ptr<GPUMem>(new GPUMem(ctx, doutput_sz, sizeof(Tgpu)));
+    states_dev    = std::unique_ptr<GPUMem>(new GPUMem(ctx, states_sizeInBytes, sizeof(std::byte)));
+    noise_dev     = std::unique_ptr<GPUMem>(new GPUMem(ctx, noise_sz, sizeof(float)));
+    workspace_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, ws_sizeInBytes, sizeof(std::byte)));
 
-    input  = std::vector<Tgpu>(input_sz);
-    output = std::vector<Tgpu>(output_sz);
-    states = std::vector<prngStates>(states_sizeInBytes / sizeof(prngStates));
+    input   = std::vector<Tgpu>(input_sz);
+    dinput  = std::vector<Tgpu>(dinput_sz, static_cast<Tgpu>(0.0f));
+    output  = std::vector<Tgpu>(output_sz, static_cast<Tgpu>(0.0f));
+    doutput = std::vector<Tgpu>(doutput_sz, static_cast<Tgpu>(1.0f));
+    states  = std::vector<prngStates>(states_sizeInBytes / sizeof(prngStates));
+    noise   = std::vector<float>(noise_sz);
 
     output_host = std::vector<Tref>(output_sz, std::numeric_limits<Tref>::quiet_NaN());
+    dinput_host = std::vector<Tref>(dinput_sz, std::numeric_limits<Tref>::quiet_NaN());
+    noise_host  = std::vector<float>(noise_sz, std::numeric_limits<float>::quiet_NaN());
 
     for(int i = 0; i < input_sz; i++)
         input[i] = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(-1), static_cast<Tgpu>(1));
 
+    for(int i = 0; i < noise_sz; i++)
+        noise[i] = prng::gen_A_to_B<float>(1.0f, 10.0f);
+
     if(input_dev->ToGPU(GetStream(), input.data()) != 0)
         std::cerr << "Error copying (input) to GPU, size: " << input_dev->GetSize() << std::endl;
+
+    if(dinput_dev->ToGPU(GetStream(), dinput.data()) != 0)
+        std::cerr << "Error copying (dinput) to GPU, size: " << dinput_dev->GetSize() << std::endl;
+
+    if(output_dev->ToGPU(GetStream(), output.data()) != 0)
+        std::cerr << "Error copying (output) to GPU, size: " << output_dev->GetSize() << std::endl;
+
+    if(doutput_dev->ToGPU(GetStream(), doutput.data()) != 0)
+        std::cerr << "Error copying (doutput) to GPU, size: " << doutput_dev->GetSize()
+                  << std::endl;
 
     miopenRReLUStatesInit(GetHandle(), states_dev->GetMem(), states_sizeInBytes, 2024);
     if(states_dev->FromGPU(GetStream(), states.data()) != 0)
         std::cerr << "Error copying (PRNG states) from GPU, size: " << states_dev->GetSize()
                   << std::endl;
+
+    if(noise_dev->ToGPU(GetStream(), noise.data()) != 0)
+        std::cerr << "Error copying (noise) to GPU, size: " << noise_dev->GetSize() << std::endl;
 
     return miopenStatusSuccess;
 }
@@ -253,12 +307,16 @@ int RReLUDriver<Tgpu, Tref>::RunForwardGPU()
     for(int i = 0; i < inflags.GetValueInt("iter"); i++)
     {
         miopenRReLUForward(GetHandle(),
+                           workspace_dev->GetMem(),
+                           ws_sizeInBytes,
                            states_dev->GetMem(),
                            states_sizeInBytes,
                            inputDesc,
                            input_dev->GetMem(),
                            outputDesc,
                            output_dev->GetMem(),
+                           noiseDesc,
+                           noise_dev->GetMem(),
                            lower,
                            upper);
 
@@ -286,14 +344,24 @@ int RReLUDriver<Tgpu, Tref>::RunForwardGPU()
         std::cerr << "Error copying (output_dev) from GPU, size: " << output_dev->GetSize()
                   << std::endl;
 
+    if(noise_dev->FromGPU(GetStream(), noise.data()) != 0)
+        std::cerr << "Error copying (noise_dev) from GPU, size: " << noise_dev->GetSize()
+                  << std::endl;
+
     return miopenStatusSuccess;
 }
 
 template <typename Tgpu, typename Tref>
 int RReLUDriver<Tgpu, Tref>::RunForwardCPU()
 {
-    mloRReLUForward5dRunHost<Tgpu, Tref>(
-        states, inputDesc, outputDesc, input.data(), output_host.data(), lower, upper);
+    mloRReLUForward5dRunHost<Tgpu, Tref>(states,
+                                         inputDesc,
+                                         outputDesc,
+                                         input.data(),
+                                         output_host.data(),
+                                         noise_host.data(),
+                                         lower,
+                                         upper);
 
     return miopenStatusSuccess;
 }
@@ -301,12 +369,55 @@ int RReLUDriver<Tgpu, Tref>::RunForwardCPU()
 template <typename Tgpu, typename Tref>
 int RReLUDriver<Tgpu, Tref>::RunBackwardGPU()
 {
+    float kernel_total_time = 0;
+    float kernel_first_time = 0;
+
+    Timer t;
+    START_TIME
+
+    for(int i = 0; i < inflags.GetValueInt("iter"); i++)
+    {
+        miopenRReLUBackward(GetHandle(),
+                            noiseDesc,
+                            noise_dev->GetMem(),
+                            doutputDesc,
+                            doutput_dev->GetMem(),
+                            dinputDesc,
+                            dinput_dev->GetMem());
+
+        float time = 0.0;
+        miopenGetKernelTime(GetHandle(), &time);
+        kernel_total_time += time;
+        if(i == 0)
+            kernel_first_time = time;
+    }
+
+    if(inflags.GetValueInt("time") == 1)
+    {
+        STOP_TIME
+        int iter = inflags.GetValueInt("iter");
+        if(WALL_CLOCK)
+            std::cout << "Wall-clock Time Backward RReLU Elapsed: " << t.gettime_ms() / iter
+                      << " ms\n";
+
+        float kernel_average_time =
+            iter > 1 ? (kernel_total_time - kernel_first_time) / (iter - 1) : kernel_first_time;
+        std::cout << "GPU Kernel Time Backward RReLU Elapsed: " << kernel_average_time << " ms\n";
+    }
+
+    if(dinput_dev->FromGPU(GetStream(), dinput.data()) != 0)
+        std::cerr << "Error copying (dinput_dev) from GPU, size: " << dinput_dev->GetSize()
+                  << std::endl;
+
     return miopenStatusSuccess;
 }
 
 template <typename Tgpu, typename Tref>
 int RReLUDriver<Tgpu, Tref>::RunBackwardCPU()
 {
+    mloRReLUBackward5dRunHost<Tgpu, Tref>(
+        doutputDesc, dinputDesc, noise.data(), doutput.data(), dinput_host.data());
+
     return miopenStatusSuccess;
 }
 
@@ -328,7 +439,15 @@ int RReLUDriver<Tgpu, Tref>::VerifyForward()
 {
     RunForwardCPU();
     const Tref tolerance = GetTolerance();
-    auto error           = miopen::rms_range(output_host, output);
+
+    auto error_noise = miopen::rms_range(noise_host, noise);
+    auto error       = miopen::rms_range(output_host, output);
+
+    if(!std::isfinite(error_noise) || error_noise > tolerance)
+    {
+        std::cout << "Forward RReLU Noise FAILED: " << error_noise << " > " << tolerance
+                  << std::endl;
+    }
 
     if(!std::isfinite(error) || error > tolerance)
     {
@@ -347,5 +466,20 @@ int RReLUDriver<Tgpu, Tref>::VerifyForward()
 template <typename Tgpu, typename Tref>
 int RReLUDriver<Tgpu, Tref>::VerifyBackward()
 {
+    RunBackwardCPU();
+    const Tref tolerance = GetTolerance();
+    auto error           = miopen::rms_range(dinput_host, dinput);
+
+    if(!std::isfinite(error) || error > tolerance)
+    {
+        std::cout << "Backward RReLU FAILED: " << error << " > " << tolerance << std::endl;
+        return EC_VerifyFwd;
+    }
+    else
+    {
+        std::cout << "Backward RReLU Verifies OK on CPU reference (" << error << " < " << tolerance
+                  << ')' << std::endl;
+    }
+
     return miopenStatusSuccess;
 }

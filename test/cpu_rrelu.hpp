@@ -37,6 +37,7 @@ template <class T>
 void cpu_rrelu_forward5d(const std::vector<prngStates> states,
                          const tensor<T> input,
                          tensor<T>& ref_output,
+                         tensor<float>& ref_noise,
                          const float lower,
                          const float upper)
 {
@@ -76,6 +77,23 @@ void cpu_rrelu_forward5d(const std::vector<prngStates> states,
                 alpha = uniform_distribution_emu(xorwow_next(&curState)) * (upper - lower) + lower;
 
             ref_output[Oidx] = static_cast<T>(x * alpha);
+            ref_noise[i]     = alpha;
         }
+    });
+}
+
+template <class T>
+void cpu_rrelu_backward5d(const tensor<float> noise, const tensor<T> doutput, tensor<T>& ref_dinput)
+{
+    auto doutput_tv = miopen::solver::rrelu::get_inner_expanded_tv<5>(doutput.desc);
+    auto dinput_tv  = miopen::solver::rrelu::get_inner_expanded_tv<5>(ref_dinput.desc);
+
+    int size = doutput.desc.GetElementSize();
+    par_ford(size)([&](int i) {
+        auto layout = tensor_layout_t<5>(dinput_tv, i);
+        auto dIidx  = dinput_tv.get_tensor_view_idx(layout);
+        auto dOidx  = doutput_tv.get_tensor_view_idx(layout);
+
+        ref_dinput[dIidx] = static_cast<T>(static_cast<float>(doutput[dOidx]) / noise[i]);
     });
 }

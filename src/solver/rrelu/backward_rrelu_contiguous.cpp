@@ -33,7 +33,7 @@
 
 #define VIEW_DIMS 5
 
-#define LOCAL_SIZE_CONTIGUOUS 256
+#define LOCAL_SIZE_BWD_CONTIGUOUS 256
 
 namespace miopen {
 
@@ -41,26 +41,26 @@ namespace solver {
 
 namespace rrelu {
 
-bool ContiguouseForward::IsApplicable(const ExecutionContext& /*context*/,
-                                      const miopen::rrelu::ForwardProblemDescription& problem) const
+bool ContiguousBackward::IsApplicable(
+    const ExecutionContext& /*context*/,
+    const miopen::rrelu::BackwardProblemDescription& problem) const
 {
-    if(!problem.IsAllPacked())
-        return false;
-    if(!problem.IsSameStride())
+    if(!problem.IsAllContiguous())
         return false;
     return true;
 }
 
 ConvSolution
-ContiguouseForward::GetSolution(const ExecutionContext& context,
-                                const miopen::rrelu::ForwardProblemDescription& problem) const
+ContiguousBackward::GetSolution(const ExecutionContext& /*context*/,
+                                const miopen::rrelu::BackwardProblemDescription& problem) const
 {
     auto result = ConvSolution{miopenStatusSuccess};
 
     {
-        auto dtype        = problem.GetOutputDesc().GetType();
-        auto input_dtype  = miopen::GetDataType(problem.GetInputDesc().GetType());
-        auto output_dtype = miopen::GetDataType(problem.GetOutputDesc().GetType());
+        auto dtype        = problem.GetdInputDesc().GetType();
+        auto input_dtype  = miopen::GetDataType(problem.GetdInputDesc().GetType());
+        auto output_dtype = miopen::GetDataType(problem.GetdOutputDesc().GetType());
+        auto size         = problem.GetdInputDesc().GetElementSize();
 
         auto build_params = KernelBuildParameters{
             {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
@@ -72,31 +72,21 @@ ContiguouseForward::GetSolution(const ExecutionContext& context,
             {"VIEW_DIMS", VIEW_DIMS},
         };
 
-        auto nthreads = GetNumThreads(context, problem);
-        result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE_CONTIGUOUS},
-                                                             {nthreads},
+        result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE_BWD_CONTIGUOUS},
+                                                             {size},
                                                              "MIOpenRReLU.cpp",
-                                                             "RReLUForwardContiguous",
+                                                             "RReLUBackwardContiguous",
                                                              build_params));
     }
 
     result.invoker_factory = [](const std::vector<Kernel>& kernels) {
         return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
-            auto params = raw_params.CastTo<miopen::rrelu::InvokeParams>();
-
-            auto prng_states  = params.states;
-            size_t num_states = params.state_size / sizeof(prngStates);
+            auto params = raw_params.CastTo<miopen::rrelu::BackwardInvokeParams>();
 
             {
-                auto size   = deref(params.inputDesc).GetElementSize();
+                auto size   = deref(params.dinputDesc).GetElementSize();
                 auto kernel = handle_.Run(kernels.front());
-                kernel(params.input,
-                       params.output,
-                       params.lower,
-                       params.upper,
-                       size,
-                       prng_states,
-                       num_states);
+                kernel(params.noise, params.doutput, params.dinput, size);
             }
         };
     };

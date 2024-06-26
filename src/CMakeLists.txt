@@ -273,8 +273,9 @@ set( MIOpen_Source
     solver/pooling/backwardNd.cpp
     solver/reduce/forward_argmax.cpp
     solver/reduce/forward_sum.cpp
-    solver/rrelu/forward_rrelu_nonpacked.cpp
-    solver/rrelu/forward_rrelu_packed.cpp
+    solver/rrelu/backward_rrelu_contiguous.cpp
+    solver/rrelu/backward_rrelu_noncontiguous.cpp
+    solver/rrelu/forward_rrelu.cpp
     solver/rrelu/utils.cpp
     solver/softmax/attn_softmax.cpp
     solver/softmax/softmax.cpp
@@ -445,6 +446,7 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         ${GPU_BATCHED_TRANSPOSE_KERNEL_HIP}
         ${GPU_GENERAL_TENSOR_REORDER_KERNEL_HIP_SOURCE}
         kernels/MIOpenArgmax.cpp
+        kernels/MIOpenAssign.cpp
         kernels/MIOpenCat.cpp
         kernels/MIOpenCheckNumerics.cpp
         kernels/MIOpenBatchNormActivBwdPerAct.cl

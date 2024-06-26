@@ -23,47 +23,34 @@
  * SOFTWARE.
  *
  *******************************************************************************/
+#ifndef MIOPEN_DONT_USE_HIP_RUNTIME_HEADERS
+#include <hip/hip_fp16.h>
+#include <hip/hip_runtime.h>
+#endif
 
-#include <miopen/dropout.hpp>
-#include <miopen/rrelu/utils.hpp>
+#include "float_types.h"
+#include "tensor_view.hpp"
 
-namespace miopen {
-
-namespace solver {
-
-namespace rrelu {
-
-KernelInfo make_hip_kernel(std::vector<size_t> localsize,
-                           std::vector<size_t> globalsize,
-                           std::string kernel_file,
-                           std::string kernel_name,
-                           KernelBuildParameters build_params)
+template <typename T, unsigned NDIMS>
+__device__ void
+Assign(T* __restrict__ x, T* __restrict__ y, const tensor_view_t<NDIMS> x_tv, const bool reverse)
 {
-    while(localsize.size() < 3)
-        localsize.push_back(1);
-    while(globalsize.size() < 3)
-        globalsize.push_back(1);
-    for(int i = 0; i < localsize.size(); ++i)
-        globalsize[i] = AlignUp(globalsize[i], localsize[i]);
-    return KernelInfo{
-        build_params.GenerateFor(kbp::HIP{}), localsize, globalsize, kernel_file, kernel_name};
+    int gid     = blockIdx.x * blockDim.x + threadIdx.x;
+    auto layout = tensor_layout_t<NDIMS>(x_tv, gid);
+    if(layout.layout[0] >= x_tv.size[0])
+        return;
+
+    if(!reverse)
+        y[gid] = x[x_tv.get_tensor_view_idx(layout)];
+    else
+        x[x_tv.get_tensor_view_idx(layout)] = y[gid];
 }
 
-size_t GetNumThreads(const ExecutionContext& context, const size_t size)
+extern "C" __global__ void Assign(DTYPE* __restrict__ x,
+                                  DTYPE* __restrict__ y,
+                                  const tensor_view_t<VIEW_DIMS> x_tv,
+                                  const bool reverse)
 {
-    // This line must be up to date with miopenDropoutGetStatesSize in src/dropout_api.cpp
-    size_t num_states = std::min(size_t(MAX_PRNG_STATE), context.GetStream().GetImage3dMaxWidth());
-
-    if(size <= num_states)
-        return size;
-    size_t divisor = 1;
-    while((1ul << divisor) * divisor <= size)
-        ++divisor;
-    --divisor;
-
-    return (1ul << divisor);
+    // instantiate the kernel
+    Assign<DTYPE, VIEW_DIMS>(x, y, x_tv, reverse);
 }
-
-} // namespace rrelu
-} // namespace solver
-} // namespace miopen

@@ -46,35 +46,87 @@ RReLUStatesInit(Handle& handle, Data_t states, size_t stateSizeInBytes, uint64_t
     return miopenStatusSuccess;
 }
 
+size_t GetRReLUForwardWorkspaceSize(Handle& handle,
+                                    const TensorDescriptor& inputDesc,
+                                    const TensorDescriptor& outputDesc)
+{
+    auto ctx           = ExecutionContext{&handle};
+    const auto problem = rrelu::ForwardProblemDescription{inputDesc, outputDesc};
+
+    const auto solvers = solver::SolverContainer<solver::rrelu::Forward>{};
+
+    auto pair_size_vector = solvers.GetWorkspaceSizes(ctx, problem);
+
+    return pair_size_vector.empty() ? static_cast<size_t>(-1) : pair_size_vector.front().second;
+}
+
 miopenStatus_t RReLUForward(Handle& handle,
+                            Data_t workspace,
+                            size_t workspaceSizeInBytes,
                             ConstData_t states,
                             size_t stateSizeInBytes,
                             const TensorDescriptor& inputDesc,
                             ConstData_t input,
                             const TensorDescriptor& outputDesc,
                             Data_t output,
+                            const TensorDescriptor& noiseDesc,
+                            Data_t noise,
                             const float lower,
                             const float upper)
 {
-    const auto problem = rrelu::ForwardProblemDescription{inputDesc, outputDesc};
+    const auto problem = rrelu::ForwardProblemDescription{inputDesc, outputDesc, noiseDesc};
 
     const auto invoke_params = [&]() {
-        auto tmp       = rrelu::InvokeParams{};
-        tmp.type       = InvokeType::Run;
-        tmp.inputDesc  = &inputDesc;
-        tmp.input      = input;
-        tmp.outputDesc = &outputDesc;
-        tmp.output     = output;
-        tmp.lower      = lower;
-        tmp.upper      = upper;
-        tmp.states     = states;
-        tmp.state_size = stateSizeInBytes;
+        auto tmp           = rrelu::ForwardInvokeParams{};
+        tmp.type           = InvokeType::Run;
+        tmp.inputDesc      = &inputDesc;
+        tmp.input          = input;
+        tmp.outputDesc     = &outputDesc;
+        tmp.output         = output;
+        tmp.noiseDesc      = &noiseDesc;
+        tmp.noise          = noise;
+        tmp.lower          = lower;
+        tmp.upper          = upper;
+        tmp.states         = states;
+        tmp.state_size     = stateSizeInBytes;
+        tmp.workspace      = workspace;
+        tmp.workspace_size = workspaceSizeInBytes;
         return tmp;
     }();
 
     const auto algo    = AlgorithmName{"RReLUForward"};
-    const auto solvers = solver::SolverContainer<solver::rrelu::ContiguouseForward,
-                                                 solver::rrelu::nonContiguouseForward>{};
+    const auto solvers = solver::SolverContainer<solver::rrelu::Forward>{};
+
+    solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
+
+    return miopenStatusSuccess;
+}
+
+miopenStatus_t RReLUBackward(Handle& handle,
+                             const TensorDescriptor& noiseDesc,
+                             ConstData_t noise,
+                             const TensorDescriptor& doutputDesc,
+                             ConstData_t doutput,
+                             const TensorDescriptor& dinputDesc,
+                             Data_t dinput)
+{
+    const auto problem = rrelu::BackwardProblemDescription{noiseDesc, doutputDesc, dinputDesc};
+
+    const auto invoke_params = [&]() {
+        auto tmp        = rrelu::BackwardInvokeParams{};
+        tmp.type        = InvokeType::Run;
+        tmp.noiseDesc   = &noiseDesc;
+        tmp.noise       = noise;
+        tmp.doutputDesc = &doutputDesc;
+        tmp.doutput     = doutput;
+        tmp.dinputDesc  = &dinputDesc;
+        tmp.dinput      = dinput;
+        return tmp;
+    }();
+
+    const auto algo    = AlgorithmName{"RReLUBackward"};
+    const auto solvers = solver::SolverContainer<solver::rrelu::ContiguousBackward,
+                                                 solver::rrelu::nonContiguousBackward>{};
 
     solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
 

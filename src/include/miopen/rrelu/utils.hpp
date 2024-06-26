@@ -83,8 +83,7 @@ KernelInfo make_hip_kernel(std::vector<size_t> localsize,
                            std::string kernel_name,
                            KernelBuildParameters build_params);
 
-size_t GetNumThreads(const ExecutionContext& context,
-                     const miopen::rrelu::ForwardProblemDescription& problem);
+size_t GetNumThreads(const ExecutionContext& context, size_t size);
 
 } // namespace rrelu
 } // namespace solver

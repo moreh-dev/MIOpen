@@ -32,20 +32,43 @@ namespace miopen {
 
 namespace rrelu {
 
-struct InvokeParams : public miopen::InvokeParams
+struct ForwardInvokeParams : public miopen::InvokeParams
 {
-    InvokeParams() = default;
+    ForwardInvokeParams() = default;
 
     const TensorDescriptor* inputDesc  = nullptr;
     const TensorDescriptor* outputDesc = nullptr;
+    const TensorDescriptor* noiseDesc  = nullptr;
 
-    ConstData_t input = nullptr;
-    Data_t output     = nullptr;
+    ConstData_t input   = nullptr;
+    Data_t output       = nullptr;
+    ConstData_t doutput = nullptr;
+    Data_t dinput       = nullptr;
+    Data_t noise        = nullptr;
 
     float lower            = 0;
     float upper            = 0;
     ConstData_t states     = nullptr;
     std::size_t state_size = 0;
+
+    Data_t workspace           = nullptr;
+    std::size_t workspace_size = 0;
+
+    std::size_t GetWorkspaceSize() const { return workspace_size; }
+    Data_t GetWorkspace() const { return workspace; }
+};
+
+struct BackwardInvokeParams : public miopen::InvokeParams
+{
+    BackwardInvokeParams() = default;
+
+    const TensorDescriptor* doutputDesc = nullptr;
+    const TensorDescriptor* dinputDesc  = nullptr;
+    const TensorDescriptor* noiseDesc   = nullptr;
+
+    ConstData_t doutput = nullptr;
+    Data_t dinput       = nullptr;
+    ConstData_t noise   = nullptr;
 
     std::size_t GetWorkspaceSize() const { return 0; }
     Data_t GetWorkspace() const { return nullptr; }

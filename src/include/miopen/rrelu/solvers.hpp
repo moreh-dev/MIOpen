@@ -37,33 +37,47 @@ namespace rrelu {
 using ForwardSolverBase =
     NonTunableSolverBase<ExecutionContext, miopen::rrelu::ForwardProblemDescription>;
 
-struct Forward : ForwardSolverBase
+struct Forward final : ForwardSolverBase
 {
-};
-
-struct ContiguouseForward final : Forward
-{
-    const std::string& SolverDbId() const override { return GetSolverDbId<ContiguouseForward>(); }
+    const std::string& SolverDbId() const override { return GetSolverDbId<Forward>(); }
 
     bool IsApplicable(const ExecutionContext& context,
                       const miopen::rrelu::ForwardProblemDescription& problem) const override;
     ConvSolution
     GetSolution(const ExecutionContext& context,
                 const miopen::rrelu::ForwardProblemDescription& problem) const override;
+    std::size_t
+    GetWorkspaceSize(const ExecutionContext& context,
+                     const miopen::rrelu::ForwardProblemDescription& problem) const override;
+    bool MayNeedWorkspace() const override { return true; }
 };
 
-struct nonContiguouseForward final : Forward
+using BackwardSolverBase =
+    NonTunableSolverBase<ExecutionContext, miopen::rrelu::BackwardProblemDescription>;
+
+struct ContiguousBackward final : BackwardSolverBase
+{
+    const std::string& SolverDbId() const override { return GetSolverDbId<ContiguousBackward>(); }
+
+    bool IsApplicable(const ExecutionContext& context,
+                      const miopen::rrelu::BackwardProblemDescription& problem) const override;
+    ConvSolution
+    GetSolution(const ExecutionContext& context,
+                const miopen::rrelu::BackwardProblemDescription& problem) const override;
+};
+
+struct nonContiguousBackward final : BackwardSolverBase
 {
     const std::string& SolverDbId() const override
     {
-        return GetSolverDbId<nonContiguouseForward>();
+        return GetSolverDbId<nonContiguousBackward>();
     }
 
     bool IsApplicable(const ExecutionContext& context,
-                      const miopen::rrelu::ForwardProblemDescription& problem) const override;
+                      const miopen::rrelu::BackwardProblemDescription& problem) const override;
     ConvSolution
     GetSolution(const ExecutionContext& context,
-                const miopen::rrelu::ForwardProblemDescription& problem) const override;
+                const miopen::rrelu::BackwardProblemDescription& problem) const override;
 };
 
 } // namespace rrelu
