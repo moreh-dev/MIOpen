@@ -102,7 +102,19 @@ ConvSolution OuterForward::GetSolution(const ExecutionContext& context,
             decltype(auto) kernel = handle_.Run(kernels.front());
             decltype(auto) params = raw_params.CastTo<miopen::outer::InvokeParams>();
 
-            kernel(4);
+            auto x1dims = params.x1Desc.GetLengths();
+            auto x2dims = params.x1Desc.GetLengths();
+            auto ydims = params.x2Desc.GetLengths();
+
+            kernel
+            (
+                params.x1,
+                params.x2,
+                params.y,
+                x1dims[0], 
+                x2dims[0],
+                ydims[0]
+            );
         };
     };
     

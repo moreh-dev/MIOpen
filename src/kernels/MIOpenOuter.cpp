@@ -24,34 +24,35 @@
  *
  *******************************************************************************/
 #ifndef MIOPEN_DONT_USE_HIP_RUNTIME_HEADERS
+#include <hip/hip_fp16.h>
 #include <hip/hip_runtime.h>
 #endif
+
+#include "float_types.h"
 
 #include <stdio.h>
 
 extern "C" __global__ void OuterForward
 (
-    int t
-/*
-    const float * input1, const float * input2, float * output, 
+    const FLOAT * input1, const FLOAT * input2, FLOAT * output, 
     const size_t n, const size_t m, const size_t nm
-*/
 )
 {
+    /*
     const size_t gid = blockIdx.x * blockDim.x + threadIdx.x;
+
+    */
+    size_t gid = blockIdx.x * blockDim.x + threadIdx.x;
     if (gid == 0)
     {
-        printf("outerforward kernel is called");
+        printf("outerforward kernel is called\n");
     }
-    /*
-    size_t gid = blockIdx.x * blockDim.x + threadIdx.x;
-    if (gid >= N) return;
+    if (gid >= nm) return;
 
-    size_t n[2];
+    size_t ix[2];
 
-    n[0] = gid / m;
-    n[1] = gid % m;
+    ix[0] = gid / m;
+    ix[1] = gid % m;
 
-    output[gid] = input1[n[0]] * input2[n[1]];
-    */
+    output[gid] = input1[ix[0]] * input2[ix[1]];
 }
