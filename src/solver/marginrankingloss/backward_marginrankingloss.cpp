@@ -51,7 +51,7 @@ bool MarginRankingLossBackward::IsApplicable(
     [[maybe_unused]] const ExecutionContext& context,
     const miopen::marginrankingloss::ProblemDescriptionBackward& problem) const
 {
-    if(!problem.IsSameType() || !problem.IsSameLength())
+    if(!problem.IsSameType() || !problem.IsSameLength() || !problem.IsAllApplicableDims())
     {
         return false;
     }

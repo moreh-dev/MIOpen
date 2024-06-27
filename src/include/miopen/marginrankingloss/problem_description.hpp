@@ -28,10 +28,12 @@
 
 #include "miopen/miopen.h"
 #include "miopen/names.hpp"
+#include <functional>
 #include <miopen/problem_description_base.hpp>
 #include <miopen/activ.hpp>
 #include <miopen/tensor.hpp>
 #include <cassert>
+#include <numeric>
 
 namespace miopen {
 
@@ -85,6 +87,32 @@ struct ProblemDescriptionForward : ProblemDescriptionBase
         if((input1Desc.GetType() != input2Desc.GetType()) ||
            (input2Desc.GetType() != targetDesc.GetType()) ||
            (targetDesc.GetType() != outputDesc.GetType()))
+        {
+            return false;
+        }
+        return true;
+    }
+
+    bool IsApplicableDims(std::vector<std::size_t> dims) const
+    {
+        size_t total_elements = std::accumulate(dims.begin(), dims.end(), 1, std::multiplies<size_t>());
+        for(size_t dim: dims)
+        {
+            if (total_elements == dim)
+            {
+                MIOPEN_THROW(miopenStatusBadParm, "MarginRankingLossForward: Only one dim is greater than 1, there should be at least two dims greater than 1.");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool IsAllApplicableDims() const
+    {
+        if (!IsApplicableDims(input1Desc.GetLengths()) ||
+        !IsApplicableDims(input2Desc.GetLengths()) ||
+        !IsApplicableDims(targetDesc.GetLengths()) ||
+        !IsApplicableDims(outputDesc.GetLengths()))
         {
             return false;
         }
@@ -161,6 +189,34 @@ struct ProblemDescriptionBackward : ProblemDescriptionBase
            (targetDesc.GetType() != outGradDesc.GetType()) ||
            (outGradDesc.GetType() != in1GradDesc.GetType()) ||
            (in1GradDesc.GetType() != in2GradDesc.GetType()))
+        {
+            return false;
+        }
+        return true;
+    }
+
+    bool IsApplicableDims(std::vector<std::size_t> dims) const
+    {
+        size_t total_elements = std::accumulate(dims.begin(), dims.end(), 1, std::multiplies<size_t>());
+        for(size_t dim: dims)
+        {
+            if (total_elements == dim)
+            {
+                MIOPEN_THROW(miopenStatusBadParm, "MarginRankingLossBackward: Only one dim is greater than 1, there should be at least two dims greater than 1.");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool IsAllApplicableDims() const
+    {
+        if (!IsApplicableDims(input1Desc.GetLengths()) ||
+        !IsApplicableDims(input2Desc.GetLengths()) ||
+        !IsApplicableDims(targetDesc.GetLengths()) ||
+        !IsApplicableDims(outGradDesc.GetLengths()) ||
+        !IsApplicableDims(in1GradDesc.GetLengths()) ||
+        !IsApplicableDims(in2GradDesc.GetLengths()))
         {
             return false;
         }

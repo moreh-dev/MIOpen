@@ -143,36 +143,12 @@ int MarginRankingLossDriver<Tgpu, Tref>::ParseCmdLineArgs(int argc, char* argv[]
 template <typename Tgpu, typename Tref>
 std::vector<int> MarginRankingLossDriver<Tgpu, Tref>::GetTensorDimsFromCmd()
 {
-    std::string lengthsStr = inflags.GetValueStr("dims");
-
-    std::vector<int> lengths;
-    std::size_t pos = 0;
-    std::size_t new_pos;
-
-    new_pos = lengthsStr.find(',', pos);
-    while(new_pos != std::string::npos)
-    {
-        std::string sliceStr = lengthsStr.substr(pos, new_pos - pos);
-
-        int len = std::stoi(sliceStr);
-
-        lengths.push_back(len);
-
-        pos     = new_pos + 1;
-        new_pos = lengthsStr.find(',', pos);
-    };
-
-    std::string sliceStr = lengthsStr.substr(pos);
-    int len              = std::stoi(sliceStr);
-
-    lengths.push_back(len);
-
-    while (lengths.size() < 5)
-    {
-        lengths.push_back(1);
-    }
-
-    return (lengths);
+    auto tensor = inflags.GetValueTensor("dims");
+    std::vector<int> input_dims = tensor.lengths;
+    std::vector<int> ret(5 - input_dims.size(), 1);
+    // return a 5D array
+    ret.insert(ret.end(), input_dims.begin(), input_dims.end());
+    return ret;
 }
 
 template <typename Tgpu, typename Tref>
@@ -227,9 +203,9 @@ int MarginRankingLossDriver<Tgpu, Tref>::AddCmdLineArgs()
     inflags.AddInputFlag("forw", 'F', "1", "MarginRankingLoss direction (Default=1)", "int");
     inflags.AddInputFlag(
         "dims",
-        'D',
-        "16,3,64,64,2",
-        "The dimensional lengths of the input tensor: N,C,H,W,D (Default=16,3,64,64,2)",
+        'd',
+        "16x3x64x64x2",
+        "The params tensor dims: N,C,H,W,D (Default=16,3,64,64,2)",
         "string");
     inflags.AddInputFlag(
         "reduction",

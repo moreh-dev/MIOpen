@@ -52,7 +52,7 @@ bool MarginRankingLossForward::IsApplicable(
     [[maybe_unused]] const ExecutionContext& context,
     const miopen::marginrankingloss::ProblemDescriptionForward& problem) const
 {
-    if(!problem.IsSameType() || !problem.IsSameLength())
+    if(!problem.IsSameType() || !problem.IsSameLength() || !problem.IsAllApplicableDims())
     {
         return false;
     }
@@ -64,6 +64,7 @@ ConvSolution MarginRankingLossForward::GetSolution(
     const ExecutionContext& context,
     const miopen::marginrankingloss::ProblemDescriptionForward& problem) const
 {
+    std::ignore = context;
     auto result = ConvSolution(miopenStatusSuccess);
     auto dtype  = problem.GetInput1Desc().GetType();
     auto dims   = problem.GetInput1Desc().GetLengths();

@@ -24,7 +24,6 @@ The MIOpen API library is structured as follows:
   * :doc:`Softmax <../doxygen/html/group__softmax>`
   * :doc:`Fusion <../doxygen/html/group___f_u_s_i_o_n>`
   * :doc:`Loss function <../doxygen/html/group___loss_function>`
-  * :doc:`MarginRankingLoss <../doxygen/html/group___marginrankingloss>` (experimental)
   * :doc:`Dropout <../doxygen/html/group__dropout>`
   * :doc:`Reduction <../doxygen/html/group___tensor_reduce>`
   * :doc:`Find <../doxygen/html/group__find2>`
@@ -32,4 +31,5 @@ The MIOpen API library is structured as follows:
   * :doc:`Sum <../doxygen/html/group__sum>` (experimental)
   * :doc:`GroupNorm <../doxygen/html/group__groupnorm>` (experimental)
   * :doc:`Cat <../doxygen/html/group__cat>` (experimental)
+  * :doc:`MarginRankingLoss <../doxygen/html/group___marginrankingloss>` (experimental)
   * :doc:`Argmax<./argmax>` (experimental)
