@@ -23,22 +23,35 @@
  * SOFTWARE.
  *
  *******************************************************************************/
+#ifndef MIOPEN_DONT_USE_HIP_RUNTIME_HEADERS
+#include <hip/hip_runtime.h>
+#endif
 
-#include <miopen/outer/problem_description.hpp>
-#include <miopen/datatype.hpp>
-#include <miopen/names.hpp>
+#include <stdio.h>
 
-#include <sstream>
-
-namespace miopen {
-
-namespace outer {
-
-NetworkConfig ProblemDescription::MakeNetworkConfig() const
+extern "C" __global__ void OuterForward
+(
+    int t
+/*
+    const float * input1, const float * input2, float * output, 
+    const size_t n, const size_t m, const size_t nm
+*/
+)
 {
-    return NetworkConfig{"outerfwd"};
+    const size_t gid = blockIdx.x * blockDim.x + threadIdx.x;
+    if (gid == 0)
+    {
+        printf("outerforward kernel is called");
+    }
+    /*
+    size_t gid = blockIdx.x * blockDim.x + threadIdx.x;
+    if (gid >= N) return;
+
+    size_t n[2];
+
+    n[0] = gid / m;
+    n[1] = gid % m;
+
+    output[gid] = input1[n[0]] * input2[n[1]];
+    */
 }
-
-} // namespace outer
-
-} // namespace miopen

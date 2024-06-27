@@ -51,14 +51,17 @@ struct AnyInvokeParams;
 namespace solver {
 
 template <class Solver, class Context, class Problem, class Db>
-auto FindSolutionImpl(rank<1>,
-                      Solver s,
-                      const Context& context,
-                      const Problem& problem,
-                      Db&& db,
-                      const AnyInvokeParams& invoke_ctx,
-                      const std::string& perf_cfg,
-                      const std::optional<FindOptions>& options)
+auto FindSolutionImpl
+(
+    rank<1>,
+    Solver s,
+    const Context& context,
+    const Problem& problem,
+    Db&& db,
+    const AnyInvokeParams& invoke_ctx,
+    const std::string& perf_cfg,
+    const std::optional<FindOptions>& options
+)
     -> decltype(s.GetSolution(context, problem, s.Search(context, problem, invoke_ctx)))
 {
     static_assert(std::is_invocable_v<Db>,
@@ -473,11 +476,13 @@ struct SolverContainer
                           const AlgorithmName& algo,
                           const AnyInvokeParams& invoke_params) const
     {
+        std::cout << "-> ExecutePrimite1 is called" << std::endl;
         const auto network_config = problem.MakeNetworkConfig();
 
         if(const auto existingInvoker =
                ctx.GetStream().GetInvoker(network_config, std::nullopt, algo))
         {
+            std::cout << "--> invoker is found" << std::endl;
             (*existingInvoker)(ctx.GetStream(), invoke_params);
             return;
         }
@@ -485,13 +490,20 @@ struct SolverContainer
         const auto slns = SearchForSolutions(ctx, problem, 1, invoke_params);
 
         if(slns.empty())
+        {
+            std::cout << "--> solution is not found" << std::endl;
             MIOPEN_THROW(miopenStatusNotImplemented, "No solver found.");
+        }
+        else
+        {
+            std::cout << "--> solution is found" << std::endl;
+        }
 
+        std::cout << "--> size of slns : " << slns.size() << std::endl;
         const auto& sln = slns.front();
         if(!sln.invoker_factory)
             MIOPEN_THROW(miopenStatusInternalError, "Invoker missing in solver " + sln.solver_id);
-        const auto invoker =
-            ctx.GetStream().PrepareInvoker(*sln.invoker_factory, sln.construction_params);
+        const auto invoker = ctx.GetStream().PrepareInvoker(*sln.invoker_factory, sln.construction_params);
         ctx.GetStream().RegisterInvoker(invoker, network_config, sln.solver_id, algo);
         invoker(ctx.GetStream(), invoke_params);
     }
@@ -502,6 +514,7 @@ struct SolverContainer
                           const AlgorithmName& algo,
                           const AnyInvokeParams& invoke_params) const
     {
+        std::cout << "ExecutePrimite2 is called" << std::endl;
         return ExecutePrimitive(&handle, problem, algo, invoke_params);
     }
 };
