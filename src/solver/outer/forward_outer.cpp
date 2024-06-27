@@ -72,7 +72,8 @@ ConvSolution OuterForward::GetSolution(const ExecutionContext& context,
     size_t ylocalsize = 1;
     size_t zlocalsize = 1;
     
-    size_t xgridsize = ydims[0];
+    std::cout << x1dims[0] << " " << x2dims[0] << " " << ydims[0] << " " << ydims[1] << std::endl;
+    size_t xgridsize = ydims[0] * ydims[1];
     size_t ygridsize = 1;
     size_t zgridsize = 1;
 
@@ -104,7 +105,7 @@ ConvSolution OuterForward::GetSolution(const ExecutionContext& context,
 
             auto x1dims = params.x1Desc.GetLengths();
             auto x2dims = params.x1Desc.GetLengths();
-            auto ydims = params.x2Desc.GetLengths();
+            auto ydims = params.yDesc.GetLengths();
 
             kernel
             (
@@ -113,7 +114,7 @@ ConvSolution OuterForward::GetSolution(const ExecutionContext& context,
                 params.y,
                 x1dims[0], 
                 x2dims[0],
-                ydims[0]
+                ydims[0] * ydims[1]
             );
         };
     };

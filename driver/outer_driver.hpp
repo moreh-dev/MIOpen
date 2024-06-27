@@ -256,6 +256,9 @@ int OuterDriver<Tgpu, Tref>::RunForwardGPU()
         out_dev->GetMem()
     );
 
+  if(out_dev->FromGPU(GetStream(), out.data()) != 0)
+        std::cerr << "Error copying (out_dev) from GPU, size: " << out_dev->GetSize() << std::endl;
+
     return miopenStatusSuccess;
 }
 
