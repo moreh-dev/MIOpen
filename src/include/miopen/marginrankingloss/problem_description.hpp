@@ -95,12 +95,15 @@ struct ProblemDescriptionForward : ProblemDescriptionBase
 
     bool IsApplicableDims(std::vector<std::size_t> dims) const
     {
-        size_t total_elements = std::accumulate(dims.begin(), dims.end(), 1, std::multiplies<size_t>());
-        for(size_t dim: dims)
+        size_t total_elements =
+            std::accumulate(dims.begin(), dims.end(), 1, std::multiplies<size_t>());
+        for(size_t dim : dims)
         {
-            if (total_elements == dim)
+            if(total_elements == dim)
             {
-                MIOPEN_THROW(miopenStatusBadParm, "MarginRankingLossForward: Only one dim is greater than 1, there should be at least two dims greater than 1.");
+                MIOPEN_THROW(miopenStatusBadParm,
+                             "MarginRankingLossForward: Only one dim is greater than 1, there "
+                             "should be at least two dims greater than 1.");
                 return false;
             }
         }
@@ -109,10 +112,9 @@ struct ProblemDescriptionForward : ProblemDescriptionBase
 
     bool IsAllApplicableDims() const
     {
-        if (!IsApplicableDims(input1Desc.GetLengths()) ||
-        !IsApplicableDims(input2Desc.GetLengths()) ||
-        !IsApplicableDims(targetDesc.GetLengths()) ||
-        !IsApplicableDims(outputDesc.GetLengths()))
+        if(!IsApplicableDims(input1Desc.GetLengths()) ||
+           !IsApplicableDims(input2Desc.GetLengths()) ||
+           !IsApplicableDims(targetDesc.GetLengths()) || !IsApplicableDims(outputDesc.GetLengths()))
         {
             return false;
         }
@@ -197,12 +199,15 @@ struct ProblemDescriptionBackward : ProblemDescriptionBase
 
     bool IsApplicableDims(std::vector<std::size_t> dims) const
     {
-        size_t total_elements = std::accumulate(dims.begin(), dims.end(), 1, std::multiplies<size_t>());
-        for(size_t dim: dims)
+        size_t total_elements =
+            std::accumulate(dims.begin(), dims.end(), 1, std::multiplies<size_t>());
+        for(size_t dim : dims)
         {
-            if (total_elements == dim)
+            if(total_elements == dim)
             {
-                MIOPEN_THROW(miopenStatusBadParm, "MarginRankingLossBackward: Only one dim is greater than 1, there should be at least two dims greater than 1.");
+                MIOPEN_THROW(miopenStatusBadParm,
+                             "MarginRankingLossBackward: Only one dim is greater than 1, there "
+                             "should be at least two dims greater than 1.");
                 return false;
             }
         }
@@ -211,12 +216,12 @@ struct ProblemDescriptionBackward : ProblemDescriptionBase
 
     bool IsAllApplicableDims() const
     {
-        if (!IsApplicableDims(input1Desc.GetLengths()) ||
-        !IsApplicableDims(input2Desc.GetLengths()) ||
-        !IsApplicableDims(targetDesc.GetLengths()) ||
-        !IsApplicableDims(outGradDesc.GetLengths()) ||
-        !IsApplicableDims(in1GradDesc.GetLengths()) ||
-        !IsApplicableDims(in2GradDesc.GetLengths()))
+        if(!IsApplicableDims(input1Desc.GetLengths()) ||
+           !IsApplicableDims(input2Desc.GetLengths()) ||
+           !IsApplicableDims(targetDesc.GetLengths()) ||
+           !IsApplicableDims(outGradDesc.GetLengths()) ||
+           !IsApplicableDims(in1GradDesc.GetLengths()) ||
+           !IsApplicableDims(in2GradDesc.GetLengths()))
         {
             return false;
         }
