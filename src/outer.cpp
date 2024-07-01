@@ -55,4 +55,30 @@ miopenStatus_t OuterForward(Handle& handle,
     return miopenStatusSuccess;
 }
 
+miopenStatus_t OuterBackward(Handle& handle,
+                                const TensorDescriptor& x1Desc,
+                                ConstData_t x1,
+                                const TensorDescriptor& x2Desc,
+                                ConstData_t x2,
+                                const TensorDescriptor& yGradDesc,
+                                ConstData_t yGrad,
+                                const TensorDescriptor& x1GradDesc,
+                                Data_t x1Grad,
+                                const TensorDescriptor& x2GradDesc,
+                                Data_t x2Grad
+                            )
+{   
+    std::cout << "outerbackward is called" << std::endl;
+    /*
+    const auto problem = outer::ProblemDescription(x1Desc, x2Desc, yDesc);
+    const auto invoke_params = outer::InvokeParams{x1Desc, x1, x2Desc, x2, yDesc, y};
+    const auto algo = AlgorithmName{"OuterForward"};
+    const auto solvers       = solver::SolverContainer<solver::outer::OuterForward>{};
+    solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
+    */
+    /*
+    */
+    return miopenStatusSuccess;
+}
+
 } // namespace miopen

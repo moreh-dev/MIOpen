@@ -74,6 +74,48 @@ int32_t mloSumForwardRunHost(miopenTensorDescriptor_t input1Desc,
     }
     return ret;
 }
+
+template <typename Tgpu, typename Tcheck>
+int32_t mloSumBackwardRunHost(miopenTensorDescriptor_t input1Desc,
+                            miopenTensorDescriptor_t input2Desc,
+                            miopenTensorDescriptor_t input1GradDesc,
+                            miopenTensorDescriptor_t input2GradDesc,
+                            miopenTensorDescriptor_t yGradDesc,
+                            Tgpu* input1,
+                            Tgpu* input2,
+                            Tgpu* outGrad,
+                            Tcheck* in1Gradhost,
+                            Tcheck* in2Gradhost,
+                            miopenSumNanPropagation_t nanPropagation)
+{
+    auto input1_dims  = miopen::deref(input1Desc).GetLengths();
+    auto input2_dims  = miopen::deref(input2Desc).GetLengths();
+    auto output_dims = miopen::deref(yGradDesc).GetLengths();
+
+    size_t in_n = input1_dims[0];
+    size_t in_m = input2_dims[0];
+
+    int32_t ret = 0;
+
+    size_t cnt = 0;
+    for(size_t i=0;i<in_n;i++)
+    {
+        in1Gradhost[i] = 0;
+        for(size_t j=0;j<in_m;j++)
+        {
+            in1Gradhost[i] += outGrad[i *in_m + j] * input2[j];
+        }
+    }
+    for(size_t j=0;j<in_m;j++)
+    {
+        in2Gradhost[j] = 0;
+        for(size_t i=0;i<in_n;i++)
+        {
+            in2Gradhost[j] = input1[i] * outGrad[i * in_m + j];
+        }
+    }
+    return ret;
+}
 #endif
 
 template <typename Tgpu, typename Tref>
@@ -85,6 +127,10 @@ public:
         miopenCreateTensorDescriptor(&input1Desc);
         miopenCreateTensorDescriptor(&input2Desc);
         miopenCreateTensorDescriptor(&yDesc);
+
+        miopenCreateTensorDescriptor(&input1GradDesc);
+        miopenCreateTensorDescriptor(&input2GradDesc);
+        miopenCreateTensorDescriptor(&yGradDesc);
 
         data_type = miopen_type<Tgpu>{};
     }
@@ -102,6 +148,7 @@ public:
     int RunForwardCPU();
 
     int RunBackwardGPU() override;
+    int RunBackwardCPU();
 
     Tref GetTolerance();
     int VerifyBackward() override;
@@ -120,17 +167,28 @@ private:
 
     miopenTensorDescriptor_t input1Desc;
     miopenTensorDescriptor_t input2Desc;
+    miopenTensorDescriptor_t input1GradDesc;
+    miopenTensorDescriptor_t input2GradDesc;
     miopenTensorDescriptor_t yDesc;
+    miopenTensorDescriptor_t yGradDesc;
+
 
     std::unique_ptr<GPUMem> in1_dev;
     std::unique_ptr<GPUMem> in2_dev;
+    std::unique_ptr<GPUMem> in1Grad_dev;
+    std::unique_ptr<GPUMem> in2Grad_dev;
     std::unique_ptr<GPUMem> out_dev;
-    std::unique_ptr<GPUMem> workspace_dev;
+    std::unique_ptr<GPUMem> outGrad_dev;
 
     std::vector<Tgpu> in1;
     std::vector<Tgpu> in2;
-
+    std::vector<Tgpu> in1Grad;
+    std::vector<Tgpu> in2Grad;
     std::vector<Tgpu> out;
+    std::vector<Tgpu> outGrad;
+
+    std::vector<Tref> in1Gradhost;
+    std::vector<Tref> in2Gradhost;
     std::vector<Tref> outhost;
 
     size_t ws_sizeInBytes;
@@ -160,9 +218,13 @@ int OuterDriver<Tgpu, Tref>::GetandSetData()
     SetTensorNd(input1Desc, lens1, data_type);
     SetTensorNd(input2Desc, lens2, data_type);
 
+    SetTensorNd(input1GradDesc, lens1, data_type);
+    SetTensorNd(input2GradDesc, lens2, data_type);
+
     std::vector<int> out_len({in_n, in_m});
 
     SetTensorNd(yDesc, out_len, data_type);
+    SetTensorNd(yGradDesc, out_len, data_type);
 
     return 0;
 }
@@ -212,12 +274,22 @@ int OuterDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
 
     in1_dev       = std::unique_ptr<GPUMem>(new GPUMem(ctx, in1_sz, sizeof(Tgpu)));
     in2_dev       = std::unique_ptr<GPUMem>(new GPUMem(ctx, in2_sz, sizeof(Tgpu)));
+    in1Grad_dev   = std::unique_ptr<GPUMem>(new GPUMem(ctx, in1_sz, sizeof(Tgpu)));
+    in2Grad_dev   = std::unique_ptr<GPUMem>(new GPUMem(ctx, in2_sz, sizeof(Tgpu)));
     out_dev       = std::unique_ptr<GPUMem>(new GPUMem(ctx, out_sz, sizeof(Tgpu)));
+    outGrad_dev   = std::unique_ptr<GPUMem>(new GPUMem(ctx, out_sz, sizeof(Tgpu)));
 
-    in1     = std::vector<Tgpu>(in1_sz, static_cast<Tgpu>(0));
-    in2     = std::vector<Tgpu>(in2_sz, static_cast<Tgpu>(0));
-    out     = std::vector<Tgpu>(out_sz, static_cast<Tgpu>(0));
-    outhost = std::vector<Tref>(out_sz, static_cast<Tref>(0));
+    in1         = std::vector<Tgpu>(in1_sz, static_cast<Tgpu>(0));
+    in2         = std::vector<Tgpu>(in2_sz, static_cast<Tgpu>(0));
+    in1Grad     = std::vector<Tgpu>(in1_sz, static_cast<Tgpu>(0));
+    in2Grad     = std::vector<Tgpu>(in2_sz, static_cast<Tgpu>(0));
+    out         = std::vector<Tgpu>(out_sz, static_cast<Tgpu>(0));
+    outGrad     = std::vector<Tgpu>(out_sz, static_cast<Tgpu>(0));
+
+    in1Gradhost = std::vector<Tref>(in1_sz, static_cast<Tgpu>(0));
+    in2Gradhost = std::vector<Tref>(in2_sz, static_cast<Tgpu>(0));
+    outhost     = std::vector<Tref>(out_sz, static_cast<Tref>(0));
+    
 
     for(int i = 0; i < in1_sz; i++)
     {
@@ -229,13 +301,18 @@ int OuterDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
         in2[i] = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.0), static_cast<Tgpu>(1.0));
     }
 
+    for(int i = 0; i < out_sz; i++)
+    {
+        outGrad[i] = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(0.0), static_cast<Tgpu>(1.0));
+    }
+
     if(in1_dev->ToGPU(GetStream(), in1.data()) != 0)
         std::cerr << "Error copying (in1) to GPU, size: " << in1_dev->GetSize() << std::endl;
 
     if(in2_dev->ToGPU(GetStream(), in2.data()) != 0)
         std::cerr << "Error copying (in1) to GPU, size: " << in2_dev->GetSize() << std::endl;
 
-    if(out_dev->ToGPU(GetStream(), out.data()) != 0)
+    if(outGrad_dev->ToGPU(GetStream(), outGrad.data()) != 0)
         std::cerr << "Error copying (out) to GPU, size: " << out_dev->GetSize() << std::endl;
 
     return miopenStatusSuccess;
@@ -256,7 +333,7 @@ int OuterDriver<Tgpu, Tref>::RunForwardGPU()
         out_dev->GetMem()
     );
 
-  if(out_dev->FromGPU(GetStream(), out.data()) != 0)
+    if(out_dev->FromGPU(GetStream(), out.data()) != 0)
         std::cerr << "Error copying (out_dev) from GPU, size: " << out_dev->GetSize() << std::endl;
 
     return miopenStatusSuccess;
@@ -274,6 +351,42 @@ int OuterDriver<Tgpu, Tref>::RunForwardCPU()
 template <typename Tgpu, typename Tref>
 int OuterDriver<Tgpu, Tref>::RunBackwardGPU()
 {
+    std::cout << "RunForwardGPU is called" << std::endl;
+
+    miopenOuterBackward(
+        GetHandle(),
+        input1Desc,
+        in1_dev->GetMem(),
+        input2Desc,
+        in2_dev->GetMem(),
+        yGradDesc,
+        outGrad_dev->GetMem(),
+        input1GradDesc,
+        in1Grad_dev->GetMem(),
+        input2GradDesc,
+        in2Grad_dev->GetMem()
+    );
+
+    if(in1Grad_dev->FromGPU(GetStream(), in1Grad.data()) != 0)
+        std::cerr << "Error copying (in1Grad_dev) from GPU, size: " << out_dev->GetSize() << std::endl;
+
+    if(in2Grad_dev->FromGPU(GetStream(), in2Grad.data()) != 0)
+        std::cerr << "Error copying (in2Grad_dev) from GPU, size: " << out_dev->GetSize() << std::endl;
+
+    return miopenStatusSuccess;
+}
+
+template <typename Tgpu, typename Tref>
+int OuterDriver<Tgpu, Tref>::RunBackwardCPU()
+{
+    mloSumBackwardRunHost<Tgpu, Tref>(
+        input1Desc, input2Desc, 
+        input1GradDesc, input2GradDesc,
+        yGradDesc, 
+        in1.data(), in2.data(), outGrad.data(), 
+        in1Gradhost.data(), in2Gradhost.data(),
+        nanPropagation);
+
     return miopenStatusSuccess;
 }
 
@@ -312,6 +425,31 @@ int OuterDriver<Tgpu, Tref>::VerifyForward()
 template <typename Tgpu, typename Tref>
 int OuterDriver<Tgpu, Tref>::VerifyBackward()
 {
+    RunBackwardCPU();
+    const Tref tolerance = GetTolerance();
+    auto error1           = miopen::rms_range(in1Gradhost, in1Grad);
+    auto error2           = miopen::rms_range(in2Gradhost, in2Grad);
+
+    if(
+        !std::isfinite(error1) || error1 > tolerance
+    )
+    {
+        std::cout << "Backward Outer FAILED: " << error1 << " > " << tolerance << std::endl;
+        return EC_VerifyFwd;
+    }
+    else if
+    (
+        !std::isfinite(error2) || error2 > tolerance
+    )
+    {
+        std::cout << "Backward Outer FAILED: " << error2 << " > " << tolerance << std::endl;
+        return EC_VerifyFwd;
+    }
+    else
+    {
+        std::cout << "Backward Outer Verifies OK on CPU reference (" << error1 << " < " << tolerance
+                  << ')' << " and " << error2 << " < " << tolerance << ')' << std::endl;
+    }
     return miopenStatusSuccess;
 }
 

@@ -88,3 +88,39 @@ extern "C" miopenStatus_t miopenOuterForward(miopenHandle_t handle,
                         );
     });
 }
+
+extern "C" miopenStatus_t miopenOuterBackward(miopenHandle_t handle,
+                                                const miopenTensorDescriptor_t x1Desc,
+                                                const void* x1,
+                                                const miopenTensorDescriptor_t x2Desc,
+                                                const void* x2,
+                                                const miopenTensorDescriptor_t yGradDesc,
+                                                const void* yGrad,
+                                                const miopenTensorDescriptor_t x1GradDesc,
+                                                void* x1Grad,
+                                                const miopenTensorDescriptor_t x2GradDesc,
+                                                void* x2Grad)
+{
+    MIOPEN_LOG_FUNCTION(
+        handle, x1Desc, x1, x2Desc, x2, yGradDesc, yGrad, 
+        x1GradDesc, x1Grad, x2GradDesc, x2Grad);
+
+    LogCmdOuter(x1Desc, x2Desc, true);
+
+    std::cout << "miopenOuterBackward is called" << std::endl;
+    
+    return miopen::try_([&] {
+        miopen::OuterBackward(miopen::deref(handle),
+                           miopen::deref(x1Desc),
+                           DataCast(x1),
+                           miopen::deref(x2Desc),
+                           DataCast(x2),
+                           miopen::deref(yGradDesc),
+                           DataCast(yGrad),
+                           miopen::deref(x1GradDesc),
+                           DataCast(x1Grad),
+                           miopen::deref(x2GradDesc),
+                           DataCast(x2Grad)
+                        );
+    });
+}

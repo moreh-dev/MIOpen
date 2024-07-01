@@ -6157,7 +6157,7 @@ MIOPEN_EXPORT miopenStatus_t miopenT5LayerNormBackward(miopenHandle_t handle,
 
 #ifdef MIOPEN_BETA_API
 // Cat APIs
-/** @addtogroup cat
+/** @addtogroup outer
  *
  *  @{
  */
@@ -6179,6 +6179,18 @@ MIOPEN_EXPORT miopenStatus_t miopenOuterForward(miopenHandle_t handle,
                                               const void* x2,
                                               const miopenTensorDescriptor_t yDesc,
                                               void* y);
+
+MIOPEN_EXPORT miopenStatus_t miopenOuterBackward(miopenHandle_t handle,
+                                                const miopenTensorDescriptor_t x1Desc,
+                                                const void* x1,
+                                                const miopenTensorDescriptor_t x2Desc,
+                                                const void* x2,
+                                                const miopenTensorDescriptor_t yGradDesc,
+                                                const void* yGrad,
+                                                const miopenTensorDescriptor_t x1GradDesc,
+                                                void* x1Grad,
+                                                const miopenTensorDescriptor_t x2GradDesc,
+                                                void* x2Grad);
 
 /** @} */
 // CLOSEOUT CAT DOXYGEN GROUP
