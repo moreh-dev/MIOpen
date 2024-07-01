@@ -46,7 +46,7 @@ miopenStatus_t OuterForward(Handle& handle,
 {   
     std::cout << "outerforward is called" << std::endl;
     const auto problem = outer::ProblemDescription(x1Desc, x2Desc, yDesc);
-    const auto invoke_params = outer::InvokeParams{x1Desc, x1, x2Desc, x2, yDesc, y};
+    const auto invoke_params = outer::InvokeParamsForward{x1Desc, x1, x2Desc, x2, yDesc, y};
     const auto algo = AlgorithmName{"OuterForward"};
     const auto solvers       = solver::SolverContainer<solver::outer::OuterForward>{};
     solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
@@ -69,13 +69,16 @@ miopenStatus_t OuterBackward(Handle& handle,
                             )
 {   
     std::cout << "outerbackward is called" << std::endl;
-    /*
-    const auto problem = outer::ProblemDescription(x1Desc, x2Desc, yDesc);
-    const auto invoke_params = outer::InvokeParams{x1Desc, x1, x2Desc, x2, yDesc, y};
+    const auto problem = outer::ProblemDescription(x1Desc, x2Desc, yGradDesc);
+    std::cout << "a" << std::endl;
+    const auto invoke_params = outer::InvokeParamsBackward{x1Desc, x1, x2Desc, x2, yGradDesc, yGrad, x1GradDesc, x1Grad, x2GradDesc, x2Grad};
+    std::cout << "b" << std::endl;
     const auto algo = AlgorithmName{"OuterForward"};
-    const auto solvers       = solver::SolverContainer<solver::outer::OuterForward>{};
+    std::cout << "c" << std::endl;
+    const auto solvers       = solver::SolverContainer<solver::outer::OuterBackward>{};
+    std::cout << "d" << std::endl;
     solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
-    */
+    
     /*
     */
     return miopenStatusSuccess;

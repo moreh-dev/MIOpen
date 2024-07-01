@@ -38,15 +38,7 @@ extern "C" __global__ void OuterForward
     const size_t n, const size_t m, const size_t nm
 )
 {
-    /*
-    const size_t gid = blockIdx.x * blockDim.x + threadIdx.x;
-
-    */
     size_t gid = blockIdx.x * blockDim.x + threadIdx.x;
-    if (gid == 0)
-    {
-        printf("outerforward kernel is called\n");
-    }
     if (gid >= nm) return;
 
     size_t ix[2];
@@ -55,4 +47,41 @@ extern "C" __global__ void OuterForward
     ix[1] = gid % m;
 
     output[gid] = input1[ix[0]] * input2[ix[1]];
+}
+
+extern "C" __global__ void OuterBackwardGrad1
+(
+    const FLOAT * input2, FLOAT * input1_grad, const FLOAT * output_grad,
+    const size_t n, const size_t m
+) 
+{
+    size_t gid = blockIdx.x * blockDim.x + threadIdx.x;
+    if (gid >= n) return;
+
+    FLOAT sum = 0;
+    for (unsigned int j = 0; j < m; ++j) {
+        sum += input2[j] * output_grad[gid * m + j];
+    }
+
+    input1_grad[gid] = sum;
+}
+
+__global__ void OuterBackwardGrad2
+(
+    const FLOAT * input1, 
+    FLOAT * input2_grad,
+    const FLOAT * output_grad,
+    int n, int m
+) 
+{
+    size_t gid = blockIdx.x * blockDim.x + threadIdx.x;
+    if (gid >= m) return;
+
+    FLOAT sum = 0;
+    for (unsigned int i = 0; i < n; ++i)
+    {
+        sum += input1[i] * output_grad[i * m +  gid];
+    }
+
+    input2_grad[gid] = sum;
 }

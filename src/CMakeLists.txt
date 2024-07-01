@@ -286,6 +286,7 @@ set( MIOpen_Source
     solver/layernorm/forward_t5layernorm.cpp
     solver/mha/mha_solver_backward.cpp
     solver/mha/mha_solver_forward.cpp
+    solver/outer/backward_outer.cpp
     solver/outer/forward_outer.cpp
     solver/pooling/forward2d.cpp
     solver/pooling/forwardNaive.cpp

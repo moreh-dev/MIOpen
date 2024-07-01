@@ -52,6 +52,20 @@ struct OuterForward final : OuterSolver
     bool MayNeedWorkspace() const override { return true; }
 };
 
+struct OuterBackward final : OuterSolver
+{
+    const std::string& SolverDbId() const override { return GetSolverDbId<OuterBackward>(); }
+
+    bool IsApplicable(const ExecutionContext& context,
+                      const miopen::outer::ProblemDescription& problem) const override;
+    ConvSolution GetSolution(const ExecutionContext& context,
+                             const miopen::outer::ProblemDescription& problem) const override;
+    std::size_t GetWorkspaceSize(const ExecutionContext& context,
+                                 const miopen::outer::ProblemDescription& problem) const override;
+    bool MayNeedWorkspace() const override { return true; }
+};
+
+
 } // namespace outer
 
 } // namespace solver

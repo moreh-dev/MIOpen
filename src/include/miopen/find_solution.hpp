@@ -476,7 +476,6 @@ struct SolverContainer
                           const AlgorithmName& algo,
                           const AnyInvokeParams& invoke_params) const
     {
-        std::cout << "-> ExecutePrimite1 is called" << std::endl;
         const auto network_config = problem.MakeNetworkConfig();
 
         if(const auto existingInvoker =
@@ -484,6 +483,7 @@ struct SolverContainer
         {
             std::cout << "--> invoker is found" << std::endl;
             (*existingInvoker)(ctx.GetStream(), invoke_params);
+            std::cout << "--> invoker call is finished" << std::endl;
             return;
         }
 
@@ -514,7 +514,6 @@ struct SolverContainer
                           const AlgorithmName& algo,
                           const AnyInvokeParams& invoke_params) const
     {
-        std::cout << "ExecutePrimite2 is called" << std::endl;
         return ExecutePrimitive(&handle, problem, algo, invoke_params);
     }
 };
