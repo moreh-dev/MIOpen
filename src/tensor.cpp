@@ -430,6 +430,30 @@ std::size_t TensorDescriptor::GetNumBytes() const
 
 bool TensorDescriptor::IsPacked() const { return this->packed; }
 
+bool TensorDescriptor::IsContiguous() const
+{
+    size_t stride = 1;
+    for(int i = this->GetSize() - 1; i >= 0; --i)
+    {
+        if(stride != this->GetStrides()[i])
+            return false;
+        stride *= this->GetLengths()[i];
+    }
+    return true;
+}
+
+bool TensorDescriptor::IsSameLength(const TensorDescriptor& otherDesc) const
+{
+    for(int32_t i = 0; i < this->GetLengths().size(); i++)
+    {
+        if(this->GetLengths()[i] != otherDesc.GetLengths()[i])
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 bool TensorDescriptor::AllDimsFitIntoInt() const
 {
     if(std::any_of(lens.cbegin(), lens.cend(), [](std::size_t x) {
