@@ -66,12 +66,12 @@ extern "C" __global__ void OuterBackwardGrad1
     input1_grad[gid] = sum;
 }
 
-__global__ void OuterBackwardGrad2
+extern "C"  __global__ void OuterBackwardGrad2
 (
     const FLOAT * input1, 
     FLOAT * input2_grad,
     const FLOAT * output_grad,
-    int n, int m
+    const size_t n, const size_t m
 ) 
 {
     size_t gid = blockIdx.x * blockDim.x + threadIdx.x;

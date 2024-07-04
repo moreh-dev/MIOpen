@@ -46,7 +46,7 @@ static bool IsImprovementOverROCm(const miopen::outer::ProblemDescription& probl
     return true;
 }
 
-bool OuterBackward::IsApplicable([[maybe_unused]] const ExecutionContext& context,
+bool OuterBackwardGrad1::IsApplicable([[maybe_unused]] const ExecutionContext& context,
                               const miopen::outer::ProblemDescription& problem) const
 {
     std::cout << "outer IsApplicable is called" << std::endl;
@@ -57,7 +57,7 @@ bool OuterBackward::IsApplicable([[maybe_unused]] const ExecutionContext& contex
     return true;
 }
 
-ConvSolution OuterBackward::GetSolution(const ExecutionContext& context,
+ConvSolution OuterBackwardGrad1::GetSolution(const ExecutionContext& context,
                                      const miopen::outer::ProblemDescription& problem) const
 {
     std::cout << "outerbackward GetSolution is called" << std::endl;
@@ -73,6 +73,10 @@ ConvSolution OuterBackward::GetSolution(const ExecutionContext& context,
     size_t zlocalsize = 1;
     
     size_t xgridsize = x1dims[0];
+    if(xgridsize % LOCAL_SIZE != 0)
+    {
+        xgridsize = (xgridsize / LOCAL_SIZE + 1) * LOCAL_SIZE;
+    }
     size_t ygridsize = 1;
     size_t zgridsize = 1;
 
@@ -100,12 +104,10 @@ ConvSolution OuterBackward::GetSolution(const ExecutionContext& context,
     result.invoker_factory = [](const std::vector<Kernel>& kernels) {
         return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
             decltype(auto) kernel = handle_.Run(kernels.front());
-            std::cout << "h" << std::endl;
-            decltype(auto) params = raw_params.CastTo<miopen::outer::InvokeParamsBackward>();
-            std::cout << "i" << std::endl;
-
+            decltype(auto) params = raw_params.CastTo<miopen::outer::InvokeParamsBackwardGrad1>();
+           
             auto x1dims = params.x1Desc.GetLengths();
-            auto x2dims = params.x1Desc.GetLengths();
+            auto x2dims = params.x2Desc.GetLengths();
             auto ydims = params.yGradDesc.GetLengths();
 
             kernel
@@ -113,8 +115,8 @@ ConvSolution OuterBackward::GetSolution(const ExecutionContext& context,
                 params.x2,
                 params.x1Grad,
                 params.yGrad,
-                x1dims[0], 
-                x2dims[0]
+                ydims[0], 
+                ydims[1]
             );
         };
     };
@@ -124,7 +126,7 @@ ConvSolution OuterBackward::GetSolution(const ExecutionContext& context,
     return result;
 }
 
-std::size_t OuterBackward::GetWorkspaceSize(const ExecutionContext& context,
+std::size_t OuterBackwardGrad1::GetWorkspaceSize(const ExecutionContext& context,
                                          const miopen::outer::ProblemDescription& problem) const
 {
     std::cout << "outer GetWorkspaceSize is called" << std::endl;

@@ -45,7 +45,7 @@ miopenStatus_t OuterForward(Handle& handle,
                         )
 {   
     std::cout << "outerforward is called" << std::endl;
-    const auto problem = outer::ProblemDescription(x1Desc, x2Desc, yDesc);
+    const auto problem = outer::ProblemDescription(true, NONE, x1Desc, x2Desc, yDesc);
     const auto invoke_params = outer::InvokeParamsForward{x1Desc, x1, x2Desc, x2, yDesc, y};
     const auto algo = AlgorithmName{"OuterForward"};
     const auto solvers       = solver::SolverContainer<solver::outer::OuterForward>{};
@@ -55,7 +55,7 @@ miopenStatus_t OuterForward(Handle& handle,
     return miopenStatusSuccess;
 }
 
-miopenStatus_t OuterBackward(Handle& handle,
+miopenStatus_t OuterBackwardGrad1(Handle& handle,
                                 const TensorDescriptor& x1Desc,
                                 ConstData_t x1,
                                 const TensorDescriptor& x2Desc,
@@ -68,15 +68,36 @@ miopenStatus_t OuterBackward(Handle& handle,
                                 Data_t x2Grad
                             )
 {   
-    std::cout << "outerbackward is called" << std::endl;
-    const auto problem = outer::ProblemDescription(x1Desc, x2Desc, yGradDesc);
-    std::cout << "a" << std::endl;
-    const auto invoke_params = outer::InvokeParamsBackward{x1Desc, x1, x2Desc, x2, yGradDesc, yGrad, x1GradDesc, x1Grad, x2GradDesc, x2Grad};
-    std::cout << "b" << std::endl;
-    const auto algo = AlgorithmName{"OuterForward"};
-    std::cout << "c" << std::endl;
-    const auto solvers       = solver::SolverContainer<solver::outer::OuterBackward>{};
-    std::cout << "d" << std::endl;
+    std::cout << "outerbackwardgrad1 is called" << std::endl;
+    const auto problem = outer::ProblemDescription(false, ONE, x1Desc, x2Desc, yGradDesc);
+    const auto invoke_params = outer::InvokeParamsBackwardGrad1{x1Desc, x1, x2Desc, x2, yGradDesc, yGrad, x1GradDesc, x1Grad, x2GradDesc, x2Grad};
+    const auto algo = AlgorithmName{"OuterBackwardGrad1"};
+    const auto solvers       = solver::SolverContainer<solver::outer::OuterBackwardGrad1>{};
+    solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
+    
+    /*
+    */
+    return miopenStatusSuccess;
+}
+
+miopenStatus_t OuterBackwardGrad2(Handle& handle,
+                                const TensorDescriptor& x1Desc,
+                                ConstData_t x1,
+                                const TensorDescriptor& x2Desc,
+                                ConstData_t x2,
+                                const TensorDescriptor& yGradDesc,
+                                ConstData_t yGrad,
+                                const TensorDescriptor& x1GradDesc,
+                                Data_t x1Grad,
+                                const TensorDescriptor& x2GradDesc,
+                                Data_t x2Grad
+                            )
+{   
+    std::cout << "outerbackwardgrad2 is called" << std::endl;
+    const auto problem = outer::ProblemDescription(false, TWO, x1Desc, x2Desc, yGradDesc);
+    const auto invoke_params = outer::InvokeParamsBackwardGrad2{x1Desc, x1, x2Desc, x2, yGradDesc, yGrad, x1GradDesc, x1Grad, x2GradDesc, x2Grad};
+    const auto algo = AlgorithmName{"OuterBackwardGrad2"};
+    const auto solvers       = solver::SolverContainer<solver::outer::OuterBackwardGrad2>{};
     solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
     
     /*

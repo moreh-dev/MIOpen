@@ -98,6 +98,7 @@ int32_t mloSumBackwardRunHost(miopenTensorDescriptor_t input1Desc,
     int32_t ret = 0;
 
     size_t cnt = 0;
+    
     for(size_t i=0;i<in_n;i++)
     {
         in1Gradhost[i] = 0;
@@ -111,8 +112,9 @@ int32_t mloSumBackwardRunHost(miopenTensorDescriptor_t input1Desc,
         in2Gradhost[j] = 0;
         for(size_t i=0;i<in_n;i++)
         {
-            in2Gradhost[j] = input1[i] * outGrad[i * in_m + j];
+            in2Gradhost[j] += input1[i] * outGrad[i * in_m + j];
         }
+
     }
     return ret;
 }
@@ -233,8 +235,12 @@ template <typename Tgpu, typename Tref>
 int OuterDriver<Tgpu, Tref>::AddCmdLineArgs()
 {
     inflags.AddInputFlag("forw", 'F', "1", "Run only Forward Sum (Default=1)", "int");
-    inflags.AddInputFlag("in_n", 'N', "256", "n size (Default=32)", "int");
+    inflags.AddInputFlag("in_n", 'N', "128", "n size (Default=32)", "int");
     inflags.AddInputFlag("in_m", 'M', "256", "m size(Default=32)", "int");
+    
+    inflags.AddInputFlag(
+        "wall", 'w', "0", "Wall-clock Time Each Layer, Requires time == 1 (Default=0)", "int");
+    inflags.AddInputFlag("iter", 'i', "10", "Number of Iterations (Default=10)", "int");
     inflags.AddInputFlag("verify", 'V', "1", "Verify Each Layer (Default=1)", "int");
     inflags.AddInputFlag("time", 't', "0", "Time Each Layer (Default=0)", "int");
     inflags.AddInputFlag(
@@ -323,15 +329,42 @@ int OuterDriver<Tgpu, Tref>::RunForwardGPU()
 {
     std::cout << "RunForwardGPU is called" << std::endl;
 
-    miopenOuterForward(
-        GetHandle(),
-        input1Desc,
-        in1_dev->GetMem(),
-        input2Desc,
-        in2_dev->GetMem(),
-        yDesc,
-        out_dev->GetMem()
-    );
+    float kernel_total_time = 0.0;
+    float kernel_first_time = 0.0;
+
+    Timer t;
+    START_TIME
+
+    for(int i = 0; i < inflags.GetValueInt("iter"); i++)
+    {
+        miopenOuterForward(
+            GetHandle(),
+            input1Desc,
+            in1_dev->GetMem(),
+            input2Desc,
+            in2_dev->GetMem(),
+            yDesc,
+            out_dev->GetMem()
+        );
+
+        float time = 0.0;
+        miopenGetKernelTime(GetHandle(), &time);
+        kernel_total_time += time;
+        if(i == 0)
+            kernel_first_time = time;
+        std::cout << "-->" << i << "th " << "time  " << time << std::endl;
+    }
+    
+    if(inflags.GetValueInt("time") == 1)
+    {
+        STOP_TIME
+        int iter = inflags.GetValueInt("iter");
+
+        float kernel_average_time =
+            iter > 1 ? (kernel_total_time - kernel_first_time) / (iter - 1) : kernel_first_time;
+        std::cout << "GPU Kernel Time Forward Outer Elapsed: " << kernel_average_time
+                  << " ms\n";
+    }
 
     if(out_dev->FromGPU(GetStream(), out.data()) != 0)
         std::cerr << "Error copying (out_dev) from GPU, size: " << out_dev->GetSize() << std::endl;
@@ -353,7 +386,21 @@ int OuterDriver<Tgpu, Tref>::RunBackwardGPU()
 {
     std::cout << "RunForwardGPU is called" << std::endl;
 
-    miopenOuterBackward(
+    miopenOuterBackwardGrad1(
+        GetHandle(),
+        input1Desc,
+        in1_dev->GetMem(),
+        input2Desc,
+        in2_dev->GetMem(),
+        yGradDesc,
+        outGrad_dev->GetMem(),
+        input1GradDesc,
+        in1Grad_dev->GetMem(),
+        input2GradDesc,
+        in2Grad_dev->GetMem()
+    );
+
+    miopenOuterBackwardGrad2(
         GetHandle(),
         input1Desc,
         in1_dev->GetMem(),
@@ -368,10 +415,10 @@ int OuterDriver<Tgpu, Tref>::RunBackwardGPU()
     );
 
     if(in1Grad_dev->FromGPU(GetStream(), in1Grad.data()) != 0)
-        std::cerr << "Error copying (in1Grad_dev) from GPU, size: " << out_dev->GetSize() << std::endl;
+        std::cerr << "Error copying (in1Grad_dev) from GPU, size: " << in1Grad_dev->GetSize() << std::endl;
 
     if(in2Grad_dev->FromGPU(GetStream(), in2Grad.data()) != 0)
-        std::cerr << "Error copying (in2Grad_dev) from GPU, size: " << out_dev->GetSize() << std::endl;
+        std::cerr << "Error copying (in2Grad_dev) from GPU, size: " << in2Grad_dev->GetSize() << std::endl;
 
     return miopenStatusSuccess;
 }
@@ -428,12 +475,20 @@ int OuterDriver<Tgpu, Tref>::VerifyBackward()
     RunBackwardCPU();
     const Tref tolerance = GetTolerance();
     auto error1           = miopen::rms_range(in1Gradhost, in1Grad);
+    auto error2           = miopen::rms_range(in2Gradhost, in2Grad);
 
     if(
         !std::isfinite(error1) || error1 > tolerance
     )
     {
-        std::cout << "Backward Outer FAILED: " << error1 << " > " << tolerance << std::endl;
+        std::cout << "Backward Outer FAILED for in1: " << error1 << " > " << tolerance << std::endl;
+        return EC_VerifyFwd;
+    }
+    else if(
+        !std::isfinite(error2) || error2 > tolerance
+    )
+    {
+        std::cout << "Backward Outer FAILED for in2: " << error2 << " > " << tolerance << std::endl;
         return EC_VerifyFwd;
     }
     else

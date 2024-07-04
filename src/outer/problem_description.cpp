@@ -36,7 +36,21 @@ namespace outer {
 
 NetworkConfig ProblemDescription::MakeNetworkConfig() const
 {
-    return NetworkConfig{"outerfwd"};
+    if(is_fwd == true)
+    {
+        return NetworkConfig{"outerfwd"};
+    }
+    else
+    {
+        if(grad == ONE)
+        {
+            return NetworkConfig{"outerbwdgrad1"};
+        }
+        else if(grad == TWO)
+        {
+            return NetworkConfig{"outerbwdgrad2"};
+        }
+    }
 }
 
 } // namespace outer

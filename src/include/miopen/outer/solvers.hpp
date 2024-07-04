@@ -52,9 +52,22 @@ struct OuterForward final : OuterSolver
     bool MayNeedWorkspace() const override { return true; }
 };
 
-struct OuterBackward final : OuterSolver
+struct OuterBackwardGrad1 final : OuterSolver
 {
-    const std::string& SolverDbId() const override { return GetSolverDbId<OuterBackward>(); }
+    const std::string& SolverDbId() const override { return GetSolverDbId<OuterBackwardGrad1>(); }
+
+    bool IsApplicable(const ExecutionContext& context,
+                      const miopen::outer::ProblemDescription& problem) const override;
+    ConvSolution GetSolution(const ExecutionContext& context,
+                             const miopen::outer::ProblemDescription& problem) const override;
+    std::size_t GetWorkspaceSize(const ExecutionContext& context,
+                                 const miopen::outer::ProblemDescription& problem) const override;
+    bool MayNeedWorkspace() const override { return true; }
+};
+
+struct OuterBackwardGrad2 final : OuterSolver
+{
+    const std::string& SolverDbId() const override { return GetSolverDbId<OuterBackwardGrad2>(); }
 
     bool IsApplicable(const ExecutionContext& context,
                       const miopen::outer::ProblemDescription& problem) const override;

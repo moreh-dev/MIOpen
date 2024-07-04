@@ -46,7 +46,7 @@ static bool IsImprovementOverROCm(const miopen::outer::ProblemDescription& probl
     return true;
 }
 
-bool OuterForward::IsApplicable([[maybe_unused]] const ExecutionContext& context,
+bool OuterBackwardGrad2::IsApplicable([[maybe_unused]] const ExecutionContext& context,
                               const miopen::outer::ProblemDescription& problem) const
 {
     std::cout << "outer IsApplicable is called" << std::endl;
@@ -57,10 +57,10 @@ bool OuterForward::IsApplicable([[maybe_unused]] const ExecutionContext& context
     return true;
 }
 
-ConvSolution OuterForward::GetSolution(const ExecutionContext& context,
+ConvSolution OuterBackwardGrad2::GetSolution(const ExecutionContext& context,
                                      const miopen::outer::ProblemDescription& problem) const
 {
-    std::cout << "outer GetSolution is called" << std::endl;
+    std::cout << "outerbackwardgrad2 GetSolution is called" << std::endl;
     auto result = ConvSolution{miopenStatusSuccess};
 
     auto dtype = problem.GetX1Desc().GetType();
@@ -72,7 +72,7 @@ ConvSolution OuterForward::GetSolution(const ExecutionContext& context,
     size_t ylocalsize = 1;
     size_t zlocalsize = 1;
     
-    size_t xgridsize = ydims[0] * ydims[1];
+    size_t xgridsize = x2dims[0];
     if(xgridsize % LOCAL_SIZE != 0)
     {
         xgridsize = (xgridsize / LOCAL_SIZE + 1) * LOCAL_SIZE;
@@ -82,8 +82,8 @@ ConvSolution OuterForward::GetSolution(const ExecutionContext& context,
 
     auto kernel = KernelInfo{};
     kernel.kernel_file = "MIOpenOuter.cpp";
-    kernel.kernel_name = "OuterForward";
-    
+    kernel.kernel_name = "OuterBackwardGrad2";
+
     const auto build_params = KernelBuildParameters{
         {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
         {"MIOPEN_USE_FP32", static_cast<int>(dtype == miopenFloat)},
@@ -104,30 +104,29 @@ ConvSolution OuterForward::GetSolution(const ExecutionContext& context,
     result.invoker_factory = [](const std::vector<Kernel>& kernels) {
         return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
             decltype(auto) kernel = handle_.Run(kernels.front());
-            decltype(auto) params = raw_params.CastTo<miopen::outer::InvokeParamsForward>();
-
+            decltype(auto) params = raw_params.CastTo<miopen::outer::InvokeParamsBackwardGrad2>();
+           
             auto x1dims = params.x1Desc.GetLengths();
-            auto x2dims = params.x1Desc.GetLengths();
-            auto ydims = params.yDesc.GetLengths();
+            auto x2dims = params.x2Desc.GetLengths();
+            auto ydims = params.yGradDesc.GetLengths();
 
             kernel
             (
                 params.x1,
-                params.x2,
-                params.y,
+                params.x2Grad,
+                params.yGrad,
                 ydims[0], 
-                ydims[1],
-                ydims[0] * ydims[1]
+                ydims[1]
             );
         };
     };
-    
-    result.construction_params.push_back(kernel);
 
+    result.construction_params.push_back(kernel);
+    
     return result;
 }
 
-std::size_t OuterForward::GetWorkspaceSize(const ExecutionContext& context,
+std::size_t OuterBackwardGrad2::GetWorkspaceSize(const ExecutionContext& context,
                                          const miopen::outer::ProblemDescription& problem) const
 {
     std::cout << "outer GetWorkspaceSize is called" << std::endl;

@@ -42,7 +42,20 @@ MIOPEN_INTERNALS_EXPORT miopenStatus_t OuterForward(Handle& handle,
                                         Data_t y
                                     );
 
-MIOPEN_INTERNALS_EXPORT miopenStatus_t OuterBackward(Handle& handle,
+MIOPEN_INTERNALS_EXPORT miopenStatus_t OuterBackwardGrad1(Handle& handle,
+    const TensorDescriptor& x1Desc,
+    ConstData_t x1,
+    const TensorDescriptor& x2Desc,
+    ConstData_t x2,
+    const TensorDescriptor& yGradDesc,
+    ConstData_t yGrad,
+    const TensorDescriptor& x1GradDesc,
+    Data_t x1Grad,
+    const TensorDescriptor& x2GradDesc,
+    Data_t x2Grad
+);
+
+MIOPEN_INTERNALS_EXPORT miopenStatus_t OuterBackwardGrad2(Handle& handle,
     const TensorDescriptor& x1Desc,
     ConstData_t x1,
     const TensorDescriptor& x2Desc,

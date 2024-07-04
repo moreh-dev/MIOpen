@@ -59,9 +59,42 @@ struct InvokeParamsForward : public miopen::InvokeParams
     Data_t GetWorkspace() const { return nullptr; }
 };
 
-struct InvokeParamsBackward : public miopen::InvokeParams
+struct InvokeParamsBackwardGrad1 : public miopen::InvokeParams
 {
-    InvokeParamsBackward(
+    InvokeParamsBackwardGrad1(
+                    const TensorDescriptor& x1Desc_,
+                    ConstData_t x1_,
+                    const TensorDescriptor& x2Desc_,
+                    ConstData_t x2_,
+                    const TensorDescriptor& yGradDesc_,
+                    ConstData_t yGrad_,
+                    const TensorDescriptor& x1GradDesc_,
+                    ConstData_t x1Grad_,
+                    const TensorDescriptor& x2GradDesc_,
+                    ConstData_t x2Grad_
+                )
+        : x1Desc(x1Desc_), x1(x1_), x2Desc(x2Desc_), x2(x2_), yGradDesc(yGradDesc_), yGrad(yGrad_), x1GradDesc(x1GradDesc_), x1Grad(x1Grad_), x2GradDesc(x2GradDesc_), x2Grad(x2Grad_)
+    {
+    }
+
+    TensorDescriptor x1Desc{};
+    ConstData_t x1                       = nullptr;
+    TensorDescriptor x2Desc{};
+    ConstData_t x2                       = nullptr;
+    TensorDescriptor yGradDesc{};
+    ConstData_t yGrad                    = nullptr;
+    TensorDescriptor x1GradDesc{};
+    ConstData_t x1Grad                   = nullptr;
+    TensorDescriptor x2GradDesc{};
+    ConstData_t x2Grad                   = nullptr;
+
+    std::size_t GetWorkspaceSize() const { return 0; }
+    Data_t GetWorkspace() const { return nullptr; }
+};
+
+struct InvokeParamsBackwardGrad2 : public miopen::InvokeParams
+{
+    InvokeParamsBackwardGrad2(
                     const TensorDescriptor& x1Desc_,
                     ConstData_t x1_,
                     const TensorDescriptor& x2Desc_,

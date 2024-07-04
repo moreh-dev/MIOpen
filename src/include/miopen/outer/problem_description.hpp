@@ -37,17 +37,26 @@ namespace miopen {
 
 struct NetworkConfig;
 
+enum gradType
+{
+    NONE,
+    ONE,
+    TWO
+};
+
 namespace outer {
 
 struct ProblemDescription : ProblemDescriptionBase
 {
     ProblemDescription
     (
+        const bool is_fwd_,
+        gradType grad_,
         const TensorDescriptor& x1Desc_,
         const TensorDescriptor& x2Desc_,
         const TensorDescriptor& yDesc_
     )
-        : x1Desc(x1Desc_), x2Desc(x2Desc_), yDesc(yDesc_)
+        : is_fwd(is_fwd_), grad(grad_), x1Desc(x1Desc_), x2Desc(x2Desc_), yDesc(yDesc_)
     {
         const auto dtype = yDesc.GetType();
         if(x1Desc.GetType() != dtype)
@@ -75,6 +84,8 @@ struct ProblemDescription : ProblemDescriptionBase
     NetworkConfig MakeNetworkConfig() const override;
 
 private:
+    bool is_fwd;
+    gradType grad;
     TensorDescriptor x1Desc;
     TensorDescriptor x2Desc;
     TensorDescriptor yDesc;
