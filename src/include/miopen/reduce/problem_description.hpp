@@ -100,9 +100,9 @@ struct ProblemDescription : ProblemDescriptionBase
         if((dim < 0) || (dim >= xDesc.GetLengths().size()))
         {
 #if MIOPEN_BUILD_DEV || !MIOPEN_NDEBUG
-            MIOPEN_THROW(
-                miopenStatusBadParm,
-                "Reduce: is greater than 0 and less than or equal tensor dimension length.");
+            MIOPEN_THROW(miopenStatusBadParm,
+                         "Reduce: selected dim must be greater or equal than 0 and less than "
+                         "tensor dimension num.");
 #else
             return false;
 #endif

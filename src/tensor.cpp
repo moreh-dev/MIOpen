@@ -430,18 +430,6 @@ std::size_t TensorDescriptor::GetNumBytes() const
 
 bool TensorDescriptor::IsPacked() const { return this->packed; }
 
-bool TensorDescriptor::IsSameLength(const TensorDescriptor& otherDesc) const
-{
-    for(int32_t i = 0; i < this->GetLengths().size(); i++)
-    {
-        if(this->GetLengths()[i] != otherDesc.GetLengths()[i])
-        {
-            return false;
-        }
-    }
-    return true;
-}
-
 bool TensorDescriptor::AllDimsFitIntoInt() const
 {
     if(std::any_of(lens.cbegin(), lens.cend(), [](std::size_t x) {

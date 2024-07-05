@@ -586,6 +586,7 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         cat.cpp
         groupnorm.cpp
         kernel_cache.cpp
+        kthvalue.cpp
         layer_norm.cpp
         lrn.cpp
         mlo_dir_conv.cpp
@@ -608,7 +609,6 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         hip/general_tensor_reorder_sol.cpp
         pooling.cpp
         ocl/fusionopconvocl.cpp
-        kthvalue.cpp
         ocl/fusionopbiasbnactivocl.cpp
         sum.cpp
         ${PROJECT_BINARY_DIR}/db_path.cpp
