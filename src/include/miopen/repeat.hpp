@@ -34,28 +34,21 @@ namespace miopen {
 struct Handle;
 struct TensorDescriptor;
 
-MIOPEN_INTERNALS_EXPORT std::size_t GetRepeatWorkspaceSize(Handle& handle,
-                                                           const TensorDescriptor& xDesc,
-                                                           const TensorDescriptor& yDesc,
-                                                           int32_t offset);
-
 MIOPEN_INTERNALS_EXPORT miopenStatus_t RepeatForward(Handle& handle,
-                                                     Data_t workspace,
-                                                     size_t workspaceSizeInBytes,
                                                      const TensorDescriptor& xDesc,
                                                      ConstData_t x,
+                                                     const int* sizes,
+                                                     const int num_sizes,
                                                      const TensorDescriptor& yDesc,
-                                                     Data_t y,
-                                                     int32_t offset);
+                                                     Data_t y);
 
 MIOPEN_INTERNALS_EXPORT miopenStatus_t RepeatBackward(Handle& handle,
-                                                      Data_t workspace,
-                                                      size_t workspaceSizeInBytes,
-                                                      const TensorDescriptor& xDesc,
-                                                      ConstData_t x,
-                                                      const TensorDescriptor& yDesc,
-                                                      Data_t y,
-                                                      int32_t offset);
+                                                      const TensorDescriptor& dyDesc,
+                                                      ConstData_t dy,
+                                                      const int* sizes,
+                                                      const int num_sizes,
+                                                      const TensorDescriptor& dxDesc,
+                                                      Data_t dx);
 
 } // namespace miopen
 #endif // _MIOPEN_REPEAT_HPP_

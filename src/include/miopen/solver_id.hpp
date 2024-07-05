@@ -55,6 +55,7 @@ enum class Primitive
     Pooling,
     Normalization,
     Reduce,
+    Repeat,
     Cat,
     Mha,
     Softmax,

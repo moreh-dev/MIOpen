@@ -24,27 +24,29 @@
  *
  *******************************************************************************/
 
+#include <miopen/repeat.hpp>
 #include <miopen/sum.hpp>
 #include <miopen/errors.hpp>
 #include <miopen/handle.hpp>
 #include <miopen/logger.hpp>
 #include <miopen/tensor_ops.hpp>
 
-static void LogCmdRepeat(const miopenTensorDescriptor_t xDesc,
-                         bool is_fwd)
+static void
+LogCmdRepeat(const miopenTensorDescriptor_t xDesc, const int* sizes, int num_sizes, bool is_fwd)
 {
-    if(miopen::IsLoggingCmd()) {
+    if(miopen::IsLoggingCmd())
+    {
         std::stringstream ss;
         auto dtype = miopen::deref(xDesc).GetType();
-        if(dtype == miopenHalf) 
+        if(dtype == miopenHalf)
         {
             ss << "repeatfp16";
-        } 
-        else if(dtype == miopenFloat) 
+        }
+        else if(dtype == miopenFloat)
         {
             ss << "repeatfp32";
-        } 
-        else if(dtype == miopenBFloat16) 
+        }
+        else if(dtype == miopenBFloat16)
         {
             ss << "repeatbfp16";
         }
@@ -74,70 +76,72 @@ static void LogCmdRepeat(const miopenTensorDescriptor_t xDesc,
         {
             ss << " -c " << miopen::deref(xDesc).GetLengths()[1];
         }
-        
+
+        ss << " -sizes ";
+        for(int i = 0; i < num_sizes; ++i)
+        {
+            ss << sizes[i] << " ";
+        }
+
         ss << " -F " << ((is_fwd) ? "1" : "2");
 
         MIOPEN_LOG_DRIVER_CMD(ss.str());
     }
 }
 
-extern "C" miopenStatus_t miopenGetRepeatWorkspaceSize(miopenHandle_t handle,
-                                                       const miopenTensorDescriptor_t xDesc,
-                                                       const miopenTensorDescriptor_t yDesc,
-                                                       const int offset,
-                                                       size_t* sizeInBytes)
-{
-    MIOPEN_LOG_FUNCTION(xDesc, yDesc, workSpaceSize, offset);
-    return miopen::try_([&] {
-        miopen::deref(workSpaceSize) = miopen::GetRepeatWorkSpaceSize(miopen::deref(handle),
-                                                                      miopen::deref(xDesc),
-                                                                      miopen::deref(yDesc),
-                                                                      offset);
-    });
-}
+// extern "C" miopenStatus_t miopenGetRepeatWorkspaceSize(miopenHandle_t handle,
+//                                                        const miopenTensorDescriptor_t xDesc,
+//                                                        const miopenTensorDescriptor_t yDesc,
+//                                                        const int offset,
+//                                                        size_t* sizeInBytes)
+// {
+//     MIOPEN_LOG_FUNCTION(xDesc, yDesc, offset, sizeInBytes);
+//     return miopen::try_([&] {
+//         miopen::deref(sizeInBytes) = miopen::GetRepeatWorkSpaceSize(miopen::deref(handle),
+//                                                                     miopen::deref(xDesc),
+//                                                                     miopen::deref(yDesc),
+//                                                                     offset);
+//     });
+// }
 
 extern "C" miopenStatus_t miopenRepeatForward(miopenHandle_t handle,
-                                              void* workspace,
-                                              size_t workspaceSizeInBytes,
                                               const miopenTensorDescriptor_t xDesc,
                                               const void* x,
-                                              const int offset,
+                                              const int* sizes,
+                                              const int num_sizes,
                                               const miopenTensorDescriptor_t yDesc,
                                               void* y)
 {
-    MIOPEN_LOG_FUNCTION(handle, workspace, workspaceSizeInBytes, xDesc, x, offset, yDesc, y);
-    LogCmdRepeat(xDesc, true);
+    MIOPEN_LOG_FUNCTION(handle, xDesc, x, sizes, num_sizes, yDesc, y);
+    LogCmdRepeat(xDesc, sizes, num_sizes, true);
     return miopen::try_([&] {
         miopen::RepeatForward(miopen::deref(handle),
-                              DataCast(workspace),
-                              workspaceSizeInBytes,
                               miopen::deref(xDesc),
                               DataCast(x),
+                              sizes,
+                              num_sizes,
                               miopen::deref(yDesc),
-                              DataCast(y),
-                              offset);
+                              DataCast(y));
     });
 }
 
 extern "C" miopenStatus_t miopenRepeatBackward(miopenHandle_t handle,
-                                               void* workspace,
-                                               size_t workspaceSizeInBytes,
                                                const miopenTensorDescriptor_t dyDesc,
                                                const void* dy,
-                                               const int offset,
+                                               const int* sizes,
+                                               const int num_sizes,
                                                const miopenTensorDescriptor_t dxDesc,
                                                void* dx)
 {
-    MIOPEN_LOG_FUNCTION(handle, workspace, workspaceSizeInBytes, dyDesc, dy, offset, dxDesc, dx);
-    LogCmdRepeat(dyDesc, false);
+    MIOPEN_LOG_FUNCTION(handle, dyDesc, dy, sizes, num_sizes, dxDesc, dx);
+    LogCmdRepeat(dyDesc, sizes, num_sizes, false);
     return miopen::try_([&] {
         miopen::RepeatBackward(miopen::deref(handle),
-                               DataCast(workspace),
-                               workspaceSizeInBytes,
                                miopen::deref(dyDesc),
                                DataCast(dy),
+                               sizes,
+                               num_sizes,
                                miopen::deref(dxDesc),
-                               DataCast(dx),
-                               offset);
+                               DataCast(dx));
     });
 }

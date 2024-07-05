@@ -39,20 +39,43 @@ namespace repeat {
 
 struct ProblemDescription : ProblemDescriptionBase
 {
-    ProblemDescription(const TensorDescriptor& xDesc_,
-                       const TensorDescriptor& yDesc_,
-                       int32_t offset_)
-        : xDesc(xDesc_), yDesc(yDesc_), offset(offset_)
+    ProblemDescription(const TensorDescriptor& xdyDesc_,
+                       const TensorDescriptor& ydxDesc_,
+                       int32_t offset_,
+                       const std::vector<int>& sizes_vector_,
+                       bool isForward_)
+        : xdyDesc(xdyDesc_),
+          ydxDesc(ydxDesc_),
+          offset(offset_),
+          sizes_vector(sizes_vector_),
+          isForward(isForward_)
     {
+        if(offset < 0)
+        {
+            MIOPEN_THROW(miopenStatusBadParm, "repeat::ProblemDescription: offset is negative");
+        }
+
+        if(xdyDesc.GetType() != ydxDesc.GetType())
+        {
+            MIOPEN_THROW(miopenStatusBadParm,
+                         "repeat::ProblemDescription: Tensor types do not match.");
+        }
     }
 
-    const TensorDescriptor& GetXDesc() const { return xDesc; }
-    const TensorDescriptor& GetYDesc() const { return yDesc; }
+    // For forward pass
+    const TensorDescriptor& GetXDesc() const { return xdyDesc; }
+    const TensorDescriptor& GetYDesc() const { return ydxDesc; }
+
+    // For backward pass
+    const TensorDescriptor& GetDyDesc() const { return xdyDesc; }
+    const TensorDescriptor& GetDxDesc() const { return ydxDesc; }
+
     int32_t GetOffset() const { return offset; }
+    const std::vector<int>& GetSizesVector() const { return sizes_vector; }
 
     bool IsSameType() const
     {
-        if(xDesc.GetType() != yDesc.GetType())
+        if(xdyDesc.GetType() != ydxDesc.GetType())
         {
             return false;
         }
@@ -62,14 +85,15 @@ struct ProblemDescription : ProblemDescriptionBase
     NetworkConfig MakeNetworkConfig() const override;
 
 private:
-    TensorDescriptor xDesc;
-    TensorDescriptor yDesc;
+    TensorDescriptor xdyDesc;
+    TensorDescriptor ydxDesc;
 
     int32_t offset;
+    std::vector<int> sizes_vector;
 
-    NetworkConfig MakeForwardNetworkConfig() const;
+    const bool isForward;
 };
 
-} // namespace reduce
+} // namespace repeat
 
 } // namespace miopen

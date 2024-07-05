@@ -31,7 +31,14 @@
 
 #include "float_types.h"
 
-__device__ inline void GET_NCDHW(uint64_t &n, uint64_t &c, uint64_t &d, uint64_t &h, uint64_t &w, uint64_t gid, const uint64_t output_dimensions[5]) {
+__device__ inline void GET_NCDHW(uint64_t& n,
+                                 uint64_t& c,
+                                 uint64_t& d,
+                                 uint64_t& h,
+                                 uint64_t& w,
+                                 uint64_t gid,
+                                 const uint64_t output_dimensions[5])
+{
     w = gid % output_dimensions[4];
     gid /= output_dimensions[4];
     h = gid % output_dimensions[3];
@@ -43,15 +50,16 @@ __device__ inline void GET_NCDHW(uint64_t &n, uint64_t &c, uint64_t &d, uint64_t
     n = gid;
 }
 
-__device__ inline uint64_t GET_5D_INDEX(const uint64_t dimensions[5], uint64_t n, uint64_t c, uint64_t d, uint64_t h, uint64_t w) {
+__device__ inline uint64_t GET_5D_INDEX(
+    const uint64_t dimensions[5], uint64_t n, uint64_t c, uint64_t d, uint64_t h, uint64_t w)
+{
     return (((n * dimensions[1] + c) * dimensions[2] + d) * dimensions[3] + h) * dimensions[4] + w;
 }
 
 extern "C" __global__ void RepeatForward(const FLOAT* __restrict__ x,
                                          FLOAT* __restrict__ y,
                                          uint64_t inout_size,
-                                         uint64_t offset
-                                         const uint64_t input_dimensions[5],
+                                         uint64_t offset const uint64_t input_dimensions[5],
                                          const uint64_t output_dimensions[5])
 {
     const uint64_t gid = threadIdx.x + blockIdx.x * blockDim.x;
@@ -64,13 +72,14 @@ extern "C" __global__ void RepeatForward(const FLOAT* __restrict__ x,
 
     // get input index
     uint64_t n[5] = {0, 0, 0, 0, 0};
-    for (uint64_t i = offset; i < 5; i++) {
+    for(uint64_t i = offset; i < 5; i++)
+    {
         n[i - offset] = o[i] % input_dimensions[i - offset];
     }
 
     uint64_t input_index = GET_5D_INDEX(input_dimensions, n[0], n[1], n[2], n[3], n[4]);
-    float val = x[input_index];
-    y[gid] = val;
+    float val            = x[input_index];
+    y[gid]               = val;
 }
 
 extern "C" __global__ void RepeatBackward(const FLOAT* __restrict__ dy,
@@ -90,7 +99,8 @@ extern "C" __global__ void RepeatBackward(const FLOAT* __restrict__ dy,
 
     // get input index
     uint64_t n[5] = {0, 0, 0, 0, 0};
-    for (uint64_t i = offset; i < 5; i++) {
+    for(uint64_t i = offset; i < 5; i++)
+    {
         n[i - offset] = o[i] % input_dimensions[i - offset];
     }
 

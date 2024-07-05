@@ -7228,59 +7228,55 @@ miopenFusedAdamWithOutput(miopenHandle_t handle,
  *  @{
  */
 
-/*! @brief Helper function to query the minimum workspace size required by the RepeatTensor call
- * @param handle                   MIOpen Handle (input)
- * @param xDesc                    Tensor descriptor for data input tensor x (input)
- * @param yDesc                    Tensor descriptor for output data tensor y (input)
- * @param offset                   Offset of start dimension (input)
- * @param sizeInBytes              Pointer to data to return the minimum workspace size
- * @return                         miopenStatus_t
- */
-MIOPEN_EXPORT miopenStatus_t miopenGetRepeatWorkspaceSize(miopenHandle_t handle,
-                                                          const miopenTensorDescriptor_t xDesc,
-                                                          const miopenTensorDescriptor_t yDesc,
-                                                          const int offset,
-                                                          size_t* sizeInBytes);
+// /*! @brief Helper function to query the minimum workspace size required by the RepeatTensor call
+//  * @param handle                   MIOpen Handle (input)
+//  * @param xDesc                    Tensor descriptor for data input tensor x (input)
+//  * @param yDesc                    Tensor descriptor for output data tensor y (input)
+//  * @param offset                   Offset of start dimension (input)
+//  * @param sizeInBytes              Pointer to data to return the minimum workspace size
+//  * @return                         miopenStatus_t
+//  */
+// MIOPEN_EXPORT miopenStatus_t miopenGetRepeatWorkspaceSize(miopenHandle_t handle,
+//                                                           const miopenTensorDescriptor_t xDesc,
+//                                                           const miopenTensorDescriptor_t yDesc,
+//                                                           const int offset,
+//                                                           size_t* sizeInBytes);
 
 /*! @brief Execute a repeat forward layer
  *
  * @param handle                   MIOpen handle (input)
- * @param workspace                Address of the allocated workspace data (input)
- * @param workspaceSizeInBytes     Size in bytes of the allocated workspace data (input)
  * @param xDesc                    Tensor descriptor for data input tensor x (input)
  * @param x                        Data tensor x (input)
- * @param offset                   Offset of start dimension (input)
+ * @param sizes                    Number of times to repeat each dimension (input)
+ * @param num_sizes                Number of elements in sizes array (input)
  * @param yDesc                    Tensor descriptor for output data tensor y (input)
  * @param y                        Data tensor y (output)
  * @return                         miopenStatus_t
  */
 MIOPEN_EXPORT miopenStatus_t miopenRepeatForward(miopenHandle_t handle,
-                                                 void* workspace,
-                                                 size_t workspaceSizeInBytes,
                                                  const miopenTensorDescriptor_t xDesc,
                                                  const void* x,
-                                                 const int offset,
+                                                 const int* sizes,
+                                                 const int num_sizes,
                                                  const miopenTensorDescriptor_t yDesc,
                                                  void* y);
 
 /*! @brief Execute a repeat backward layer
  *
  * @param handle                   MIOpen handle (input)
- * @param workspace                Address of the allocated workspace data (input)
- * @param workspaceSizeInBytes     Size in bytes of the allocated workspace data (input)
  * @param dyDesc                   Tensor descriptor for data input tensor dx (input)
  * @param dy                       Data tensor dx (input)
- * @param offset                   Offset of start dimension (input)
+ * @param sizes                    Number of times to repeat each dimension (input)
+ * @param num_sizes                Number of elements in sizes array (input)
  * @param dxDesc                   Tensor descriptor for output data tensor dy (input)
  * @param dx                       Data tensor dy (output)
  * @return                         miopenStatus_t
  */
 MIOPEN_EXPORT miopenStatus_t miopenRepeatBackward(miopenHandle_t handle,
-                                                  void* workspace,
-                                                  size_t workspaceSizeInBytes,
                                                   const miopenTensorDescriptor_t dyDesc,
                                                   const void* dy,
-                                                  const int offset,
+                                                  const int* sizes,
+                                                  const int num_sizes,
                                                   const miopenTensorDescriptor_t dxDesc,
                                                   void* dx);
 

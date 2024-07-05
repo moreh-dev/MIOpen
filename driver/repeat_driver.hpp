@@ -2,7 +2,7 @@
  *
  * MIT License
  *
- * Copyright (c) 2023 Advanced Micro Devices, Inc.
+ * Copyright (c) 2020 Advanced Micro Devices, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,47 +23,9 @@
  * SOFTWARE.
  *
  *******************************************************************************/
+#ifndef GUARD_MIOPEN_REPEAT_DRIVER_HPP
+#define GUARD_MIOPEN_REPEAT_DRIVER_HPP
 
-#include <miopen/repeat/problem_description.hpp>
-#include <miopen/names.hpp>
 
-#include <sstream>
 
-namespace miopen {
-
-namespace repeat {
-
-NetworkConfig ProblemDescription::MakeNetworkConfig() const
-{
-    std::ostringstream ss;
-    ss << (isForward ? "rptfwd-" : "rptbwd-");
-
-    const auto& x_lengths = xdyDesc.GetLengths();
-    const auto& y_lengths = ydxDesc.GetLengths();
-
-    for(auto len : x_lengths)
-    {
-        ss << "x" << len << "-";
-    }
-
-    for(auto len : y_lengths)
-    {
-        ss << "y" << len << "-";
-    }
-
-    ss << "dtype" << xdyDesc.GetType() << "-";
-
-    ss << "offset" << offset << "-";
-
-    ss << "sizes";
-    for(auto size : sizes_vector)
-    {
-        ss << size << "-";
-    }
-
-    return NetworkConfig{ss.str()};
-}
-
-} // namespace repeat
-
-} // namespace miopen
+#endif // GUARD_MIOPEN_CONV_DRIVER_HPP

@@ -44,12 +44,21 @@ struct RepeatForward final : RepeatSolver
                       const miopen::repeat::ProblemDescription& problem) const override;
     ConvSolution GetSolution(const ExecutionContext& context,
                              const miopen::repeat::ProblemDescription& problem) const override;
-    std::size_t GetWorkspaceSize(const ExecutionContext& context,
-                                 const miopen::repeat::ProblemDescription& problem) const override;
-    bool MayNeedWorkspace() const override { return true; }
+    bool MayNeedWorkspace() const override { return false; }
 };
 
-} // namespace reduce
+struct RepeatBackward final : RepeatSolver
+{
+    const std::string& SolverDbId() const override { return GetSolverDbId<RepeatBackward>(); }
+
+    bool IsApplicable(const ExecutionContext& context,
+                      const miopen::repeat::ProblemDescription& problem) const override;
+    ConvSolution GetSolution(const ExecutionContext& context,
+                             const miopen::repeat::ProblemDescription& problem) const override;
+    bool MayNeedWorkspace() const override { return false; }
+};
+
+} // namespace repeat
 
 } // namespace solver
 

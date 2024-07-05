@@ -39,8 +39,8 @@ namespace solver {
 
 namespace repeat {
 
-bool RepeatForward::IsApplicable(const ExecutionContext& context,
-                                 const miopen::repeat::ProblemDescription& problem) const
+bool RepeatBackward::IsApplicable(const ExecutionContext& context,
+                                  const miopen::repeat::ProblemDescription& problem) const
 {
     if(!problem.IsSameType())
     {
@@ -49,16 +49,17 @@ bool RepeatForward::IsApplicable(const ExecutionContext& context,
     return true;
 }
 
-ConvSolution RepeatForward::GetSolution(const ExecutionContext& context,
-                                        const miopen::repeat::ProblemDescription& problem) const
+ConvSolution RepeatBackward::GetSolution(const ExecutionContext& context,
+                                         const miopen::repeat::ProblemDescription& problem) const
 {
     auto result = ConvSolution{miopenStatusSuccess};
 
-    auto dtype  = problem.GetXDesc().GetType();
-    auto xdims  = problem.GetXDesc().GetLengths();
-    auto ydims  = problem.GetYDesc().GetLengths();
+    auto dtype  = problem.GetDyDesc().GetType();
+    auto dydims = problem.GetDyDesc().GetLengths();
+    auto dxdims = problem.GetDxDesc().GetLengths();
 
-    auto output_size = std::accumulate(ydims.begin(), ydims.end(), 1ULL, std::multiplies<size_t>{});
+    auto output_size =
+        std::accumulate(dydims.begin(), dydims.end(), 1ULL, std::multiplies<size_t>{});
 
     {
         size_t xlocalsize = LOCAL_SIZE;
@@ -71,7 +72,7 @@ ConvSolution RepeatForward::GetSolution(const ExecutionContext& context,
         auto kernel = KernelInfo{};
 
         kernel.kernel_file = "MIopenRepeat.cpp";
-        kernel.kernel_name = "RepeatForward";
+        kernel.kernel_name = "RepeatBackward";
 
         const auto build_params = KernelBuildParameters{
             {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
@@ -98,30 +99,30 @@ ConvSolution RepeatForward::GetSolution(const ExecutionContext& context,
             decltype(auto) kernel = handle_.Run(kernels.front());
             decltype(auto) params = raw_params.CastTo<miopen::repeat::InvokeParams>();
 
-            auto xdims  = params.xDyDesc->GetLengths();
-            auto ydims  = params.yDxDesc->GetLengths();
+            auto dydims = params.xDyDesc->GetLengths();
+            auto dxdims = params.yDxDesc->GetLengths();
             auto offset = params.offset;
 
             auto inout_size =
-                std::accumulate(ydims.begin(), ydims.end(), 1ULL, std::multiplies<size_t>{});
+                std::accumulate(dydims.begin(), dydims.end(), 1ULL, std::multiplies<size_t>{});
 
-            std::vector<uint64_t> input_dimensions(5);
-            std::vector<uint64_t> output_dimensions(5);
+            std::vector<uint64_t> output_grad_dimensions(5);
+            std::vector<uint64_t> input_grad_dimensions(5);
             for(int i = 0; i < 5; ++i)
             {
-                input_dimensions[i]  = xdims[i];
-                output_dimensions[i] = ydims[i];
+                output_grad_dimensions[i] = dydims[i];
+                input_grad_dimensions[i]  = dxdims[i];
             }
 
             kernel(params.xDy,
                    params.yDx,
                    inout_size,
                    offset,
-                   input_dimensions.data(),
-                   output_dimensions.data());
+                   output_grad_dimensions.data(),
+                   input_grad_dimensions.data());
         };
-    };
-
+    }; 
+    
     return result;
 }
 

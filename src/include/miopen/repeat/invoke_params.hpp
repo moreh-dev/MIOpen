@@ -34,20 +34,25 @@ namespace repeat {
 
 struct InvokeParams : public miopen::InvokeParams
 {
-    InvokeParams() = default;
+    InvokeParams(const TensorDescriptor& xDesc_,
+                 ConstData_t x_,
+                 const TensorDescriptor& yDesc_,
+                 Data_t y_,
+                 int32_t offset_)
+        : xDyDesc(&xDesc_), yDxDesc(&yDesc_), xDy(x_), yDx(y_), offset(offset_)
+    {
+    }
 
-    const TensorDescriptor* xDesc      = nullptr;
-    const TensorDescriptor* yDesc      = nullptr;
-    
-    ConstData_t x                            = nullptr;
-    Data_t y                                 = nullptr;
-    Data_t workspace                         = nullptr;
-    std::size_t workspace_size               = 0;
-    int32_t offset                           = 0;
+    const TensorDescriptor* xDyDesc = nullptr;
+    const TensorDescriptor* yDxDesc = nullptr;
 
-    std::size_t GetWorkspaceSize() const { return workspace_size; }
-    Data_t GetWorkspace() const { return workspace; }
-}
+    ConstData_t xDy = nullptr;
+    Data_t yDx      = nullptr;
+    int32_t offset  = 0;
+
+    std::size_t GetWorkspaceSize() const { return 0; }
+    Data_t GetWorkspace() const { return nullptr; }
+};
 
 } // namespace repeat
 

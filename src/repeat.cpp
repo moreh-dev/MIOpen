@@ -28,21 +28,81 @@
 #include <miopen/find_solution.hpp>
 #include <miopen/float_equal.hpp>
 #include <miopen/kernel_cache.hpp>
-#include <miopen/reduce/invoke_params.hpp>
-#include <miopen/reduce/solvers.hpp>
+#include <miopen/repeat/invoke_params.hpp>
+#include <miopen/repeat/solvers.hpp>
 #include <miopen/repeat.hpp>
 #include <miopen/tensor.hpp>
 
 namespace miopen {
 
-//TODO : implement GetRepeatWorkspaceSize, RepeatForward, and RepeatBackward
-
-std::size_t GetRepeatWorkspaceSize(Handle& handle,
-                                   const TensorDescriptor& xDesc,
-                                   const TensorDescriptor& yDesc,
-                                   int32_t offset)
+miopenStatus_t RepeatForward(Handle& handle,
+                             const TensorDescriptor& xDesc,
+                             ConstData_t x,
+                             const int* sizes,
+                             const int num_sizes,
+                             const TensorDescriptor& yDesc,
+                             Data_t y)
 {
-    auto ctx = ExecutionContext(&handle);
+    if(x == nullptr || y == nullptr)
+    {
+        MIOPEN_THROW(miopenStatusBadParm, "Null pointer for tensor.");
+    }
+
+    const auto x_dims_size = xDesc.GetLengths().size();
+    int32_t offset         = static_cast<int32_t>(num_sizes) - static_cast<int32_t>(x_dims_size);
+
+    if(offset < 0)
+    {
+        MIOPEN_THROW(miopenStatusBadParm,
+                     "Number of dimensions of sizes can not be smaller than number of dimensions "
+                     "of tensor.");
+    }
+
+    std::vector<int> sizes_vector(sizes, sizes + num_sizes);
+
+    const auto problem       = repeat::ProblemDescription{xDesc, yDesc, offset, sizes_vector, true};
+    const auto invoke_params = repeat::InvokeParams{xDesc, x, yDesc, y, offset};
+    const auto algo          = AlgorithmName{"RepeatForward"};
+    const auto solvers       = solver::SolverContainer<solver::repeat::RepeatForward>{};
+
+    solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
+
+    return miopenStatusSuccess;
 }
 
+miopenStatus_t RepeatBackward(Handle& handle,
+                              const TensorDescriptor& dyDesc,
+                              ConstData_t dy,
+                              const int* sizes,
+                              const int num_sizes,
+                              const TensorDescriptor& dxDesc,
+                              Data_t dx)
+{
+    if(dx == nullptr || dy == nullptr)
+    {
+        MIOPEN_THROW(miopenStatusBadParm, "Null pointer for tensor.");
+    }
+
+    const auto dx_dims_size = dxDesc.GetLengths().size();
+    int32_t offset          = static_cast<int32_t>(num_sizes) - static_cast<int32_t>(dx_dims_size);
+
+    if(offset < 0)
+    {
+        MIOPEN_THROW(miopenStatusBadParm,
+                     "Number of dimensions of sizes can not be smaller than number of dimensions "
+                     "of tensor.");
+    }
+
+    std::vector<int> sizes_vector(sizes, sizes + num_sizes);
+
+    const auto problem = repeat::ProblemDescription{dyDesc, dxDesc, offset, sizes_vector, false};
+    const auto invoke_params = repeat::InvokeParams{dyDesc, dy, dxDesc, dx, offset};
+    const auto algo          = AlgorithmName{"RepeatBackward"};
+    const auto solvers       = solver::SolverContainer<solver::repeat::RepeatBackward>{};
+
+    solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
+
+    return miopenStatusSuccess;
 }
+
+} // namespace miopen
