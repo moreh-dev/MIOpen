@@ -89,21 +89,6 @@ LogCmdRepeat(const miopenTensorDescriptor_t xDesc, const int* sizes, int num_siz
     }
 }
 
-// extern "C" miopenStatus_t miopenGetRepeatWorkspaceSize(miopenHandle_t handle,
-//                                                        const miopenTensorDescriptor_t xDesc,
-//                                                        const miopenTensorDescriptor_t yDesc,
-//                                                        const int offset,
-//                                                        size_t* sizeInBytes)
-// {
-//     MIOPEN_LOG_FUNCTION(xDesc, yDesc, offset, sizeInBytes);
-//     return miopen::try_([&] {
-//         miopen::deref(sizeInBytes) = miopen::GetRepeatWorkSpaceSize(miopen::deref(handle),
-//                                                                     miopen::deref(xDesc),
-//                                                                     miopen::deref(yDesc),
-//                                                                     offset);
-//     });
-// }
-
 extern "C" miopenStatus_t miopenRepeatForward(miopenHandle_t handle,
                                               const miopenTensorDescriptor_t xDesc,
                                               const void* x,
