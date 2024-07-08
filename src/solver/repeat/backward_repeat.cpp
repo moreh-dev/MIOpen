@@ -71,7 +71,7 @@ ConvSolution RepeatBackward::GetSolution(const ExecutionContext& context,
 
         auto kernel = KernelInfo{};
 
-        kernel.kernel_file = "MIopenRepeat.cpp";
+        kernel.kernel_file = "MIOpenRepeat.cpp";
         kernel.kernel_name = "RepeatBackward";
 
         const auto build_params = KernelBuildParameters{
@@ -106,23 +106,36 @@ ConvSolution RepeatBackward::GetSolution(const ExecutionContext& context,
             auto inout_size =
                 std::accumulate(dydims.begin(), dydims.end(), 1ULL, std::multiplies<size_t>{});
 
-            std::vector<uint64_t> output_grad_dimensions(5);
-            std::vector<uint64_t> input_grad_dimensions(5);
-            for(int i = 0; i < 5; ++i)
+            std::vector<uint64_t> output_grad_dimensions(5, 1);
+            std::vector<uint64_t> input_grad_dimensions(5, 1);
+
+            for(int i = 0; i < dydims.size(); ++i)
             {
                 output_grad_dimensions[i] = dydims[i];
-                input_grad_dimensions[i]  = dxdims[i];
+            }
+
+            for(int i = 0; i < dxdims.size(); ++i)
+            {
+                input_grad_dimensions[i] = dxdims[i];
             }
 
             kernel(params.xDy,
                    params.yDx,
                    inout_size,
                    offset,
-                   output_grad_dimensions.data(),
-                   input_grad_dimensions.data());
+                   output_grad_dimensions[0],
+                   output_grad_dimensions[1],
+                   output_grad_dimensions[2],
+                   output_grad_dimensions[3],
+                   output_grad_dimensions[4],
+                   input_grad_dimensions[0],
+                   input_grad_dimensions[1],
+                   input_grad_dimensions[2],
+                   input_grad_dimensions[3],
+                   input_grad_dimensions[4]);
         };
-    }; 
-    
+    };
+
     return result;
 }
 

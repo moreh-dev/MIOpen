@@ -54,9 +54,9 @@ ConvSolution RepeatForward::GetSolution(const ExecutionContext& context,
 {
     auto result = ConvSolution{miopenStatusSuccess};
 
-    auto dtype  = problem.GetXDesc().GetType();
-    auto xdims  = problem.GetXDesc().GetLengths();
-    auto ydims  = problem.GetYDesc().GetLengths();
+    auto dtype = problem.GetXDesc().GetType();
+    auto xdims = problem.GetXDesc().GetLengths();
+    auto ydims = problem.GetYDesc().GetLengths();
 
     auto output_size = std::accumulate(ydims.begin(), ydims.end(), 1ULL, std::multiplies<size_t>{});
 
@@ -70,7 +70,7 @@ ConvSolution RepeatForward::GetSolution(const ExecutionContext& context,
 
         auto kernel = KernelInfo{};
 
-        kernel.kernel_file = "MIopenRepeat.cpp";
+        kernel.kernel_file = "MIOpenRepeat.cpp";
         kernel.kernel_name = "RepeatForward";
 
         const auto build_params = KernelBuildParameters{
@@ -105,11 +105,16 @@ ConvSolution RepeatForward::GetSolution(const ExecutionContext& context,
             auto inout_size =
                 std::accumulate(ydims.begin(), ydims.end(), 1ULL, std::multiplies<size_t>{});
 
-            std::vector<uint64_t> input_dimensions(5);
-            std::vector<uint64_t> output_dimensions(5);
-            for(int i = 0; i < 5; ++i)
+            std::vector<uint64_t> input_dimensions(5, 1);
+            std::vector<uint64_t> output_dimensions(5, 1);
+
+            for(int i = 0; i < xdims.size(); ++i)
             {
-                input_dimensions[i]  = xdims[i];
+                input_dimensions[i] = xdims[i];
+            }
+
+            for(int i = 0; i < ydims.size(); ++i)
+            {
                 output_dimensions[i] = ydims[i];
             }
 
@@ -117,8 +122,16 @@ ConvSolution RepeatForward::GetSolution(const ExecutionContext& context,
                    params.yDx,
                    inout_size,
                    offset,
-                   input_dimensions.data(),
-                   output_dimensions.data());
+                   input_dimensions[0],
+                   input_dimensions[1],
+                   input_dimensions[2],
+                   input_dimensions[3],
+                   input_dimensions[4],
+                   output_dimensions[0],
+                   output_dimensions[1],
+                   output_dimensions[2],
+                   output_dimensions[3],
+                   output_dimensions[4]);
         };
     };
 
