@@ -362,7 +362,6 @@ int RepeatDriver<Tgpu, Tref>::RunBackwardGPU()
 
     for(int i = 0; i < inflags.GetValueInt("iter"); i++)
     {
-        hipMemset(din_dev->GetMem(), 0, miopen::deref(dinputDesc).GetElementSize() * sizeof(Tgpu));
         miopenRepeatBackward(GetHandle(),
                              doutputDesc,
                              dout_dev->GetMem(),

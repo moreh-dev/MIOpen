@@ -30,6 +30,7 @@
 #include <miopen/repeat/solvers.hpp>
 #include <miopen/repeat.hpp>
 #include <miopen/target_properties.hpp>
+#include <hip/hip_runtime.h>
 
 #define LOCAL_SIZE 256
 
@@ -106,6 +107,9 @@ ConvSolution RepeatBackward::GetSolution(const ExecutionContext& context,
             auto inout_size =
                 std::accumulate(dydims.begin(), dydims.end(), 1ULL, std::multiplies<size_t>{});
 
+            auto dx_size =
+                std::accumulate(dxdims.begin(), dxdims.end(), 1ULL, std::multiplies<size_t>{});
+
             std::vector<uint64_t> output_grad_dimensions(5, 1);
             std::vector<uint64_t> input_grad_dimensions(5, 1);
 
@@ -118,6 +122,8 @@ ConvSolution RepeatBackward::GetSolution(const ExecutionContext& context,
             {
                 input_grad_dimensions[i] = dxdims[i];
             }
+
+            hipMemset(params.yDx, 0, dx_size * sizeof(dtype));
 
             kernel(params.xDy,
                    params.yDx,
