@@ -405,23 +405,12 @@ int RepeatDriver<Tgpu, Tref>::RunBackwardCPU()
 template <typename Tgpu, typename Tref>
 Tref RepeatDriver<Tgpu, Tref>::GetTolerance()
 {
-    if(data_type == miopenHalf)
-    {
-        return 1e-3;
-    }
-    else if(data_type == miopenFloat)
-    {
-        return 5e-5;
-    }
-    else if(data_type == miopenDouble)
-    {
-        return 1e-10;
-    }
-    else if(data_type == miopenBFloat16)
-    {
-        return 5e-3;
-    }
-    return 1e-3;
+    auto tolerance = std::is_same<Tgpu, float>::value ? 1.5e-6 : 8.2e-3;
+
+    if(std::is_same<Tgpu, bfloat16>::value)
+        tolerance *= 8.0;
+
+    return tolerance;
 }
 
 template <typename Tgpu, typename Tref>

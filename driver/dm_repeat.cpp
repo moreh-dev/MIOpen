@@ -29,11 +29,11 @@
 static Driver* makeDriver(const std::string& base_arg)
 {
     if(base_arg == "repeat")
-        return new RepeatDriver<float, double>();
+        return new RepeatDriver<float, float>();
     if(base_arg == "repeatfp16")
-        return new RepeatDriver<float16, double>();
+        return new RepeatDriver<float16, float>();
     if(base_arg == "repeatbfp16")
-        return new RepeatDriver<bfloat16, double>();
+        return new RepeatDriver<bfloat16, float>();
     return nullptr;
 }
 

@@ -123,7 +123,7 @@ ConvSolution RepeatBackward::GetSolution(const ExecutionContext& context,
                 input_grad_dimensions[i] = dxdims[i];
             }
 
-            hipMemset(params.yDx, 0, dx_size * sizeof(dtype));
+            hipMemset(params.yDx, 0, dx_size * GetTypeSize(params.yDxDesc->GetType()));
 
             kernel(params.xDy,
                    params.yDx,
