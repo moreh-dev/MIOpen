@@ -82,13 +82,13 @@ struct RepeatTestCase
 std::vector<RepeatTestCase> RepeatTestConfigs()
 { // n c d h w sizes num_sizes
     return {
-        {1, 1, 0, 0, 512, new int32_t[3]{48, 512, 1}, 3}, // stdc
-        {1, 1, 0, 0, 512, new int32_t[3]{32, 512, 1}, 3}, // llama2
-        {10, 1, 0, 100, 1, new int32_t[4]{10, 32, 1, 128}, 4}, // t5_3b
-        {10, 1, 0, 149, 1, new int32_t[4]{10, 32, 1, 128}, 4}, // t5_3b
+        {1, 1, 0, 0, 512, new int32_t[3]{48, 512, 1}, 3},        // stdc
+        {1, 1, 0, 0, 512, new int32_t[3]{32, 512, 1}, 3},        // llama2
+        {10, 1, 0, 100, 1, new int32_t[4]{10, 32, 1, 128}, 4},   // t5_3b
+        {10, 1, 0, 149, 1, new int32_t[4]{10, 32, 1, 128}, 4},   // t5_3b
         {10, 1, 1, 100, 1, new int32_t[5]{10, 32, 2, 1, 64}, 5}, // llama2_7b
-        {1, 1, 0, 0, 1, new int32_t[3]{10, 1, 1}, 3}, // llama2_7b
-        {3, 0, 0, 0, 0, new int32_t[2]{4, 2}, 2}, // Custom Test Case ~
+        {1, 1, 0, 0, 1, new int32_t[3]{10, 1, 1}, 3},            // llama2_7b
+        {3, 0, 0, 0, 0, new int32_t[2]{4, 2}, 2},                // Custom Test Case ~
         {16, 0, 0, 0, 0, new int32_t[2]{16, 32}, 2},
         {32, 24, 0, 0, 0, new int32_t[3]{26, 32, 24}, 3},
         {16, 16, 0, 0, 0, new int32_t[3]{32, 24, 24}, 3},
@@ -139,14 +139,7 @@ protected:
 
         for(size_t i = 0; i < in_dims.size(); ++i)
         {
-            if (in_dims[i] == sizes[offset + i])
-            {
-                out_dims[offset + i] = in_dims[i];
-            }
-            else
-            {
-                out_dims[offset + i] = in_dims[i] * sizes[offset + i];
-            }
+            out_dims[offset + i] = in_dims[i] * sizes[offset + i];
         }
 
         output = tensor<T>{out_dims};
@@ -180,11 +173,11 @@ protected:
 
         if(std::is_same<T, bfloat16>::value)
             threshold *= 8.0;
-        auto error       = miopen::rms_range(ref_output, output);
+        auto error = miopen::rms_range(ref_output, output);
 
         EXPECT_TRUE(miopen::range_distance(ref_output) == miopen::range_distance(output));
-        EXPECT_TRUE(error < threshold) << "Error output beyond tolerance Error:" << error
-                                       << ",   Threshold " << threshold;
+        EXPECT_TRUE(error < threshold)
+            << "Error output beyond tolerance Error:" << error << ",   Threshold " << threshold;
     }
     RepeatTestCase repeat_config;
 
@@ -249,8 +242,13 @@ protected:
         cpu_repeat_backward<T>(output_grad, ref_input_grad, sizes, num_sizes);
         miopenStatus_t status;
 
-        status = miopen::RepeatBackward(
-            handle, output_grad.desc, output_grad_dev.get(), sizes, num_sizes, input_grad.desc, input_grad_dev.get());
+        status = miopen::RepeatBackward(handle,
+                                        output_grad.desc,
+                                        output_grad_dev.get(),
+                                        sizes,
+                                        num_sizes,
+                                        input_grad.desc,
+                                        input_grad_dev.get());
 
         EXPECT_EQ(status, miopenStatusSuccess);
 
@@ -263,11 +261,11 @@ protected:
 
         if(std::is_same<T, bfloat16>::value)
             threshold *= 8.0;
-        auto error       = miopen::rms_range(ref_input_grad, input_grad);
+        auto error = miopen::rms_range(ref_input_grad, input_grad);
 
         EXPECT_TRUE(miopen::range_distance(ref_input_grad) == miopen::range_distance(input_grad));
-        EXPECT_TRUE(error < threshold * 10) << "Error output beyond tolerance Error:" << error
-                                            << ",   Threshold: " << threshold;
+        EXPECT_TRUE(error < threshold * 10)
+            << "Error output beyond tolerance Error:" << error << ",   Threshold: " << threshold;
     }
     RepeatTestCase repeat_config;
 

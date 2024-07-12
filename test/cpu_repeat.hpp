@@ -31,10 +31,7 @@
 #include <vector>
 
 template <class T>
-void cpu_repeat_forward(tensor<T> input,
-                        tensor<T>& ref_output,
-                        int32_t* sizes,
-                        int32_t num_sizes)
+void cpu_repeat_forward(tensor<T> input, tensor<T>& ref_output, int32_t* sizes, int32_t num_sizes)
 {
     auto input_dims  = input.desc.GetLengths();
     auto output_dims = ref_output.desc.GetLengths();
@@ -42,7 +39,8 @@ void cpu_repeat_forward(tensor<T> input,
     int32_t offset = num_sizes - static_cast<int32_t>(input_dims.size());
     if(offset < 0)
     {
-        throw std::runtime_error("Number of dimensions of sizes cannot be smaller than number of dimensions of input tensor.");
+        throw std::runtime_error("Number of dimensions of sizes cannot be smaller than number of "
+                                 "dimensions of input tensor.");
     }
 
     auto output_numel =
@@ -65,7 +63,7 @@ void cpu_repeat_forward(tensor<T> input,
         }
 
         int64_t input_flat_idx = 0;
-        int64_t stride = 1;
+        int64_t stride         = 1;
         for(int i = input_dims.size() - 1; i >= 0; --i)
         {
             input_flat_idx += input_idx[i] * stride;
@@ -77,10 +75,7 @@ void cpu_repeat_forward(tensor<T> input,
 }
 
 template <class T>
-void cpu_repeat_backward(tensor<T> doutput,
-                         tensor<T>& dinput,
-                         int32_t* sizes,
-                         int32_t num_sizes)
+void cpu_repeat_backward(tensor<T> doutput, tensor<T>& dinput, int32_t* sizes, int32_t num_sizes)
 {
     auto doutput_dims = doutput.desc.GetLengths();
     auto dinput_dims  = dinput.desc.GetLengths();
@@ -88,7 +83,8 @@ void cpu_repeat_backward(tensor<T> doutput,
     int32_t offset = num_sizes - static_cast<int32_t>(dinput_dims.size());
     if(offset < 0)
     {
-        throw std::runtime_error("Number of dimensions of sizes cannot be smaller than number of dimensions of input tensor.");
+        throw std::runtime_error("Number of dimensions of sizes cannot be smaller than number of "
+                                 "dimensions of input tensor.");
     }
 
     auto doutput_numel =
@@ -114,7 +110,7 @@ void cpu_repeat_backward(tensor<T> doutput,
         }
 
         int64_t dinput_flat_idx = 0;
-        int64_t stride = 1;
+        int64_t stride          = 1;
         for(int i = dinput_dims.size() - 1; i >= 0; --i)
         {
             dinput_flat_idx += dinput_idx[i] * stride;
@@ -124,6 +120,5 @@ void cpu_repeat_backward(tensor<T> doutput,
         dinput[dinput_flat_idx] += doutput[gid];
     }
 }
-
 
 #endif

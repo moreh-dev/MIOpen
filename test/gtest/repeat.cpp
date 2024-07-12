@@ -150,11 +150,23 @@ TEST_P(RepeatBackwardTestBFloat16, RepeatTestBw)
 };
 
 // Forward Test
-INSTANTIATE_TEST_SUITE_P(RepeatTestSet, RepeatForwardTestFloat, testing::ValuesIn(RepeatTestConfigs()));
-INSTANTIATE_TEST_SUITE_P(RepeatTestSet, RepeatForwardTestHalf, testing::ValuesIn(RepeatTestConfigs()));
-INSTANTIATE_TEST_SUITE_P(RepeatTestSet, RepeatForwardTestBFloat16, testing::ValuesIn(RepeatTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(RepeatTestSet,
+                         RepeatForwardTestFloat,
+                         testing::ValuesIn(RepeatTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(RepeatTestSet,
+                         RepeatForwardTestHalf,
+                         testing::ValuesIn(RepeatTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(RepeatTestSet,
+                         RepeatForwardTestBFloat16,
+                         testing::ValuesIn(RepeatTestConfigs()));
 
 // Backward Test
-INSTANTIATE_TEST_SUITE_P(RepeatTestSet, RepeatBackwardTestFloat, testing::ValuesIn(RepeatTestConfigs()));
-INSTANTIATE_TEST_SUITE_P(RepeatTestSet, RepeatBackwardTestHalf, testing::ValuesIn(RepeatTestConfigs()));
-INSTANTIATE_TEST_SUITE_P(RepeatTestSet, RepeatBackwardTestBFloat16, testing::ValuesIn(RepeatTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(RepeatTestSet,
+                         RepeatBackwardTestFloat,
+                         testing::ValuesIn(RepeatTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(RepeatTestSet,
+                         RepeatBackwardTestHalf,
+                         testing::ValuesIn(RepeatTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(RepeatTestSet,
+                         RepeatBackwardTestBFloat16,
+                         testing::ValuesIn(RepeatTestConfigs()));
