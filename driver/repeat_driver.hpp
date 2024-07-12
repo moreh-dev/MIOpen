@@ -153,7 +153,14 @@ int RepeatDriver<Tgpu, Tref>::GetandSetData()
     }
     for(size_t i = 0; i < in_len.size(); ++i)
     {
-        out_len[offset + i] = in_len[i] * sizes[offset + i];
+        if (in_len[i] == sizes[offset + i])
+        {
+            out_len[offset + i] = in_len[i];
+        }
+        else
+        {
+            out_len[offset + i] = in_len[i] * sizes[offset + i];
+        }
     }
 
     SetTensorNd(inputDesc, in_len, data_type);

@@ -48,7 +48,23 @@ struct RepeatForwardTestFloat : RepeatForwardTest<float>
 {
 };
 
+struct RepeatForwardTestHalf : RepeatForwardTest<half_float::half>
+{
+};
+
+struct RepeatForwardTestBFloat16 : RepeatForwardTest<bfloat16>
+{
+};
+
 struct RepeatBackwardTestFloat : RepeatBackwardTest<float>
+{
+};
+
+struct RepeatBackwardTestHalf : RepeatBackwardTest<half_float::half>
+{
+};
+
+struct RepeatBackwardTestBFloat16 : RepeatBackwardTest<bfloat16>
 {
 };
 
@@ -58,6 +74,32 @@ using namespace repeat;
 TEST_P(RepeatForwardTestFloat, RepeatTestFw)
 {
     if(env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--float"))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
+
+TEST_P(RepeatForwardTestHalf, RepeatTestFw)
+{
+    if(env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--half"))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
+
+TEST_P(RepeatForwardTestBFloat16, RepeatTestFw)
+{
+    if(env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--bfloat16"))
     {
         RunTest();
         Verify();
@@ -81,5 +123,38 @@ TEST_P(RepeatBackwardTestFloat, RepeatTestBw)
     }
 };
 
+TEST_P(RepeatBackwardTestHalf, RepeatTestBw)
+{
+    if(env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--half"))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
+
+TEST_P(RepeatBackwardTestBFloat16, RepeatTestBw)
+{
+    if(env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--bfloat16"))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
+
+// Forward Test
 INSTANTIATE_TEST_SUITE_P(RepeatTestSet, RepeatForwardTestFloat, testing::ValuesIn(RepeatTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(RepeatTestSet, RepeatForwardTestHalf, testing::ValuesIn(RepeatTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(RepeatTestSet, RepeatForwardTestBFloat16, testing::ValuesIn(RepeatTestConfigs()));
+
+// Backward Test
 INSTANTIATE_TEST_SUITE_P(RepeatTestSet, RepeatBackwardTestFloat, testing::ValuesIn(RepeatTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(RepeatTestSet, RepeatBackwardTestHalf, testing::ValuesIn(RepeatTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(RepeatTestSet, RepeatBackwardTestBFloat16, testing::ValuesIn(RepeatTestConfigs()));
