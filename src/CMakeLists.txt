@@ -306,6 +306,7 @@ set( MIOpen_Source
     seq_tensor.cpp
     solver/maskedfill/maskedfill.cpp
     maskedfill_api.cpp
+    maskedfill/problem_description.cpp
 )
 
 if(MIOPEN_ENABLE_AI_KERNEL_TUNING OR MIOPEN_ENABLE_AI_IMMED_MODE_FALLBACK)
