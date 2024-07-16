@@ -133,17 +133,15 @@ __device__ void GET_NCDHW(uint64_t& n,
     c             = (nc) % output_dim1;
 }
 
-__device__ void GET_5D_INDEX(const uint64_t input_dimensions[5],
+__device__ int GET_5D_INDEX(const uint64_t input_dimensions[5],
                              uint64_t n,
                              uint64_t c,
                              uint64_t d,
                              uint64_t h,
-                             uint64_t w,
-                             uint64_t& output)
+                             uint64_t w)
 {
-    output = (((n * input_dimensions[1] + c) * input_dimensions[2] + d) * input_dimensions[3] + h) *
-                 input_dimensions[4] +
-             w;
+    return (((n * input_dimensions[1] + c) * input_dimensions[2] + d) * input_dimensions[3] + h) *
+                 input_dimensions[4] + w;
 }
 
 extern "C" __global__ void RepeatForward(const FLOAT* __restrict__ x,
@@ -188,8 +186,7 @@ extern "C" __global__ void RepeatForward(const FLOAT* __restrict__ x,
         n[i - offset] = o[i] % input_dimensions[i - offset];
     }
 
-    uint64_t input_index = 0;
-    GET_5D_INDEX(input_dimensions, n[0], n[1], n[2], n[3], n[4], input_index);
+    uint64_t input_index = GET_5D_INDEX(input_dimensions, n[0], n[1], n[2], n[3], n[4]);
     y[gid] = x[input_index];
 }
 
@@ -236,7 +233,6 @@ extern "C" __global__ void RepeatBackward(const FLOAT* __restrict__ dy,
         n[i - offset] = o[i] % input_grad_dimensions[i - offset];
     }
 
-    uint64_t input_grad_index;
-    GET_5D_INDEX(input_grad_dimensions, n[0], n[1], n[2], n[3], n[4], input_grad_index);
+    uint64_t input_grad_index = GET_5D_INDEX(input_grad_dimensions, n[0], n[1], n[2], n[3], n[4]);
     atomic_add_g(&dx[input_grad_index], dy[gid]);
 }
