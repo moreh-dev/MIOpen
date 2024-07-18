@@ -24,33 +24,44 @@
  *
  *******************************************************************************/
 
-# ifndef MIOPEN_DONT_USE_HIP_RUNTIME_HEADERS
-# include <hip/hipf16.h>
-# include <hip/hip_runtime.h>
-# endif
+# include "maskedfill.hpp"
 
-# include "float_types.h"
+# include <miopen/env.hpp>
 
-extern "C" __global__ void MaskedFillForward(
-	FLOAT const * const __restrict__ input,
-	FLOAT * const __restrict__ output,
-	__hip_internal :: int8_t const * const __restrict__ mask,
-	FLOAT const value,
-	unsigned long const numel
-) {
-	uint64_t const gid = blockIdx.x * blockDim.x + threadIdx.x;
-	if (gid >= numel) return;
-	output[gid] = mask[gid]? value : input[gid];
+MIOPEN_DECLARE_ENV_VAR_BOOL	(MIOPEN_TEST_ALL)
+MIOPEN_DECLARE_ENV_VAR_STR	(MIOPEN_TEST_FLOAT_ARG)
+
+namespace maskedfill {
+
+	std :: string GetFloatArg() {
+		auto const tmp = miopen :: env :: value(MIOPEN_TEST_FLOAT_ARG);
+		return tmp.empty()? "" : tmp;
+	}
+
 }
 
-extern "C" __global__ void MaskedFillBackward(
-	FLOAT const * const __restrict__ outputgradient,
-	FLOAT * const __restrict__ inputgradient,
-	__hip_internal :: int8_t const * const __restrict__ mask,
-	FLOAT const value,
-	unsigned long const numel
-) {
-	const uint64_t gid = blockIdx.x * blockDim.x + threadIdx.x;
-	if (gid >= numel) return;
-	inputgradient[gid] = mask[gid]? static_cast<FLOAT>(0) : outputgradient[gid];
+using namespace maskedfill;
+
+struct MaskedFillForwardTestFloat:	MaskedFillForwardTest<float>	{};
+struct MaskedFillBackwardTestFloat:	MaskedFillBackwardTest<float>	{};
+
+TEST_P(MaskedFillForwardTestFloat, Ok) {
+	if (miopen :: env :: enabled(MIOPEN_TEST_ALL) && GetFloatArg() == "--float") {
+		RunTest();
+		Verify();
+	} else {
+		GTEST_SKIP();
+	}
 }
+
+TEST_P(MaskedFillBackwardTestFloat, Ok) {
+	if (miopen :: env :: enabled(MIOPEN_TEST_ALL) && GetFloatArg() == "--float") {
+		RunTest();
+		Verify();
+	} else {
+		GTEST_SKIP();
+	}
+}
+
+INSTANTIATE_TEST_SUITE_P(, MaskedFillForwardTestFloat,	testing :: ValuesIn(MaskedFillTestConfigs(MIOPEN_MASKEDFILL_FORWARD)));
+INSTANTIATE_TEST_SUITE_P(, MaskedFillBackwardTestFloat,	testing :: ValuesIn(MaskedFillTestConfigs(MIOPEN_MASKEDFILL_BACKWARD)));

@@ -24,33 +24,21 @@
  *
  *******************************************************************************/
 
-# ifndef MIOPEN_DONT_USE_HIP_RUNTIME_HEADERS
-# include <hip/hipf16.h>
-# include <hip/hip_runtime.h>
+# ifndef GUARD_CPU_MASKEDFILL_HPP
+# define GUARD_CPU_MASKEDFILL_HPP
+
+# include "tensor_holder.hpp"
+
+template <class T> void cpu_maskedfill_forward(tensor<T> const & input, tensor<T> & output, tensor<int8_t> const & mask, T const value) {
+	par_ford(std :: accumulate(input.desc.GetLengths().begin(), input.desc.GetLengths().end(), 1, std :: multiplies<> {}))([&] (size_t const i) {
+		output[i] = mask[i]? value : input[i];
+	} );
+}
+
+template <class T> void cpu_maskedfill_backward(tensor<T> const & outputgradient, tensor<T> & inputgradient, tensor<int8_t> const & mask) {
+	par_ford(std :: accumulate(outputgradient.desc.GetLengths().begin(), outputgradient.desc.GetLengths().end(), 1, std :: multiplies<> {}))([&] (size_t const i) {
+		inputgradient[i] = mask[i]? 0 : outputgradient[i];
+	} );
+}
+
 # endif
-
-# include "float_types.h"
-
-extern "C" __global__ void MaskedFillForward(
-	FLOAT const * const __restrict__ input,
-	FLOAT * const __restrict__ output,
-	__hip_internal :: int8_t const * const __restrict__ mask,
-	FLOAT const value,
-	unsigned long const numel
-) {
-	uint64_t const gid = blockIdx.x * blockDim.x + threadIdx.x;
-	if (gid >= numel) return;
-	output[gid] = mask[gid]? value : input[gid];
-}
-
-extern "C" __global__ void MaskedFillBackward(
-	FLOAT const * const __restrict__ outputgradient,
-	FLOAT * const __restrict__ inputgradient,
-	__hip_internal :: int8_t const * const __restrict__ mask,
-	FLOAT const value,
-	unsigned long const numel
-) {
-	const uint64_t gid = blockIdx.x * blockDim.x + threadIdx.x;
-	if (gid >= numel) return;
-	inputgradient[gid] = mask[gid]? static_cast<FLOAT>(0) : outputgradient[gid];
-}
