@@ -98,89 +98,32 @@ extern "C" __global__ void RepeatForward(const FLOAT* __restrict__ x,
                                          FLOAT* __restrict__ y,
                                          uint64_t inout_size,
                                          uint64_t offset,
-                                         uint64_t input_dim0,
-                                         uint64_t input_dim1,
-                                         uint64_t input_dim2,
-                                         uint64_t input_dim3,
-                                         uint64_t input_dim4,
-                                         uint64_t output_dim0,
-                                         uint64_t output_dim1,
-                                         uint64_t output_dim2,
-                                         uint64_t output_dim3,
-                                         uint64_t output_dim4,
-                                         uint64_t input_stride0,
-                                         uint64_t input_stride1,
-                                         uint64_t input_stride2,
-                                         uint64_t input_stride3,
-                                         uint64_t input_stride4,
-                                         uint64_t output_stride0,
-                                         uint64_t output_stride1,
-                                         uint64_t output_stride2,
-                                         uint64_t output_stride3,
-                                         uint64_t output_stride4)
+                                         tensor_view input_tv,
+                                         tensor_view output_tv)
 {
-    uint64_t input_dimensions[5]  = {input_dim0, input_dim1, input_dim2, input_dim3, input_dim4};
-    uint64_t output_dimensions[5] = {
-        output_dim0, output_dim1, output_dim2, output_dim3, output_dim4};
-    uint64_t input_strides[5] = {
-        input_stride0, input_stride1, input_stride2, input_stride3, input_stride4};
-    uint64_t output_strides[5] = {
-        output_stride0, output_stride1, output_stride2, output_stride3, output_stride4};
     RepeatForwardImpl<FLOAT>(x,
                              y,
                              inout_size,
                              offset,
-                             input_dimensions,
-                             output_dimensions,
-                             input_strides,
-                             output_strides);
+                             input_tv.dimensions,
+                             output_tv.dimensions,
+                             input_tv.strides,
+                             output_tv.strides);
 }
 
 extern "C" __global__ void RepeatBackward(const FLOAT* __restrict__ dy,
                                           FLOAT* __restrict__ dx,
                                           uint64_t inout_size,
                                           uint64_t offset,
-                                          uint64_t output_grad_dim0,
-                                          uint64_t output_grad_dim1,
-                                          uint64_t output_grad_dim2,
-                                          uint64_t output_grad_dim3,
-                                          uint64_t output_grad_dim4,
-                                          uint64_t input_grad_dim0,
-                                          uint64_t input_grad_dim1,
-                                          uint64_t input_grad_dim2,
-                                          uint64_t input_grad_dim3,
-                                          uint64_t input_grad_dim4,
-                                          uint64_t output_grad_stride0,
-                                          uint64_t output_grad_stride1,
-                                          uint64_t output_grad_stride2,
-                                          uint64_t output_grad_stride3,
-                                          uint64_t output_grad_stride4,
-                                          uint64_t input_grad_stride0,
-                                          uint64_t input_grad_stride1,
-                                          uint64_t input_grad_stride2,
-                                          uint64_t input_grad_stride3,
-                                          uint64_t input_grad_stride4)
+                                          tensor_view output_grad_tv,
+                                          tensor_view input_grad_tv)
 {
-    uint64_t output_grad_dimensions[5] = {
-        output_grad_dim0, output_grad_dim1, output_grad_dim2, output_grad_dim3, output_grad_dim4};
-    uint64_t input_grad_dimensions[5] = {
-        input_grad_dim0, input_grad_dim1, input_grad_dim2, input_grad_dim3, input_grad_dim4};
-    uint64_t output_grad_strides[5] = {output_grad_stride0,
-                                       output_grad_stride1,
-                                       output_grad_stride2,
-                                       output_grad_stride3,
-                                       output_grad_stride4};
-    uint64_t input_grad_strides[5]  = {input_grad_stride0,
-                                      input_grad_stride1,
-                                      input_grad_stride2,
-                                      input_grad_stride3,
-                                      input_grad_stride4};
     RepeatBackwardImpl<FLOAT>(dy,
                               dx,
                               inout_size,
                               offset,
-                              output_grad_dimensions,
-                              input_grad_dimensions,
-                              output_grad_strides,
-                              input_grad_strides);
+                              output_grad_tv.dimensions,
+                              input_grad_tv.dimensions,
+                              output_grad_tv.strides,
+                              input_grad_tv.strides);
 }

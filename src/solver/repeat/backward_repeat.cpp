@@ -31,6 +31,7 @@
 #include <miopen/repeat.hpp>
 #include <miopen/target_properties.hpp>
 #include <hip/hip_runtime.h>
+#include "../../kernels/tensor_utils.hpp"
 
 #define LOCAL_SIZE 1024
 
@@ -112,49 +113,24 @@ ConvSolution RepeatBackward::GetSolution(const ExecutionContext& context,
             auto dx_size =
                 std::accumulate(dxdims.begin(), dxdims.end(), 1ULL, std::multiplies<size_t>{});
 
-            uint64_t output_grad_dimensions[5] = {1, 1, 1, 1, 1};
-            uint64_t input_grad_dimensions[5]  = {1, 1, 1, 1, 1};
-            uint64_t output_grad_strides[5]    = {1, 1, 1, 1, 1};
-            uint64_t input_grad_strides[5]     = {1, 1, 1, 1, 1};
+            tensor_view output_grad_tv;
+            tensor_view input_grad_tv;
 
             for(int i = 0; i < dydims.size(); ++i)
             {
-                output_grad_dimensions[i] = dydims[i];
-                output_grad_strides[i]    = dystrides[i];
+                output_grad_tv.dimensions[i] = dydims[i];
+                output_grad_tv.strides[i]    = dystrides[i];
             }
 
             for(int i = 0; i < dxdims.size(); ++i)
             {
-                input_grad_dimensions[i] = dxdims[i];
-                input_grad_strides[i]    = dxstrides[i];
+                input_grad_tv.dimensions[i] = dxdims[i];
+                input_grad_tv.strides[i]    = dxstrides[i];
             }
 
             hipMemset(params.yDx, 0, dx_size * GetTypeSize(params.yDxDesc->GetType()));
 
-            kernel(params.xDy,
-                   params.yDx,
-                   inout_size,
-                   offset,
-                   output_grad_dimensions[0],
-                   output_grad_dimensions[1],
-                   output_grad_dimensions[2],
-                   output_grad_dimensions[3],
-                   output_grad_dimensions[4],
-                   input_grad_dimensions[0],
-                   input_grad_dimensions[1],
-                   input_grad_dimensions[2],
-                   input_grad_dimensions[3],
-                   input_grad_dimensions[4],
-                   output_grad_strides[0],
-                   output_grad_strides[1],
-                   output_grad_strides[2],
-                   output_grad_strides[3],
-                   output_grad_strides[4],
-                   input_grad_strides[0],
-                   input_grad_strides[1],
-                   input_grad_strides[2],
-                   input_grad_strides[3],
-                   input_grad_strides[4]);
+            kernel(params.xDy, params.yDx, inout_size, offset, output_grad_tv, input_grad_tv);
         };
     };
 

@@ -24,6 +24,12 @@
  *
  *******************************************************************************/
 
+struct tensor_view
+{
+    uint64_t dimensions[5] = {1, 1, 1, 1, 1};
+    uint64_t strides[5]    = {1, 1, 1, 1, 1};
+};
+
 __device__ void GET_NCDHW(uint64_t ncdhw[5], uint64_t gid, const uint64_t output_dimensions[5])
 {
     uint64_t ncdh = (gid) / output_dimensions[4];
