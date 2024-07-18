@@ -31,7 +31,7 @@
 #include <miopen/repeat.hpp>
 #include <miopen/target_properties.hpp>
 
-#define LOCAL_SIZE 256
+#define LOCAL_SIZE 1024
 
 namespace miopen {
 

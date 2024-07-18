@@ -32,7 +32,7 @@
 #include <miopen/target_properties.hpp>
 #include <hip/hip_runtime.h>
 
-#define LOCAL_SIZE 256
+#define LOCAL_SIZE 1024
 
 namespace miopen {
 
