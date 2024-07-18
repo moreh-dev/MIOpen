@@ -167,12 +167,12 @@ set( MIOpen_Source
     reducetensor.cpp
     reducetensor_api.cpp
     reduce/problem_description.cpp
+    repeat_api.cpp
     repeat/problem_description.cpp
     rnn.cpp
     rnn_api.cpp
     rnn/rnn_util.cpp
     rnn/Solutions/rnn_transformer.cpp
-    repeat_api.cpp
     scalar.cpp
     softmax.cpp
     softmax_api.cpp
