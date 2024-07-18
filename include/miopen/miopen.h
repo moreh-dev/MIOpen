@@ -69,6 +69,7 @@
  * @defgroup groupnorm
  * @defgroup cat
  * @defgroup SGD
+ * @defgroup repeat
  *
  */
 
@@ -7227,21 +7228,6 @@ miopenFusedAdamWithOutput(miopenHandle_t handle,
  *
  *  @{
  */
-
-// /*! @brief Helper function to query the minimum workspace size required by the RepeatTensor call
-//  * @param handle                   MIOpen Handle (input)
-//  * @param xDesc                    Tensor descriptor for data input tensor x (input)
-//  * @param yDesc                    Tensor descriptor for output data tensor y (input)
-//  * @param offset                   Offset of start dimension (input)
-//  * @param sizeInBytes              Pointer to data to return the minimum workspace size
-//  * @return                         miopenStatus_t
-//  */
-// MIOPEN_EXPORT miopenStatus_t miopenGetRepeatWorkspaceSize(miopenHandle_t handle,
-//                                                           const miopenTensorDescriptor_t xDesc,
-//                                                           const miopenTensorDescriptor_t yDesc,
-//                                                           const int offset,
-//                                                           size_t* sizeInBytes);
-
 /*! @brief Execute a repeat forward layer
  *
  * @param handle                   MIOpen handle (input)
