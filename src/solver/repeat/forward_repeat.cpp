@@ -98,24 +98,30 @@ ConvSolution RepeatForward::GetSolution(const ExecutionContext& context,
             decltype(auto) kernel = handle_.Run(kernels.front());
             decltype(auto) params = raw_params.CastTo<miopen::repeat::InvokeParams>();
 
-            auto xdims  = params.xDyDesc->GetLengths();
-            auto ydims  = params.yDxDesc->GetLengths();
-            auto offset = params.offset;
+            auto xdims    = params.xDyDesc->GetLengths();
+            auto ydims    = params.yDxDesc->GetLengths();
+            auto xstrides = params.xDyDesc->GetStrides();
+            auto ystrides = params.yDxDesc->GetStrides();
+            auto offset   = params.offset;
 
             auto inout_size =
                 std::accumulate(ydims.begin(), ydims.end(), 1ULL, std::multiplies<size_t>{});
 
-            std::vector<uint64_t> input_dimensions(5, 1);
-            std::vector<uint64_t> output_dimensions(5, 1);
+            uint64_t input_dimensions[5]  = {1, 1, 1, 1, 1};
+            uint64_t output_dimensions[5] = {1, 1, 1, 1, 1};
+            uint64_t input_strides[5]     = {1, 1, 1, 1, 1};
+            uint64_t output_strides[5]    = {1, 1, 1, 1, 1};
 
             for(int i = 0; i < xdims.size(); ++i)
             {
                 input_dimensions[i] = xdims[i];
+                input_strides[i]    = xstrides[i];
             }
 
             for(int i = 0; i < ydims.size(); ++i)
             {
                 output_dimensions[i] = ydims[i];
+                output_strides[i]    = ystrides[i];
             }
 
             kernel(params.xDy,
@@ -131,7 +137,17 @@ ConvSolution RepeatForward::GetSolution(const ExecutionContext& context,
                    output_dimensions[1],
                    output_dimensions[2],
                    output_dimensions[3],
-                   output_dimensions[4]);
+                   output_dimensions[4],
+                   input_strides[0],
+                   input_strides[1],
+                   input_strides[2],
+                   input_strides[3],
+                   input_strides[4],
+                   output_strides[0],
+                   output_strides[1],
+                   output_strides[2],
+                   output_strides[3],
+                   output_strides[4]);
         };
     };
 

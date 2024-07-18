@@ -24,32 +24,21 @@
  *
  *******************************************************************************/
 
-__device__ void GET_NCDHW(uint64_t& n,
-                          uint64_t& c,
-                          uint64_t& d,
-                          uint64_t& h,
-                          uint64_t& w,
-                          uint64_t gid,
-                          uint64_t output_dim0,
-                          uint64_t output_dim1,
-                          uint64_t output_dim2,
-                          uint64_t output_dim3,
-                          uint64_t output_dim4)
+__device__ void GET_NCDHW(uint64_t ncdhw[5], uint64_t gid, const uint64_t output_dimensions[5])
 {
-    uint64_t ncdh = (gid) / output_dim4;
-    w             = (gid) % output_dim4;
-    uint64_t ncd  = (ncdh) / output_dim3;
-    h             = (ncdh) % output_dim3;
-    uint64_t nc   = (ncd) / output_dim2;
-    d             = (ncd) % output_dim2;
-    n             = (nc) / output_dim1;
-    c             = (nc) % output_dim1;
+    uint64_t ncdh = (gid) / output_dimensions[4];
+    ncdhw[4]      = (gid) % output_dimensions[4];
+    uint64_t ncd  = (ncdh) / output_dimensions[3];
+    ncdhw[3]      = (ncdh) % output_dimensions[3];
+    uint64_t nc   = (ncd) / output_dimensions[2];
+    ncdhw[2]      = (ncd) % output_dimensions[2];
+    uint64_t n    = (nc) / output_dimensions[1];
+    ncdhw[1]      = (nc) % output_dimensions[1];
+    ncdhw[0]      = n;
 }
 
-__device__ int GET_5D_INDEX(
-    const uint64_t input_dimensions[5], uint64_t n, uint64_t c, uint64_t d, uint64_t h, uint64_t w)
+__device__ uint64_t GET_STRIDED_INDEX(const uint64_t indices[5], const uint64_t strides[5])
 {
-    return (((n * input_dimensions[1] + c) * input_dimensions[2] + d) * input_dimensions[3] + h) *
-               input_dimensions[4] +
-           w;
+    return indices[0] * strides[0] + indices[1] * strides[1] + indices[2] * strides[2] +
+           indices[3] * strides[3] + indices[4] * strides[4];
 }

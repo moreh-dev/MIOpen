@@ -40,7 +40,9 @@ __device__ void RepeatForwardImpl(const T* __restrict__ x,
                                   uint64_t inout_size,
                                   uint64_t offset,
                                   const uint64_t input_dimensions[5],
-                                  const uint64_t output_dimensions[5])
+                                  const uint64_t output_dimensions[5],
+                                  const uint64_t input_strides[5],
+                                  const uint64_t output_strides[5])
 {
     const uint64_t gid = threadIdx.x + blockIdx.x * blockDim.x;
     if(gid >= inout_size)
@@ -48,17 +50,7 @@ __device__ void RepeatForwardImpl(const T* __restrict__ x,
 
     // get output index
     uint64_t o[5];
-    GET_NCDHW(o[0],
-              o[1],
-              o[2],
-              o[3],
-              o[4],
-              gid,
-              output_dimensions[0],
-              output_dimensions[1],
-              output_dimensions[2],
-              output_dimensions[3],
-              output_dimensions[4]);
+    GET_NCDHW(o, gid, output_dimensions);
 
     // get input index
     uint64_t n[5] = {0, 0, 0, 0, 0};
@@ -67,8 +59,9 @@ __device__ void RepeatForwardImpl(const T* __restrict__ x,
         n[i - offset] = o[i] % input_dimensions[i - offset];
     }
 
-    uint64_t input_index = GET_5D_INDEX(input_dimensions, n[0], n[1], n[2], n[3], n[4]);
-    y[gid]               = x[input_index];
+    uint64_t input_index  = GET_STRIDED_INDEX(n, input_strides);
+    uint64_t output_index = GET_STRIDED_INDEX(o, output_strides);
+    y[output_index]       = x[input_index];
 }
 
 template <typename T>
@@ -77,7 +70,9 @@ __device__ void RepeatBackwardImpl(const T* __restrict__ dy,
                                    uint64_t inout_size,
                                    uint64_t offset,
                                    const uint64_t output_grad_dimensions[5],
-                                   const uint64_t input_grad_dimensions[5])
+                                   const uint64_t input_grad_dimensions[5],
+                                   const uint64_t output_grad_strides[5],
+                                   const uint64_t input_grad_strides[5])
 {
     const uint64_t gid = threadIdx.x + blockIdx.x * blockDim.x;
     if(gid >= inout_size)
@@ -85,17 +80,7 @@ __device__ void RepeatBackwardImpl(const T* __restrict__ dy,
 
     // get output index
     uint64_t o[5];
-    GET_NCDHW(o[0],
-              o[1],
-              o[2],
-              o[3],
-              o[4],
-              gid,
-              output_grad_dimensions[0],
-              output_grad_dimensions[1],
-              output_grad_dimensions[2],
-              output_grad_dimensions[3],
-              output_grad_dimensions[4]);
+    GET_NCDHW(o, gid, output_grad_dimensions);
 
     // get input index
     uint64_t n[5] = {0, 0, 0, 0, 0};
@@ -104,8 +89,9 @@ __device__ void RepeatBackwardImpl(const T* __restrict__ dy,
         n[i - offset] = o[i] % input_grad_dimensions[i - offset];
     }
 
-    uint64_t input_grad_index = GET_5D_INDEX(input_grad_dimensions, n[0], n[1], n[2], n[3], n[4]);
-    atomic_add_g(&dx[input_grad_index], dy[gid]);
+    uint64_t input_grad_index  = GET_STRIDED_INDEX(n, input_grad_strides);
+    uint64_t output_grad_index = GET_STRIDED_INDEX(o, output_grad_strides);
+    atomic_add_g(&dx[input_grad_index], dy[output_grad_index]);
 }
 
 extern "C" __global__ void RepeatForward(const FLOAT* __restrict__ x,
@@ -121,12 +107,33 @@ extern "C" __global__ void RepeatForward(const FLOAT* __restrict__ x,
                                          uint64_t output_dim1,
                                          uint64_t output_dim2,
                                          uint64_t output_dim3,
-                                         uint64_t output_dim4)
+                                         uint64_t output_dim4,
+                                         uint64_t input_stride0,
+                                         uint64_t input_stride1,
+                                         uint64_t input_stride2,
+                                         uint64_t input_stride3,
+                                         uint64_t input_stride4,
+                                         uint64_t output_stride0,
+                                         uint64_t output_stride1,
+                                         uint64_t output_stride2,
+                                         uint64_t output_stride3,
+                                         uint64_t output_stride4)
 {
     uint64_t input_dimensions[5]  = {input_dim0, input_dim1, input_dim2, input_dim3, input_dim4};
     uint64_t output_dimensions[5] = {
         output_dim0, output_dim1, output_dim2, output_dim3, output_dim4};
-    RepeatForwardImpl<FLOAT>(x, y, inout_size, offset, input_dimensions, output_dimensions);
+    uint64_t input_strides[5] = {
+        input_stride0, input_stride1, input_stride2, input_stride3, input_stride4};
+    uint64_t output_strides[5] = {
+        output_stride0, output_stride1, output_stride2, output_stride3, output_stride4};
+    RepeatForwardImpl<FLOAT>(x,
+                             y,
+                             inout_size,
+                             offset,
+                             input_dimensions,
+                             output_dimensions,
+                             input_strides,
+                             output_strides);
 }
 
 extern "C" __global__ void RepeatBackward(const FLOAT* __restrict__ dy,
@@ -142,12 +149,38 @@ extern "C" __global__ void RepeatBackward(const FLOAT* __restrict__ dy,
                                           uint64_t input_grad_dim1,
                                           uint64_t input_grad_dim2,
                                           uint64_t input_grad_dim3,
-                                          uint64_t input_grad_dim4)
+                                          uint64_t input_grad_dim4,
+                                          uint64_t output_grad_stride0,
+                                          uint64_t output_grad_stride1,
+                                          uint64_t output_grad_stride2,
+                                          uint64_t output_grad_stride3,
+                                          uint64_t output_grad_stride4,
+                                          uint64_t input_grad_stride0,
+                                          uint64_t input_grad_stride1,
+                                          uint64_t input_grad_stride2,
+                                          uint64_t input_grad_stride3,
+                                          uint64_t input_grad_stride4)
 {
     uint64_t output_grad_dimensions[5] = {
         output_grad_dim0, output_grad_dim1, output_grad_dim2, output_grad_dim3, output_grad_dim4};
     uint64_t input_grad_dimensions[5] = {
         input_grad_dim0, input_grad_dim1, input_grad_dim2, input_grad_dim3, input_grad_dim4};
-    RepeatBackwardImpl<FLOAT>(
-        dy, dx, inout_size, offset, output_grad_dimensions, input_grad_dimensions);
+    uint64_t output_grad_strides[5] = {output_grad_stride0,
+                                       output_grad_stride1,
+                                       output_grad_stride2,
+                                       output_grad_stride3,
+                                       output_grad_stride4};
+    uint64_t input_grad_strides[5]  = {input_grad_stride0,
+                                      input_grad_stride1,
+                                      input_grad_stride2,
+                                      input_grad_stride3,
+                                      input_grad_stride4};
+    RepeatBackwardImpl<FLOAT>(dy,
+                              dx,
+                              inout_size,
+                              offset,
+                              output_grad_dimensions,
+                              input_grad_dimensions,
+                              output_grad_strides,
+                              input_grad_strides);
 }

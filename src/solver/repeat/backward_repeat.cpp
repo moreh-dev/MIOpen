@@ -100,9 +100,11 @@ ConvSolution RepeatBackward::GetSolution(const ExecutionContext& context,
             decltype(auto) kernel = handle_.Run(kernels.front());
             decltype(auto) params = raw_params.CastTo<miopen::repeat::InvokeParams>();
 
-            auto dydims = params.xDyDesc->GetLengths();
-            auto dxdims = params.yDxDesc->GetLengths();
-            auto offset = params.offset;
+            auto dydims    = params.xDyDesc->GetLengths();
+            auto dxdims    = params.yDxDesc->GetLengths();
+            auto dystrides = params.xDyDesc->GetStrides();
+            auto dxstrides = params.yDxDesc->GetStrides();
+            auto offset    = params.offset;
 
             auto inout_size =
                 std::accumulate(dydims.begin(), dydims.end(), 1ULL, std::multiplies<size_t>{});
@@ -110,17 +112,21 @@ ConvSolution RepeatBackward::GetSolution(const ExecutionContext& context,
             auto dx_size =
                 std::accumulate(dxdims.begin(), dxdims.end(), 1ULL, std::multiplies<size_t>{});
 
-            std::vector<uint64_t> output_grad_dimensions(5, 1);
-            std::vector<uint64_t> input_grad_dimensions(5, 1);
+            uint64_t output_grad_dimensions[5] = {1, 1, 1, 1, 1};
+            uint64_t input_grad_dimensions[5]  = {1, 1, 1, 1, 1};
+            uint64_t output_grad_strides[5]    = {1, 1, 1, 1, 1};
+            uint64_t input_grad_strides[5]     = {1, 1, 1, 1, 1};
 
             for(int i = 0; i < dydims.size(); ++i)
             {
                 output_grad_dimensions[i] = dydims[i];
+                output_grad_strides[i]    = dystrides[i];
             }
 
             for(int i = 0; i < dxdims.size(); ++i)
             {
                 input_grad_dimensions[i] = dxdims[i];
+                input_grad_strides[i]    = dxstrides[i];
             }
 
             hipMemset(params.yDx, 0, dx_size * GetTypeSize(params.yDxDesc->GetType()));
@@ -138,7 +144,17 @@ ConvSolution RepeatBackward::GetSolution(const ExecutionContext& context,
                    input_grad_dimensions[1],
                    input_grad_dimensions[2],
                    input_grad_dimensions[3],
-                   input_grad_dimensions[4]);
+                   input_grad_dimensions[4],
+                   output_grad_strides[0],
+                   output_grad_strides[1],
+                   output_grad_strides[2],
+                   output_grad_strides[3],
+                   output_grad_strides[4],
+                   input_grad_strides[0],
+                   input_grad_strides[1],
+                   input_grad_strides[2],
+                   input_grad_strides[3],
+                   input_grad_strides[4]);
         };
     };
 
