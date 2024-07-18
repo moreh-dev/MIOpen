@@ -43,55 +43,104 @@ struct ProblemDescription : ProblemDescriptionBase
                        const TensorDescriptor& ydxDesc_,
                        int32_t offset_,
                        const std::vector<int>& sizes_vector_,
-                       bool isForward_)
-        : xdyDesc(xdyDesc_),
-          ydxDesc(ydxDesc_),
-          offset(offset_),
-          sizes_vector(sizes_vector_),
-          isForward(isForward_)
+                       bool isForward_,
+                       ConstData_t xdy_,
+                       Data_t ydx_)
+        : offset(offset_), sizes_vector(sizes_vector_), isForward(isForward_)
     {
         if(offset < 0)
         {
             MIOPEN_THROW(miopenStatusBadParm, "repeat::ProblemDescription: offset is negative");
         }
 
-        if(xdyDesc.GetType() != ydxDesc.GetType())
+        if(isForward)
         {
-            MIOPEN_THROW(miopenStatusBadParm,
-                         "repeat::ProblemDescription: Tensor types do not match.");
+            xDesc = xdyDesc_;
+            yDesc = ydxDesc_;
+            x     = xdy_;
+            y     = ydx_;
+
+            if(xDesc.GetType() != yDesc.GetType())
+            {
+                MIOPEN_THROW(miopenStatusBadParm,
+                             "repeat::ProblemDescription: Tensor types do not match.");
+            }
+
+            if(x == nullptr || y == nullptr)
+            {
+                MIOPEN_THROW(miopenStatusBadParm,
+                             "repeat::ProblemDescription: data pointer is null pointer.");
+            }
+        }
+        else
+        {
+            dyDesc = xdyDesc_;
+            dxDesc = ydxDesc_;
+            dy     = xdy_;
+            dx     = ydx_;
+
+            if(dyDesc.GetType() != dxDesc.GetType())
+            {
+                MIOPEN_THROW(miopenStatusBadParm,
+                             "repeat::ProblemDescription: Tensor types do not match.");
+            }
+
+            if(dy == nullptr || dx == nullptr)
+            {
+                MIOPEN_THROW(miopenStatusBadParm,
+                             "repeat::ProblemDescription: data pointer is null pointer.");
+            }
         }
     }
 
     // For forward pass
-    const TensorDescriptor& GetXDesc() const { return xdyDesc; }
-    const TensorDescriptor& GetYDesc() const { return ydxDesc; }
+    const TensorDescriptor& GetXDesc() const { return xDesc; }
+    const TensorDescriptor& GetYDesc() const { return yDesc; }
 
     // For backward pass
-    const TensorDescriptor& GetDyDesc() const { return xdyDesc; }
-    const TensorDescriptor& GetDxDesc() const { return ydxDesc; }
+    const TensorDescriptor& GetDyDesc() const { return dyDesc; }
+    const TensorDescriptor& GetDxDesc() const { return dxDesc; }
 
     int32_t GetOffset() const { return offset; }
     const std::vector<int>& GetSizesVector() const { return sizes_vector; }
 
     bool IsSameType() const
     {
-        if(xdyDesc.GetType() != ydxDesc.GetType())
+        if(isForward)
         {
-            return false;
+            if(xDesc.GetType() != yDesc.GetType())
+            {
+                return false;
+            }
+            return true;
         }
-        return true;
+        else
+        {
+            if(yDesc.GetType() != xDesc.GetType())
+            {
+                return false;
+            }
+            return true;
+        }
     }
 
     NetworkConfig MakeNetworkConfig() const override;
 
 private:
-    TensorDescriptor xdyDesc;
-    TensorDescriptor ydxDesc;
+    TensorDescriptor xDesc;
+    TensorDescriptor yDesc;
+    TensorDescriptor dyDesc;
+    TensorDescriptor dxDesc;
 
     int32_t offset;
     std::vector<int> sizes_vector;
 
     const bool isForward;
+
+    ConstData_t x;
+    Data_t y;
+    ConstData_t dy;
+    Data_t dx;
 };
 
 } // namespace repeat

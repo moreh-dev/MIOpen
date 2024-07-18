@@ -38,27 +38,55 @@ NetworkConfig ProblemDescription::MakeNetworkConfig() const
     std::ostringstream ss;
     ss << (isForward ? "rptfwd-" : "rptbwd-");
 
-    const auto& x_lengths = xdyDesc.GetLengths();
-    const auto& y_lengths = ydxDesc.GetLengths();
-
-    for(auto len : x_lengths)
+    if(isForward)
     {
-        ss << "x" << len << "-";
+        const auto& x_lengths = xDesc.GetLengths();
+        const auto& y_lengths = yDesc.GetLengths();
+
+        for(auto len : x_lengths)
+        {
+            ss << "x" << len << "-";
+        }
+
+        for(auto len : y_lengths)
+        {
+            ss << "y" << len << "-";
+        }
+
+        ss << "dtype" << xDesc.GetType() << "-";
+
+        ss << "offset" << offset << "-";
+
+        ss << "sizes";
+        for(auto size : sizes_vector)
+        {
+            ss << size << "-";
+        }
     }
-
-    for(auto len : y_lengths)
+    else
     {
-        ss << "y" << len << "-";
-    }
+        const auto& dy_lengths = dyDesc.GetLengths();
+        const auto& dx_lengths = dxDesc.GetLengths();
 
-    ss << "dtype" << xdyDesc.GetType() << "-";
+        for(auto len : dy_lengths)
+        {
+            ss << "dy" << len << "-";
+        }
 
-    ss << "offset" << offset << "-";
+        for(auto len : dx_lengths)
+        {
+            ss << "dx" << len << "-";
+        }
 
-    ss << "sizes";
-    for(auto size : sizes_vector)
-    {
-        ss << size << "-";
+        ss << "dtype" << dyDesc.GetType() << "-";
+
+        ss << "offset" << offset << "-";
+
+        ss << "sizes";
+        for(auto size : sizes_vector)
+        {
+            ss << size << "-";
+        }
     }
 
     return NetworkConfig{ss.str()};

@@ -43,24 +43,12 @@ miopenStatus_t RepeatForward(Handle& handle,
                              const TensorDescriptor& yDesc,
                              Data_t y)
 {
-    if(x == nullptr || y == nullptr)
-    {
-        MIOPEN_THROW(miopenStatusBadParm, "Null pointer for tensor.");
-    }
-
     const auto x_dims_size = xDesc.GetLengths().size();
     int32_t offset         = static_cast<int32_t>(num_sizes) - static_cast<int32_t>(x_dims_size);
 
-    if(offset < 0)
-    {
-        MIOPEN_THROW(miopenStatusBadParm,
-                     "Number of dimensions of sizes can not be smaller than number of dimensions "
-                     "of tensor.");
-    }
-
     std::vector<int> sizes_vector(sizes, sizes + num_sizes);
 
-    const auto problem       = repeat::ProblemDescription{xDesc, yDesc, offset, sizes_vector, true};
+    const auto problem = repeat::ProblemDescription{xDesc, yDesc, offset, sizes_vector, true, x, y};
     const auto invoke_params = repeat::InvokeParams{xDesc, x, yDesc, y, offset};
     const auto algo          = AlgorithmName{"RepeatForward"};
     const auto solvers       = solver::SolverContainer<solver::repeat::RepeatForward>{};
@@ -78,24 +66,13 @@ miopenStatus_t RepeatBackward(Handle& handle,
                               const TensorDescriptor& dxDesc,
                               Data_t dx)
 {
-    if(dx == nullptr || dy == nullptr)
-    {
-        MIOPEN_THROW(miopenStatusBadParm, "Null pointer for tensor.");
-    }
-
     const auto dx_dims_size = dxDesc.GetLengths().size();
     int32_t offset          = static_cast<int32_t>(num_sizes) - static_cast<int32_t>(dx_dims_size);
 
-    if(offset < 0)
-    {
-        MIOPEN_THROW(miopenStatusBadParm,
-                     "Number of dimensions of sizes can not be smaller than number of dimensions "
-                     "of tensor.");
-    }
-
     std::vector<int> sizes_vector(sizes, sizes + num_sizes);
 
-    const auto problem = repeat::ProblemDescription{dyDesc, dxDesc, offset, sizes_vector, false};
+    const auto problem =
+        repeat::ProblemDescription{dyDesc, dxDesc, offset, sizes_vector, false, dy, dx};
     const auto invoke_params = repeat::InvokeParams{dyDesc, dy, dxDesc, dx, offset};
     const auto algo          = AlgorithmName{"RepeatBackward"};
     const auto solvers       = solver::SolverContainer<solver::repeat::RepeatBackward>{};
