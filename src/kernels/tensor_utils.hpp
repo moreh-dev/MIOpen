@@ -46,13 +46,10 @@ __device__ void GET_NCDHW(uint64_t& n,
     c             = (nc) % output_dim1;
 }
 
-__device__ int GET_5D_INDEX(const uint64_t input_dimensions[5],
-                             uint64_t n,
-                             uint64_t c,
-                             uint64_t d,
-                             uint64_t h,
-                             uint64_t w)
+__device__ int GET_5D_INDEX(
+    const uint64_t input_dimensions[5], uint64_t n, uint64_t c, uint64_t d, uint64_t h, uint64_t w)
 {
     return (((n * input_dimensions[1] + c) * input_dimensions[2] + d) * input_dimensions[3] + h) *
-                 input_dimensions[4] + w;
+               input_dimensions[4] +
+           w;
 }
