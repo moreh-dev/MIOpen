@@ -69,9 +69,9 @@ struct InvokeParamsBackward : public miopen::InvokeParams
     InvokeParamsBackward(const TensorDescriptor& xGradDesc_,
                          Data_t xGrad_,
                          const TensorDescriptor& indicesDesc_,
-                         Data_t indices_,
+                         ConstData_t indices_,
                          const TensorDescriptor& yGradDesc_,
-                         Data_t yGrad_,
+                         ConstData_t yGrad_,
                          size_t dim_)
         : xGradDesc(xGradDesc_),
           xGrad(xGrad_),
@@ -86,10 +86,10 @@ struct InvokeParamsBackward : public miopen::InvokeParams
     TensorDescriptor xGradDesc{};
     Data_t xGrad = nullptr;
     TensorDescriptor indicesDesc{};
-    Data_t indices = nullptr;
+    ConstData_t indices = nullptr;
     TensorDescriptor yGradDesc{};
-    Data_t yGrad = nullptr;
-    size_t dim   = 0;
+    ConstData_t yGrad = nullptr;
+    size_t dim        = 0;
 
     std::size_t GetWorkspaceSize() const { return 0; }
     Data_t GetWorkspace() const { return nullptr; }

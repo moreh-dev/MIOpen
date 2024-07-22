@@ -383,8 +383,15 @@ int IndexSelectDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     if(input_dev->ToGPU(GetStream(), input.data()) != 0)
         std::cerr << "Error copying (input) to GPU, size: " << input_dev->GetSize() << std::endl;
 
+    if(output_dev->ToGPU(GetStream(), output.data()) != 0)
+        std::cerr << "Error copying (output) to GPU, size: " << output_dev->GetSize() << std::endl;
+
     if(indices_dev->ToGPU(GetStream(), indices.data()) != 0)
         std::cerr << "Error copying (indices) to GPU, size: " << indices_dev->GetSize()
+                  << std::endl;
+
+    if(inputGrad_dev->ToGPU(GetStream(), inputGrad.data()) != 0)
+        std::cerr << "Error copying (inputGrad) to GPU, size: " << inputGrad_dev->GetSize()
                   << std::endl;
 
     if(outputGrad_dev->ToGPU(GetStream(), outputGrad.data()) != 0)

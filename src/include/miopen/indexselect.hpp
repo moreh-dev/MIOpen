@@ -46,9 +46,9 @@ MIOPEN_INTERNALS_EXPORT miopenStatus_t IndexSelectBackward(Handle& handle,
                                                            const TensorDescriptor& xGradDesc,
                                                            Data_t xGrad,
                                                            const TensorDescriptor& indicesDesc,
-                                                           Data_t indices,
+                                                           ConstData_t indices,
                                                            const TensorDescriptor& yGradDesc,
-                                                           Data_t yGrad,
+                                                           ConstData_t yGrad,
                                                            size_t dim);
 
 } // namespace miopen

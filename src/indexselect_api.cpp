@@ -81,9 +81,9 @@ extern "C" miopenStatus_t miopenIndexSelectBackward(miopenHandle_t handle,
                                                     const miopenTensorDescriptor_t xGradDesc,
                                                     void* xGrad,
                                                     const miopenTensorDescriptor_t indicesDesc,
-                                                    void* indices,
+                                                    const void* indices,
                                                     const miopenTensorDescriptor_t yGradDesc,
-                                                    void* yGrad,
+                                                    const void* yGrad,
                                                     size_t dim)
 {
     MIOPEN_LOG_FUNCTION(handle, xGradDesc, xGrad, indicesDesc, indices, yGradDesc, yGrad);

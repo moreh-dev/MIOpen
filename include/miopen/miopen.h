@@ -6195,9 +6195,9 @@ MIOPEN_EXPORT miopenStatus_t miopenIndexSelectBackward(miopenHandle_t handle,
                                                        const miopenTensorDescriptor_t xGradDesc,
                                                        void* xGrad,
                                                        const miopenTensorDescriptor_t indicesDesc,
-                                                       void* indices,
+                                                       const void* indices,
                                                        const miopenTensorDescriptor_t yDesc,
-                                                       void* yGrad,
+                                                       const void* yGrad,
                                                        size_t dim);
 /** @} */
 // CLOSEOUT INDEXSELECT DOXYGEN GROUP
