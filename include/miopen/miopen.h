@@ -6156,6 +6156,54 @@ MIOPEN_EXPORT miopenStatus_t miopenT5LayerNormBackward(miopenHandle_t handle,
 #endif
 
 #ifdef MIOPEN_BETA_API
+// IndexSelect APIs
+/** @addtogroup indexselect
+ *
+ *  @{
+ */
+/*! @brief Execute a indexselect forward layer
+ *
+ * @param handle         MIOpen handle (input)
+ * @param xDesc          Tensor descriptor of input tensor x (input)
+ * @param x              Source data tensor x (input)
+ * @param indicesDesc    Tensor descriptor of input tensor indices (input)
+ * @param indices        Source data tensor indices (input)
+ * @param yDesc          Tensor descriptor of output tensor y (output)
+ * @param y              Data tensor y (output)
+ * @return               miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t miopenIndexSelectForward(miopenHandle_t handle,
+                                                      const miopenTensorDescriptor_t xDesc,
+                                                      const void* x,
+                                                      const miopenTensorDescriptor_t indices2Desc,
+                                                      const void* indices,
+                                                      const miopenTensorDescriptor_t yDesc,
+                                                      void* y,
+                                                      size_t dim);
+/*! @brief Execute a indexselect forward layer
+ *
+ * @param handle         MIOpen handle (input)
+ * @param xDesc          Tensor descriptor of input tensor x (output)
+ * @param x              Source data tensor x (output)
+ * @param indicesDesc    Tensor descriptor of input tensor indices (input)
+ * @param indices        Source data tensor indices (input)
+ * @param yDesc          Tensor descriptor of output tensor y (input)
+ * @param y              Data tensor y (input)
+ * @return               miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t miopenIndexSelectBackward(miopenHandle_t handle,
+                                                       const miopenTensorDescriptor_t xGradDesc,
+                                                       void* xGrad,
+                                                       const miopenTensorDescriptor_t indicesDesc,
+                                                       void* indices,
+                                                       const miopenTensorDescriptor_t yDesc,
+                                                       void* yGrad,
+                                                       size_t dim);
+/** @} */
+// CLOSEOUT INDEXSELECT DOXYGEN GROUP
+#endif
+
+#ifdef MIOPEN_BETA_API
 // Graph API
 /** @addtogroup GraphAPI
  *

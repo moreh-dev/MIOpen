@@ -142,7 +142,9 @@ set( MIOpen_Source
     graphapi/variant_pack.cpp
     groupnorm_api.cpp
     groupnorm/problem_description.cpp
+    indexselect/problem_description.cpp
     handle_api.cpp
+    indexselect_api.cpp
     invoker_cache.cpp
     kernel_build_params.cpp
     kernel_warnings.cpp
@@ -276,6 +278,8 @@ set( MIOpen_Source
     solver/gemm_common.cpp
     solver/gemm_wrw.cpp
     solver/groupnorm/forward_groupnorm.cpp
+    solver/indexselect/forward_indexselect.cpp
+    solver/indexselect/backward_indexselect.cpp
     solver/layernorm/backward_t5layernorm.cpp
     solver/layernorm/forward_addlayernorm.cpp
     solver/layernorm/forward_layernorm.cpp
@@ -484,6 +488,7 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         kernels/MIOpenConvDirBatchNormActiv.cl
         kernels/MIOpenConvDirGenFwd.cl
         kernels/MIOpenGroupNorm.cpp
+        kernels/MIOpenIndexSelect.cl
         kernels/MIOpenLayerNorm.cpp
         kernels/MIOpenLRNBwd.cl
         kernels/MIOpenLRNFwd.cl
@@ -611,6 +616,7 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         addlayernorm.cpp
         cat.cpp
         groupnorm.cpp
+        indexselect.cpp
         kernel_cache.cpp
         layernorm.cpp
         lrn.cpp
