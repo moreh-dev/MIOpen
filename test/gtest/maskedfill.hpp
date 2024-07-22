@@ -152,7 +152,7 @@ template <typename T = float> class MaskedFillTest: public testing :: TestWithPa
 		}
 	}
 	void Verify() const {
-		auto error = miopen :: rms_range(output, ref_output);
+		auto const error = miopen :: rms_range(output, ref_output);
 		EXPECT_TRUE(miopen :: range_distance(output) == miopen :: range_distance(ref_output));
 		EXPECT_TRUE(error == 0) << "Outputs do not match each other: `error` = " << error;
 	}
