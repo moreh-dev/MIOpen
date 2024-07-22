@@ -27,13 +27,14 @@
 # include <miopen/miopen.h>
 # include <gtest/gtest.h>
 # include <miopen/maskedfill.hpp>
-# include "cpu_maskedfill.hpp"
 
 # include "get_handle.hpp"
 # include "tensor_holder.hpp"
 # include "random.hpp"
 # include "verify.hpp"
 # include "../driver/tensor_driver.hpp"
+
+# include "cpu_maskedfill.hpp"
 
 struct MaskedFillTestCase /* MaskedFillTestParameters */ {
 	std :: vector<size_t> const size; // or "dims"
