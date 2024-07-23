@@ -94,16 +94,17 @@ IndexSelectForward::GetSolution([[maybe_unused]] const ExecutionContext& context
     size_t zgridsize = 1;
 
     auto kernel        = KernelInfo();
-    kernel.kernel_file = "MIOpenIndexSelect.cl";
+    kernel.kernel_file = "MIOpenIndexSelect.cpp";
     kernel.kernel_name = "IndexSelectForward";
 
-    const auto build_params =
-        KernelBuildParameters{{"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
-                              {"MIOPEN_USE_FP32", static_cast<int>(dtype == miopenFloat)},
-                              {"MIOPEN_USE_FP64", static_cast<int>(dtype == miopenDouble)},
-                              {"MIOPEN_USE_BFP16", static_cast<int>(dtype == miopenBFloat16)}};
+    const auto build_params = KernelBuildParameters{
+        {"MIOPEN_USE_FP16", static_cast<int32_t>(dtype == miopenHalf)},
+        {"MIOPEN_USE_FP32", static_cast<int32_t>(dtype == miopenFloat)},
+        {"MIOPEN_USE_FP64", static_cast<int32_t>(dtype == miopenDouble)},
+        {"MIOPEN_USE_BFP16", static_cast<int32_t>(dtype == miopenBFloat16)},
+    };
 
-    kernel.comp_options = build_params.GenerateFor(kbp::OpenCL{});
+    kernel.comp_options = build_params.GenerateFor(kbp::HIP{});
 
     kernel.l_wk.push_back(xlocalsize);
     kernel.l_wk.push_back(ylocalsize);
