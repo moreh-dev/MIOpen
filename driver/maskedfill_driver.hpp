@@ -96,7 +96,7 @@ template <typename Tgpu, typename Tref> int MaskedFillDriver<Tgpu, Tref> :: Geta
 	SetTensorNd(inputDesc,	inputsize, data_type);
 	SetTensorNd(outputDesc,	inputsize, data_type);
 	SetTensorNd(maskDesc,	inputsize, miopenInt8);
-	value = prng :: gen_0_to_B<Tgpu>(1);
+	value = prng :: gen_0_to_B<Tgpu>(static_cast<Tgpu>(1));
 	return 0;
 }
 template <typename Tgpu, typename Tref> int MaskedFillDriver<Tgpu, Tref> :: AllocateBuffersAndCopy() {
@@ -108,12 +108,12 @@ template <typename Tgpu, typename Tref> int MaskedFillDriver<Tgpu, Tref> :: Allo
 	input_dev	= std :: unique_ptr<GPUMem> {new GPUMem {ctx, inputsize,	sizeof(Tgpu)}};
 	output_dev	= std :: unique_ptr<GPUMem> {new GPUMem {ctx, outputsize,	sizeof(Tgpu)}};
 	mask_dev	= std :: unique_ptr<GPUMem> {new GPUMem {ctx, masksize,		sizeof(int8_t)}};
-	input		= std :: vector<Tgpu>(inputsize,	0); // "Note that the presence of list-initializing constructor (10) means list initialization and direct initialization do different things[.]" (https://en.cppreference.com/w/cpp/container/vector/vector)
-	output		= std :: vector<Tgpu>(outputsize,	0); // "If a class has an initializer list constructor (TypeName(initializer_list<SomeType>);), then it takes priority over other forms of construction, provided that the initializer list conforms to the sequence constructor's type. The C++11 version of std::vector has an initializer list constructor for its template type. Thus this code: `std::vector<int> the_vec{4};` will call the initializer list constructor, not the constructor of std::vector that takes a single size parameter and creates the vector with that size. To access the latter constructor, the user will need to use the standard constructor syntax directly." (https://en.wikipedia.org/wiki/C%2B%2B11#Uniform_initialization)
+	input		= std :: vector<Tgpu>(inputsize,	static_cast<Tgpu>(0)); // "Note that the presence of list-initializing constructor (10) means list initialization and direct initialization do different things[.]" (https://en.cppreference.com/w/cpp/container/vector/vector)
+	output		= std :: vector<Tgpu>(outputsize,	static_cast<Tgpu>(0)); // "If a class has an initializer list constructor (TypeName(initializer_list<SomeType>);), then it takes priority over other forms of construction, provided that the initializer list conforms to the sequence constructor's type. The C++11 version of std::vector has an initializer list constructor for its template type. Thus this code: `std::vector<int> the_vec{4};` will call the initializer list constructor, not the constructor of std::vector that takes a single size parameter and creates the vector with that size. To access the latter constructor, the user will need to use the standard constructor syntax directly." (https://en.wikipedia.org/wiki/C%2B%2B11#Uniform_initialization)
 	mask		= std :: vector<int8_t>(masksize,	0);
-	hostoutput	= std :: vector<Tref>(outputsize,	0);
+	hostoutput	= std :: vector<Tref>(outputsize,	static_cast<Tref>(0));
 
-	for (auto i = 0; i < inputsize;	++i) input[i]	= prng :: gen_0_to_B<Tgpu>(1);
+	for (auto i = 0; i < inputsize;	++i) input[i]	= prng :: gen_0_to_B<Tgpu>(static_cast<Tgpu>(1));
 	for (auto i = 0; i < masksize;	++i) mask[i]	= prng :: gen_0_to_B<int8_t>(1);
 
 	if (input_dev -> ToGPU(GetStream(), input.data())	!= 0) std :: cerr << "Error copying (input) to GPU, size: "		<< input_dev -> GetSize()	<< std :: endl;
