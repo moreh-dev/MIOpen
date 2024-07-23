@@ -76,10 +76,7 @@ struct IndexSelectTestCase
     }
 };
 
-std::vector<IndexSelectTestCase> IndexSelectFwdTestConfigs() 
-{ 
-    return {{{2, 2, 2, 2}, 1, {1}}}; 
-}
+std::vector<IndexSelectTestCase> IndexSelectFwdTestConfigs() { return {{{2, 2, 2, 2}, 1, {1}}}; }
 
 template <typename T = float>
 struct IndexSelectFwdTest : public ::testing::TestWithParam<IndexSelectTestCase>
@@ -87,15 +84,15 @@ struct IndexSelectFwdTest : public ::testing::TestWithParam<IndexSelectTestCase>
 protected:
     void SetUp() override
     {
-        auto&& handle     = get_handle();
+        auto&& handle      = get_handle();
         indexselect_config = GetParam();
-        auto gen_value    = [](auto...) { return prng::gen_descreet_uniform_sign<T>(0, 1); };
-        
-        auto in_dims  = indexselect_config.GetInput();
-        dim      = indexselect_config.GetDim();
-        auto indices_para  = indexselect_config.GetIndices();
-        auto out_dims = indexselect_config.GetOutput();
-        
+        auto gen_value     = [](auto...) { return prng::gen_descreet_uniform_sign<T>(0, 1); };
+
+        auto in_dims      = indexselect_config.GetInput();
+        dim               = indexselect_config.GetDim();
+        auto indices_para = indexselect_config.GetIndices();
+        auto out_dims     = indexselect_config.GetOutput();
+
         input      = tensor<T>{in_dims}.generate(gen_value);
         output     = tensor<T>{out_dims};
         indices    = tensor<int>{std::vector<size_t>({indices_para.size()})};
@@ -104,31 +101,31 @@ protected:
         std::fill(output.begin(), output.end(), 0);
         std::fill(outputhost.begin(), outputhost.end(), 0);
 
-        input_dev  = handle.Write(input.data);
-        output_dev = handle.Write(output.data);
+        input_dev   = handle.Write(input.data);
+        output_dev  = handle.Write(output.data);
         indices_dev = handle.Write(indices.data);
     }
     void RunTest()
     {
         auto&& handle = get_handle();
-        
+
         cpu_indexselect_forward<T>(input, indices, output, dim, outputhost);
 
         miopenStatus_t status;
 
         status = miopen::IndexSelectForward(handle,
-                                      input.desc,
-                                      input_dev.get(),
-                                      indices.desc,
-                                      indices_dev.get(),
-                                      output.desc,
-                                      output_dev.get(),
-                                      dim);
+                                            input.desc,
+                                            input_dev.get(),
+                                            indices.desc,
+                                            indices_dev.get(),
+                                            output.desc,
+                                            output_dev.get(),
+                                            dim);
 
         EXPECT_EQ(status, miopenStatusSuccess);
 
-        input.data = handle.Read<T>(input_dev, input.data.size());
-        output.data = handle.Read<T>(output_dev, output.data.size());
+        input.data   = handle.Read<T>(input_dev, input.data.size());
+        output.data  = handle.Read<T>(output_dev, output.data.size());
         indices.data = handle.Read<int>(indices_dev, indices.data.size());
     }
 

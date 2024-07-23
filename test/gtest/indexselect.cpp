@@ -70,7 +70,7 @@ struct IndexSelectBwdTestBFloat16 : OuterBwdTest<bfloat16>
 };
 */
 
-} // namespace outer
+} // namespace indexselect
 using namespace indexselect;
 
 TEST_P(IndexSelectFwdTestFloat, IndexSelectFwdTest)
@@ -153,7 +153,9 @@ TEST_P(OuterBwdTestBFloat16, OuterBwdTest)
 };
 */
 
-INSTANTIATE_TEST_SUITE_P(IndexSelectTestSet, IndexSelectFwdTestFloat, testing::ValuesIn(IndexSelectFwdTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(IndexSelectTestSet,
+                         IndexSelectFwdTestFloat,
+                         testing::ValuesIn(IndexSelectFwdTestConfigs()));
 
 /*
 INSTANTIATE_TEST_SUITE_P(OuterTestSet, OuterBwdTestFloat, testing::ValuesIn(OuterBwdTestConfigs()));

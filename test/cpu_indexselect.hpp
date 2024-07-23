@@ -29,16 +29,13 @@
 #include "tensor_holder.hpp"
 
 template <class T>
-void cpu_indexselect_forward(tensor<T> input, 
-    tensor<int> indices,
-    tensor<T> output, 
-    int dim,
-    tensor<T>& outputhost)
+void cpu_indexselect_forward(
+    tensor<T> input, tensor<int> indices, tensor<T> output, int dim, tensor<T>& outputhost)
 {
-    auto input_dims = input.desc.GetLengths();
+    auto input_dims  = input.desc.GetLengths();
     auto output_dims = output.desc.GetLengths();
 
-    auto input_strides = input.desc.GetStrides();
+    auto input_strides  = input.desc.GetStrides();
     auto output_strides = output.desc.GetStrides();
 
     auto output_numel =
