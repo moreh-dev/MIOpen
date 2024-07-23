@@ -123,7 +123,7 @@ template <typename Tgpu, typename Tref> int MaskedFillDriver<Tgpu, Tref> :: Allo
 	return miopenStatusSuccess;
 }
 template <typename Tgpu, typename Tref> int MaskedFillDriver<Tgpu, Tref> :: RunForwardGPU() {
-	auto kernel_first_time = 0, kernel_total_time = 0;
+	float kernel_first_time = 0, kernel_total_time = 0;
 	Timer t;
 	START_TIME
 	for (auto i = 0; i < inflags.GetValueInt("iter"); ++i) {
@@ -176,7 +176,7 @@ template <typename Tgpu, typename Tref> int MaskedFillDriver<Tgpu, Tref> :: Veri
 	return miopenStatusSuccess;
 }
 template <typename Tgpu, typename Tref> int MaskedFillDriver<Tgpu, Tref> :: RunBackwardGPU() {
-	auto kernel_first_time = 0, kernel_total_time = 0;
+	float kernel_first_time = 0, kernel_total_time = 0;
 	Timer t;
 	START_TIME
 	for (auto i = 0; i < inflags.GetValueInt("iter"); ++i) {
