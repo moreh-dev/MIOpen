@@ -7223,7 +7223,7 @@ miopenFusedAdamWithOutput(miopenHandle_t handle,
 
 # ifdef MIOPEN_BETA_API
 
-/** @addtogroup MaskedFill
+/** @addtogroup maskedfill
  *  @{
  */
 
@@ -7232,7 +7232,7 @@ miopenFusedAdamWithOutput(miopenHandle_t handle,
 
 typedef enum { MIOPEN_MASKEDFILL_FORWARD, MIOPEN_MASKEDFILL_BACKWARD } miopenMaskedFillDirection_t;
 
-/*! @brief Do a masked fill.
+/*! @brief Execute a masked fill forward layer
  *  
  *  @param handle		MIOpen handle (input)
  *  
@@ -7263,7 +7263,7 @@ MIOPEN_EXPORT miopenStatus_t miopenMaskedFillForward(
     const float value
 );
 
-/*! @brief 
+/*! @brief Execute a masked fill backward layer
  *  
  *  @param handle				MIOpen handle (input)
  *  
