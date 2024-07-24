@@ -48,28 +48,6 @@ struct IndexSelectFwdTestFloat : IndexSelectFwdTest<float>
 {
 };
 
-/*
-struct IndexSelectBwdTestFloat : IndexSelectBwdTest<float>
-{
-};
-
-struct IndexSelectFwdTestHalf : IndexSelectFwdTest<half_float::half>
-{
-};
-
-struct IndexSelectBwdTestHalf : OuterBwdTest<half_float::half>
-{
-};
-
-struct IndexSelectFwdTestBFloat16 : OuterFwdTest<bfloat16>
-{
-};
-
-struct IndexSelectBwdTestBFloat16 : OuterBwdTest<bfloat16>
-{
-};
-*/
-
 } // namespace indexselect
 using namespace indexselect;
 
@@ -86,85 +64,6 @@ TEST_P(IndexSelectFwdTestFloat, IndexSelectFwdTest)
     }
 };
 
-/*
-TEST_P(OuterBwdTestFloat, OuterBwdTest)
-{
-    if(env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--float"))
-    {
-        RunTest();
-        Verify();
-    }
-    else
-    {
-        GTEST_SKIP();
-    }
-};
-
-TEST_P(OuterFwdTestHalf, OuterFwdTest)
-{
-    if(env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--half"))
-    {
-        RunTest();
-        Verify();
-    }
-    else
-    {
-        GTEST_SKIP();
-    }
-};
-
-TEST_P(OuterBwdTestHalf, OuterBwdTest)
-{
-    if(env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--half"))
-    {
-        RunTest();
-        Verify();
-    }
-    else
-    {
-        GTEST_SKIP();
-    }
-};
-
-TEST_P(OuterFwdTestBFloat16, OuterFwdTest)
-{
-    if(env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--bfloat16"))
-    {
-        RunTest();
-        Verify();
-    }
-    else
-    {
-        GTEST_SKIP();
-    }
-};
-
-TEST_P(OuterBwdTestBFloat16, OuterBwdTest)
-{
-    if(env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--bfloat16"))
-    {
-        RunTest();
-        Verify();
-    }
-    else
-    {
-        GTEST_SKIP();
-    }
-};
-*/
-
 INSTANTIATE_TEST_SUITE_P(IndexSelectTestSet,
                          IndexSelectFwdTestFloat,
                          testing::ValuesIn(IndexSelectFwdTestConfigs()));
-
-/*
-INSTANTIATE_TEST_SUITE_P(OuterTestSet, OuterBwdTestFloat, testing::ValuesIn(OuterBwdTestConfigs()));
-INSTANTIATE_TEST_SUITE_P(OuterTestSet, OuterFwdTestHalf, testing::ValuesIn(OuterFwdTestConfigs()));
-INSTANTIATE_TEST_SUITE_P(OuterTestSet, OuterBwdTestHalf, testing::ValuesIn(OuterBwdTestConfigs()));
-INSTANTIATE_TEST_SUITE_P(OuterTestSet,
-                         OuterFwdTestBFloat16,
-                         testing::ValuesIn(OuterFwdTestConfigs()));
-INSTANTIATE_TEST_SUITE_P(OuterTestSet,
-                         OuterBwdTestBFloat16,
-                         testing::ValuesIn(OuterBwdTestConfigs()));
-*/

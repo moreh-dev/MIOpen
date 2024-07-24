@@ -40,14 +40,6 @@ namespace solver {
 
 namespace indexselect {
 
-struct t4
-{
-    int p0;
-    int p1;
-    int p2;
-    int p3;
-};
-
 static bool IsImprovementOverROCm(const miopen::indexselect::ProblemDescription& problem)
 {
     return true;
@@ -134,7 +126,7 @@ IndexSelectForward::GetSolution([[maybe_unused]] const ExecutionContext& context
                    (int)xlens[2],
                    (int)xlens[3],
                    (int)ylens[0],
-                   (int)ylens[2],
+                   (int)ylens[1],
                    (int)ylens[2],
                    (int)ylens[3],
                    (int)xstrides[0],

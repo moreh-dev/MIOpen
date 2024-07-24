@@ -124,9 +124,7 @@ protected:
 
         EXPECT_EQ(status, miopenStatusSuccess);
 
-        input.data   = handle.Read<T>(input_dev, input.data.size());
-        output.data  = handle.Read<T>(output_dev, output.data.size());
-        indices.data = handle.Read<int>(indices_dev, indices.data.size());
+        output.data = handle.Read<T>(output_dev, output.data.size());
     }
 
     void Verify()
