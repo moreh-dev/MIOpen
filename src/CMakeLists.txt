@@ -173,6 +173,8 @@ set( MIOpen_Source
     rnn/rnn_util.cpp
     rnn/Solutions/rnn_transformer.cpp
     scalar.cpp
+    sigmoidfocalloss/problem_description.cpp
+    sigmoid_focal_loss_api.cpp
     softmax.cpp
     softmax_api.cpp
     softmax/problem_description.cpp
@@ -296,6 +298,10 @@ set( MIOpen_Source
     solver/reduce/forward_max.cpp
     solver/reduce/forward_min.cpp
     solver/reduce/forward_sum.cpp
+    solver/sigmoidfocalloss/backward_reduce_sigmoid_focal_loss.cpp
+    solver/sigmoidfocalloss/backward_unreduce_sigmoid_focal_loss.cpp
+    solver/sigmoidfocalloss/forward_reduce_sigmoid_focal_loss.cpp
+    solver/sigmoidfocalloss/forward_unreduce_sigmoid_focal_loss.cpp
     solver/softmax/attn_softmax.cpp
     solver/softmax/softmax.cpp
     subbuffers.cpp
@@ -449,7 +455,9 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         kernels/neuron.inc
         kernels/rocm_version.inc
         kernels/stride_array.hpp
+        kernels/tensor_view.hpp
         kernels/utilities.inc
+        kernels/warp_shuffle.hpp
         kernels/winograd/Conv_Winograd_Fury_v2_4_1_gfx11_1536vgprs_fp16_fp16acc_f2x3_c16_stride1.inc
         kernels/winograd/Conv_Winograd_Fury_v2_4_1_gfx11_1536vgprs_fp16_fp16acc_f2x3_c32_stride1.inc
         kernels/winograd/Conv_Winograd_Fury_v2_4_1_gfx11_1024vgprs_fp16_fp16acc_f2x3_c16_stride1.inc
@@ -491,6 +499,7 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         kernels/MIOpenLRNBwd.cl
         kernels/MIOpenLRNFwd.cl
         kernels/MIOpenNeuron.cl
+        kernels/MIOpenLossSum.cpp
         kernels/MIOpenPooling.cl
         kernels/MIOpenPoolingBwd.cl
         kernels/MIOpenPoolingBwdND.cl
@@ -536,6 +545,7 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         kernels/gcnAsmBNBwdTrainSpatial.s
         kernels/MIOpenTensorKernels.cl
         kernels/MIOpenTensorKernelsHip.cpp
+        kernels/MIOpenSigmoidFocalLoss.cpp
         kernels/MIOpenSubTensorOpWithScalarKernel.cl
         kernels/MIOpenSubTensorOpWithSubTensorKernel.cl
         kernels/MIOpenSubTensorOpWithCastTensorKernel.cl
@@ -641,6 +651,7 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         t5layernorm.cpp
         ocl/fusionopconvocl.cpp
         ocl/fusionopbiasbnactivocl.cpp
+        sigmoid_focal_loss.cpp
         reduceextreme.cpp
         sum.cpp
         transformers_adam_w.cpp

@@ -36,6 +36,7 @@
 #include <miopen/pooling/solvers.hpp>
 #include <miopen/reduce/solvers.hpp>
 #include <miopen/mha/solvers.hpp>
+#include <miopen/sigmoidfocalloss/solvers.hpp>
 #include <miopen/softmax/solvers.hpp>
 
 #include <miopen/conv_algo_name.hpp>
@@ -670,6 +671,17 @@ inline SolverRegistrar::SolverRegistrar(IdRegistryData& registry)
              Primitive::Fusion,
              fusion::ConvWinoFuryRxSFused<2, 3>{}.SolverDbId(),
              miopenConvolutionAlgoWinograd);
+
+    Register(registry,
+             ++id,
+             Primitive::Loss,
+             sigmoidfocalloss::SigmoidFocalLossUnreducedFwd{}.SolverDbId());
+    Register(registry,
+             ++id,
+             Primitive::Loss,
+             sigmoidfocalloss::SigmoidFocalLossUnreducedBwd{}.SolverDbId());
+    Register(registry, ++id, Primitive::Loss, sigmoidfocalloss::SigmoidFocalLossFwd{}.SolverDbId());
+    Register(registry, ++id, Primitive::Loss, sigmoidfocalloss::SigmoidFocalLossBwd{}.SolverDbId());
 
     // IMPORTANT: New solvers should be added to the end of the function!
 }
