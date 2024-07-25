@@ -58,7 +58,7 @@ struct ProblemDescription : ProblemDescriptionBase
     const TensorDescriptor& GetXDesc() const { return xDesc; }
     const TensorDescriptor& GetYDesc() const { return yDesc; }
     const TensorDescriptor& GetIndices() const { return indicesDesc; }
-    const size_t GetDim() const { return dim; }
+    size_t GetDim() const { return dim; }
 
     bool IsAllPacked() const
     {

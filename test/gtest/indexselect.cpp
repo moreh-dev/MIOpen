@@ -157,8 +157,12 @@ INSTANTIATE_TEST_SUITE_P(IndexSelectTestSet,
                          IndexSelectBwdTestFloat,
                          testing::ValuesIn(IndexSelectBwdTestConfigs()));
 
-INSTANTIATE_TEST_SUITE_P(IndexSelectTestSet, IndexSelectFwdTestHalf, testing::ValuesIn(IndexSelectFwdTestConfigs()));
-INSTANTIATE_TEST_SUITE_P(IndexSelectTestSet, IndexSelectBwdTestHalf, testing::ValuesIn(IndexSelectBwdTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(IndexSelectTestSet,
+                         IndexSelectFwdTestHalf,
+                         testing::ValuesIn(IndexSelectFwdTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(IndexSelectTestSet,
+                         IndexSelectBwdTestHalf,
+                         testing::ValuesIn(IndexSelectBwdTestConfigs()));
 INSTANTIATE_TEST_SUITE_P(IndexSelectTestSet,
                          IndexSelectFwdTestBFloat16,
                          testing::ValuesIn(IndexSelectFwdTestConfigs()));
