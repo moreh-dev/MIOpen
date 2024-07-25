@@ -314,13 +314,13 @@ std::vector<int> IndexSelectDriver<Tgpu, Tref>::GetOutputTensorLengthsFromCmdLin
     numOfIndices = inflags.GetValueInt("NumOfIndices");
 
     if(dim == 0)
-        in_n -= numOfIndices;
+        in_n = numOfIndices;
     else if(dim == 1)
-        in_c -= numOfIndices;
+        in_c = numOfIndices;
     else if(dim == 2)
-        in_h -= numOfIndices;
+        in_h = numOfIndices;
     else if(dim == 3)
-        in_w -= numOfIndices;
+        in_w = numOfIndices;
 
     if((in_n != 0) && (in_c != 0) && (in_h != 0) && (in_w != 0))
     {

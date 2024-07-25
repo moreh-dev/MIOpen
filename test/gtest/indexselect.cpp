@@ -52,6 +52,22 @@ struct IndexSelectBwdTestFloat : IndexSelectBwdTest<float>
 {
 };
 
+struct IndexSelectFwdTestHalf : IndexSelectFwdTest<half_float::half>
+{
+};
+
+struct IndexSelectBwdTestHalf : IndexSelectBwdTest<half_float::half>
+{
+};
+
+struct IndexSelectFwdTestBFloat16 : IndexSelectFwdTest<bfloat16>
+{
+};
+
+struct IndexSelectBwdTestBFloat16 : IndexSelectBwdTest<bfloat16>
+{
+};
+
 } // namespace indexselect
 using namespace indexselect;
 
@@ -81,10 +97,71 @@ TEST_P(IndexSelectBwdTestFloat, IndexSelectBwdTest)
     }
 };
 
+TEST_P(IndexSelectFwdTestHalf, IndexSelectFwdTest)
+{
+    if(env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--half"))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
+
+TEST_P(IndexSelectBwdTestHalf, IndexSelectBwdTest)
+{
+    if(env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--half"))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
+
+TEST_P(IndexSelectFwdTestBFloat16, IndexSelectFwdTest)
+{
+    if(env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--bfloat16"))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
+
+TEST_P(IndexSelectBwdTestBFloat16, IndexSelectBwdTest)
+{
+    if(env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--bfloat16"))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
+
 INSTANTIATE_TEST_SUITE_P(IndexSelectTestSet,
                          IndexSelectFwdTestFloat,
                          testing::ValuesIn(IndexSelectFwdTestConfigs()));
 
 INSTANTIATE_TEST_SUITE_P(IndexSelectTestSet,
                          IndexSelectBwdTestFloat,
+                         testing::ValuesIn(IndexSelectBwdTestConfigs()));
+
+INSTANTIATE_TEST_SUITE_P(IndexSelectTestSet, IndexSelectFwdTestHalf, testing::ValuesIn(IndexSelectFwdTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(IndexSelectTestSet, IndexSelectBwdTestHalf, testing::ValuesIn(IndexSelectBwdTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(IndexSelectTestSet,
+                         IndexSelectFwdTestBFloat16,
+                         testing::ValuesIn(IndexSelectFwdTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(IndexSelectTestSet,
+                         IndexSelectBwdTestBFloat16,
                          testing::ValuesIn(IndexSelectBwdTestConfigs()));
