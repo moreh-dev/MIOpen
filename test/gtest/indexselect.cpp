@@ -48,6 +48,10 @@ struct IndexSelectFwdTestFloat : IndexSelectFwdTest<float>
 {
 };
 
+struct IndexSelectBwdTestFloat : IndexSelectBwdTest<float>
+{
+};
+
 } // namespace indexselect
 using namespace indexselect;
 
@@ -64,6 +68,23 @@ TEST_P(IndexSelectFwdTestFloat, IndexSelectFwdTest)
     }
 };
 
+TEST_P(IndexSelectBwdTestFloat, IndexSelectBwdTest)
+{
+    if(env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--float"))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+};
+
 INSTANTIATE_TEST_SUITE_P(IndexSelectTestSet,
                          IndexSelectFwdTestFloat,
                          testing::ValuesIn(IndexSelectFwdTestConfigs()));
+
+INSTANTIATE_TEST_SUITE_P(IndexSelectTestSet,
+                         IndexSelectBwdTestFloat,
+                         testing::ValuesIn(IndexSelectBwdTestConfigs()));

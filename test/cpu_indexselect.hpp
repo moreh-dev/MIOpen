@@ -30,7 +30,8 @@
 
 template <class T>
 void cpu_indexselect_forward(
-    tensor<T> input, tensor<int> indices, tensor<T> output, int dim, tensor<T>& outputhost)
+    tensor<T> input, tensor<int> indices, tensor<T> output, 
+    int dim, tensor<T>& outputhost)
 {
     auto input_dims  = input.desc.GetLengths();
     auto output_dims = output.desc.GetLengths();
@@ -61,6 +62,63 @@ void cpu_indexselect_forward(
                            n[2] * input_strides[2] + n[3] * input_strides[3];
 
         outputhost[output_idx] = input[input_idx];
+    }
+}
+
+template <class T>
+void cpu_indexselect_backward(
+    tensor<T>& inputGradhost, tensor<int> indices, int dim, tensor<T> outputGrad
+)
+{
+    auto inputGrad_dims = inputGradhost.desc.GetLengths();
+    auto outputGrad_dims = outputGrad.desc.GetLengths();
+
+    auto inputGrad_strides = inputGradhost.desc.GetStrides();
+    auto outputGrad_strides = outputGrad.desc.GetStrides();
+
+    auto oK = outputGrad_dims[dim];
+    auto iK = inputGrad_dims[dim];
+
+    size_t st = 1;
+    for(size_t i = dim + 1; i < inputGrad_dims.size(); i++)
+    {
+        st *= inputGrad_dims[i];
+    }
+    size_t N = 1;
+    for(size_t i = 0; i < inputGrad_dims.size(); i++)
+    {
+        if(i != dim)
+        {
+            N *= inputGrad_dims[i];
+        }
+    }
+
+    for(size_t i = 0; i < N; i++)
+    {
+        size_t output_grad_base_idx = (i / st) * st * oK + i % st;
+        size_t n[4], n012, n01;
+        n[3] = output_grad_base_idx % outputGrad_dims[3];
+        n012 = output_grad_base_idx / outputGrad_dims[3];
+        n[2] = n012 % outputGrad_dims[2];
+        n01  = n012 / outputGrad_dims[2];
+        n[1] = n01 % outputGrad_dims[1];
+        n[0] = n01 / outputGrad_dims[1];
+
+        for(int j = 0; j < oK; ++j)
+        {
+            n[dim]                 = j;
+            size_t idx             = indices[j];
+            size_t output_grad_idx = n[0] * outputGrad_strides[0] + n[1] * outputGrad_strides[1] +
+                                     n[2] * outputGrad_strides[2] + n[3] * outputGrad_strides[3];
+            
+            n[dim]                = idx;
+            size_t input_grad_idx = n[0] * inputGrad_strides[0] + n[1] * inputGrad_strides[1] +
+                                    n[2] * inputGrad_strides[2] + n[3] * inputGrad_strides[3];
+
+            T input_grad_v           = inputGradhost[input_grad_idx];
+            T output_grad_v          = outputGrad[output_grad_idx];
+            inputGradhost[input_grad_idx] = input_grad_v + output_grad_v;
+        }
     }
 }
 #endif

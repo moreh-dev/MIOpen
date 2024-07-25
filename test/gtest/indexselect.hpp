@@ -78,6 +78,8 @@ struct IndexSelectTestCase
 
 std::vector<IndexSelectTestCase> IndexSelectFwdTestConfigs() { return {{{2, 2, 2, 2}, 1, {1}}}; }
 
+std::vector<IndexSelectTestCase> IndexSelectBwdTestConfigs() { return {{{2, 2, 2, 2}, 1, {1}}}; }
+
 template <typename T = float>
 struct IndexSelectFwdTest : public ::testing::TestWithParam<IndexSelectTestCase>
 {
@@ -148,4 +150,77 @@ protected:
     miopen::Allocator::ManageDataPtr input_dev;
     miopen::Allocator::ManageDataPtr indices_dev;
     miopen::Allocator::ManageDataPtr output_dev;
+};
+
+template <typename T = float>
+struct IndexSelectBwdTest : public ::testing::TestWithParam<IndexSelectTestCase>
+{
+protected:
+    void SetUp() override
+    {
+        auto&& handle      = get_handle();
+        indexselect_config = GetParam();
+        auto gen_value     = [](auto...) { return prng::gen_descreet_uniform_sign<T>(0, 1); };
+
+        auto in_dims      = indexselect_config.GetInput();
+        dim               = indexselect_config.GetDim();
+        auto indices_para = indexselect_config.GetIndices();
+        auto out_dims     = indexselect_config.GetOutput();
+
+        inputGrad      = tensor<T>{in_dims};
+        outputGrad     = tensor<T>{out_dims}.generate(gen_value);
+        indices    = tensor<int>{std::vector<size_t>({indices_para.size()})};
+        inputGradhost = tensor<T>{in_dims};
+
+        std::fill(inputGrad.begin(), inputGrad.end(), 0);
+        std::fill(inputGradhost.begin(), inputGradhost.end(), 0);
+
+        inputGrad_dev   = handle.Write(inputGrad.data);
+        outputGrad_dev  = handle.Write(outputGrad.data);
+        indices_dev = handle.Write(indices.data);
+    }
+
+    void RunTest()
+    {
+        auto&& handle = get_handle();
+
+        cpu_indexselect_backward<T>(inputGradhost, indices, dim, outputGrad);
+
+        miopenStatus_t status;
+
+        status = miopen::IndexSelectBackward(handle,
+                                            inputGrad.desc,
+                                            inputGrad_dev.get(),
+                                            indices.desc,
+                                            indices_dev.get(),
+                                            outputGrad.desc,
+                                            outputGrad_dev.get(),
+                                            dim);
+
+        EXPECT_EQ(status, miopenStatusSuccess);
+
+        inputGrad.data = handle.Read<T>(inputGrad_dev, inputGrad.data.size());
+    }
+
+    void Verify()
+    {
+        double threshold = std::numeric_limits<T>::epsilon();
+        auto error       = miopen::rms_range(inputGradhost, inputGrad);
+
+        EXPECT_TRUE(miopen::range_distance(inputGradhost) == miopen::range_distance(inputGrad));
+        EXPECT_TRUE(error < threshold * 10) << "Error output beyond tolerance Error:" << error
+                                            << ",  Thresholdx10: " << threshold * 10;
+    }
+    IndexSelectTestCase indexselect_config;
+
+    tensor<T> inputGrad;
+    tensor<int> indices;
+    tensor<T> outputGrad;
+    int dim;
+
+    tensor<T> inputGradhost;
+
+    miopen::Allocator::ManageDataPtr inputGrad_dev;
+    miopen::Allocator::ManageDataPtr indices_dev;
+    miopen::Allocator::ManageDataPtr outputGrad_dev;
 };
