@@ -49,7 +49,7 @@ int32_t mloIndexSelectForwardRunHost(miopenTensorDescriptor_t inputDesc,
                                      miopenTensorDescriptor_t indicesDesc,
                                      miopenTensorDescriptor_t outputDesc,
                                      Tgpu* input,
-                                     size_t* indices,
+                                     int* indices,
                                      Tgpu* output,
                                      size_t dim,
                                      size_t numOfIndices,
@@ -94,7 +94,7 @@ template <typename Tgpu, typename Tcheck>
 int32_t mloIndexSelectBackwardRunHost(miopenTensorDescriptor_t outputGradDesc,
                                       miopenTensorDescriptor_t inputGradDesc,
                                       Tgpu* outputGrad,
-                                      size_t* indices,
+                                      int* indices,
                                       Tgpu* inputGrad,
                                       size_t dim,
                                       size_t numOfIndices,
@@ -215,7 +215,7 @@ private:
     std::unique_ptr<GPUMem> outputGrad_dev;
 
     std::vector<Tgpu> input;
-    std::vector<size_t> indices;
+    std::vector<int> indices;
     std::vector<Tgpu> output;
     std::vector<Tgpu> inputGrad;
     std::vector<Tgpu> outputGrad;
@@ -260,11 +260,11 @@ int IndexSelectDriver<Tgpu, Tref>::GetandSetData()
 template <typename Tgpu, typename Tref>
 int IndexSelectDriver<Tgpu, Tref>::AddCmdLineArgs()
 {
-    inflags.AddInputFlag("batchsize", 'n', "2", "Mini-batch size (Default=2)", "int");
+    inflags.AddInputFlag("batchsize", 'n', "32", "Mini-batch size (Default=32)", "int");
 
-    inflags.AddInputFlag("in_channels", 'c', "2", "Number of Input Channels (Default=2)", "int");
-    inflags.AddInputFlag("in_h", 'H', "2", "Input Height (Default=2)", "int");
-    inflags.AddInputFlag("in_w", 'W', "2", "Input Width (Default=2)", "int");
+    inflags.AddInputFlag("in_channels", 'c', "32", "Number of Input Channels (Default=32)", "int");
+    inflags.AddInputFlag("in_h", 'H', "32", "Input Height (Default=32)", "int");
+    inflags.AddInputFlag("in_w", 'W', "32", "Input Width (Default=32)", "int");
 
     inflags.AddInputFlag("time", 't', "0", "Time Each Layer (Default=0)", "int");
 
@@ -273,7 +273,7 @@ int IndexSelectDriver<Tgpu, Tref>::AddCmdLineArgs()
 
     inflags.AddInputFlag("NumOfIndices",
                          'I',
-                         "1",
+                         "4",
                          "The number of indice of the dimension to be reduced(Default=1)",
                          "int");
 
@@ -345,13 +345,13 @@ int IndexSelectDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     uint32_t ctx = 0;
 
     input_dev      = std::unique_ptr<GPUMem>(new GPUMem(ctx, in_sz, sizeof(Tgpu)));
-    indices_dev    = std::unique_ptr<GPUMem>(new GPUMem(ctx, numOfIndices, sizeof(size_t)));
+    indices_dev    = std::unique_ptr<GPUMem>(new GPUMem(ctx, numOfIndices, sizeof(int)));
     output_dev     = std::unique_ptr<GPUMem>(new GPUMem(ctx, out_sz, sizeof(Tgpu)));
     inputGrad_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, in_sz, sizeof(Tgpu)));
     outputGrad_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, out_sz, sizeof(Tgpu)));
 
     input      = std::vector<Tgpu>(in_sz, static_cast<Tgpu>(0));
-    indices    = std::vector<size_t>(numOfIndices, static_cast<size_t>(0));
+    indices    = std::vector<int>(numOfIndices, static_cast<int>(0));
     output     = std::vector<Tgpu>(out_sz, static_cast<Tgpu>(0));
     inputGrad  = std::vector<Tgpu>(in_sz, static_cast<Tgpu>(0));
     outputGrad = std::vector<Tgpu>(out_sz, static_cast<Tgpu>(0));
@@ -398,7 +398,6 @@ int IndexSelectDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
         std::cerr << "Error copying (outputGrad) to GPU, size: " << outputGrad_dev->GetSize()
                   << std::endl;
 
-    puts("ed AllocateBuffersAndCopy");
     return miopenStatusSuccess;
 }
 

@@ -72,8 +72,11 @@ IndexSelectForward::GetSolution([[maybe_unused]] const ExecutionContext& context
     size_t ylocalsize = 1;
     size_t zlocalsize = 1;
 
-    auto output_size =
-        std::accumulate(ydims.begin(), ydims.begin() + dim, 1ULL, std::multiplies<size_t>());
+    size_t output_size = 1;
+    for(size_t i=0;i<ydims.size();i++)
+    {
+        output_size *= ydims[i];
+    }
 
     size_t xgridsize = output_size;
     if(xgridsize % LOCAL_SIZE != 0)
