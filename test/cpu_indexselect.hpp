@@ -30,8 +30,7 @@
 
 template <class T>
 void cpu_indexselect_forward(
-    tensor<T> input, tensor<int> indices, tensor<T> output, 
-    int dim, tensor<T>& outputhost)
+    tensor<T> input, tensor<int> indices, tensor<T> output, int dim, tensor<T>& outputhost)
 {
     auto input_dims  = input.desc.GetLengths();
     auto output_dims = output.desc.GetLengths();
@@ -66,14 +65,15 @@ void cpu_indexselect_forward(
 }
 
 template <class T>
-void cpu_indexselect_backward(
-    tensor<T>& inputGradhost, tensor<int> indices, int dim, tensor<T> outputGrad
-)
+void cpu_indexselect_backward(tensor<T>& inputGradhost,
+                              tensor<int> indices,
+                              int dim,
+                              tensor<T> outputGrad)
 {
-    auto inputGrad_dims = inputGradhost.desc.GetLengths();
+    auto inputGrad_dims  = inputGradhost.desc.GetLengths();
     auto outputGrad_dims = outputGrad.desc.GetLengths();
 
-    auto inputGrad_strides = inputGradhost.desc.GetStrides();
+    auto inputGrad_strides  = inputGradhost.desc.GetStrides();
     auto outputGrad_strides = outputGrad.desc.GetStrides();
 
     auto oK = outputGrad_dims[dim];
@@ -110,13 +110,13 @@ void cpu_indexselect_backward(
             size_t idx             = indices[j];
             size_t output_grad_idx = n[0] * outputGrad_strides[0] + n[1] * outputGrad_strides[1] +
                                      n[2] * outputGrad_strides[2] + n[3] * outputGrad_strides[3];
-            
+
             n[dim]                = idx;
             size_t input_grad_idx = n[0] * inputGrad_strides[0] + n[1] * inputGrad_strides[1] +
                                     n[2] * inputGrad_strides[2] + n[3] * inputGrad_strides[3];
 
-            T input_grad_v           = inputGradhost[input_grad_idx];
-            T output_grad_v          = outputGrad[output_grad_idx];
+            T input_grad_v                = inputGradhost[input_grad_idx];
+            T output_grad_v               = outputGrad[output_grad_idx];
             inputGradhost[input_grad_idx] = input_grad_v + output_grad_v;
         }
     }

@@ -40,7 +40,8 @@ namespace solver {
 
 namespace indexselect {
 
-static bool IsImprovementOverROCm([[maybe_unused]] const miopen::indexselect::ProblemDescription& problem)
+static bool
+IsImprovementOverROCm([[maybe_unused]] const miopen::indexselect::ProblemDescription& problem)
 {
     return true;
 }

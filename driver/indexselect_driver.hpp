@@ -267,6 +267,8 @@ int IndexSelectDriver<Tgpu, Tref>::AddCmdLineArgs()
     inflags.AddInputFlag("in_w", 'W', "32", "Input Width (Default=32)", "int");
 
     inflags.AddInputFlag("time", 't', "0", "Time Each Layer (Default=0)", "int");
+    inflags.AddInputFlag(
+        "wall", 'w', "0", "Wall-clock Time Each Layer, Requires time == 1 (Default=0)", "int");
 
     inflags.AddInputFlag(
         "DimToReduce", 'R', "1", "The indice of the dimensions to be reduced(Default=1)", "int");
@@ -277,8 +279,8 @@ int IndexSelectDriver<Tgpu, Tref>::AddCmdLineArgs()
                          "The number of indice of the dimension to be reduced(Default=1)",
                          "int");
 
+    inflags.AddInputFlag("iter", 'i', "10", "Number of Iterations (Default=10)", "int");
     inflags.AddInputFlag("forw", 'F', "1", "Run only Forward Outer (Default=1)", "int");
-
     inflags.AddInputFlag("verify", 'V', "1", "Verify Each Layer (Default=1)", "int");
 
     return miopenStatusSuccess;
@@ -404,14 +406,41 @@ int IndexSelectDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
 template <typename Tgpu, typename Tref>
 int IndexSelectDriver<Tgpu, Tref>::RunForwardGPU()
 {
-    miopenIndexSelectForward(GetHandle(),
-                             inputDesc,
-                             input_dev->GetMem(),
-                             indicesDesc,
-                             indices_dev->GetMem(),
-                             outputDesc,
-                             output_dev->GetMem(),
-                             dim);
+    float kernel_total_time = 0;
+    float kernel_first_time = 0;
+
+    Timer t;
+    START_TIME
+    for(int i = 0; i < inflags.GetValueInt("iter"); i++)
+    {
+        miopenIndexSelectForward(GetHandle(),
+                                 inputDesc,
+                                 input_dev->GetMem(),
+                                 indicesDesc,
+                                 indices_dev->GetMem(),
+                                 outputDesc,
+                                 output_dev->GetMem(),
+                                 dim);
+        float time = 0.0;
+        miopenGetKernelTime(GetHandle(), &time);
+        kernel_total_time += time;
+        if(i == 0)
+            kernel_first_time = time;
+    }
+
+    if(inflags.GetValueInt("time") == 1)
+    {
+        STOP_TIME
+        int iter = inflags.GetValueInt("iter");
+        if(WALL_CLOCK)
+            std::cout << "Wall-clock Time Forward IndexSelect Elapsed: " << t.gettime_ms() / iter
+                      << " ms\n";
+
+        float kernel_average_time =
+            iter > 1 ? (kernel_total_time - kernel_first_time) / (iter - 1) : kernel_first_time;
+        std::cout << "GPU Kernel Time Forward IndexSelect Elapsed: " << kernel_average_time
+                  << " ms\n";
+    }
 
     if(output_dev->FromGPU(GetStream(), output.data()) != 0)
         std::cerr << "Error copying (output_dev) from GPU, size: " << output_dev->GetSize()
@@ -439,14 +468,42 @@ int IndexSelectDriver<Tgpu, Tref>::RunForwardCPU()
 template <typename Tgpu, typename Tref>
 int IndexSelectDriver<Tgpu, Tref>::RunBackwardGPU()
 {
-    miopenIndexSelectBackward(GetHandle(),
-                              inputGradDesc,
-                              inputGrad_dev->GetMem(),
-                              indicesDesc,
-                              indices_dev->GetMem(),
-                              outputGradDesc,
-                              outputGrad_dev->GetMem(),
-                              dim);
+    float kernel_total_time = 0;
+    float kernel_first_time = 0;
+
+    Timer t;
+    START_TIME
+
+    for(int i = 0; i < inflags.GetValueInt("iter"); i++)
+    {
+        miopenIndexSelectBackward(GetHandle(),
+                                  inputGradDesc,
+                                  inputGrad_dev->GetMem(),
+                                  indicesDesc,
+                                  indices_dev->GetMem(),
+                                  outputGradDesc,
+                                  outputGrad_dev->GetMem(),
+                                  dim);
+        float time = 0.0;
+        miopenGetKernelTime(GetHandle(), &time);
+        kernel_total_time += time;
+        if(i == 0)
+            kernel_first_time = time;
+    }
+
+    if(inflags.GetValueInt("time") == 1)
+    {
+        STOP_TIME
+        int iter = inflags.GetValueInt("iter");
+        if(WALL_CLOCK)
+            std::cout << "Wall-clock Time Backward IndexSelect Elapsed: " << t.gettime_ms() / iter
+                      << " ms\n";
+
+        float kernel_average_time =
+            iter > 1 ? (kernel_total_time - kernel_first_time) / (iter - 1) : kernel_first_time;
+        std::cout << "GPU Kernel Time Backward IndexSelect Elapsed: " << kernel_average_time
+                  << " ms\n";
+    }
 
     if(inputGrad_dev->FromGPU(GetStream(), inputGrad.data()) != 0)
         std::cerr << "Error copying (inputGrad_dev) from GPU, size: " << inputGrad_dev->GetSize()

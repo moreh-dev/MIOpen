@@ -40,7 +40,8 @@ namespace solver {
 
 namespace indexselect {
 
-static bool IsImprovementOverROCm([[maybe_unused]] const miopen::indexselect::ProblemDescription& problem)
+static bool
+IsImprovementOverROCm([[maybe_unused]] const miopen::indexselect::ProblemDescription& problem)
 {
     return true;
 }
@@ -73,7 +74,7 @@ IndexSelectForward::GetSolution([[maybe_unused]] const ExecutionContext& context
     size_t zlocalsize = 1;
 
     size_t output_size = 1;
-    for(size_t i=0;i<ydims.size();i++)
+    for(size_t i = 0; i < ydims.size(); i++)
     {
         output_size *= ydims[i];
     }
