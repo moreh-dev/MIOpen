@@ -108,7 +108,6 @@ int32_t mloIndexSelectBackwardRunHost(miopenTensorDescriptor_t outputGradDesc,
     auto outputGrad_strides = miopen::deref(outputGradDesc).GetStrides();
 
     size_t oK = outputGrad_dims[dim];
-    size_t iK = inputGrad_dims[dim];
 
     size_t st = 1;
     for(size_t i = dim + 1; i < inputGrad_dims.size(); i++)
@@ -167,7 +166,7 @@ public:
 
         data_type = miopen_type<Tgpu>{};
     }
-
+    std::vector<int> ComputeInputStrides();
     int AddCmdLineArgs() override;
     int ParseCmdLineArgs(int argc, char* argv[]) override;
     InputFlags& GetInputFlags() override { return inflags; }
@@ -225,7 +224,24 @@ private:
 
     size_t dim;
     size_t numOfIndices;
+
+    bool isContiguous;
 };
+
+template <typename Tgpu, typename Tref>
+std::vector<int> IndexSelectDriver<Tgpu, Tref>::ComputeInputStrides()
+{
+    std::vector<int> in_lens = GetInputTensorLengthsFromCmdLine();
+    if(!isContiguous)
+        std::swap(in_lens.front(), in_lens.back());
+    std::vector<int> strides(in_lens.size());
+    strides.back() = 1;
+    for(int i = in_lens.size() - 2; i >= 0; --i)
+        strides[i] = strides[i + 1] * in_lens[i + 1];
+    if(!isContiguous)
+        std::swap(strides.front(), strides.back());
+    return strides;
+}
 
 template <typename Tgpu, typename Tref>
 int IndexSelectDriver<Tgpu, Tref>::ParseCmdLineArgs(int argc, char* argv[])
@@ -247,8 +263,9 @@ int IndexSelectDriver<Tgpu, Tref>::GetandSetData()
     std::vector<int> out_len     = GetOutputTensorLengthsFromCmdLine();
     numOfIndices                 = inflags.GetValueInt("NumOfIndices");
     std::vector<int> indices_len = std::vector<int>({numOfIndices});
+    auto inputStrides            = ComputeInputStrides();
 
-    SetTensorNd(inputDesc, in_len, data_type);
+    SetTensorNd(inputDesc, in_len, inputStrides, data_type);
     SetTensorNd(indicesDesc, indices_len, miopenInt32);
     SetTensorNd(outputDesc, out_len, data_type);
     SetTensorNd(inputGradDesc, in_len, data_type);
@@ -265,6 +282,8 @@ int IndexSelectDriver<Tgpu, Tref>::AddCmdLineArgs()
     inflags.AddInputFlag("in_channels", 'c', "32", "Number of Input Channels (Default=32)", "int");
     inflags.AddInputFlag("in_h", 'H', "32", "Input Height (Default=32)", "int");
     inflags.AddInputFlag("in_w", 'W', "32", "Input Width (Default=32)", "int");
+
+    inflags.AddInputFlag("contiguous", 'C', "1", "Tensor is contiguous or not", "int");
 
     inflags.AddInputFlag("time", 't', "0", "Time Each Layer (Default=0)", "int");
     inflags.AddInputFlag(
@@ -314,6 +333,14 @@ std::vector<int> IndexSelectDriver<Tgpu, Tref>::GetOutputTensorLengthsFromCmdLin
     int in_w     = inflags.GetValueInt("in_w");
     dim          = inflags.GetValueInt("DimToReduce");
     numOfIndices = inflags.GetValueInt("NumOfIndices");
+    if(inflags.GetValueInt("contiguous") == 1)
+    {
+        isContiguous = true;
+    }
+    else
+    {
+        isContiguous = false;
+    }
 
     if(dim == 0)
         in_n = numOfIndices;

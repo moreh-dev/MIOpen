@@ -74,6 +74,50 @@ extern "C" __global__ void IndexSelectForward(FLOAT* x,
     y[output_idx] = x[input_idx];
 }
 
+extern "C" __global__ void IndexSelectForwardContiguous(FLOAT* x,
+                                                        FLOAT* y,
+                                                        const int in_sz0,
+                                                        const int in_sz1,
+                                                        const int in_sz2,
+                                                        const int in_sz3,
+                                                        const int out_sz0,
+                                                        const int out_sz1,
+                                                        const int out_sz2,
+                                                        const int out_sz3,
+                                                        const int in_st0,
+                                                        const int in_st1,
+                                                        const int in_st2,
+                                                        const int in_st3,
+                                                        const int out_st0,
+                                                        const int out_st1,
+                                                        const int out_st2,
+                                                        const int out_st3,
+                                                        const int dim,
+                                                        int* indices)
+{
+    int gid = threadIdx.x + blockIdx.x * blockDim.x;
+    int n[4];
+    int n012;
+    int n01;
+    n[3] = gid % out_sz3;
+    n012 = gid / out_sz3;
+    n[2] = n012 % out_sz2;
+    n01  = n012 / out_sz2;
+    n[1] = n01 % out_sz1;
+    n[0] = n01 / out_sz1;
+
+    if(n[0] >= out_sz0)
+        return;
+
+    size_t output_idx = gid;
+
+    n[dim] = indices[n[dim]];
+
+    size_t input_idx = n[0] * in_st0 + n[1] * in_st1 + n[2] * in_st2 + n[3] * in_st3;
+
+    y[output_idx] = x[input_idx];
+}
+
 extern "C" __global__ void IndexSelectBackward(FLOAT* inGrad,
                                                FLOAT* outGrad,
                                                const int inGrad_sz0,

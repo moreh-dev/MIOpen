@@ -77,7 +77,6 @@ void cpu_indexselect_backward(tensor<T>& inputGradhost,
     auto outputGrad_strides = outputGrad.desc.GetStrides();
 
     auto oK = outputGrad_dims[dim];
-    auto iK = inputGrad_dims[dim];
 
     size_t st = 1;
     for(size_t i = dim + 1; i < inputGrad_dims.size(); i++)

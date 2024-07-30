@@ -58,7 +58,19 @@ NetworkConfig ProblemDescription::MakeNetworkConfig() const
 
     ss << "<" << indiceslength.size() << ">";
 
-    ss << dim;
+    ss << "<" << dim << ">";
+
+    if(isForw)
+    {
+        if(xDesc.IsContiguous())
+        {
+            ss << "<ture>";
+        }
+        else
+        {
+            ss << "<false>";
+        }
+    }
 
     return NetworkConfig{ss.str()};
 }

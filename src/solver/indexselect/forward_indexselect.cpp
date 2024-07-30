@@ -89,7 +89,14 @@ IndexSelectForward::GetSolution([[maybe_unused]] const ExecutionContext& context
 
     auto kernel        = KernelInfo();
     kernel.kernel_file = "MIOpenIndexSelect.cpp";
-    kernel.kernel_name = "IndexSelectForward";
+    if(problem.GetXDesc().IsContiguous())
+    {
+        kernel.kernel_name = "IndexSelectForwardContiguous";
+    }
+    else
+    {
+        kernel.kernel_name = "IndexSelectForward";
+    }
 
     const auto build_params = KernelBuildParameters{
         {"MIOPEN_USE_FP16", static_cast<int32_t>(dtype == miopenHalf)},
