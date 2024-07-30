@@ -26,12 +26,9 @@
 
 #pragma once
 
-#include "miopen/conv_solution.hpp"
-#include "miopen/execution_context.hpp"
 #include <miopen/solver.hpp>
 #include <miopen/interpolate/problem_description.hpp>
 #include "miopen/kernel_build_params.hpp"
-#include "miopen/kernel_info.hpp"
 
 namespace miopen {
 

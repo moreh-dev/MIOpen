@@ -111,13 +111,13 @@ TEST_P(GPU_Interpolate_fwd_BFP16, InterpolateTest)
     }
 };
 
-INSTANTIATE_TEST_SUITE_P(InterpolateTestSet,
+INSTANTIATE_TEST_SUITE_P(Smoke,
                          GPU_Interpolate_fwd_FP32,
                          testing::ValuesIn(InterpolateTestConfigs()));
-INSTANTIATE_TEST_SUITE_P(InterpolateTestSet,
+INSTANTIATE_TEST_SUITE_P(Smoke,
                          GPU_Interpolate_fwd_FP16,
                          testing::ValuesIn(InterpolateTestConfigs()));
-INSTANTIATE_TEST_SUITE_P(InterpolateTestSet,
+INSTANTIATE_TEST_SUITE_P(Smoke,
                          GPU_Interpolate_fwd_BFP16,
                          testing::ValuesIn(InterpolateTestConfigs()));
 
@@ -164,12 +164,12 @@ TEST_P(GPU_Interpolate_bwd_BFP16, InterpolateTestBwd)
     }
 };
 
-INSTANTIATE_TEST_SUITE_P(InterpolateTestSet,
+INSTANTIATE_TEST_SUITE_P(Smoke,
                          GPU_Interpolate_bwd_FP32,
                          testing::ValuesIn(InterpolateTestConfigs()));
-INSTANTIATE_TEST_SUITE_P(InterpolateTestSet,
+INSTANTIATE_TEST_SUITE_P(Smoke,
                          GPU_Interpolate_bwd_FP16,
                          testing::ValuesIn(InterpolateTestConfigs()));
-INSTANTIATE_TEST_SUITE_P(InterpolateTestSet,
+INSTANTIATE_TEST_SUITE_P(Smoke,
                          GPU_Interpolate_bwd_BFP16,
                          testing::ValuesIn(InterpolateTestConfigs()));
