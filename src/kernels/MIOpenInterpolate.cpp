@@ -103,7 +103,6 @@ __device__ inline void compute_linear_back_index_from_to(int64_t src,
 __device__ inline void compute_source_index_and_lambda(int64_t h,
                                                        FLOAT_ACCUM scale_factor,
                                                        int64_t Hin,
-                                                       int64_t Hout,
                                                        bool align_corners,
                                                        int64_t* hin_index0,
                                                        int64_t* hin_index1,
@@ -153,7 +152,7 @@ __device__ inline FLOAT_ACCUM compute_back_lambda(int64_t dest,
     FLOAT_ACCUM lambda0;
     FLOAT_ACCUM lambda1;
     compute_source_index_and_lambda(
-        dest, scale_factor, Hin, Hout, align_corners, &index0, &index1, &lambda0, &lambda1);
+        dest, scale_factor, Hin, align_corners, &index0, &index1, &lambda0, &lambda1);
     return get_back_lambda(src, index0, index1, lambda0, lambda1);
 }
 
@@ -192,7 +191,7 @@ __device__ inline void interpolateLinearForward(const TI* __restrict__ input,
     FLOAT_ACCUM lambda1;
     FLOAT_ACCUM lambda0;
     compute_source_index_and_lambda(
-        h, scale_factor_h, Hin, Hout, align_corners, &hin_index0, &hin_index1, &lambda0, &lambda1);
+        h, scale_factor_h, Hin, align_corners, &hin_index0, &hin_index1, &lambda0, &lambda1);
 
     tensor_layout_t<3> input_layout0(n, c, hin_index0);
 
@@ -319,15 +318,8 @@ __device__ inline void interpolateBilinearForward(const TI* __restrict__ input,
         FLOAT_ACCUM scale_factor_h = CVT_FP32_2ACCUM(scale_factors[0]);
         FLOAT_ACCUM scale_factor_h_ =
             compute_linear_scale_factor(scale_factor_h, Hin, Hout, align_corners);
-        compute_source_index_and_lambda(h,
-                                        scale_factor_h_,
-                                        Hin,
-                                        Hout,
-                                        align_corners,
-                                        &hin_index0,
-                                        &hin_index1,
-                                        &hlambda0,
-                                        &hlambda1);
+        compute_source_index_and_lambda(
+            h, scale_factor_h_, Hin, align_corners, &hin_index0, &hin_index1, &hlambda0, &hlambda1);
     }
 
     int64_t win_index0   = w;
@@ -339,15 +331,8 @@ __device__ inline void interpolateBilinearForward(const TI* __restrict__ input,
         FLOAT_ACCUM scale_factor_w = CVT_FP32_2ACCUM(scale_factors[1]);
         FLOAT_ACCUM scale_factor_w_ =
             compute_linear_scale_factor(scale_factor_w, Win, Wout, align_corners);
-        compute_source_index_and_lambda(w,
-                                        scale_factor_w_,
-                                        Win,
-                                        Wout,
-                                        align_corners,
-                                        &win_index0,
-                                        &win_index1,
-                                        &wlambda0,
-                                        &wlambda1);
+        compute_source_index_and_lambda(
+            w, scale_factor_w_, Win, align_corners, &win_index0, &win_index1, &wlambda0, &wlambda1);
     }
 
     tensor_layout_t<4> input_layout00(n, c, hin_index0, win_index0);

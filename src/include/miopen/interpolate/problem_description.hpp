@@ -45,6 +45,7 @@ struct ProblemDescription : ProblemDescriptionBase
         : scaleFactorsDesc(scaleFactorsDesc_), mode(mode_), align_corners(align_corners_)
     {
         IsValidMode();
+        IsValidType();
     }
 
     const TensorDescriptor& GetScaleFactorsDesc() const { return scaleFactorsDesc; }
@@ -57,8 +58,17 @@ struct ProblemDescription : ProblemDescriptionBase
            mode != MIOPEN_INTERPOLATE_MODE_BILINEAR && mode != MIOPEN_INTERPOLATE_MODE_TRILINEAR &&
            mode != MIOPEN_INTERPOLATE_MODE_BICUBIC)
         {
-            std::cout << "MODE: " << mode << std::endl;
             MIOPEN_THROW(miopenStatusBadParm, "Interpolate: Invalid mode.");
+        }
+        return true;
+    }
+
+    bool IsValidType() const
+    {
+        if(scaleFactorsDesc.GetType() != miopenFloat)
+        {
+            MIOPEN_THROW(miopenStatusBadParm,
+                         "Interpolate: Scale factor type should be miopenFloat.");
         }
         return true;
     }
