@@ -41,27 +41,27 @@ std::string GetFloatArg()
     return tmp;
 }
 
-struct InterpolateTestFloat : InterpolateTest<float>
+struct GPU_Interpolate_fwd_FP32 : InterpolateTestFwd<float>
 {
 };
 
-struct InterpolateTestHalf : InterpolateTest<half>
+struct GPU_Interpolate_fwd_FP16 : InterpolateTestFwd<half>
 {
 };
 
-struct InterpolateTestBFloat16 : InterpolateTest<bfloat16>
+struct GPU_Interpolate_fwd_BFP16 : InterpolateTestFwd<bfloat16>
 {
 };
 
-struct InterpolateTestFloatBwd : InterpolateTestBwd<float>
+struct GPU_Interpolate_bwd_FP32 : InterpolateTestBwd<float>
 {
 };
 
-struct InterpolateTestHalfBwd : InterpolateTestBwd<half>
+struct GPU_Interpolate_bwd_FP16 : InterpolateTestBwd<half>
 {
 };
 
-struct InterpolateTestBFloat16Bwd : InterpolateTestBwd<bfloat16>
+struct GPU_Interpolate_bwd_BFP16 : InterpolateTestBwd<bfloat16>
 {
 };
 
@@ -69,7 +69,7 @@ struct InterpolateTestBFloat16Bwd : InterpolateTestBwd<bfloat16>
 using namespace interpolate;
 
 // FORWARD TEST
-TEST_P(InterpolateTestFloat, InterpolateTest)
+TEST_P(GPU_Interpolate_fwd_FP32, InterpolateTest)
 {
     if((miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && GetFloatArg() == "--float") ||
        miopen::IsUnset(ENV(MIOPEN_TEST_ALL)))
@@ -83,7 +83,7 @@ TEST_P(InterpolateTestFloat, InterpolateTest)
     }
 };
 
-TEST_P(InterpolateTestHalf, InterpolateTest)
+TEST_P(GPU_Interpolate_fwd_FP16, InterpolateTest)
 {
     if((miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && GetFloatArg() == "--half") ||
        miopen::IsUnset(ENV(MIOPEN_TEST_ALL)))
@@ -97,7 +97,7 @@ TEST_P(InterpolateTestHalf, InterpolateTest)
     }
 };
 
-TEST_P(InterpolateTestBFloat16, InterpolateTest)
+TEST_P(GPU_Interpolate_fwd_BFP16, InterpolateTest)
 {
     if((miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && GetFloatArg() == "--bfloat16") ||
        miopen::IsUnset(ENV(MIOPEN_TEST_ALL)))
@@ -112,17 +112,17 @@ TEST_P(InterpolateTestBFloat16, InterpolateTest)
 };
 
 INSTANTIATE_TEST_SUITE_P(InterpolateTestSet,
-                         InterpolateTestFloat,
+                         GPU_Interpolate_fwd_FP32,
                          testing::ValuesIn(InterpolateTestConfigs()));
 INSTANTIATE_TEST_SUITE_P(InterpolateTestSet,
-                         InterpolateTestHalf,
+                         GPU_Interpolate_fwd_FP16,
                          testing::ValuesIn(InterpolateTestConfigs()));
 INSTANTIATE_TEST_SUITE_P(InterpolateTestSet,
-                         InterpolateTestBFloat16,
+                         GPU_Interpolate_fwd_BFP16,
                          testing::ValuesIn(InterpolateTestConfigs()));
 
 // BACKWARD TEST
-TEST_P(InterpolateTestFloatBwd, InterpolateTestBwd)
+TEST_P(GPU_Interpolate_bwd_FP32, InterpolateTestBwd)
 {
     if((miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && GetFloatArg() == "--float") ||
        miopen::IsUnset(ENV(MIOPEN_TEST_ALL)))
@@ -136,7 +136,7 @@ TEST_P(InterpolateTestFloatBwd, InterpolateTestBwd)
     }
 };
 
-TEST_P(InterpolateTestHalfBwd, InterpolateTestBwd)
+TEST_P(GPU_Interpolate_bwd_FP16, InterpolateTestBwd)
 {
     if((miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && GetFloatArg() == "--half") ||
        miopen::IsUnset(ENV(MIOPEN_TEST_ALL)))
@@ -150,7 +150,7 @@ TEST_P(InterpolateTestHalfBwd, InterpolateTestBwd)
     }
 };
 
-TEST_P(InterpolateTestBFloat16Bwd, InterpolateTestBwd)
+TEST_P(GPU_Interpolate_bwd_BFP16, InterpolateTestBwd)
 {
     if((miopen::IsEnabled(ENV(MIOPEN_TEST_ALL)) && GetFloatArg() == "--bfloat16") ||
        miopen::IsUnset(ENV(MIOPEN_TEST_ALL)))
@@ -165,11 +165,11 @@ TEST_P(InterpolateTestBFloat16Bwd, InterpolateTestBwd)
 };
 
 INSTANTIATE_TEST_SUITE_P(InterpolateTestSet,
-                         InterpolateTestFloatBwd,
+                         GPU_Interpolate_bwd_FP32,
                          testing::ValuesIn(InterpolateTestConfigs()));
 INSTANTIATE_TEST_SUITE_P(InterpolateTestSet,
-                         InterpolateTestHalfBwd,
+                         GPU_Interpolate_bwd_FP16,
                          testing::ValuesIn(InterpolateTestConfigs()));
 INSTANTIATE_TEST_SUITE_P(InterpolateTestSet,
-                         InterpolateTestBFloat16Bwd,
+                         GPU_Interpolate_bwd_BFP16,
                          testing::ValuesIn(InterpolateTestConfigs()));

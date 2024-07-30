@@ -142,13 +142,12 @@ ConvSolution InterpolateBicubicBackward::GetSolution(
             HipEventPtr start;
             HipEventPtr stop;
 
-            bool reset_profiling_state = false;
-            if(kernels.size() > 1 && handle_.IsProfilingEnabled())
+            const bool profiling = handle_.IsProfilingEnabled();
+            if(kernels.size() > 1 && profiling)
             {
-                reset_profiling_state = true;
-                handle_.EnableProfiling(false);
                 start = miopen::make_hip_event();
                 stop  = miopen::make_hip_event();
+                handle_.EnableProfiling(false);
                 hipEventRecord(start.get(), handle_.GetStream());
             }
 
@@ -177,19 +176,18 @@ ConvSolution InterpolateBicubicBackward::GetSolution(
                 kernel(params.input_grad, params.workspace, input_grad_tv, nelems);
             }
 
-            if(reset_profiling_state)
-            {
-                handle_.EnableProfiling(true);
-            }
-            if(kernels.size() > 1 && handle_.IsProfilingEnabled())
+            if(kernels.size() > 1 && profiling)
             {
                 hipEventRecord(stop.get(), handle_.GetStream());
                 hipEventSynchronize(stop.get());
                 hipEventElapsedTime(&elapsed, start.get(), stop.get());
+
+                // Clean up
                 hipEventDestroy(start.get());
                 hipEventDestroy(stop.get());
                 handle_.ResetKernelTime();
                 handle_.AccumKernelTime(elapsed);
+                handle_.EnableProfiling(true);
             };
         };
     };

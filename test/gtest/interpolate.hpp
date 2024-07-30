@@ -99,7 +99,7 @@ inline std::vector<size_t> GetStrides(std::vector<size_t> input, bool contiguous
 
 // FORWARD TEST
 template <typename T = float>
-struct InterpolateTest : public ::testing::TestWithParam<InterpolateTestCase>
+struct InterpolateTestFwd : public ::testing::TestWithParam<InterpolateTestCase>
 {
 protected:
     void SetUp() override
@@ -192,7 +192,7 @@ protected:
                                                            align_corners);
         }
         fflush(stdout);
-        EXPECT_EQ(status, miopenStatusSuccess);
+        ASSERT_EQ(status, miopenStatusSuccess);
 
         output.data = handle.Read<T>(output_dev, output.data.size());
     }
@@ -203,9 +203,9 @@ protected:
 
         auto error = miopen::rms_range(ref_output, output);
 
-        EXPECT_TRUE(miopen::range_distance(ref_output) == miopen::range_distance(output));
-        EXPECT_TRUE(error < threshold * 10) << "Error output beyond tolerance Error:" << error
-                                            << ",  Thresholdx10: " << threshold * 10;
+        ASSERT_EQ(miopen::range_distance(ref_output), miopen::range_distance(output));
+        EXPECT_LT(error, threshold * 10) << "Error output beyond tolerance Error:" << error
+                                         << ",  Thresholdx10: " << threshold * 10;
     }
     InterpolateTestCase interpolate_config;
 
@@ -343,7 +343,7 @@ protected:
                                                        align_corners);
         }
         fflush(stdout);
-        EXPECT_EQ(status, miopenStatusSuccess);
+        ASSERT_EQ(status, miopenStatusSuccess);
 
         input_grad.data = handle.Read<T>(input_grad_dev, input_grad.data.size());
     }
@@ -354,9 +354,9 @@ protected:
 
         auto error = miopen::rms_range(ref_input_grad, input_grad);
 
-        EXPECT_TRUE(miopen::range_distance(ref_input_grad) == miopen::range_distance(input_grad));
-        EXPECT_TRUE(error < threshold * 10) << "Error input grad beyond tolerance Error:" << error
-                                            << ",  Thresholdx10: " << threshold * 10;
+        ASSERT_EQ(miopen::range_distance(ref_input_grad), miopen::range_distance(input_grad));
+        EXPECT_LT(error, threshold * 10) << "Error input grad beyond tolerance Error:" << error
+                                         << ",  Thresholdx10: " << threshold * 10;
     }
     InterpolateTestCase interpolate_config;
 
