@@ -32,29 +32,29 @@
 
 extern "C" __global__ void IndexSelectForward(FLOAT* x,
                                               FLOAT* y,
-                                              const int in_sz0,
-                                              const int in_sz1,
-                                              const int in_sz2,
-                                              const int in_sz3,
-                                              const int out_sz0,
-                                              const int out_sz1,
-                                              const int out_sz2,
-                                              const int out_sz3,
-                                              const int in_st0,
-                                              const int in_st1,
-                                              const int in_st2,
-                                              const int in_st3,
-                                              const int out_st0,
-                                              const int out_st1,
-                                              const int out_st2,
-                                              const int out_st3,
-                                              const int dim,
+                                              const size_t in_sz0,
+                                              const size_t in_sz1,
+                                              const size_t in_sz2,
+                                              const size_t in_sz3,
+                                              const size_t out_sz0,
+                                              const size_t out_sz1,
+                                              const size_t out_sz2,
+                                              const size_t out_sz3,
+                                              const size_t in_st0,
+                                              const size_t in_st1,
+                                              const size_t in_st2,
+                                              const size_t in_st3,
+                                              const size_t out_st0,
+                                              const size_t out_st1,
+                                              const size_t out_st2,
+                                              const size_t out_st3,
+                                              const size_t dim,
                                               int* indices)
 {
-    int gid = threadIdx.x + blockIdx.x * blockDim.x;
-    int n[4];
-    int n012;
-    int n01;
+    size_t gid = threadIdx.x + blockIdx.x * blockDim.x;
+    size_t n[4];
+    size_t n012;
+    size_t n01;
     n[3] = gid % out_sz3;
     n012 = gid / out_sz3;
     n[2] = n012 % out_sz2;
@@ -76,29 +76,29 @@ extern "C" __global__ void IndexSelectForward(FLOAT* x,
 
 extern "C" __global__ void IndexSelectForwardContiguous(FLOAT* x,
                                                         FLOAT* y,
-                                                        const int in_sz0,
-                                                        const int in_sz1,
-                                                        const int in_sz2,
-                                                        const int in_sz3,
-                                                        const int out_sz0,
-                                                        const int out_sz1,
-                                                        const int out_sz2,
-                                                        const int out_sz3,
-                                                        const int in_st0,
-                                                        const int in_st1,
-                                                        const int in_st2,
-                                                        const int in_st3,
-                                                        const int out_st0,
-                                                        const int out_st1,
-                                                        const int out_st2,
-                                                        const int out_st3,
-                                                        const int dim,
+                                                        const size_t in_sz0,
+                                                        const size_t in_sz1,
+                                                        const size_t in_sz2,
+                                                        const size_t in_sz3,
+                                                        const size_t out_sz0,
+                                                        const size_t out_sz1,
+                                                        const size_t out_sz2,
+                                                        const size_t out_sz3,
+                                                        const size_t in_st0,
+                                                        const size_t in_st1,
+                                                        const size_t in_st2,
+                                                        const size_t in_st3,
+                                                        const size_t out_st0,
+                                                        const size_t out_st1,
+                                                        const size_t out_st2,
+                                                        const size_t out_st3,
+                                                        const size_t dim,
                                                         int* indices)
 {
-    int gid = threadIdx.x + blockIdx.x * blockDim.x;
-    int n[4];
-    int n012;
-    int n01;
+    size_t gid = threadIdx.x + blockIdx.x * blockDim.x;
+    size_t n[4];
+    size_t n012;
+    size_t n01;
     n[3] = gid % out_sz3;
     n012 = gid / out_sz3;
     n[2] = n012 % out_sz2;
@@ -120,35 +120,35 @@ extern "C" __global__ void IndexSelectForwardContiguous(FLOAT* x,
 
 extern "C" __global__ void IndexSelectBackward(FLOAT* inGrad,
                                                FLOAT* outGrad,
-                                               const int inGrad_sz0,
-                                               const int inGrad_sz1,
-                                               const int inGrad_sz2,
-                                               const int inGrad_sz3,
-                                               const int outGrad_sz0,
-                                               const int outGrad_sz1,
-                                               const int outGrad_sz2,
-                                               const int outGrad_sz3,
-                                               const int inGrad_st0,
-                                               const int inGrad_st1,
-                                               const int inGrad_st2,
-                                               const int inGrad_st3,
-                                               const int outGrad_st0,
-                                               const int outGrad_st1,
-                                               const int outGrad_st2,
-                                               const int outGrad_st3,
-                                               const int dim,
-                                               int N,
-                                               int st,
-                                               int iK,
-                                               int oK,
+                                               const size_t inGrad_sz0,
+                                                const size_t inGrad_sz1,
+                                                const size_t inGrad_sz2,
+                                                const size_t inGrad_sz3,
+                                                const size_t outGrad_sz0,
+                                                const size_t outGrad_sz1,
+                                                const size_t outGrad_sz2,
+                                                const size_t outGrad_sz3,
+                                                const size_t inGrad_st0,
+                                                const size_t inGrad_st1,
+                                                const size_t inGrad_st2,
+                                                const size_t inGrad_st3,
+                                                const size_t outGrad_st0,
+                                                const size_t outGrad_st1,
+                                                const size_t outGrad_st2,
+                                                const size_t outGrad_st3,
+                                                const size_t dim,
+                                                size_t N,
+                                                size_t st,
+                                                size_t iK,
+                                                size_t oK,
                                                int* indices)
 {
-    int gid = threadIdx.x + blockIdx.x * blockDim.x;
+    size_t gid = threadIdx.x + blockIdx.x * blockDim.x;
     if(gid >= N)
         return;
 
-    int output_grad_base_idx = (gid / st) * st * oK + gid % st;
-    int n[4], n012, n01;
+    size_t output_grad_base_idx = (gid / st) * st * oK + gid % st;
+    size_t n[4], n012, n01;
     n[3] = output_grad_base_idx % outGrad_sz3;
     n012 = output_grad_base_idx / outGrad_sz3;
     n[2] = n012 % outGrad_sz2;
@@ -160,16 +160,12 @@ extern "C" __global__ void IndexSelectBackward(FLOAT* inGrad,
     {
         n[dim]     = i;
         size_t idx = indices[i];
-        int output_grad_idx =
+        size_t output_grad_idx =
             n[0] * outGrad_st0 + n[1] * outGrad_st1 + n[2] * outGrad_st2 + n[3] * outGrad_st3;
         n[dim] = idx;
-        int input_grad_idx =
+        size_t input_grad_idx =
             n[0] * inGrad_st0 + n[1] * inGrad_st1 + n[2] * inGrad_st2 + n[3] * inGrad_st3;
 
-        FLOAT input_grad_v  = inGrad[input_grad_idx];
-        FLOAT output_grad_v = outGrad[output_grad_idx];
-        FLOAT sum           = input_grad_v + output_grad_v;
-
-        inGrad[input_grad_idx] = sum;
+        inGrad[input_grad_idx] = inGrad[input_grad_idx] + outGrad[output_grad_idx];
     }
 }

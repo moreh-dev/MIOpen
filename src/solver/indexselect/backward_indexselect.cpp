@@ -123,8 +123,8 @@ IndexSelectBackward::GetSolution([[maybe_unused]] const ExecutionContext& contex
             auto yGradStrides = params.yGradDesc.GetStrides();
             auto dim          = params.dim;
 
-            int N  = 1;
-            int st = 1;
+            size_t N  = 1;
+            size_t st = 1;
 
             for(size_t i = 0; i < xGradlens.size(); i++)
             {
@@ -139,29 +139,29 @@ IndexSelectBackward::GetSolution([[maybe_unused]] const ExecutionContext& contex
             }
 
             kernel(params.xGrad,
-                   params.yGrad,
-                   (int)xGradlens[0],
-                   (int)xGradlens[1],
-                   (int)xGradlens[2],
-                   (int)xGradlens[3],
-                   (int)yGradlens[0],
-                   (int)yGradlens[1],
-                   (int)yGradlens[2],
-                   (int)yGradlens[3],
-                   (int)xGradStrides[0],
-                   (int)xGradStrides[1],
-                   (int)xGradStrides[2],
-                   (int)xGradStrides[3],
-                   (int)yGradStrides[0],
-                   (int)yGradStrides[1],
-                   (int)yGradStrides[2],
-                   (int)yGradStrides[3],
-                   (int)dim,
-                   N,
-                   st,
-                   (int)xGradlens[dim],
-                   (int)yGradlens[dim],
-                   params.indices);
+                    params.yGrad,
+                    xGradlens[0],
+                    xGradlens[1],
+                    xGradlens[2],
+                    xGradlens[3],
+                    yGradlens[0],
+                    yGradlens[1],
+                    yGradlens[2],
+                    yGradlens[3],
+                    xGradStrides[0],
+                    xGradStrides[1],
+                    xGradStrides[2],
+                    xGradStrides[3],
+                    yGradStrides[0],
+                    yGradStrides[1],
+                    yGradStrides[2],
+                    yGradStrides[3],
+                    dim,
+                    N,
+                    st,
+                    xGradlens[dim],
+                    yGradlens[dim],
+                    params.indices);
         };
     };
 
