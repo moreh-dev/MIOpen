@@ -495,6 +495,8 @@ int IndexSelectDriver<Tgpu, Tref>::RunForwardCPU()
 template <typename Tgpu, typename Tref>
 int IndexSelectDriver<Tgpu, Tref>::RunBackwardGPU()
 {
+    size_t in_sz = GetTensorSize(inputDesc);
+
     float kernel_total_time = 0;
     float kernel_first_time = 0;
 
@@ -516,6 +518,14 @@ int IndexSelectDriver<Tgpu, Tref>::RunBackwardGPU()
         kernel_total_time += time;
         if(i == 0)
             kernel_first_time = time;
+
+        if(i != inflags.GetValueInt("iter") - 1)
+        {
+            inputGrad = std::vector<Tgpu>(in_sz, static_cast<Tgpu>(0));
+            if(inputGrad_dev->ToGPU(GetStream(), inputGrad.data()) != 0)
+                std::cerr << "Error copying (inputGrad) to GPU, size: " << inputGrad_dev->GetSize()
+                          << std::endl;
+        }
     }
 
     if(inflags.GetValueInt("time") == 1)
