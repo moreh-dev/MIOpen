@@ -34,8 +34,8 @@ namespace miopen :: solver :: maskedfill {
 	using MaskedFillSolver = NonTunableSolverBase<ExecutionContext, miopen :: maskedfill :: ProblemDescription>;
 	struct MaskedFill: MaskedFillSolver {
 		std :: string const & SolverDbId() const override { return GetSolverDbId<MaskedFill>(); }
-		bool			IsApplicable(ExecutionContext const & context, miopen :: maskedfill :: ProblemDescription const & problem) const override;
-		ConvSolution	GetSolution	(ExecutionContext const & context, miopen :: maskedfill :: ProblemDescription const & problem) const override;
+		bool IsApplicable(ExecutionContext const & context, miopen :: maskedfill :: ProblemDescription const & problem) const override;
+		ConvSolution GetSolution(ExecutionContext const & context, miopen :: maskedfill :: ProblemDescription const & problem) const override;
 	};
 
 }

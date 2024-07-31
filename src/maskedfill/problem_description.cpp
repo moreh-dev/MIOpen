@@ -30,9 +30,8 @@ namespace miopen :: maskedfill {
 
 	NetworkConfig ProblemDescription :: MakeNetworkConfig() const {
 		std :: ostringstream ss;
-		auto const dtype = inputDesc.GetType();
-		auto const inputlengths = inputDesc.GetLengths();
-		auto const numel = std :: accumulate(inputlengths.begin(), inputlengths.end(), 1, std :: multiplies<> {});
+		auto const dtype = outputDesc.GetType();
+		auto const numel = outputDesc.GetElementSize();
 		ss << "dtype" << dtype;
 		ss << "numel" << numel;
 		return NetworkConfig {ss.str()};

@@ -33,14 +33,12 @@
 namespace miopen :: maskedfill {
 
 	struct ProblemDescription: ProblemDescriptionBase {
-		ProblemDescription(TensorDescriptor const & inputDesc_, TensorDescriptor const & maskDesc_, miopenMaskedFillDirection_t const direction_): inputDesc(inputDesc_), maskDesc(maskDesc_), direction(direction_) {}
-		TensorDescriptor const & GetInputDesc() const { return inputDesc; }
-		TensorDescriptor const & GetMaskDesc() const { return maskDesc; }
+		ProblemDescription(TensorDescriptor const & outputDesc_, miopenMaskedFillDirection_t const direction_): outputDesc(outputDesc_), direction(direction_) {}
+		TensorDescriptor const & GetOutputDesc() const { return outputDesc; }
 		bool const IsBackward() const { return direction == MIOPEN_MASKEDFILL_BACKWARD; }
 		NetworkConfig MakeNetworkConfig() const override;
 		private:
-		TensorDescriptor inputDesc;
-		TensorDescriptor maskDesc;
+		TensorDescriptor outputDesc;
 		miopenMaskedFillDirection_t direction;
 		NetworkConfig MakeForwardNetworkConfig() const;
 	};

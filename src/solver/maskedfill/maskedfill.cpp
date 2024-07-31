@@ -34,16 +34,20 @@
 
 namespace miopen :: solver :: maskedfill {
 
+	bool IsImprovementOverROCm(miopen :: maskedfill :: ProblemDescription const & problem) {
+		constexpr auto minimumnonimprovementnumel = 524288;
+		return problem.GetOutputDesc().GetElementSize() < minimumnonimprovementnumel;
+	}
 	bool MaskedFill :: IsApplicable(ExecutionContext const & context, miopen :: maskedfill :: ProblemDescription const & problem) const {
+		if (!IsImprovementOverROCm(problem)) return false;
 		return true;
 	}
 
 	ConvSolution MaskedFill :: GetSolution(ExecutionContext const & context, miopen :: maskedfill :: ProblemDescription const & problem) const {
 		auto result = ConvSolution {miopenStatusSuccess};
 		{
-			auto const dtype = problem.GetInputDesc().GetType();
-			auto const inputlengths = problem.GetInputDesc().GetLengths();
-			auto const numel = std :: accumulate(inputlengths.begin(), inputlengths.end(), 1, std :: multiplies<> {});
+			auto const dtype = problem.GetOutputDesc().GetType();
+			auto const numel = problem.GetOutputDesc().GetElementSize();
 			size_t xlocalsize = LOCAL_SIZE;
 			size_t ylocalsize = 1;
 			size_t zlocalsize = 1;
@@ -73,8 +77,7 @@ namespace miopen :: solver :: maskedfill {
 			return [=] (Handle const & handle, AnyInvokeParams const & rawparams) {
 				decltype(auto) kernel = handle.Run(kernels.front());
 				decltype(auto) params = rawparams.CastTo<miopen :: maskedfill :: InvokeParams>();
-				auto const inputlengths = params.inputDesc -> GetLengths();
-				auto const numel = std :: accumulate(inputlengths.begin(), inputlengths.end(), 1, std :: multiplies<> {});
+				auto const numel = params.outputDesc -> GetElementSize();
 				kernel(
 					params.input,
 					params.output,
