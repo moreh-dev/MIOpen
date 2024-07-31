@@ -47,7 +47,7 @@ namespace miopen {
 
 		float const value
 	) {
-		auto const problem = maskedfill :: ProblemDescription {outputDesc, MIOPEN_MASKEDFILL_FORWARD};
+		auto const problem = maskedfill :: ProblemDescription(inputDesc, outputDesc, maskDesc, MIOPEN_MASKEDFILL_FORWARD);
 		auto const algo = AlgorithmName {"MaskedFillForward"};
 		auto const invoke_params = [&] {
 			auto tmp = maskedfill :: InvokeParams {};
@@ -83,7 +83,7 @@ namespace miopen {
 
 		float const value
 	) {
-		auto const problem = maskedfill :: ProblemDescription {inputGradientDesc, MIOPEN_MASKEDFILL_BACKWARD};
+		auto const problem = maskedfill :: ProblemDescription(outputGradientDesc, inputGradientDesc, maskDesc, MIOPEN_MASKEDFILL_BACKWARD);
 		auto const algo = AlgorithmName {"MaskedFillBackward"};
 		auto const invoke_params = [&] {
 			auto tmp = maskedfill :: InvokeParams {};
