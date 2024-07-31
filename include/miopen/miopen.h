@@ -69,6 +69,7 @@
  * @defgroup groupnorm
  * @defgroup cat
  * @defgroup SGD
+ * @defgroup MaskedFill
  *
  */
 
@@ -7223,7 +7224,7 @@ miopenFusedAdamWithOutput(miopenHandle_t handle,
 
 # ifdef MIOPEN_BETA_API
 
-/** @addtogroup maskedfill
+/** @addtogroup MaskedFill
  *  @{
  */
 
