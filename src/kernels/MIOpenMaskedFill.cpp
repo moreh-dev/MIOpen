@@ -31,26 +31,43 @@
 
 # include "float_types.h"
 
-extern "C" __global__ void MaskedFillForward(
-	FLOAT const * const __restrict__ input,
-	FLOAT * const __restrict__ output,
+template <typename T> __device__ void MaskedFillForwardContiguousImpl(
+	T const * const __restrict__ input,
+	T * const __restrict__ output,
 	__hip_internal :: int8_t const * const __restrict__ mask,
-	FLOAT const value,
+	T const value,
 	unsigned long const numel
 ) {
 	uint64_t const gid = blockIdx.x * blockDim.x + threadIdx.x;
 	if (gid >= numel) return;
 	output[gid] = mask[gid]? value : input[gid];
 }
+extern "C" __global__ void MaskedFillForwardContiguous(
+	FLOAT const * const __restrict__ input,
+	FLOAT * const __restrict__ output,
+	__hip_internal :: int8_t const * const __restrict__ mask,
+	FLOAT const value,
+	unsigned long const numel
+) {
+	MaskedFillForwardContiguousImpl<FLOAT>(input, output, mask, value, numel);
+}
 
-extern "C" __global__ void MaskedFillBackward(
+template <typename T> __device__ void MaskedFillBackwardContiguousImpl(
+	T const * const __restrict__ outputgradient,
+	T * const __restrict__ inputgradient,
+	__hip_internal :: int8_t const * const __restrict__ mask,
+	unsigned long const numel
+) {
+	const uint64_t gid = blockIdx.x * blockDim.x + threadIdx.x;
+	if (gid >= numel) return;
+	inputgradient[gid] = mask[gid]? static_cast<T>(0) : outputgradient[gid];
+}
+extern "C" __global__ void MaskedFillBackwardContiguous(
 	FLOAT const * const __restrict__ outputgradient,
 	FLOAT * const __restrict__ inputgradient,
 	__hip_internal :: int8_t const * const __restrict__ mask,
 	FLOAT const value,
 	unsigned long const numel
 ) {
-	const uint64_t gid = blockIdx.x * blockDim.x + threadIdx.x;
-	if (gid >= numel) return;
-	inputgradient[gid] = mask[gid]? static_cast<FLOAT>(0) : outputgradient[gid];
+	MaskedFillBackwardContiguousImpl<FLOAT>(outputgradient, inputgradient, mask, numel);
 }

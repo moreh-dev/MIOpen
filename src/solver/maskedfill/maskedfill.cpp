@@ -56,7 +56,7 @@ namespace miopen :: solver :: maskedfill {
 			size_t zgridsize  = 1;
 			auto kernel = KernelInfo {};
 			kernel.kernel_file = "MIOpenMaskedFill.cpp";
-			kernel.kernel_name = problem.IsBackward()? "MaskedFillBackward" : "MaskedFillForward";
+			kernel.kernel_name = problem.IsBackward()? "MaskedFillBackwardContiguous" : "MaskedFillForwardContiguous";
 			auto const buildparams = KernelBuildParameters {
 				{"MIOPEN_USE_FP16",		static_cast<int>(dtype == miopenHalf)},
 				{"MIOPEN_USE_FP32",		static_cast<int>(dtype == miopenFloat)},
