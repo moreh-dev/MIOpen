@@ -46,7 +46,7 @@ struct MaskedFillForwardTestFloat:	MaskedFillForwardTest<float>	{};
 struct MaskedFillBackwardTestFloat:	MaskedFillBackwardTest<float>	{};
 
 TEST_P(MaskedFillForwardTestFloat, Ok) {
-	if (miopen :: env :: enabled(MIOPEN_TEST_ALL) && GetFloatArg() == "--float") {
+	if (!MIOPEN_TEST_ALL || (miopen :: env :: enabled(MIOPEN_TEST_ALL) && GetFloatArg() == "--float")) {
 		RunTest();
 		Verify();
 	} else {
@@ -55,7 +55,7 @@ TEST_P(MaskedFillForwardTestFloat, Ok) {
 }
 
 TEST_P(MaskedFillBackwardTestFloat, Ok) {
-	if (miopen :: env :: enabled(MIOPEN_TEST_ALL) && GetFloatArg() == "--float") {
+	if (!MIOPEN_TEST_ALL || (miopen :: env :: enabled(MIOPEN_TEST_ALL) && GetFloatArg() == "--float")) {
 		RunTest();
 		Verify();
 	} else {
