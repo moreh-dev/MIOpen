@@ -356,6 +356,15 @@ if( MIOPEN_BACKEND STREQUAL "HIP" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN_B
         message(STATUS "Build without rocblas")
     endif()
 
+    # rocfft
+    set(MIOPEN_USE_ROCFTT ON CACHE BOOL "")
+    if(MIOPEN_USE_ROCFTT)
+        find_package(rocftt REQUIRED PATHS /opt/rocm)
+        message(STATUS "Build with rocftt ${rocftt_VERSION} ${rocftt_DIR}")
+    else()
+        message(STATUS "Build without rocftt")
+    endif()
+
     # hipblaslt
     set_var_to_condition(MIOPEN_USE_HIPBLASLT_DEFAULT NOT WIN32)
     option(MIOPEN_USE_HIPBLASLT "Use hipBlasLt" ${MIOPEN_USE_HIPBLASLT_DEFAULT})

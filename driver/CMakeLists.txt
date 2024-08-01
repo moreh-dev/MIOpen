@@ -50,6 +50,7 @@ add_executable(MIOpenDriver
     dm_pool.cpp
     dm_reduce.cpp
     dm_reduceextreme.cpp
+    dm_rfft.cpp
     dm_rnn.cpp
     dm_softmax.cpp
     dm_sum.cpp
