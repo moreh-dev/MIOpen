@@ -182,7 +182,7 @@ struct LogsumexpTestCase
 std::vector<LogsumexpTestCase> LogsumexpTestConfigs()
 {
     return {
-
+        {17, 40, 0, 0, 0, new int32_t[1]{0}, 1, true},
     };
 }
 
@@ -192,14 +192,19 @@ struct LogsumexpForwardTest : public ::testing::TestWithParam<LogsumexpTestCase>
 protected:
     void SetUp() override
     {
-        auto&& handle = get_handle();
+        auto&& handle    = get_handle();
         logsumexp_config = GetParam();
         auto gen_value   = [](auto...) { return prng::gen_descreet_uniform_sign<T>(1e-2, 100); };
 
         std::vector<int32_t> dims_vector = logsumexp_config.GetDims();
 
-        dims    = dims_vector.data();
-        num_dims = dims_vector.size();
+        dims     = logsumexp_config.dims;
+        num_dims = logsumexp_config.num_dims;
+
+        for(int i = 0; i < num_dims; i++)
+        {
+            dims[i] = dims_vector[i];
+        }
 
         keepdim = logsumexp_config.keepdim;
 
@@ -218,7 +223,7 @@ protected:
         output = tensor<T>{output_dims};
         std::fill(output.begin(), output.end(), std::numeric_limits<T>::quiet_NaN());
 
-        ref_output = tensor<T>{input_dims};
+        ref_output = tensor<T>{output_dims};
         std::fill(ref_output.begin(), ref_output.end(), std::numeric_limits<T>::quiet_NaN());
 
         input_dev  = handle.Write(input.data);
@@ -229,7 +234,7 @@ protected:
     {
         auto&& handle = get_handle();
 
-        cpu_logsumexp_forward(input, output);
+        cpu_logsumexp_forward(input, ref_output);
         miopenStatus_t status;
 
         status = miopen::LogsumexpForward(handle,
@@ -243,7 +248,7 @@ protected:
 
         EXPECT_EQ(status, miopenStatusSuccess);
 
-        output.data = handle.Read<T>(output_dev.get(), output.data.size());
+        output.data = handle.Read<T>(output_dev, output.data.size());
     }
 
     void Verify()
@@ -273,4 +278,4 @@ protected:
     int32_t num_dims;
 
     bool keepdim;
-}
+};
