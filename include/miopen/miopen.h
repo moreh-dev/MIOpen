@@ -70,6 +70,7 @@
  * @defgroup cat
  * @defgroup SGD
  * @defgroup getitem
+ * @defgroup logsumexp
  *
  */
 
@@ -7605,6 +7606,68 @@ MIOPEN_EXPORT miopenStatus_t miopenGetitemBackward(miopenHandle_t handle,
 
 /** @} */
 // CLOSEOUT GETITEM DOXYGEN GROUP
+#endif // MIOPEN_BETA_API
+
+#ifdef MIOPEN_BETA_API
+// GetItem APIs
+/** @addtogroup logsumexp
+ *
+ *  @{
+ */
+/*!
+ * @brief Execute a logsumexp forward layer
+ *
+ * @param handle        MIOpen handle (input)
+ * @param inputDesc     Tensor descriptor for the input tensor (input)
+ * @param input         Input tensor (input)
+ * @param outputDesc    Tensor descriptor for the output tensor (input)
+ * @param output        Output tensor (output)
+ * @param dims          Dimensions to reduce (input)
+ * @param num_dims      Number of dimensions to reduce (input)
+ * @param keepdim       Flag indicating whether to keep the reduced dimensions (input)
+ * @return              miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t miopenLogsumexpForward(miopenHandle_t handle,
+                                                    const miopenTensorDescriptor_t inputDesc,
+                                                    const void* input,
+                                                    const miopenTensorDescriptor_t outputDesc,
+                                                    void* output,
+                                                    const int* dims,
+                                                    const int num_dims,
+                                                    const bool keepdim);
+
+/*!
+ * @brief Execute a logsumexp backward layer
+ *
+ * @param handle            MIOpen handle (input)
+ * @param inputDesc         Tensor descriptor for the input tensor (input)
+ * @param input             Input tensor (input)
+ * @param inputGradDesc     Tensor descriptor for the input gradient tensor (input)
+ * @param inputGrad         Input gradient tensor (output)
+ * @param outputDesc        Tensor descriptor for the output tensor (input)
+ * @param output            Output tensor (input)
+ * @param outputGradDesc    Tensor descriptor for the output gradient tensor (input)
+ * @param outputGrad        Output gradient tensor (input)
+ * @param dims              Dimensions to reduce (input)
+ * @param num_dims          Number of dimensions to reduce (input)
+ * @param keepdim           Flag indicating whether to keep the reduced dimensions (input)
+ * @return                  miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t miopenLogsumexpBackward(miopenHandle_t handle,
+                                                     const miopenTensorDescriptor_t inputDesc,
+                                                     const void* input,
+                                                     const miopenTensorDescriptor_t inputGradDesc,
+                                                     void* inputGrad,
+                                                     const miopenTensorDescriptor_t outputDesc,
+                                                     const void* output,
+                                                     const miopenTensorDescriptor_t outputGradDesc,
+                                                     const void* outputGrad,
+                                                     const int* dims,
+                                                     const int num_dims,
+                                                     const bool keepdim);
+
+/** @} */
+// CLOSEOUT LOGSUMEXP DOXYGEN GROUP
 #endif // MIOPEN_BETA_API
 
 #ifdef __cplusplus

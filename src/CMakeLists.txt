@@ -154,6 +154,8 @@ set( MIOpen_Source
     load_file.cpp
     lock_file.cpp
     logger.cpp
+    logsumexp_api.cpp
+    logsumexp/problem_description.cpp
     lrn_api.cpp
     mha/mha_descriptor.cpp
     mha/problem_description.cpp
@@ -287,6 +289,8 @@ set( MIOpen_Source
     solver/layernorm/forward_layernorm2d_ck.cpp
     solver/layernorm/forward_layernorm4d_ck.cpp
     solver/layernorm/forward_t5layernorm.cpp
+    solver/logsumexp/backward_logsumexp.cpp
+    solver/logsumexp/forward_logsumexp.cpp
     solver/mha/mha_solver_backward.cpp
     solver/mha/mha_solver_forward.cpp
     solver/pooling/forward2d.cpp
@@ -439,6 +443,7 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         kernels/bfloat16_dev.hpp
         kernels/conv_common.inc
         kernels/conv_sizes.inc
+        kernels/dims_utils.hpp
         kernels/float_types.h
         kernels/gpr_alloc.inc
         kernels/hip_atomic.hpp
@@ -494,6 +499,7 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         kernels/MIOpenGroupNorm.cpp
         kernels/MIOpenGetitem.cpp
         kernels/MIOpenLayerNorm.cpp
+        kernels/MIOpenLogsumexp.cpp
         kernels/MIOpenLRNBwd.cl
         kernels/MIOpenLRNFwd.cl
         kernels/MIOpenNeuron.cl
@@ -625,6 +631,7 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         getitem.cpp
         kernel_cache.cpp
         layernorm.cpp
+        logsumexp.cpp
         lrn.cpp
         mlo_dir_conv.cpp
         exec_utils.cpp
