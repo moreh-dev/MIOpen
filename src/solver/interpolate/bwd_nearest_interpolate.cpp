@@ -46,35 +46,40 @@ namespace interpolate {
 
 bool IsOverRocmNearestBwd(const miopen::interpolate::BwdProblemDescription& problem)
 {
-    TensorDescriptor input_grad_desc  = problem.GetInputGradDesc();
-    TensorDescriptor output_grad_desc = problem.GetOutputGradDesc();
-    if(input_grad_desc.GetLengths().size() == 3)
-    {
-        if(output_grad_desc.GetElementSize() < 8000 || input_grad_desc.GetLengths()[0] < 10)
-            return false;
-    }
-    else if(input_grad_desc.GetLengths().size() == 4)
-    {
-        float scale_h =
-            static_cast<float>(output_grad_desc.GetLengths()[2]) / input_grad_desc.GetLengths()[2];
-        float scale_w =
-            static_cast<float>(output_grad_desc.GetLengths()[3]) / input_grad_desc.GetLengths()[3];
+    // TensorDescriptor input_grad_desc  = problem.GetInputGradDesc();
+    // TensorDescriptor output_grad_desc = problem.GetOutputGradDesc();
+    // if(input_grad_desc.GetLengths().size() == 3)
+    // {
+    //     if(output_grad_desc.GetElementSize() < 8000 || input_grad_desc.GetLengths()[0] < 10)
+    //         return false;
+    // }
+    // else if(input_grad_desc.GetLengths().size() == 4)
+    // {
+    //     float scale_h =
+    //         static_cast<float>(output_grad_desc.GetLengths()[2]) /
+    //         input_grad_desc.GetLengths()[2];
+    //     float scale_w =
+    //         static_cast<float>(output_grad_desc.GetLengths()[3]) /
+    //         input_grad_desc.GetLengths()[3];
 
-        if(input_grad_desc.GetLengths()[0] < 10 || (scale_h + scale_w <= 4))
-            return false;
-    }
-    else if(input_grad_desc.GetLengths().size() == 5)
-    {
-        float scale_h =
-            static_cast<float>(output_grad_desc.GetLengths()[2]) / input_grad_desc.GetLengths()[2];
-        float scale_w =
-            static_cast<float>(output_grad_desc.GetLengths()[3]) / input_grad_desc.GetLengths()[3];
-        float scale_d =
-            static_cast<float>(output_grad_desc.GetLengths()[4]) / input_grad_desc.GetLengths()[4];
+    //     if(input_grad_desc.GetLengths()[0] < 10 || (scale_h + scale_w <= 4))
+    //         return false;
+    // }
+    // else if(input_grad_desc.GetLengths().size() == 5)
+    // {
+    //     float scale_h =
+    //         static_cast<float>(output_grad_desc.GetLengths()[2]) /
+    //         input_grad_desc.GetLengths()[2];
+    //     float scale_w =
+    //         static_cast<float>(output_grad_desc.GetLengths()[3]) /
+    //         input_grad_desc.GetLengths()[3];
+    //     float scale_d =
+    //         static_cast<float>(output_grad_desc.GetLengths()[4]) /
+    //         input_grad_desc.GetLengths()[4];
 
-        if(scale_h + scale_w + scale_d < 6)
-            return false;
-    }
+    //     if(scale_h + scale_w + scale_d < 6)
+    //         return false;
+    // }
 
     return true;
 }

@@ -131,10 +131,9 @@ protected:
         for(int i = 0; i < size.size(); i++)
         {
             if(scale_factors[i] != 0)
-                out_dim.push_back(ceil(static_cast<size_t>(in_dim[i + 2] * scale_factors[i])));
+                out_dim.push_back(static_cast<size_t>(ceil(in_dim[i + 2] * scale_factors[i])));
             else
             {
-                scale_factors[i] = static_cast<float>(size[i]) / in_dim[i + 2];
                 out_dim.push_back(size[i]);
             }
         }
@@ -257,7 +256,7 @@ protected:
         for(int i = 0; i < size.size(); i++)
         {
             if(scale_factors[i] != 0)
-                out_grad_dim.push_back(ceil(static_cast<size_t>(in_dim[i + 2] * scale_factors[i])));
+                out_grad_dim.push_back(static_cast<size_t>(ceil(in_dim[i + 2] * scale_factors[i])));
             else
                 out_grad_dim.push_back(size[i]);
         }

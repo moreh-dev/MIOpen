@@ -226,7 +226,7 @@ int InterpolateDriver<Tgpu, Tref>::GetandSetData()
         for(int i = 0; i < size.size(); i++)
         {
             if(size[i] == 0)
-                out_len.push_back(ceil(static_cast<int>(in_len[i + 2] * scale_factors[i])));
+                out_len.push_back(static_cast<int>(ceil(in_len[i + 2] * scale_factors[i])));
             else
             {
                 if(config_scale_factors[0] == -1)
@@ -245,7 +245,7 @@ int InterpolateDriver<Tgpu, Tref>::GetandSetData()
     {
         for(int i = 0; i < in_len.size() - 2; i++)
         {
-            out_len.push_back(ceil(static_cast<int>(in_len[i + 2] * scale_factors[i])));
+            out_len.push_back(static_cast<int>(ceil(in_len[i + 2] * scale_factors[i])));
             scale_factors[i] = static_cast<float>(out_len[i + 2]) / in_len[i + 2];
         }
     }
@@ -257,7 +257,7 @@ int InterpolateDriver<Tgpu, Tref>::GetandSetData()
     SetTensorNd(outputDesc, out_len, output_strides, data_type);
 
     std::vector<int> scale_length = std::vector<int>({scale_factors.size()});
-    SetTensorNd(scaleFactorsDesc, scale_length, data_type);
+    SetTensorNd(scaleFactorsDesc, scale_length, miopen_type<float>{});
 
     SetTensorNd(outputGradDesc, out_len, output_strides, data_type);
     SetTensorNd(inputGradDesc, in_len, in_strides, data_type);

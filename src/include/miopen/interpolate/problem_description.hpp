@@ -67,9 +67,12 @@ struct ProblemDescription : ProblemDescriptionBase
     {
         if(scaleFactorsDesc.GetType() != miopenFloat)
         {
+            std::cout << "scaleFactorsDesc.GetType() = " << scaleFactorsDesc.GetType()
+                      << "miopenFloat type:" << miopenFloat << std::endl;
             MIOPEN_THROW(miopenStatusBadParm,
                          "Interpolate: Scale factor type should be miopenFloat.");
         }
+
         return true;
     }
 
@@ -92,6 +95,7 @@ struct FwdProblemDescription : ProblemDescription
     {
         IsValidDims();
         IsValidLength();
+        IsSameType();
     }
 
     const TensorDescriptor& GetInputDesc() const { return inputDesc; }
@@ -158,6 +162,16 @@ struct FwdProblemDescription : ProblemDescription
         return true;
     }
 
+    bool IsSameType() const
+    {
+        if(inputDesc.GetType() != outputDesc.GetType())
+        {
+            MIOPEN_THROW(miopenStatusBadParm,
+                         "Interpolate: Input and output tensor type do not match.");
+        }
+        return true;
+    }
+
     NetworkConfig MakeNetworkConfig() const override;
 
 private:
@@ -178,6 +192,7 @@ struct BwdProblemDescription : ProblemDescription
     {
         IsValidDims();
         IsValidLength();
+        IsSameType();
     }
     const TensorDescriptor& GetInputGradDesc() const { return inputGradDesc; }
     const TensorDescriptor& GetOutputGradDesc() const { return outputGradDesc; }
@@ -239,6 +254,16 @@ struct BwdProblemDescription : ProblemDescription
                 MIOPEN_THROW(miopenStatusBadParm,
                              "Interpolate: Trilinear mode requires 5D tensors.");
             }
+        }
+        return true;
+    }
+
+    bool IsSameType() const
+    {
+        if(inputGradDesc.GetType() != outputGradDesc.GetType())
+        {
+            MIOPEN_THROW(miopenStatusBadParm,
+                         "Interpolate: Input grad and output grad tensor type do not match.");
         }
         return true;
     }
