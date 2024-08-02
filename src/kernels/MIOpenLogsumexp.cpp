@@ -50,14 +50,14 @@ __device__ void LogsumexpLargeKForwardImpl(const T* __restrict__ input,
     if(gid >= N)
         return;
 
-    __shared__ T ltmp[LOCAL_SIZE_64];
-    T max_v = std::numeric_limits<T>::lowest();
+    __shared__ FLOAT_ACCUM ltmp[LOCAL_SIZE_64];
+    FLOAT_ACCUM max_v = std::numeric_limits<FLOAT_ACCUM>::lowest();
 
     for(uint64_t k = lid; k < K; k += LOCAL_SIZE_64)
     {
         tensor_layout_t<5> input_ncdhw(input_tv, gid * K + k);
-        T val = input[input_tv.get_tensor_view_idx(input_ncdhw)];
-        max_v = max_v > val ? max_v : val;
+        FLOAT_ACCUM val = CVT_FLOAT2ACCUM(input[input_tv.get_tensor_view_idx(input_ncdhw)]);
+        max_v           = max_v > val ? max_v : val;
     }
 
     // Max Reduction
@@ -76,11 +76,11 @@ __device__ void LogsumexpLargeKForwardImpl(const T* __restrict__ input,
     max_v = ltmp[0];
     __syncthreads();
 
-    T logsum = static_cast<T>(0.0);
+    FLOAT_ACCUM logsum = static_cast<FLOAT_ACCUM>(0.0);
     for(uint64_t k = 0; k < K; k += LOCAL_SIZE_64)
     {
         tensor_layout_t<5> input_ncdhw(input_tv, gid * K + k);
-        T val = input[input_tv.get_tensor_view_idx(input_ncdhw)];
+        FLOAT_ACCUM val = CVT_FLOAT2ACCUM(input[input_tv.get_tensor_view_idx(input_ncdhw)]);
         logsum += std::exp(val - max_v);
     }
 
@@ -106,10 +106,11 @@ __device__ void LogsumexpLargeKForwardImpl(const T* __restrict__ input,
     if(lid == 0)
     {
         tensor_layout_t<5> output_ncdhw(output_tv, gid);
-        if(ltmp[0] > static_cast<T>(0.0))
-            output[output_tv.get_tensor_view_idx(output_ncdhw)] = max_v + std::log(ltmp[0]);
+        if(ltmp[0] > static_cast<FLOAT_ACCUM>(0.0))
+            output[output_tv.get_tensor_view_idx(output_ncdhw)] =
+                CVT_ACCUM2FLOAT(max_v + std::log(ltmp[0]));
         else:
-            output[output_tv.get_tensor_view_idx(output_ncdhw)] = max_v + std::numeric_limits<T>::lowest();
+            output[output_tv.get_tensor_view_idx(output_ncdhw)] = CVT_ACCUM2FLOAT(max_v + std::numeric_limits<FLOAT_ACCUM>::lowest());
     }
 }
 
@@ -125,28 +126,29 @@ __device__ void LogsumexpSmallKForwardImpl(const T* __restrict__ input,
     if(gid >= N)
         return;
 
-    T vals[LIMIT_SMALL_K];
-    T max = std::numeric_limits<T>::lowest();
+    FLOAT_ACCUM vals[LIMIT_SMALL_K];
+    FLOAT_ACCUM max = std::numeric_limits<FLOAT_ACCUM>::lowest();
 
     for(int64_t k = 0; k < K; k++)
     {
         tensor_layout_t<5> input_ncdhw(input_tv, gid * K + k);
-        T val   = input[input_tv.get_tensor_view_idx(input_ncdhw)];
-        max     = max > val ? max : val;
-        vals[k] = val;
+        FLOAT_ACCUM val = CVT_FLOAT2ACCUM(input[input_tv.get_tensor_view_idx(input_ncdhw)]);
+        max             = max > val ? max : val;
+        vals[k]         = val;
     }
 
-    T logsum = static_cast<T>(0.0);
+    FLOAT_ACCUM logsum = static_cast<FLOAT_ACCUM>(0.0);
     for(int64_t k = 0; k < K; k++)
     {
         logsum += std::exp(vals[k] - max);
     }
 
     tensor_layout_t<5> output_ncdhw(output_tv, gid);
-    if(logsum > static_cast<T>(0.0))
-        output[output_tv.get_tensor_view_idx(output_ncdhw)] = max + std::log(logsum);
+    if(logsum > static_cast<FLOAT_ACCUM>(0.0))
+        output[output_tv.get_tensor_view_idx(output_ncdhw)] =
+            CVT_ACCUM2FLOAT(max + std::log(logsum));
     else:
-        output[output_tv.get_tensor_view_idx(output_ncdhw)] = max + std::numeric_limits<T>::lowest();
+        output[output_tv.get_tensor_view_idx(output_ncdhw)] = CVT_ACCUM2FLOAT(max + std::numeric_limits<FLOAT_ACCUM>::lowest());
 }
 
 template <typename T>
@@ -178,11 +180,12 @@ __device__ void LogsumexpBackwardImpl(const T* __restrict__ input,
     if(selection_info.x[4] == 1)
         output_ncdhw.layout[4] = 0;
 
-    T x  = input[input_tv.get_tensor_view_idx(input_ncdhw)];
-    T y  = output[output_tv.get_tensor_view_idx(output_ncdhw)];
-    T dy = output_grad[output_grad_tv.get_tensor_view_idx(output_ncdhw)];
+    FLOAT_ACCUM x  = CVT_FLOAT2ACCUM(input[input_tv.get_tensor_view_idx(input_ncdhw)]);
+    FLOAT_ACCUM y  = CVT_FLOAT2ACCUM(output[output_tv.get_tensor_view_idx(output_ncdhw)]);
+    FLOAT_ACCUM dy = CVT_FLOAT2ACCUM(output_grad[output_grad_tv.get_tensor_view_idx(output_ncdhw)]);
 
-    input_grad[input_grad_tv.get_tensor_view_idx(input_ncdhw)] = dy * (std::exp(x - y));
+    input_grad[input_grad_tv.get_tensor_view_idx(input_ncdhw)] =
+        CVT_ACCUM2FLOAT(dy * (std::exp(x - y)));
 }
 
 extern "C" __global__ void LogsumexpLargeKForward(const FLOAT* __restrict__ input,

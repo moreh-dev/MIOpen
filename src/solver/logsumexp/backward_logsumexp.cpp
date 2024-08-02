@@ -46,6 +46,8 @@ bool LogsumexpBackward::IsApplicable([[maybe_unused]] const ExecutionContext& co
 {
     if(!problem.IsSameType())
         return false;
+    if(!problem.IsAllPacked())
+        return false;
     return true;
 }
 

@@ -78,16 +78,43 @@ struct ProblemDescription : ProblemDescriptionBase
 
     bool IsSameType() const
     {
-        if(inputDesc.GetType() == outputDesc.GetType() &&
-           inputDesc.GetType() == inputGradDesc.GetType() &&
-           inputDesc.GetType() == outputGradDesc.GetType())
+        if(isForward)
         {
-            return true;
+            if(!(inputDesc.GetType() == outputDesc.GetType()))
+            {
+                return false;
+            }
         }
         else
         {
-            return false;
+            if(!(inputDesc.GetType() == outputDesc.GetType() &&
+                 inputDesc.GetType() == inputGradDesc.GetType() &&
+                 inputDesc.GetType() == outputGradDesc.GetType()))
+            {
+                return false;
+            }
         }
+        return true;
+    }
+
+    bool IsAllPacked() const
+    {
+        if(isForward)
+        {
+            if(!(inputDesc.IsPacked() && outputDesc.IsPacked()))
+            {
+                return false;
+            }
+        }
+        else
+        {
+            if(!(inputDesc.IsPacked() && inputGradDesc.IsPacked() && outputDesc.IsPacked() &&
+                 outputGradDesc.IsPacked()))
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     NetworkConfig MakeNetworkConfig() const override;

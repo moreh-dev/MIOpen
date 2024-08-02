@@ -43,10 +43,25 @@ namespace solver {
 
 namespace logsumexp {
 
+std::size_t sizeof_kernel_FLOAT_ACCUM(const miopen::logsumexp::ProblemDescription& problem)
+{
+    const auto datatype = problem.GetInputDesc().GetType();
+    return get_data_size(datatype);
+}
+
+std::size_t sizeof_local_memory(const miopen::logsumexp::ProblemDescription& problem)
+{
+    return LOCAL_SIZE_64 * sizeof_kernel_FLOAT_ACCUM(problem);
+}
+
 bool LogsumexpForward::IsApplicable([[maybe_unused]] const ExecutionContext& context,
                                     const miopen::logsumexp::ProblemDescription& problem) const
 {
     if(!problem.IsSameType())
+        return false;
+    if(!problem.IsAllPacked())
+        return false;
+    if(!(sizeof_local_memory(problem) <= TargetProperties::GetMaxLocalMemorySize()))
         return false;
     return true;
 }
