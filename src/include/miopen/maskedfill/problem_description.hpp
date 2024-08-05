@@ -56,7 +56,6 @@ namespace miopen :: maskedfill {
 		TensorDescriptor outputDesc;
 		TensorDescriptor maskDesc;
 		miopenMaskedFillDirection_t direction;
-		NetworkConfig MakeForwardNetworkConfig() const;
 	};
 
 }
