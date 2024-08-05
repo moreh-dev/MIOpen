@@ -2,7 +2,7 @@
  *
  * MIT License
  *
- * Copyright (c) 2023 Advanced Micro Devices, Inc.
+ * Copyright (c) 2024 Advanced Micro Devices, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,7 @@
 # include <miopen/miopen.h>
 # include <gtest/gtest.h>
 # include <miopen/maskedfill.hpp>
+# include <miopen/maskedfill/solvers.hpp>
 
 # include "get_handle.hpp"
 # include "tensor_holder.hpp"
@@ -39,6 +40,16 @@
 struct MaskedFillTestCase /* MaskedFillTestParameters */ {
 	std :: vector<size_t> const size; // or "dims"
 	std :: vector<size_t> const & GetSize() const { return size; };
+	std :: vector<size_t> strides;
+	std :: vector<size_t> const & GetStrides() const { return strides; };
+	MaskedFillTestCase(std :: vector<size_t> const size): size {size}, strides (size.size(), 1) {
+		auto stride = 1;
+		for (signed i = size.size() - 1; i >= 0; --i) {
+			strides[i] = stride;
+			stride *= size[i];
+		}
+	}
+	MaskedFillTestCase(std :: vector<size_t> const size, std :: vector<size_t> const strides): size {size}, strides {strides} {}
 	friend std :: ostream const & operator<< (std :: ostream & os, MaskedFillTestCase const & parameters) {
 		os << "{{";
 		for (auto dimension = 0; dimension < parameters.size.size(); ++dimension) {
@@ -57,6 +68,8 @@ std :: vector<MaskedFillTestCase> const MaskedFillTestConfigs(miopenMaskedFillDi
 			{{1}},
 			{{2, 2}},
 			{{1323, 12, 12, 20}},
+			{{2, 2, 2}},
+			{{2, 2, 2}, {1, 4, 2}},
 		};
 		break;
 		case MIOPEN_MASKEDFILL_BACKWARD:
@@ -64,14 +77,14 @@ std :: vector<MaskedFillTestCase> const MaskedFillTestConfigs(miopenMaskedFillDi
 			{{1}},
 			{{2, 2}},
 			{{1323, 12, 12, 20}},
+			{{2, 2, 2}},
+			{{2, 2, 2}, {1, 4, 2}},
 		};
 	}
 }
 
 inline int SetTensorLayout(miopen :: TensorDescriptor & desc) {
-	auto const lengths = desc.GetLengths();
-	std :: vector<int> intlengths {lengths.begin(), lengths.end()};
-	return SetTensorNd(& desc, intlengths, desc.GetType());
+	return SetTensorNd(& desc, desc.GetLengths(), desc.GetStrides(), desc.GetType());
 }
 
 template <typename T = float> class MaskedFillTest: public testing :: TestWithParam<MaskedFillTestCase> {
@@ -83,24 +96,31 @@ template <typename T = float> class MaskedFillTest: public testing :: TestWithPa
 
 	void SetUp() override {
 		auto && handle = get_handle();
-		auto size = GetParam().GetSize();
+		auto const size = GetParam().GetSize();
+		auto const strides = GetParam().GetStrides();
 
 		auto gen_value = [] (auto ...) { return prng :: gen_descreet_uniform_sign<T>(1e-2, 100); };
-		input = tensor<T> {size}.generate(gen_value);
+		std :: mt19937 generator;
+		std :: uniform_int_distribution<unsigned int> distribution {0, 1};
+
+		input = tensor<T>(size, strides);
+		input.generate(gen_value);
 		SetTensorLayout(input.desc);
 		input_dev = handle.Write(input.data);
 
-		output = tensor<T> {size};
-		SetTensorLayout(output.desc);
+		output = tensor<T>(size, strides);
 		std :: fill(output.begin(), output.end(), std :: numeric_limits<T> :: quiet_NaN());
+		SetTensorLayout(output.desc);
 		output_dev = handle.Write(output.data);
 
-		ref_output = tensor<T> {size};
-		std :: fill(ref_output.begin(), ref_output.end(), std :: numeric_limits<T> :: quiet_NaN());
+		ref_output = tensor<T>(size, strides);
+		std :: fill(ref_output.begin(),	ref_output.end(), std :: numeric_limits<T> :: quiet_NaN());
+		SetTensorLayout(ref_output.desc);
 
-		std :: mt19937 generator;
-		std :: uniform_int_distribution<unsigned int> distribution {0, 1};
-		mask = tensor<int8_t> {size}.generate([&] (auto ...) { return distribution(generator); });
+
+		mask = tensor<int8_t>(size, strides);
+		mask.generate([&] (auto ...) { return distribution(generator); });
+		SetTensorLayout(mask.desc);
 		mask_dev = handle.Write(mask.data);
 
 		value = gen_value();
@@ -130,7 +150,7 @@ template <typename T = float> class MaskedFillTest: public testing :: TestWithPa
 			);
 			EXPECT_EQ(status, miopenStatusSuccess);
 			output.data = handle.Read<T>(output_dev, output.data.size());
-			cpu_maskedfill_forward<T>(input, ref_output, mask, value);
+			cpu_maskedfill_forward<T, 5>(input, ref_output, mask, value);
 			break;
 			case MIOPEN_MASKEDFILL_BACKWARD:
 			status = miopen :: MaskedFillBackward(
@@ -148,7 +168,7 @@ template <typename T = float> class MaskedFillTest: public testing :: TestWithPa
 			);
 			EXPECT_EQ(status, miopenStatusSuccess);
 			output.data = handle.Read<T>(output_dev, output.data.size());
-			cpu_maskedfill_backward<T>(input, ref_output, mask);
+			cpu_maskedfill_backward<T, 5>(input, ref_output, mask);
 		}
 	}
 	void Verify() const {

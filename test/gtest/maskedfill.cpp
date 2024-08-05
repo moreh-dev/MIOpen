@@ -2,7 +2,7 @@
  *
  * MIT License
  *
- * Copyright (c) 2023 Advanced Micro Devices, Inc.
+ * Copyright (c) 2024 Advanced Micro Devices, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -47,6 +47,8 @@ struct MaskedFillBackwardTestFloat:	MaskedFillBackwardTest<float>	{};
 
 TEST_P(MaskedFillForwardTestFloat, Ok) {
 	if (!MIOPEN_TEST_ALL || (miopen :: env :: enabled(MIOPEN_TEST_ALL) && GetFloatArg() == "--float")) {
+		auto const size = GetParam().GetSize();
+		if (std :: accumulate(size.begin(), size.end(), 1, std :: multiplies<>()) >= miopen :: solver :: maskedfill :: minimumnonimprovementnumel) GTEST_SKIP();
 		RunTest();
 		Verify();
 	} else {
@@ -56,6 +58,8 @@ TEST_P(MaskedFillForwardTestFloat, Ok) {
 
 TEST_P(MaskedFillBackwardTestFloat, Ok) {
 	if (!MIOPEN_TEST_ALL || (miopen :: env :: enabled(MIOPEN_TEST_ALL) && GetFloatArg() == "--float")) {
+		auto const size = GetParam().GetSize();
+		if (std :: accumulate(size.begin(), size.end(), 1, std :: multiplies<>()) >= miopen :: solver :: maskedfill :: minimumnonimprovementnumel) GTEST_SKIP();
 		RunTest();
 		Verify();
 	} else {

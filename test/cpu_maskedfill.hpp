@@ -2,7 +2,7 @@
  *
  * MIT License
  *
- * Copyright (c) 2023 Advanced Micro Devices, Inc.
+ * Copyright (c) 2024 Advanced Micro Devices, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,15 +29,21 @@
 
 # include "tensor_holder.hpp"
 
-template <class T> void cpu_maskedfill_forward(tensor<T> const & input, tensor<T> & output, tensor<int8_t> const & mask, T const value) {
-	par_ford(std :: accumulate(input.desc.GetLengths().begin(), input.desc.GetLengths().end(), 1, std :: multiplies<> {}))([&] (size_t const i) {
-		output[i] = mask[i]? value : input[i];
+template <class T, size_t dim> void cpu_maskedfill_forward(tensor<T> const & input, tensor<T> & output, tensor<int8_t> const & mask, T const value) {
+	auto const inputtensorview	= get_inner_expanded_tv<dim>(input.desc);
+	auto const outputtensorview	= get_inner_expanded_tv<dim>(output.desc);
+	auto const masktensorview	= get_inner_expanded_tv<dim>(mask.desc);
+	par_ford(output.desc.GetElementSize())([&] (size_t const gid) {
+		output[outputtensorview.get_tensor_view_idx({outputtensorview, gid})] = mask[masktensorview.get_tensor_view_idx({masktensorview, gid})]? value : input[inputtensorview.get_tensor_view_idx({inputtensorview, gid})];
 	} );
 }
 
-template <class T> void cpu_maskedfill_backward(tensor<T> const & outputgradient, tensor<T> & inputgradient, tensor<int8_t> const & mask) {
-	par_ford(std :: accumulate(outputgradient.desc.GetLengths().begin(), outputgradient.desc.GetLengths().end(), 1, std :: multiplies<> {}))([&] (size_t const i) {
-		inputgradient[i] = mask[i]? 0 : outputgradient[i];
+template <class T, size_t dim> void cpu_maskedfill_backward(tensor<T> const & outputgradient, tensor<T> & inputgradient, tensor<int8_t> const & mask) {
+	auto const outputgradienttensorview	= get_inner_expanded_tv<dim>(outputgradient.desc);
+	auto const inputgradienttensorview	= get_inner_expanded_tv<dim>(inputgradient.desc);
+	auto const masktensorview			= get_inner_expanded_tv<dim>(mask.desc);
+	par_ford(inputgradient.desc.GetElementSize())([&] (size_t const gid) {
+		inputgradient[inputgradienttensorview.get_tensor_view_idx({inputgradienttensorview, gid})] = mask[masktensorview.get_tensor_view_idx({masktensorview, gid})]? static_cast<T>(0) : outputgradient[outputgradienttensorview.get_tensor_view_idx({outputgradienttensorview, gid})];
 	} );
 }
 

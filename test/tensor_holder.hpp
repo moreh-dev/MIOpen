@@ -33,6 +33,7 @@
 #include <miopen/type_name.hpp>
 #include <miopen/each_args.hpp>
 #include <miopen/bfloat16.hpp>
+#include <miopen/tensor_view_utils.hpp>
 #include "../driver/random.hpp"
 
 #include "serialize.hpp"

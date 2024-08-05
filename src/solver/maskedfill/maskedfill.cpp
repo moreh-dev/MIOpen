@@ -2,7 +2,7 @@
  *
  * MIT License
  *
- * Copyright (c) 2023 Advanced Micro Devices, Inc.
+ * Copyright (c) 2024 Advanced Micro Devices, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,14 +29,16 @@
 # include <miopen/maskedfill/invoke_params.hpp>
 
 # include <miopen/kernel_build_params.hpp>
+# include <miopen/tensor_view_utils.hpp>
 
 # define LOCAL_SIZE 256
 
 namespace miopen :: solver :: maskedfill {
 
 	bool IsImprovementOverROCm(miopen :: maskedfill :: ProblemDescription const & problem) {
-		constexpr auto minimumnonimprovementnumel = 524288;
-		return problem.GetOutputDesc().GetElementSize() < minimumnonimprovementnumel;
+		if (problem.IsAllContiguous()) {
+			return problem.GetOutputDesc().GetElementSize() < minimumnonimprovementnumel;
+		} else return true;
 	}
 	bool MaskedFill :: IsApplicable(ExecutionContext const & context, miopen :: maskedfill :: ProblemDescription const & problem) const {
 		if (!IsImprovementOverROCm(problem)) return false;
@@ -56,7 +58,7 @@ namespace miopen :: solver :: maskedfill {
 			size_t zgridsize  = 1;
 			auto kernel = KernelInfo {};
 			kernel.kernel_file = "MIOpenMaskedFill.cpp";
-			kernel.kernel_name = problem.IsBackward()? "MaskedFillBackwardContiguous" : "MaskedFillForwardContiguous";
+			kernel.kernel_name = problem.IsAllContiguous()? problem.IsBackward()? "MaskedFillBackwardContiguous" : "MaskedFillForwardContiguous" : problem.IsBackward()? "MaskedFillBackward" : "MaskedFillForward";
 			auto const buildparams = KernelBuildParameters {
 				{"MIOPEN_USE_FP16",		static_cast<int>(dtype == miopenHalf)},
 				{"MIOPEN_USE_FP32",		static_cast<int>(dtype == miopenFloat)},
@@ -73,20 +75,40 @@ namespace miopen :: solver :: maskedfill {
 			kernel.g_wk.push_back(zgridsize);
 			result.construction_params.push_back(kernel);
 		}
-		result.invoker_factory = [] (std :: vector<Kernel> const & kernels) {
-			return [=] (Handle const & handle, AnyInvokeParams const & rawparams) {
-				decltype(auto) kernel = handle.Run(kernels.front());
-				decltype(auto) params = rawparams.CastTo<miopen :: maskedfill :: InvokeParams>();
-				auto const numel = params.outputDesc -> GetElementSize();
-				kernel(
-					params.input,
-					params.output,
-					params.mask,
-					params.value,
-					static_cast<unsigned long const>(numel)
-				);
+		if (problem.IsAllContiguous()) {
+			result.invoker_factory = [] (std :: vector<Kernel> const & kernels) {
+				return [=] (Handle const & handle, AnyInvokeParams const & rawparams) {
+					decltype(auto) kernel = handle.Run(kernels.front());
+					decltype(auto) params = rawparams.CastTo<miopen :: maskedfill :: InvokeParams>();
+					auto const numel = params.outputDesc -> GetElementSize();
+					kernel(
+						params.input,
+						params.output,
+						params.mask,
+						params.value,
+						static_cast<unsigned long const>(numel)
+					);
+				};
 			};
-		};
+		} else {
+			result.invoker_factory = [] (std :: vector<Kernel> const & kernels) {
+				return [=] (Handle const & handle, AnyInvokeParams const & rawparams) {
+					decltype(auto) kernel = handle.Run(kernels.front());
+					decltype(auto) params = rawparams.CastTo<miopen :: maskedfill :: InvokeParams>();
+					auto const numel = params.outputDesc -> GetElementSize();
+					kernel(
+						params.input,
+						get_inner_expanded_tv<5>(* params.inputDesc),
+						params.output,
+						get_inner_expanded_tv<5>(* params.outputDesc),
+						params.mask,
+						get_inner_expanded_tv<5>(* params.maskDesc),
+						params.value,
+						static_cast<unsigned long const>(numel)
+					);
+				};
+			};
+		}
 		return result;
 	}
 

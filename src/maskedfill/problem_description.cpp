@@ -2,7 +2,7 @@
  *
  * MIT License
  *
- * Copyright (c) 2023 Advanced Micro Devices, Inc.
+ * Copyright (c) 2024 Advanced Micro Devices, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,7 @@ namespace miopen :: maskedfill {
 		auto const numel = outputDesc.GetElementSize();
 		ss << "dtype" << dtype;
 		ss << "numel" << numel;
+		if (IsAllContiguous()) ss << "contiguous";
 		return NetworkConfig {ss.str()};
 	}
 
