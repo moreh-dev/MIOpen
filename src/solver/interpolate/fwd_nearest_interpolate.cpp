@@ -45,17 +45,17 @@ namespace interpolate {
 
 bool IsOverRocmNearestFwd(const miopen::interpolate::FwdProblemDescription& problem)
 {
-    // TensorDescriptor input_desc = problem.GetInputDesc();
-    // if(input_desc.GetLengths().size() == 3)
-    // {
-    //     size_t nelems = problem.GetInputDesc().GetElementSize();
-    //     if(nelems < 4096)
-    //         return false;
-    // }
-    // else if(input_desc.GetLengths().size() == 4 || input_desc.GetLengths().size() == 5)
-    // {
-    //     return false;
-    // }
+    TensorDescriptor input_desc = problem.GetInputDesc();
+    if(input_desc.GetLengths().size() == 3)
+    {
+        size_t nelems = problem.GetInputDesc().GetElementSize();
+        if(nelems < 4096)
+            return false;
+    }
+    else if(input_desc.GetLengths().size() == 4 || input_desc.GetLengths().size() == 5)
+    {
+        return false;
+    }
 
     return true;
 }
