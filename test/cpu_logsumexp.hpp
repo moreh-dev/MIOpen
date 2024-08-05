@@ -46,8 +46,8 @@ void cpu_logsumexp_forward(tensor<T> input, tensor<T>& output)
     auto K = input_numel / output_numel;
 
     par_ford(output_numel)([&](size_t gid) {
-        std::vector<T> vals(K);
-        T max = std::numeric_limits<T>::lowest();
+        std::vector<float> vals(K);
+        float max = std::numeric_limits<float>::lowest();
 
         for(int64_t k = 0; k < K; ++k)
         {
@@ -58,13 +58,13 @@ void cpu_logsumexp_forward(tensor<T> input, tensor<T>& output)
                 input_idx[i] = tmp_gid % input_dims[i];
                 tmp_gid /= input_dims[i];
             }
-            T val   = input[std::inner_product(
+            float val = input[std::inner_product(
                 input_idx.begin(), input_idx.end(), input_strides.begin(), static_cast<size_t>(0))];
-            max     = max > val ? max : val;
-            vals[k] = val;
+            max       = max > val ? max : val;
+            vals[k]   = val;
         }
 
-        T logsum = static_cast<T>(0, 0);
+        float logsum = static_cast<float>(0, 0);
         for(int64_t k = 0; k < K; ++k)
         {
             logsum += std::exp(vals[k] - max);
@@ -81,7 +81,7 @@ void cpu_logsumexp_forward(tensor<T> input, tensor<T>& output)
 
         output[std::inner_product(
             output_idx.begin(), output_idx.end(), output_strides.begin(), static_cast<size_t>(0))] =
-            max + std::log(logsum);
+            static_cast<T>(max + std::log(logsum));
     });
 }
 
@@ -129,11 +129,11 @@ void cpu_logsumexp_backward(tensor<T> input,
         int64_t output_index = std::inner_product(
             reduced_idx.begin(), reduced_idx.end(), output_strides.begin(), static_cast<size_t>(0));
 
-        T x  = input[input_index];
-        T y  = output[output_index];
-        T dy = output_grad[output_index];
+        float x  = input[input_index];
+        float y  = output[output_index];
+        float dy = output_grad[output_index];
 
-        input_grad[input_index] = dy * std::exp(x - y);
+        input_grad[input_index] = static_cast<T>(dy * std::exp(x - y));
     });
 }
 

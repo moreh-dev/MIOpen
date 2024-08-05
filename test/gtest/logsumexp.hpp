@@ -182,11 +182,49 @@ struct LogsumexpTestCase
 std::vector<LogsumexpTestCase> LogsumexpTestConfigs()
 {
     return {
+        {10, 0, 0, 0, 0, new int32_t[1]{0}, 1, true},
+        {128, 0, 0, 0, 0, new int32_t[1]{0}, 1, true},
+        {1024, 0, 0, 0, 0, new int32_t[1]{0}, 1, true},
+        {4096, 0, 0, 0, 0, new int32_t[1]{0}, 1, true},
         {12, 40, 0, 0, 0, new int32_t[1]{0}, 1, true},
+        {16, 120, 0, 0, 0, new int32_t[1]{0}, 1, true},
         {256, 32, 0, 0, 0, new int32_t[1]{0}, 1, true},
-        {32, 80, 0, 0, 5, new int32_t[1]{0}, 1, true},
-        {12, 12, 0, 10, 5, new int32_t[2]{0, 1}, 2, true},
-        {2, 3, 2, 10, 5, new int32_t[3]{0, 1, 2}, 3, true}
+        {1024, 48, 0, 0, 0, new int32_t[1]{0}, 1, true},
+        {32, 32, 0, 0, 0, new int32_t[2]{0, 1}, 2, true},
+        {64, 64, 0, 0, 0, new int32_t[2]{0, 1}, 2, false},
+        {12, 18, 0, 0, 10, new int32_t[1]{0}, 1, false},
+        {256, 32, 0, 0, 5, new int32_t[1]{0}, 1, true},
+        {32, 80, 0, 0, 5, new int32_t[1]{1}, 1, true},
+        {32, 96, 0, 0, 16, new int32_t[1]{4}, 1, false},
+        {16, 64, 0, 0, 12, new int32_t[2]{0, 1}, 2, true},
+        {36, 256, 0, 0, 6, new int32_t[2]{0, 4}, 2, true},
+        {12, 12, 0, 0, 12, new int32_t[3]{0, 1, 4}, 3, false},
+        {6, 6, 0, 6, 6, new int32_t[1]{0}, 1, false},
+        {32, 32, 0, 32, 32, new int32_t[1]{3}, 1, true},
+        {64, 64, 0, 16, 16, new int32_t[2]{0, 3}, 2, false},
+        {128, 128, 0, 8, 8, new int32_t[2]{0, 3}, 2, true},
+        {256, 256, 0, 4, 4, new int32_t[2]{0, 3}, 2, false},
+        {512, 512, 0, 2, 2, new int32_t[2]{0, 3}, 2, true},
+        {1024, 1024, 0, 1, 1, new int32_t[2]{0, 3}, 2, false},
+        {12, 12, 0, 10, 5, new int32_t[3]{0, 1, 3}, 3, true},
+        {6, 6, 6, 6, 6, new int32_t[1]{0}, 1, true},
+        {12, 12, 12, 12, 12, new int32_t[1]{3}, 1, false},
+        {32, 32, 32, 32, 32, new int32_t[1]{4}, 1, false},
+        {16, 32, 16, 32, 16, new int32_t[2]{0, 1}, 2, true},
+        {32, 16, 32, 6, 6, new int32_t[3]{0, 1, 2}, 3, false},
+        {16, 256, 16, 2, 32, new int32_t[3]{0, 3, 4}, 3, true},
+        {2, 3, 2, 10, 5, new int32_t[3]{0, 1, 2}, 3, true},
+        {16, 16, 24, 10, 5, new int32_t[3]{0, 1, 4}, 3, false},
+        {16, 30, 16, 5, 16, new int32_t[4]{0, 1, 2, 3}, 4, true},
+        {32, 16, 12, 6, 6, new int32_t[4]{0, 1, 2, 3}, 4, false},
+        {32, 16, 16, 2, 32, new int32_t[4]{0, 1, 3, 4}, 4, true},
+        {22, 32, 2, 10, 5, new int32_t[4]{0, 1, 2, 3}, 4, false},
+        {28, 16, 24, 10, 5, new int32_t[4]{0, 1, 2, 4}, 4, true},
+        {32, 12, 16, 15, 16, new int32_t[5]{0, 1, 2, 3, 4}, 5, false},
+        {12, 16, 12, 6, 6, new int32_t[5]{0, 1, 2, 3, 4}, 5, true},
+        {32, 12, 16, 2, 12, new int32_t[5]{0, 1, 2, 3, 4}, 5, false},
+        {2, 3, 2, 10, 5, new int32_t[5]{0, 1, 2, 3, 4}, 5, true},
+        {25, 16, 32, 10, 5, new int32_t[5]{0, 1, 2, 3, 4}, 5, false},
     };
 }
 
@@ -290,9 +328,9 @@ struct LogsumexpBackwardTest : public ::testing::TestWithParam<LogsumexpTestCase
 protected:
     void SetUp() override
     {
-        auto&& handle = get_handle();
+        auto&& handle    = get_handle();
         logsumexp_config = GetParam();
-        auto gen_value = [](auto...) { return prng::gen_descreet_uniform_sign<T>(1e-2, 100); };
+        auto gen_value   = [](auto...) { return prng::gen_descreet_uniform_sign<T>(1e-2, 100); };
 
         std::vector<int32_t> dims_vector = logsumexp_config.GetDims();
 
@@ -317,23 +355,24 @@ protected:
 
         for(const auto& dim : dims_vector)
         {
-            output_dims[dim]       = 1;
-            output_grad_dims[dim]  = 1;
+            output_dims[dim]      = 1;
+            output_grad_dims[dim] = 1;
         }
 
-        input = tensor<T>{input_dims}.generate(gen_value);
-        output = tensor<T>{output_dims}.generate(gen_value);
+        input       = tensor<T>{input_dims}.generate(gen_value);
+        output      = tensor<T>{output_dims}.generate(gen_value);
         output_grad = tensor<T>{output_grad_dims}.generate(gen_value);
 
         input_grad = tensor<T>{input_grad_dims};
         std::fill(input_grad.begin(), input_grad.end(), std::numeric_limits<T>::quiet_NaN());
 
         ref_input_grad = tensor<T>{input_grad_dims};
-        std::fill(ref_input_grad.begin(), ref_input_grad.end(), std::numeric_limits<T>::quiet_NaN());
+        std::fill(
+            ref_input_grad.begin(), ref_input_grad.end(), std::numeric_limits<T>::quiet_NaN());
 
-        input_dev      = handle.Write(input.data);
-        input_grad_dev = handle.Write(input_grad.data);
-        output_dev     = handle.Write(output.data);
+        input_dev       = handle.Write(input.data);
+        input_grad_dev  = handle.Write(input_grad.data);
+        output_dev      = handle.Write(output.data);
         output_grad_dev = handle.Write(output_grad.data);
     }
 
@@ -371,8 +410,8 @@ protected:
         auto error = miopen::rms_range(ref_input_grad, input_grad);
 
         EXPECT_TRUE(miopen::range_distance(ref_input_grad) == miopen::range_distance(input_grad));
-        EXPECT_TRUE(error < threshold)
-            << "Error input_grad beyond tolerance Error: " << error << ",   Threshold " << threshold;
+        EXPECT_TRUE(error < threshold) << "Error input_grad beyond tolerance Error: " << error
+                                       << ",   Threshold " << threshold;
     }
 
     LogsumexpTestCase logsumexp_config;
