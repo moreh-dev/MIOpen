@@ -25,6 +25,7 @@
 ################################################################################
 
 find_package(Threads REQUIRED)
+find_package(rocfft REQUIRED CONFIG PATHS)
 
 add_executable(MIOpenDriver 
     InputFlags.cpp
@@ -66,7 +67,7 @@ if(WIN32)
 endif()
 add_dependencies(MIOpenDriver generate_kernels)
 target_include_directories(MIOpenDriver PRIVATE ../src/kernels)
-target_link_libraries(MIOpenDriver MIOpen Threads::Threads roc::rocrand)
+target_link_libraries(MIOpenDriver MIOpen Threads::Threads roc::rocrand roc::rocfft)
 if(NOT MIOPEN_EMBED_DB STREQUAL "")
 target_link_libraries(MIOpenDriver $<BUILD_INTERFACE:miopen_data> )
 endif()

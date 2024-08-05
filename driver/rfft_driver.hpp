@@ -35,6 +35,20 @@
 #include <../test/verify.hpp>
 #include <cmath>
 
+#define ROCFFT_CHECK(status)                                  \
+    if(status != rocfft_status_success)                       \
+    {                                                         \
+        std::cerr << "rocFFT error: " << status << std::endl; \
+        exit(status);                                         \
+    }
+
+#define HIP_CHECK(status)                                                     \
+    if(status != hipSuccess)                                                  \
+    {                                                                         \
+        std::cerr << "HIP error: " << hipGetErrorString(status) << std::endl; \
+        exit(status);                                                         \
+    }
+
 template <typename TI, typename TO, typename Tcheck>
 class RfftDriver : public Driver
 {
@@ -137,8 +151,8 @@ int RfftDriver<TI, TO, Tcheck>::GetandSetData()
     SetTensorNd(doutputDesc, inDims, data_type);
     SetTensorNd(dinputDesc, inDims, data_type);
 
-    auto outDims = inDims;
-    outDims.back() *= 2;
+    auto outDims   = inDims;
+    outDims.back() = (outDims.back() / 2 + 1) * 2;
     SetTensorNd(outputDesc, outDims, out_data_type);
 
     return 0;
@@ -189,7 +203,7 @@ int RfftDriver<TI, TO, Tcheck>::AllocateBuffersAndCopy()
 
     input_dev   = std::unique_ptr<GPUMem>(new GPUMem(ctx, in_sz, sizeof(TI)));
     target_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, target_sz, sizeof(TI)));
-    output_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, out_sz, sizeof(TI)));
+    output_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, out_sz, sizeof(TO)));
     doutput_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, dO_sz, sizeof(TI)));
     dinput_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, dI_sz, sizeof(TI)));
     dtarget_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, dT_sz, sizeof(TI)));
@@ -212,6 +226,7 @@ int RfftDriver<TI, TO, Tcheck>::AllocateBuffersAndCopy()
     {
         input[i] =
             prng::gen_A_to_B<TI>(static_cast<TI>(-randomBound), static_cast<TI>(randomBound));
+        input[i] = (float)i / in_sz;
     }
     for(int i = 0; i < dO_sz; ++i)
     {
@@ -234,21 +249,7 @@ int RfftDriver<TI, TO, Tcheck>::AllocateBuffersAndCopy()
     if(dinput_dev->ToGPU(GetStream(), dinput.data()) != 0)
         std::cerr << "Error copying (dI) to GPU, size: " << dinput_dev->GetSize() << std::endl;
 
-    if(dtarget_dev->ToGPU(GetStream(), dtarget.data()) != 0)
-        std::cerr << "Error copying (dT) to GPU, size: " << dtarget_dev->GetSize() << std::endl;
-
-    if(workspace_dev->ToGPU(GetStream(), workspace.data()) != 0)
-        std::cerr << "Error copying (dI) to GPU, size: " << workspace_dev->GetSize() << std::endl;
-
     return miopenStatusSuccess;
-}
-
-inline void CHECK_ROCFFT_STATUS(rocfft_status err)
-{
-    if(err != rocfft_status_success)
-    {
-        std::cerr << "rocFFT error: " << err << std::endl;
-    }
 }
 
 template <typename TI, typename TO, typename Tcheck>
@@ -264,25 +265,25 @@ int RfftDriver<TI, TO, Tcheck>::RunForwardGPU()
     // Create rocFFT plan
     rocfft_plan plan = nullptr;
     size_t length    = in_sz;
-    rocfft_plan_create(&plan,
-                       rocfft_placement_notinplace,
-                       rocfft_transform_type_real_forward,
-                       rocfft_precision_single,
-                       1,
-                       &length,
-                       1,
-                       nullptr);
+    ROCFFT_CHECK(rocfft_plan_create(&plan,
+                                    rocfft_placement_notinplace,
+                                    rocfft_transform_type_real_forward,
+                                    rocfft_precision_single,
+                                    1,
+                                    &length,
+                                    1,
+                                    nullptr));
 
     // Check if the plan requires a work buffer
     size_t work_buf_size = 0;
-    rocfft_plan_get_work_buffer_size(plan, &work_buf_size);
+    ROCFFT_CHECK(rocfft_plan_get_work_buffer_size(plan, &work_buf_size));
     void* work_buf             = nullptr;
     rocfft_execution_info info = nullptr;
     if(work_buf_size != 0u)
     {
-        rocfft_execution_info_create(&info);
-        hipMalloc(&work_buf, work_buf_size);
-        rocfft_execution_info_set_work_buffer(info, work_buf, work_buf_size);
+        ROCFFT_CHECK(rocfft_execution_info_create(&info));
+        HIP_CHECK(hipMalloc(&work_buf, work_buf_size));
+        ROCFFT_CHECK(rocfft_execution_info_set_work_buffer(info, work_buf, work_buf_size));
     }
 
     void* input_dev_ptr  = input_dev->GetMem();
@@ -294,13 +295,16 @@ int RfftDriver<TI, TO, Tcheck>::RunForwardGPU()
     {
         auto start = std::chrono::high_resolution_clock::now();
         // Execute plan
-        rocfft_execute(plan, &input_dev_ptr, &output_dev_ptr, info);
+        ROCFFT_CHECK(rocfft_execute(plan, &input_dev_ptr, &output_dev_ptr, info));
         hipDeviceSynchronize();
         auto end = std::chrono::high_resolution_clock::now();
 
         if(i > 0)
         {
-            totalTime += std::chrono::duration<float>(end - start).count();
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+            totalTime += duration.count() / 1000.0; // Convert to milliseconds
+            // totalTime +=
+            //     std::chrono::duration<std::chrono::microseconds>(end - start).count() / 1000;
         }
     }
 
@@ -315,26 +319,131 @@ int RfftDriver<TI, TO, Tcheck>::RunForwardGPU()
     // Clean up work buffer
     if(work_buf_size != 0u)
     {
-        hipFree(work_buf);
-        rocfft_execution_info_destroy(info);
+        HIP_CHECK(hipFree(work_buf));
+        ROCFFT_CHECK(rocfft_execution_info_destroy(info));
     }
 
     // Destroy plan
-    rocfft_plan_destroy(plan);
+    ROCFFT_CHECK(rocfft_plan_destroy(plan));
 
     if(output_dev->FromGPU(GetStream(), output.data()) != 0)
         std::cerr << "Error copying (out_dev) from GPU, size: " << output_dev->GetSize()
                   << std::endl;
 
-    // Print results
-    for(size_t i = 0; i < in_sz; i++)
-    {
-        std::cout << output.data()[i * 2] << ", " << output.data()[i * 2 + 1] << std::endl;
-    }
+    // // Print results
+    // for(size_t i = 0; i < in_sz / 2 + 1; i++)
+    // {
+    //     // std::cout << input.data()[i] << std::endl;
+    //     std::cout << output.data()[i * 2] << "+" << output.data()[i * 2 + 1] << "j" << std::endl;
+    //     // std::cout << output.data()[i].x << "+" << output.data()[i].y << "j" << std::endl;
+    // }
 
-    rocfft_cleanup();
+    ROCFFT_CHECK(rocfft_cleanup());
 
     return miopenStatusSuccess;
+
+    // // rocFFT gpu compute
+    // // ========================================
+    // std::cout << sizeof(float2) << '\n';
+
+    // rocfft_setup();
+
+    // size_t N        = 8;
+    // size_t inBytes  = N * sizeof(float);
+    // size_t outBytes = (N / 2 + 1) * sizeof(float2);
+
+    // // Create HIP device buffer
+    // float* x_dev;
+    // hipMalloc(&x_dev, inBytes);
+    // float* y_dev;
+    // hipMalloc(&y_dev, outBytes);
+    // size_t* length_dev;
+    // hipMalloc(&length_dev, 2 * sizeof(size_t));
+
+    // // Initialize data
+    // std::vector<float> cx(N);
+    // for(size_t i = 0; i < N; i++)
+    // {
+    //     cx[i] = (float)i / N;
+    //     // cx[i].y = 0;
+    // }
+    // std::vector<size_t> length;
+    // length.push_back(N);
+
+    // //  Copy data to device
+    // hipMemcpy(x_dev, cx.data(), inBytes, hipMemcpyHostToDevice);
+
+    // // Create rocFFT description
+    // rocfft_plan_description desc = nullptr;
+    // rocfft_plan_description_create(&desc);
+    // rocfft_plan_description_set_data_layout(desc,
+    //                                         rocfft_array_type_real,
+    //                                         rocfft_array_type_hermitian_interleaved,
+    //                                         0,
+    //                                         0,
+    //                                         1,
+    //                                         nullptr,
+    //                                         N,
+    //                                         1,
+    //                                         nullptr,
+    //                                         1 + N / 2);
+
+    // // Create rocFFT plan
+    // rocfft_plan plan = nullptr;
+    // rocfft_plan_create(&plan,
+    //                    rocfft_placement_notinplace,
+    //                    rocfft_transform_type_real_forward,
+    //                    rocfft_precision_single,
+    //                    1,
+    //                    length.data(),
+    //                    1,
+    //                    desc);
+
+    // // Check if the plan requires a work buffer
+    // size_t work_buf_size = 0;
+    // rocfft_plan_get_work_buffer_size(plan, &work_buf_size);
+    // void* work_buf             = nullptr;
+    // rocfft_execution_info info = nullptr;
+    // if(work_buf_size)
+    // {
+    //     rocfft_execution_info_create(&info);
+    //     hipMalloc(&work_buf, work_buf_size);
+    //     rocfft_execution_info_set_work_buffer(info, work_buf, work_buf_size);
+    // }
+
+    // // Execute plan
+    // rocfft_execute(plan, (void**)&x_dev, (void**)&y_dev, info);
+
+    // // Wait for execution to finish
+    // hipDeviceSynchronize();
+
+    // // Clean up work buffer
+    // if(work_buf_size)
+    // {
+    //     hipFree(work_buf);
+    //     rocfft_execution_info_destroy(info);
+    // }
+
+    // // Destroy plan
+    // rocfft_plan_destroy(plan);
+
+    // // Copy result back to host
+    // std::vector<float2> y(N);
+    // hipMemcpy(y.data(), y_dev, outBytes, hipMemcpyDeviceToHost);
+
+    // // Print results
+    // for(size_t i = 0; i < N / 2 + 1; i++)
+    // {
+    //     std::cout << y[i].x << ", " << y[i].y << std::endl;
+    // }
+
+    // // Free device buffer
+    // hipFree(x_dev);
+    // hipFree(y_dev);
+
+    // rocfft_cleanup();
+
+    // return 0;
 }
 
 template <typename TI, typename TO, typename Tcheck>

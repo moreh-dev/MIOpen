@@ -31,7 +31,7 @@
 static Driver* makeDriver(const std::string& base_arg)
 {
     if(base_arg == "rfft")
-        return new RfftDriver<float, float16, float>();
+        return new RfftDriver<float, float, float>();
     return nullptr;
 }
 
