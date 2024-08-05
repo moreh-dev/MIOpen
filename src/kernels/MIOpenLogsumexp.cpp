@@ -47,7 +47,7 @@ __device__ void LogsumexpLargeKForwardImpl(const T* __restrict__ input,
                                            tensor_view_t<5> input_tv,
                                            tensor_view_t<5> output_tv)
 {
-    const uint64_t gid = threadIdx.x + blockIdx.x * blockDim.x;
+    const uint64_t gid = blockIdx.x;
     const uint64_t lid = threadIdx.x;
     if(gid >= N)
         return;
@@ -79,7 +79,7 @@ __device__ void LogsumexpLargeKForwardImpl(const T* __restrict__ input,
     __syncthreads();
 
     FLOAT_ACCUM logsum = static_cast<FLOAT_ACCUM>(0.0);
-    for(uint64_t k = 0; k < K; k += LOCAL_SIZE_64)
+    for(uint64_t k = lid; k < K; k += LOCAL_SIZE_64)
     {
         tensor_layout_t<5> input_ncdhw(input_tv, gid * K + k);
         FLOAT_ACCUM val = CVT_FLOAT2ACCUM(input[input_tv.get_tensor_view_idx(input_ncdhw)]);
