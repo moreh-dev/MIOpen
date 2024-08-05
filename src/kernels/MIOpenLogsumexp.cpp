@@ -38,7 +38,6 @@
 #define LOCAL_SIZE_64 64
 #define LIMIT_SMALL_K 16
 
-// TODO : CPU 버전이랑 계산 결과가 다름. 수정 필요
 template <typename T>
 __device__ void LogsumexpLargeKForwardImpl(const T* __restrict__ input,
                                            T* __restrict__ output,

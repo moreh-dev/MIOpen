@@ -182,7 +182,11 @@ struct LogsumexpTestCase
 std::vector<LogsumexpTestCase> LogsumexpTestConfigs()
 {
     return {
-        {17, 40, 0, 0, 0, new int32_t[1]{0}, 1, true},
+        {12, 40, 0, 0, 0, new int32_t[1]{0}, 1, true},
+        {256, 32, 0, 0, 0, new int32_t[1]{0}, 1, true},
+        {32, 80, 0, 0, 5, new int32_t[1]{0}, 1, true},
+        {12, 12, 0, 10, 5, new int32_t[2]{0, 1}, 2, true},
+        {2, 3, 2, 10, 5, new int32_t[3]{0, 1, 2}, 3, true}
     };
 }
 
@@ -273,6 +277,117 @@ protected:
 
     miopen::Allocator::ManageDataPtr input_dev;
     miopen::Allocator::ManageDataPtr output_dev;
+
+    int32_t* dims;
+    int32_t num_dims;
+
+    bool keepdim;
+};
+
+template <typename T = float>
+struct LogsumexpBackwardTest : public ::testing::TestWithParam<LogsumexpTestCase>
+{
+protected:
+    void SetUp() override
+    {
+        auto&& handle = get_handle();
+        logsumexp_config = GetParam();
+        auto gen_value = [](auto...) { return prng::gen_descreet_uniform_sign<T>(1e-2, 100); };
+
+        std::vector<int32_t> dims_vector = logsumexp_config.GetDims();
+
+        dims     = logsumexp_config.dims;
+        num_dims = logsumexp_config.num_dims;
+
+        for(int i = 0; i < num_dims; i++)
+        {
+            dims[i] = dims_vector[i];
+        }
+
+        keepdim = logsumexp_config.keepdim;
+
+        auto input_dims = logsumexp_config.GetInput();
+
+        std::vector<size_t> input_grad_dims(input_dims.size());
+        std::copy(input_dims.begin(), input_dims.end(), input_grad_dims.begin());
+        std::vector<size_t> output_dims(input_dims.size());
+        std::copy(input_dims.begin(), input_dims.end(), output_dims.begin());
+        std::vector<size_t> output_grad_dims(input_dims.size());
+        std::copy(input_dims.begin(), input_dims.end(), output_grad_dims.begin());
+
+        for(const auto& dim : dims_vector)
+        {
+            output_dims[dim]       = 1;
+            output_grad_dims[dim]  = 1;
+        }
+
+        input = tensor<T>{input_dims}.generate(gen_value);
+        output = tensor<T>{output_dims}.generate(gen_value);
+        output_grad = tensor<T>{output_grad_dims}.generate(gen_value);
+
+        input_grad = tensor<T>{input_grad_dims};
+        std::fill(input_grad.begin(), input_grad.end(), std::numeric_limits<T>::quiet_NaN());
+
+        ref_input_grad = tensor<T>{input_grad_dims};
+        std::fill(ref_input_grad.begin(), ref_input_grad.end(), std::numeric_limits<T>::quiet_NaN());
+
+        input_dev      = handle.Write(input.data);
+        input_grad_dev = handle.Write(input_grad.data);
+        output_dev     = handle.Write(output.data);
+        output_grad_dev = handle.Write(output_grad.data);
+    }
+
+    void RunTest()
+    {
+        auto&& handle = get_handle();
+
+        cpu_logsumexp_backward(input, ref_input_grad, output, output_grad, dims, num_dims);
+        miopenStatus_t status;
+
+        status = miopen::LogsumexpBackward(handle,
+                                           input.desc,
+                                           input_dev.get(),
+                                           input_grad.desc,
+                                           input_grad_dev.get(),
+                                           output.desc,
+                                           output_dev.get(),
+                                           output_grad.desc,
+                                           output_grad_dev.get(),
+                                           dims,
+                                           num_dims,
+                                           keepdim);
+
+        EXPECT_EQ(status, miopenStatusSuccess);
+
+        input_grad.data = handle.Read<T>(input_grad_dev, input_grad.data.size());
+    }
+
+    void Verify()
+    {
+        auto threshold = std::is_same<T, float>::value ? 1.5e-5 : 8.2e-2;
+
+        if(std::is_same<T, bfloat16>::value)
+            threshold *= 8.0;
+        auto error = miopen::rms_range(ref_input_grad, input_grad);
+
+        EXPECT_TRUE(miopen::range_distance(ref_input_grad) == miopen::range_distance(input_grad));
+        EXPECT_TRUE(error < threshold)
+            << "Error input_grad beyond tolerance Error: " << error << ",   Threshold " << threshold;
+    }
+
+    LogsumexpTestCase logsumexp_config;
+
+    tensor<T> input;
+    tensor<T> input_grad;
+    tensor<T> output;
+    tensor<T> output_grad;
+
+    tensor<T> ref_input_grad;
+
+    miopen::Allocator::ManageDataPtr input_dev;
+    miopen::Allocator::ManageDataPtr input_grad_dev;
+    miopen::Allocator::ManageDataPtr output_dev;
+    miopen::Allocator::ManageDataPtr output_grad_dev;
 
     int32_t* dims;
     int32_t num_dims;

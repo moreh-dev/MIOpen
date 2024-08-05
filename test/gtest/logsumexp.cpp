@@ -46,6 +46,26 @@ struct LogsumexpForwardTestFloat : LogsumexpForwardTest<float>
 {
 };
 
+struct LogsumexpForwardTestHalf : LogsumexpForwardTest<half_float::half>
+{
+};
+
+struct LogsumexpForwardTestBFloat16 : LogsumexpForwardTest<bfloat16>
+{
+};
+
+struct LogsumexpBackwardTestFloat : LogsumexpBackwardTest<float>
+{
+};
+
+struct LogsumexpBackwardTestHalf : LogsumexpBackwardTest<half_float::half>
+{
+};
+
+struct LogsumexpBackwardTestBFloat16 : LogsumexpBackwardTest<bfloat16>
+{
+};
+
 } // namespace logsumexp
 using namespace logsumexp;
 
@@ -62,4 +82,74 @@ TEST_P(LogsumexpForwardTestFloat, LogsumexpTestFW)
     }
 }
 
+TEST_P(LogsumexpForwardTestHalf, LogsumexpTestFW)
+{
+    if(!MIOPEN_TEST_ALL || (env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--half")))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+}
+
+TEST_P(LogsumexpForwardTestBFloat16, LogsumexpTestFW)
+{
+    if(!MIOPEN_TEST_ALL || (env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--bfloat16")))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+}
+
+TEST_P(LogsumexpBackwardTestFloat, LogsumexpTestBW)
+{
+    if(!MIOPEN_TEST_ALL || (env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--float")))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+}
+
+TEST_P(LogsumexpBackwardTestHalf, LogsumexpTestBW)
+{
+    if(!MIOPEN_TEST_ALL || (env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--half")))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+}
+
+TEST_P(LogsumexpBackwardTestBFloat16, LogsumexpTestBW)
+{
+    if(!MIOPEN_TEST_ALL || (env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--bfloat16")))
+    {
+        RunTest();
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
+}
+
 INSTANTIATE_TEST_SUITE_P(LogsumexpTestSet, LogsumexpForwardTestFloat, testing::ValuesIn(LogsumexpTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(LogsumexpTestSet, LogsumexpForwardTestHalf, testing::ValuesIn(LogsumexpTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(LogsumexpTestSet, LogsumexpForwardTestBFloat16, testing::ValuesIn(LogsumexpTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(LogsumexpTestSet, LogsumexpBackwardTestFloat, testing::ValuesIn(LogsumexpTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(LogsumexpTestSet, LogsumexpBackwardTestHalf, testing::ValuesIn(LogsumexpTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(LogsumexpTestSet, LogsumexpBackwardTestBFloat16, testing::ValuesIn(LogsumexpTestConfigs()));

@@ -128,7 +128,7 @@ LogsumexpForward::GetSolution([[maybe_unused]] const ExecutionContext& context,
         const auto build_params = KernelBuildParameters{
             {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
             {"MIOPEN_USE_FP32", static_cast<int>(dtype == miopenFloat)},
-            {"MIOPEN_USE_BF16", static_cast<int>(dtype == miopenBFloat16)},
+            {"MIOPEN_USE_BFP16", static_cast<int>(dtype == miopenBFloat16)},
             {"MIOPEN_USE_FP64", static_cast<int>(dtype == miopenDouble)},
         };
 
