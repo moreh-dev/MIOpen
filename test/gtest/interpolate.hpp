@@ -67,7 +67,20 @@ struct InterpolateTestCase
     std::vector<size_t> GetInput() const { return input; }
 };
 
-inline std::vector<InterpolateTestCase> InterpolateTestConfigs()
+inline std::vector<InterpolateTestCase> InterpolateTestFwdConfigs()
+{
+    return {
+        {{16, 256, 1, 1}, {32, 32}, {0, 0}, MIOPEN_INTERPOLATE_MODE_BILINEAR, false},
+        {{16, 256, 1, 1}, {32, 32}, {0, 0}, MIOPEN_INTERPOLATE_MODE_BILINEAR, true},
+        {{16, 256, 20, 20}, {40, 40}, {2, 2}, MIOPEN_INTERPOLATE_MODE_BICUBIC, false},
+        {{16, 256, 20, 20}, {40, 40}, {0, 0}, MIOPEN_INTERPOLATE_MODE_BICUBIC, true},
+        {{16, 256, 1}, {32}, {0}, MIOPEN_INTERPOLATE_MODE_NEAREST, false},
+        {{16, 256, 1}, {32}, {0}, MIOPEN_INTERPOLATE_MODE_LINEAR, false},
+        {{16, 256, 1}, {32}, {0}, MIOPEN_INTERPOLATE_MODE_LINEAR, true},
+    };
+}
+
+inline std::vector<InterpolateTestCase> InterpolateTestBwdConfigs()
 {
     return {
         {{16, 256, 1, 1, 1}, {32, 32, 32}, {32, 32, 32}, MIOPEN_INTERPOLATE_MODE_TRILINEAR, false},
