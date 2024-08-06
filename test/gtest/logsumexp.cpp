@@ -147,9 +147,21 @@ TEST_P(LogsumexpBackwardTestBFloat16, LogsumexpTestBW)
     }
 }
 
-INSTANTIATE_TEST_SUITE_P(LogsumexpTestSet, LogsumexpForwardTestFloat, testing::ValuesIn(LogsumexpTestConfigs()));
-INSTANTIATE_TEST_SUITE_P(LogsumexpTestSet, LogsumexpForwardTestHalf, testing::ValuesIn(LogsumexpTestConfigs()));
-INSTANTIATE_TEST_SUITE_P(LogsumexpTestSet, LogsumexpForwardTestBFloat16, testing::ValuesIn(LogsumexpTestConfigs()));
-INSTANTIATE_TEST_SUITE_P(LogsumexpTestSet, LogsumexpBackwardTestFloat, testing::ValuesIn(LogsumexpTestConfigs()));
-INSTANTIATE_TEST_SUITE_P(LogsumexpTestSet, LogsumexpBackwardTestHalf, testing::ValuesIn(LogsumexpTestConfigs()));
-INSTANTIATE_TEST_SUITE_P(LogsumexpTestSet, LogsumexpBackwardTestBFloat16, testing::ValuesIn(LogsumexpTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(LogsumexpTestSet,
+                         LogsumexpForwardTestFloat,
+                         testing::ValuesIn(LogsumexpTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(LogsumexpTestSet,
+                         LogsumexpForwardTestHalf,
+                         testing::ValuesIn(LogsumexpTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(LogsumexpTestSet,
+                         LogsumexpForwardTestBFloat16,
+                         testing::ValuesIn(LogsumexpTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(LogsumexpTestSet,
+                         LogsumexpBackwardTestFloat,
+                         testing::ValuesIn(LogsumexpTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(LogsumexpTestSet,
+                         LogsumexpBackwardTestHalf,
+                         testing::ValuesIn(LogsumexpTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(LogsumexpTestSet,
+                         LogsumexpBackwardTestBFloat16,
+                         testing::ValuesIn(LogsumexpTestConfigs()));

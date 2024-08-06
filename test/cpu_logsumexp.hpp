@@ -93,10 +93,14 @@ void cpu_logsumexp_backward(tensor<T> input,
                             int32_t* dims,
                             int32_t num_dims)
 {
-    auto input_dims     = input.desc.GetLengths();
-    auto input_strides  = input.desc.GetStrides();
-    auto output_dims    = output.desc.GetLengths();
-    auto output_strides = output.desc.GetStrides();
+    auto input_dims          = input.desc.GetLengths();
+    auto input_strides       = input.desc.GetStrides();
+    auto input_grad_dims     = input_grad.desc.GetLengths();
+    auto input_grad_strides  = input_grad.desc.GetStrides();
+    auto output_dims         = output.desc.GetLengths();
+    auto output_strides      = output.desc.GetStrides();
+    auto output_grad_dims    = output_grad.desc.GetLengths();
+    auto output_grad_strides = output_grad.desc.GetStrides();
 
     auto input_grad_numel = std::accumulate(input_grad.desc.GetLengths().begin(),
                                             input_grad.desc.GetLengths().end(),
@@ -126,14 +130,20 @@ void cpu_logsumexp_backward(tensor<T> input,
 
         int64_t input_index = std::inner_product(
             input_idx.begin(), input_idx.end(), input_strides.begin(), static_cast<size_t>(0));
+        int64_t input_grad_index = std::inner_product(
+            input_idx.begin(), input_idx.end(), input_grad_strides.begin(), static_cast<size_t>(0));
         int64_t output_index = std::inner_product(
             reduced_idx.begin(), reduced_idx.end(), output_strides.begin(), static_cast<size_t>(0));
+        int64_t output_grad_index = std::inner_product(reduced_idx.begin(),
+                                                       reduced_idx.end(),
+                                                       output_grad_strides.begin(),
+                                                       static_cast<size_t>(0));
 
         float x  = input[input_index];
         float y  = output[output_index];
-        float dy = output_grad[output_index];
+        float dy = output_grad[output_grad_index];
 
-        input_grad[input_index] = static_cast<T>(dy * std::exp(x - y));
+        input_grad[input_grad_index] = static_cast<T>(dy * std::exp(x - y));
     });
 }
 
