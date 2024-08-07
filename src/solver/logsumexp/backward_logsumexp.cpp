@@ -41,12 +41,26 @@ namespace solver {
 
 namespace logsumexp {
 
+bool IsImprovementOverROCmBackward(const miopen::logsumexp::ProblemDescription& problem)
+{
+    constexpr size_t max_input_numel = 1000000;
+
+    if(problem.GetInputDesc().GetElementSize() > max_input_numel)
+    {
+        return false;
+    }
+
+    return true;
+}
+
 bool LogsumexpBackward::IsApplicable([[maybe_unused]] const ExecutionContext& context,
                                      const miopen::logsumexp::ProblemDescription& problem) const
 {
     if(!problem.IsSameType())
         return false;
     if(!problem.IsAllPacked())
+        return false;
+    if(!IsImprovementOverROCmBackward(problem))
         return false;
     return true;
 }

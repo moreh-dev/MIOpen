@@ -54,12 +54,40 @@ std::size_t sizeof_local_memory(const miopen::logsumexp::ProblemDescription& pro
     return LOCAL_SIZE_64 * sizeof_kernel_FLOAT_ACCUM(problem);
 }
 
+bool IsImprovementOverROCmForward(const miopen::logsumexp::ProblemDescription& problem)
+{
+    constexpr size_t max_input_numel = 1000000;
+    constexpr size_t max_K           = 1024;
+
+    auto input_grad_dims = problem.GetInputDesc().GetLengths();
+    auto K               = 1;
+
+    if(problem.GetInputDesc().GetElementSize() > max_input_numel)
+    {
+        return false;
+    }
+
+    for(auto dim : problem.GetDims())
+    {
+        K *= input_grad_dims[dim];
+    }
+
+    if(K > max_K)
+    {
+        return false;
+    }
+
+    return true;
+}
+
 bool LogsumexpForward::IsApplicable([[maybe_unused]] const ExecutionContext& context,
                                     const miopen::logsumexp::ProblemDescription& problem) const
 {
     if(!problem.IsSameType())
         return false;
     if(!problem.IsAllPacked())
+        return false;
+    if(!IsImprovementOverROCmForward(problem))
         return false;
     if(!(sizeof_local_memory(problem) <= TargetProperties::GetMaxLocalMemorySize()))
         return false;
