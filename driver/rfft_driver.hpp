@@ -27,6 +27,7 @@
 #pragma once
 #include "InputFlags.hpp"
 #include "driver.hpp"
+#include <iostream>
 #include <miopen/errors.hpp>
 #include <miopen/miopen.h>
 #include "tensor_driver.hpp"
@@ -126,13 +127,14 @@ private:
 
     bool isContiguous = true;
     miopenDataType_t out_data_type;
+    int dim;
 };
 
 template <typename TI, typename TO, typename Tcheck>
 int RfftDriver<TI, TO, Tcheck>::ParseCmdLineArgs(int argc, char* argv[])
 {
     inflags.Parse(argc, argv);
-
+    dim = inflags.GetValueInt("dim");
     if(inflags.GetValueInt("time") == 1)
     {
         miopenEnableProfiling(GetHandle(), true);
@@ -145,14 +147,19 @@ int RfftDriver<TI, TO, Tcheck>::GetandSetData()
 {
     auto inDims               = inflags.GetValueTensor("dim-lengths").lengths;
     std::vector<int> inStride = ComputeStrides(inDims);
+    if(dim < 0)
+    {
+        dim += inDims.size();
+    }
 
     SetTensorNd(inputDesc, inDims, inStride, data_type);
     SetTensorNd(targetDesc, inDims, inStride, data_type);
     SetTensorNd(doutputDesc, inDims, data_type);
     SetTensorNd(dinputDesc, inDims, data_type);
 
-    auto outDims   = inDims;
-    outDims.back() = (outDims.back() / 2 + 1) * 2;
+    auto outDims = inDims;
+    outDims[dim] = (outDims[dim] / 2 + 1) * 2;
+    // TODO: trungbc - fixed out data type
     SetTensorNd(outputDesc, outDims, out_data_type);
 
     return 0;
@@ -181,6 +188,7 @@ int RfftDriver<TI, TO, Tcheck>::AddCmdLineArgs()
         "dim-lengths", 'D', "256x4x2", "The dimensional lengths of the input tensor");
     inflags.AddInputFlag("is-contiguous", 'c', "1", "is-contiguous (Default=1)", "int");
     inflags.AddInputFlag("iter", 'i', "10", "Number of Iterations (Default=10)", "int");
+    inflags.AddInputFlag("dim", 'd', "-1", "dim (Default=-1)", "int");
     inflags.AddInputFlag("verify", 'V', "1", "Verify Each Layer (Default=1)", "int");
     inflags.AddInputFlag("time", 't', "0", "Time Each Layer (Default=0)", "int");
     inflags.AddInputFlag(
@@ -217,8 +225,6 @@ int RfftDriver<TI, TO, Tcheck>::AllocateBuffersAndCopy()
     dinputHost  = std::vector<Tcheck>(dI_sz, static_cast<Tcheck>(0));
     dtarget     = std::vector<TI>(dT_sz, static_cast<TI>(0));
     dtargetHost = std::vector<Tcheck>(dT_sz, static_cast<Tcheck>(0));
-    // workspace             = std::vector<TI>(workSpaceElems, static_cast<TI>(0));
-    // workspaceHost         = std::vector<Tcheck>(workSpaceElems, static_cast<Tcheck>(0));
 
     float randomBound = 2;
     // For half, the random bound is smaller to avoid half overflow
@@ -236,9 +242,6 @@ int RfftDriver<TI, TO, Tcheck>::AllocateBuffersAndCopy()
 
     if(input_dev->ToGPU(GetStream(), input.data()) != 0)
         std::cerr << "Error copying (in) to GPU, size: " << input_dev->GetSize() << std::endl;
-
-    if(target_dev->ToGPU(GetStream(), target.data()) != 0)
-        std::cerr << "Error copying (in) to GPU, size: " << target_dev->GetSize() << std::endl;
 
     if(output_dev->ToGPU(GetStream(), output.data()) != 0)
         std::cerr << "Error copying (out) to GPU, size: " << output_dev->GetSize() << std::endl;
@@ -260,19 +263,40 @@ int RfftDriver<TI, TO, Tcheck>::RunForwardGPU()
 
     rocfft_setup();
 
-    size_t in_sz = miopen::deref(inputDesc).GetElementSize();
+    size_t in_sz     = miopen::deref(inputDesc).GetElementSize();
+    auto inStrides   = miopen::deref(inputDesc).GetStrides();
+    auto outStrides  = miopen::deref(outputDesc).GetStrides();
+    auto inDistance  = miopen::deref(inputDesc).GetLengths()[dim];
+    auto outDistance = 1 + inDistance / 2;
+    auto batchSize   = in_sz / inDistance;
+    auto numDim      = miopen::deref(inputDesc).GetNumDims();
+
+    // Description
+    rocfft_plan_description desc = nullptr;
+    rocfft_plan_description_create(&desc);
+    rocfft_plan_description_set_data_layout(desc,
+                                            rocfft_array_type_real,
+                                            rocfft_array_type_hermitian_interleaved,
+                                            0,
+                                            0,
+                                            inStrides.size(),
+                                            inStrides.data(),
+                                            inDistance,
+                                            outStrides.size(),
+                                            outStrides.data(),
+                                            outDistance);
 
     // Create rocFFT plan
     rocfft_plan plan = nullptr;
-    size_t length    = in_sz;
+    auto length      = miopen::deref(inputDesc).GetLengths();
     ROCFFT_CHECK(rocfft_plan_create(&plan,
                                     rocfft_placement_notinplace,
                                     rocfft_transform_type_real_forward,
                                     rocfft_precision_single,
-                                    1,
-                                    &length,
-                                    1,
-                                    nullptr));
+                                    numDim,
+                                    length.data(),
+                                    batchSize,
+                                    desc));
 
     // Check if the plan requires a work buffer
     size_t work_buf_size = 0;
@@ -303,8 +327,6 @@ int RfftDriver<TI, TO, Tcheck>::RunForwardGPU()
         {
             auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
             totalTime += duration.count() / 1000.0; // Convert to milliseconds
-            // totalTime +=
-            //     std::chrono::duration<std::chrono::microseconds>(end - start).count() / 1000;
         }
     }
 
@@ -330,13 +352,27 @@ int RfftDriver<TI, TO, Tcheck>::RunForwardGPU()
         std::cerr << "Error copying (out_dev) from GPU, size: " << output_dev->GetSize()
                   << std::endl;
 
-    // // Print results
-    // for(size_t i = 0; i < in_sz / 2 + 1; i++)
-    // {
-    //     // std::cout << input.data()[i] << std::endl;
-    //     std::cout << output.data()[i * 2] << "+" << output.data()[i * 2 + 1] << "j" << std::endl;
-    //     // std::cout << output.data()[i].x << "+" << output.data()[i].y << "j" << std::endl;
-    // }
+    // Print results
+    for(size_t i = 0; i < in_sz; ++i)
+    {
+        std::cout << input.data()[i] << " ";
+    }
+    std::cout << std::endl;
+    for(size_t i = 0; i < batchSize; ++i)
+    {
+        for(size_t j = 0; j < outDistance; ++j)
+        {
+            // double value = output.data()[j];
+
+            // DoubleBytes bytes = getFirstAndLastBytes(value);
+
+            // float a = byteToFloat(bytes.first8);
+            // float b = byteToFloat(bytes.last8);
+
+            std::cout << output.data()[j * 2] << "+" << output.data()[j * 2 + 1] << "j"
+                      << std::endl;
+        }
+    }
 
     ROCFFT_CHECK(rocfft_cleanup());
 
