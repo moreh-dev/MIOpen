@@ -182,23 +182,21 @@ struct LogsumexpTestCase
 std::vector<LogsumexpTestCase> LogsumexpTestConfigs()
 {
     return {
-        {10, 0, 0, 0, 0, new int32_t[1]{0}, 1, true},
-        {32, 0, 0, 0, 0, new int32_t[1]{0}, 1, true},
-        {64, 0, 0, 0, 0, new int32_t[1]{0}, 1, true},
-        {128, 0, 0, 0, 0, new int32_t[1]{0}, 1, true},
+        {400, 0, 0, 0, 0, new int32_t[1]{0}, 1, true},
+        {800, 0, 0, 0, 0, new int32_t[1]{0}, 1, true},
         {12, 40, 0, 0, 0, new int32_t[1]{0}, 1, true},
         {16, 120, 0, 0, 0, new int32_t[1]{0}, 1, true},
         {256, 32, 0, 0, 0, new int32_t[1]{0}, 1, true},
         {1000, 48, 0, 0, 0, new int32_t[1]{0}, 1, true},
         {32, 24, 0, 0, 0, new int32_t[2]{0, 1}, 2, true},
-        {12, 12, 0, 0, 0, new int32_t[2]{0, 1}, 2, false},
+        {12, 36, 0, 0, 0, new int32_t[2]{0, 1}, 2, false},
         {12, 18, 0, 0, 10, new int32_t[1]{0}, 1, false},
         {256, 32, 0, 0, 5, new int32_t[1]{0}, 1, true},
         {32, 80, 0, 0, 5, new int32_t[1]{1}, 1, true},
         {32, 96, 0, 0, 16, new int32_t[1]{4}, 1, false},
         {16, 32, 0, 0, 12, new int32_t[2]{0, 1}, 2, true},
         {36, 256, 0, 0, 6, new int32_t[2]{0, 4}, 2, true},
-        {12, 12, 0, 0, 2, new int32_t[3]{0, 1, 4}, 3, false},
+        {12, 24, 0, 0, 2, new int32_t[3]{0, 1, 4}, 3, false},
         {6, 6, 0, 6, 6, new int32_t[1]{0}, 1, false},
         {16, 32, 0, 16, 32, new int32_t[1]{3}, 1, true},
         {32, 64, 0, 16, 16, new int32_t[2]{0, 3}, 2, false},
@@ -221,10 +219,10 @@ std::vector<LogsumexpTestCase> LogsumexpTestConfigs()
         {11, 16, 2, 2, 5, new int32_t[4]{0, 1, 2, 3}, 4, false},
         {14, 6, 2, 10, 5, new int32_t[4]{0, 1, 2, 4}, 4, true},
         {16, 2, 2, 2, 4, new int32_t[5]{0, 1, 2, 3, 4}, 5, false},
-        {6, 6, 2, 2, 2, new int32_t[5]{0, 1, 2, 3, 4}, 5, true},
-        {12, 2, 2, 2, 2, new int32_t[5]{0, 1, 2, 3, 4}, 5, false},
-        {2, 3, 2, 1, 5, new int32_t[5]{0, 1, 2, 3, 4}, 5, true},
-        {2, 2, 6, 2, 2, new int32_t[5]{0, 1, 2, 3, 4}, 5, false},
+        {6, 6, 4, 2, 2, new int32_t[5]{0, 1, 2, 3, 4}, 5, true},
+        {12, 2, 4, 2, 2, new int32_t[5]{0, 1, 2, 3, 4}, 5, false},
+        {2, 3, 12, 1, 5, new int32_t[5]{0, 1, 2, 3, 4}, 5, true},
+        {2, 2, 6, 12, 2, new int32_t[5]{0, 1, 2, 3, 4}, 5, false},
     };
 }
 
