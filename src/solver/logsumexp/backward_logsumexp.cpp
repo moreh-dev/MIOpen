@@ -46,13 +46,9 @@ bool IsImprovementOverROCmBackward(const miopen::logsumexp::ProblemDescription& 
     constexpr size_t max_input_numel = 1000000;
     constexpr size_t min_input_numel = 300;
     if(problem.GetInputDesc().GetElementSize() > max_input_numel)
-    {
         return false;
-    }
     if(problem.GetInputDesc().GetElementSize() < min_input_numel)
-    {
         return false;
-    }
 
     return true;
 }

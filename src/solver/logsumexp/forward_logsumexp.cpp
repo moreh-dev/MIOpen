@@ -63,19 +63,13 @@ bool IsImprovementOverROCmForward(const miopen::logsumexp::ProblemDescription& p
     auto K               = 1;
 
     if(problem.GetInputDesc().GetElementSize() > max_input_numel)
-    {
         return false;
-    }
 
     for(auto dim : problem.GetDims())
-    {
         K *= input_grad_dims[dim];
-    }
 
     if(K > max_K)
-    {
         return false;
-    }
 
     return true;
 }
