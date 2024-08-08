@@ -92,7 +92,7 @@ template <typename T = float> class MaskedFillTest: public testing :: TestWithPa
 	tensor<T>								input,		output,		ref_output;
 	tensor<int8_t>																	mask;	// `tensor<bool>`s aren't implemented (because `miopen_type<bool>` isn't implemented)
 	miopen :: Allocator :: ManageDataPtr	input_dev,	output_dev,				mask_dev;
-	T value;
+	float value;
 
 	void SetUp() override {
 		auto && handle = get_handle();
@@ -123,7 +123,7 @@ template <typename T = float> class MaskedFillTest: public testing :: TestWithPa
 		SetTensorLayout(mask.desc);
 		mask_dev = handle.Write(mask.data);
 
-		value = gen_value();
+		value = prng :: gen_descreet_uniform_sign<float>(1, 100);
 	}
 
 	public:

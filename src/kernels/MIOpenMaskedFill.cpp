@@ -47,10 +47,20 @@ extern "C" __global__ void MaskedFillForwardContiguous(
 	FLOAT const * const __restrict__ input,
 	FLOAT * const __restrict__ output,
 	__hip_internal :: int8_t const * const __restrict__ mask,
-	FLOAT const value,
+	float const value,
 	unsigned long const numel
 ) {
-	MaskedFillForwardContiguousImpl<FLOAT>(input, output, mask, value, numel);
+	MaskedFillForwardContiguousImpl<FLOAT>(
+		input,
+		output,
+		mask,
+		# if MIOPEN_USE_BFP16
+		float_to_bfloat16(value),
+		# else
+		value,
+		# endif
+		numel
+	);
 }
 
 template <typename T> __device__ void MaskedFillBackwardContiguousImpl(
@@ -67,7 +77,7 @@ extern "C" __global__ void MaskedFillBackwardContiguous(
 	FLOAT const * const __restrict__ outputgradient,
 	FLOAT * const __restrict__ inputgradient,
 	__hip_internal :: int8_t const * const __restrict__ mask,
-	FLOAT const value,
+	float const value,
 	unsigned long const numel
 ) {
 	MaskedFillBackwardContiguousImpl<FLOAT>(outputgradient, inputgradient, mask, numel);
@@ -97,16 +107,29 @@ extern "C" __global__ void MaskedFillForward(
 	tensor_view_t<5> const								outputtensorview,
 	__hip_internal :: int8_t const * const __restrict__	mask,
 	tensor_view_t<5> const								masktensorview,
-	FLOAT const value,
+	float const value,
 	unsigned long const numel
 ) {
-	MaskedFillForwardImpl<FLOAT>(input, inputtensorview, output, outputtensorview, mask, masktensorview, value, numel);
+	MaskedFillForwardImpl<FLOAT>(
+		input,
+		inputtensorview,
+		output,
+		outputtensorview,
+		mask,
+		masktensorview,
+		# if MIOPEN_USE_BFP16
+		float_to_bfloat16(value),
+		# else
+		value,
+		# endif
+		numel
+	);
 }
 
 template <typename T> __device__ void MaskedFillBackwardImpl(
-	FLOAT const * const __restrict__					outputgradient,
+	T const * const __restrict__						outputgradient,
 	tensor_view_t<5> const								outputgradienttensorview,
-	FLOAT * const __restrict__							inputgradient,
+	T * const __restrict__								inputgradient,
 	tensor_view_t<5> const								inputgradienttensorview,
 	__hip_internal :: int8_t const * const __restrict__	mask,
 	tensor_view_t<5> const								masktensorview,
@@ -126,7 +149,7 @@ extern "C" __global__ void MaskedFillBackward(
 	tensor_view_t<5> const								inputgradienttensorview,
 	__hip_internal :: int8_t const * const __restrict__	mask,
 	tensor_view_t<5> const								masktensorview,
-	FLOAT const value,
+	float const value,
 	unsigned long const numel
 ) {
 	MaskedFillBackwardImpl<FLOAT>(outputgradient, outputgradienttensorview, inputgradient, inputgradienttensorview, mask, masktensorview, numel);

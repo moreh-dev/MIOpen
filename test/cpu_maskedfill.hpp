@@ -29,12 +29,12 @@
 
 # include "tensor_holder.hpp"
 
-template <class T, size_t dim> void cpu_maskedfill_forward(tensor<T> const & input, tensor<T> & output, tensor<int8_t> const & mask, T const value) {
+template <class T, size_t dim> void cpu_maskedfill_forward(tensor<T> const & input, tensor<T> & output, tensor<int8_t> const & mask, float const value) {
 	auto const inputtensorview	= get_inner_expanded_tv<dim>(input.desc);
 	auto const outputtensorview	= get_inner_expanded_tv<dim>(output.desc);
 	auto const masktensorview	= get_inner_expanded_tv<dim>(mask.desc);
 	par_ford(output.desc.GetElementSize())([&] (size_t const gid) {
-		output[outputtensorview.get_tensor_view_idx({outputtensorview, gid})] = mask[masktensorview.get_tensor_view_idx({masktensorview, gid})]? value : input[inputtensorview.get_tensor_view_idx({inputtensorview, gid})];
+		output[outputtensorview.get_tensor_view_idx({outputtensorview, gid})] = mask[masktensorview.get_tensor_view_idx({masktensorview, gid})]? static_cast<T>(value) : input[inputtensorview.get_tensor_view_idx({inputtensorview, gid})];
 	} );
 }
 
