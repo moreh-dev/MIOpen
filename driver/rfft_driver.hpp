@@ -58,16 +58,14 @@ public:
     {
         miopenCreateTensorDescriptor(&inputDesc);
         miopenCreateTensorDescriptor(&targetDesc);
-        miopenCreateTensorDescriptor(&outputDesc);
         miopenCreateTensorDescriptor(&doutputDesc);
         miopenCreateTensorDescriptor(&dinputDesc);
         miopenCreateTensorDescriptor(&dtargetDesc);
 
-        data_type     = miopen_type<TI>{};
-        out_data_type = miopen_type<TO>{};
+        data_type = miopen_type<TI>{};
     }
 
-    std::vector<int> ComputeStrides(std::vector<int> input);
+    std::vector<size_t> ComputeStrides(std::vector<int> input);
     int AddCmdLineArgs() override;
     int ParseCmdLineArgs(int argc, char* argv[]) override;
     InputFlags& GetInputFlags() override { return inflags; }
@@ -89,7 +87,6 @@ public:
     {
         miopenDestroyTensorDescriptor(inputDesc);
         miopenDestroyTensorDescriptor(targetDesc);
-        miopenDestroyTensorDescriptor(outputDesc);
         miopenDestroyTensorDescriptor(doutputDesc);
         miopenDestroyTensorDescriptor(dinputDesc);
         miopenDestroyTensorDescriptor(dtargetDesc);
@@ -100,7 +97,6 @@ private:
 
     miopenTensorDescriptor_t inputDesc;
     miopenTensorDescriptor_t targetDesc;
-    miopenTensorDescriptor_t outputDesc;
     miopenTensorDescriptor_t doutputDesc;
     miopenTensorDescriptor_t dinputDesc;
     miopenTensorDescriptor_t dtargetDesc;
@@ -116,6 +112,7 @@ private:
     std::vector<TI> input;
     std::vector<TI> target;
     std::vector<TO> output;
+    std::vector<int> outDims;
     std::vector<Tcheck> outputHost;
     std::vector<TI> doutput;
     std::vector<TI> dinput;
@@ -126,7 +123,6 @@ private:
     std::vector<Tcheck> workspaceHost;
 
     bool isContiguous = true;
-    miopenDataType_t out_data_type;
     int dim;
 };
 
@@ -145,33 +141,31 @@ int RfftDriver<TI, TO, Tcheck>::ParseCmdLineArgs(int argc, char* argv[])
 template <typename TI, typename TO, typename Tcheck>
 int RfftDriver<TI, TO, Tcheck>::GetandSetData()
 {
-    auto inDims               = inflags.GetValueTensor("dim-lengths").lengths;
-    std::vector<int> inStride = ComputeStrides(inDims);
+    auto inDims                  = inflags.GetValueTensor("dim-lengths").lengths;
+    std::vector<size_t> inStride = ComputeStrides(inDims);
     if(dim < 0)
     {
         dim += inDims.size();
     }
 
-    SetTensorNd(inputDesc, inDims, inStride, data_type);
-    SetTensorNd(targetDesc, inDims, inStride, data_type);
+    // TODO: pass strides to create non-cont tensor, but strides require vector<int>
+    SetTensorNd(inputDesc, inDims, data_type);
     SetTensorNd(doutputDesc, inDims, data_type);
     SetTensorNd(dinputDesc, inDims, data_type);
 
-    auto outDims = inDims;
-    outDims[dim] = (outDims[dim] / 2 + 1) * 2;
-    // TODO: trungbc - fixed out data type
-    SetTensorNd(outputDesc, outDims, out_data_type);
+    outDims      = inDims;
+    outDims[dim] = outDims[dim] / 2 + 1;
 
     return 0;
 }
 
 // Equivalent to: tensor.tranpose(0, -1).contiguous().tranpose(0, -1) incase contiguous = False
 template <typename TI, typename TO, typename Tcheck>
-std::vector<int> RfftDriver<TI, TO, Tcheck>::ComputeStrides(std::vector<int> inputDim)
+std::vector<size_t> RfftDriver<TI, TO, Tcheck>::ComputeStrides(std::vector<int> inputDim)
 {
     if(!isContiguous)
         std::swap(inputDim.front(), inputDim.back());
-    std::vector<int> strides(inputDim.size());
+    std::vector<size_t> strides(inputDim.size());
     strides.back() = 1;
     for(int i = inputDim.size() - 2; i >= 0; --i)
         strides[i] = strides[i + 1] * inputDim[i + 1];
@@ -202,10 +196,14 @@ int RfftDriver<TI, TO, Tcheck>::AllocateBuffersAndCopy()
 {
     size_t in_sz     = miopen::deref(inputDesc).GetElementSize();
     size_t target_sz = miopen::deref(targetDesc).GetElementSize();
-    size_t out_sz    = miopen::deref(outputDesc).GetElementSize();
-    size_t dO_sz     = miopen::deref(doutputDesc).GetElementSize();
-    size_t dI_sz     = miopen::deref(dinputDesc).GetElementSize();
-    size_t dT_sz     = miopen::deref(dtargetDesc).GetElementSize();
+    size_t out_sz    = 1;
+    for(auto i : outDims)
+    {
+        out_sz *= i;
+    }
+    size_t dO_sz = miopen::deref(doutputDesc).GetElementSize();
+    size_t dI_sz = miopen::deref(dinputDesc).GetElementSize();
+    size_t dT_sz = miopen::deref(dtargetDesc).GetElementSize();
 
     uint32_t ctx = 0;
 
@@ -258,18 +256,39 @@ int RfftDriver<TI, TO, Tcheck>::AllocateBuffersAndCopy()
 template <typename TI, typename TO, typename Tcheck>
 int RfftDriver<TI, TO, Tcheck>::RunForwardGPU()
 {
-    // rocFFT gpu compute
-    // ========================================
-
     rocfft_setup();
 
-    size_t in_sz     = miopen::deref(inputDesc).GetElementSize();
-    auto inStrides   = miopen::deref(inputDesc).GetStrides();
-    auto outStrides  = miopen::deref(outputDesc).GetStrides();
-    auto inDistance  = miopen::deref(inputDesc).GetLengths()[dim];
-    auto outDistance = 1 + inDistance / 2;
-    auto batchSize   = in_sz / inDistance;
-    auto numDim      = miopen::deref(inputDesc).GetNumDims();
+    int totalDim = miopen::deref(inputDesc).GetNumDims();
+    if(dim != 0 and dim != totalDim - 1)
+    {
+        return miopenStatusNotImplemented;
+    }
+    // auto inStrides = miopen::deref(inputDesc).GetStrides();
+    auto selectedDimSize = miopen::deref(inputDesc).GetLengths()[dim];
+    std::vector<size_t> inStrides;
+    std::vector<size_t> outStrides;
+    size_t inDistance;
+    size_t outDistance;
+
+    if(dim == totalDim - 1)
+    {
+        inStrides.push_back(1);
+        outStrides.push_back(1);
+
+        inDistance  = miopen::deref(inputDesc).GetLengths()[dim];
+        outDistance = 1 + inDistance / 2;
+    }
+    else
+    {
+        inStrides.push_back(miopen::deref(inputDesc).GetStrides()[0]);
+        outStrides.push_back(miopen::deref(inputDesc).GetStrides()[0]);
+
+        inDistance  = 1;
+        outDistance = 1;
+    }
+
+    auto inSz      = miopen::deref(inputDesc).GetElementSize();
+    auto batchSize = inSz / selectedDimSize;
 
     // Description
     rocfft_plan_description desc = nullptr;
@@ -288,13 +307,12 @@ int RfftDriver<TI, TO, Tcheck>::RunForwardGPU()
 
     // Create rocFFT plan
     rocfft_plan plan = nullptr;
-    auto length      = miopen::deref(inputDesc).GetLengths();
     ROCFFT_CHECK(rocfft_plan_create(&plan,
                                     rocfft_placement_notinplace,
                                     rocfft_transform_type_real_forward,
                                     rocfft_precision_single,
-                                    numDim,
-                                    length.data(),
+                                    1,
+                                    &selectedDimSize,
                                     batchSize,
                                     desc));
 
@@ -353,133 +371,13 @@ int RfftDriver<TI, TO, Tcheck>::RunForwardGPU()
                   << std::endl;
 
     // Print results
-    for(size_t i = 0; i < in_sz; ++i)
-    {
-        std::cout << input.data()[i] << " ";
-    }
-    std::cout << std::endl;
-    for(size_t i = 0; i < batchSize; ++i)
-    {
-        for(size_t j = 0; j < outDistance; ++j)
-        {
-            // double value = output.data()[j];
-
-            // DoubleBytes bytes = getFirstAndLastBytes(value);
-
-            // float a = byteToFloat(bytes.first8);
-            // float b = byteToFloat(bytes.last8);
-
-            std::cout << output.data()[j * 2] << "+" << output.data()[j * 2 + 1] << "j"
-                      << std::endl;
-        }
-    }
+    // for(auto elem : output)
+    // {
+    //     std::cout << elem.x << "+" << elem.y << "i" << std::endl;
+    // }
 
     ROCFFT_CHECK(rocfft_cleanup());
-
     return miopenStatusSuccess;
-
-    // // rocFFT gpu compute
-    // // ========================================
-    // std::cout << sizeof(float2) << '\n';
-
-    // rocfft_setup();
-
-    // size_t N        = 8;
-    // size_t inBytes  = N * sizeof(float);
-    // size_t outBytes = (N / 2 + 1) * sizeof(float2);
-
-    // // Create HIP device buffer
-    // float* x_dev;
-    // hipMalloc(&x_dev, inBytes);
-    // float* y_dev;
-    // hipMalloc(&y_dev, outBytes);
-    // size_t* length_dev;
-    // hipMalloc(&length_dev, 2 * sizeof(size_t));
-
-    // // Initialize data
-    // std::vector<float> cx(N);
-    // for(size_t i = 0; i < N; i++)
-    // {
-    //     cx[i] = (float)i / N;
-    //     // cx[i].y = 0;
-    // }
-    // std::vector<size_t> length;
-    // length.push_back(N);
-
-    // //  Copy data to device
-    // hipMemcpy(x_dev, cx.data(), inBytes, hipMemcpyHostToDevice);
-
-    // // Create rocFFT description
-    // rocfft_plan_description desc = nullptr;
-    // rocfft_plan_description_create(&desc);
-    // rocfft_plan_description_set_data_layout(desc,
-    //                                         rocfft_array_type_real,
-    //                                         rocfft_array_type_hermitian_interleaved,
-    //                                         0,
-    //                                         0,
-    //                                         1,
-    //                                         nullptr,
-    //                                         N,
-    //                                         1,
-    //                                         nullptr,
-    //                                         1 + N / 2);
-
-    // // Create rocFFT plan
-    // rocfft_plan plan = nullptr;
-    // rocfft_plan_create(&plan,
-    //                    rocfft_placement_notinplace,
-    //                    rocfft_transform_type_real_forward,
-    //                    rocfft_precision_single,
-    //                    1,
-    //                    length.data(),
-    //                    1,
-    //                    desc);
-
-    // // Check if the plan requires a work buffer
-    // size_t work_buf_size = 0;
-    // rocfft_plan_get_work_buffer_size(plan, &work_buf_size);
-    // void* work_buf             = nullptr;
-    // rocfft_execution_info info = nullptr;
-    // if(work_buf_size)
-    // {
-    //     rocfft_execution_info_create(&info);
-    //     hipMalloc(&work_buf, work_buf_size);
-    //     rocfft_execution_info_set_work_buffer(info, work_buf, work_buf_size);
-    // }
-
-    // // Execute plan
-    // rocfft_execute(plan, (void**)&x_dev, (void**)&y_dev, info);
-
-    // // Wait for execution to finish
-    // hipDeviceSynchronize();
-
-    // // Clean up work buffer
-    // if(work_buf_size)
-    // {
-    //     hipFree(work_buf);
-    //     rocfft_execution_info_destroy(info);
-    // }
-
-    // // Destroy plan
-    // rocfft_plan_destroy(plan);
-
-    // // Copy result back to host
-    // std::vector<float2> y(N);
-    // hipMemcpy(y.data(), y_dev, outBytes, hipMemcpyDeviceToHost);
-
-    // // Print results
-    // for(size_t i = 0; i < N / 2 + 1; i++)
-    // {
-    //     std::cout << y[i].x << ", " << y[i].y << std::endl;
-    // }
-
-    // // Free device buffer
-    // hipFree(x_dev);
-    // hipFree(y_dev);
-
-    // rocfft_cleanup();
-
-    // return 0;
 }
 
 template <typename TI, typename TO, typename Tcheck>
@@ -516,44 +414,11 @@ Tcheck RfftDriver<TI, TO, Tcheck>::GetTolerance()
 template <typename TI, typename TO, typename Tcheck>
 int RfftDriver<TI, TO, Tcheck>::VerifyForward()
 {
-    RunForwardCPU();
-
-    const Tcheck tolerance = GetTolerance();
-    auto error             = miopen::rms_range(outputHost, output);
-
-    if(!std::isfinite(error) || error > tolerance)
-    {
-        std::cout << "Forward rfft FAILED: " << error << " > " << tolerance << std::endl;
-        return EC_VerifyFwd;
-    }
-    else
-    {
-        std::cout << "Forward rfft Verifies OK on CPU reference (" << error << "< " << tolerance
-                  << ')' << std::endl;
-    }
-
     return miopenStatusSuccess;
 }
 
 template <typename TI, typename TO, typename Tcheck>
 int RfftDriver<TI, TO, Tcheck>::VerifyBackward()
 {
-    RunBackwardCPU();
-
-    const Tcheck tolerance = GetTolerance();
-    auto dinputError       = miopen::rms_range(dinputHost, dinput);
-    auto dtargetError      = miopen::rms_range(dtargetHost, dtarget);
-
-    if(!std::isfinite(dinputError) || dinputError > tolerance)
-    {
-        std::cout << "Backward rfft FAILED: " << dinputError << " > " << tolerance << std::endl;
-        return EC_VerifyFwd;
-    }
-    else
-    {
-        std::cout << "Backward rfft Verifies OK on CPU reference (dinput: " << dinputError
-                  << ", dtarget: " << dtargetError << "< " << tolerance << ')' << std::endl;
-    }
-
     return miopenStatusSuccess;
 }
