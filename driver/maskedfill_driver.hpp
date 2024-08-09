@@ -75,7 +75,8 @@ template <typename Tgpu, typename Tref = Tgpu> class MaskedFillDriver: public Dr
 template <typename Tgpu, typename Tref> int MaskedFillDriver<Tgpu, Tref> :: AddCmdLineArgs() {
     inflags.AddInputFlag("forw", 'F', "1", "Run only Forward MaskedFill (Default=1)", "int");
 
-	inflags.AddTensorFlag("input", 'I', "2x2", "Tensor descriptor for the input and mask tensors (default = 2x2)");
+	inflags.AddTensorFlag("input", 'I', "2x2", "Tensor descriptor for the input tensor (default = 2x2)");
+	inflags.AddTensorFlag("mask", 'm', "2x2", "Tensor descriptor for the boolean mask (default = 2x2)");
 
     inflags.AddInputFlag("iter", 'i', "10", "Number of Iterations (Default=10)", "int");
     inflags.AddInputFlag("verify", 'V', "1", "Verify Each Layer (Default=1)", "int");
@@ -92,10 +93,11 @@ template <typename Tgpu, typename Tref> int MaskedFillDriver<Tgpu, Tref> :: Pars
 	return miopenStatusSuccess;
 }
 template <typename Tgpu, typename Tref> int MaskedFillDriver<Tgpu, Tref> :: GetandSetData() {
-	auto inputsize = inflags.GetValueTensor("input").lengths;
-	SetTensorNd(inputDesc,	inputsize, data_type);
-	SetTensorNd(outputDesc,	inputsize, data_type);
-	SetTensorNd(maskDesc,	inputsize, miopenInt8);
+	auto const input	= inflags.GetValueTensor("input");
+	auto const mask		= inflags.GetValueTensor("mask");
+	SetTensorNd(inputDesc,	input.lengths,	input.strides,	data_type);
+	SetTensorNd(outputDesc,	input.lengths,	input.strides,	data_type);
+	SetTensorNd(maskDesc,	mask.lengths,	mask.strides,	miopenInt8);
 	value = prng :: gen_0_to_B<Tgpu>(static_cast<Tgpu>(1));
 	return 0;
 }
