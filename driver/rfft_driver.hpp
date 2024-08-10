@@ -123,6 +123,7 @@ private:
     std::vector<Tcheck> workspaceHost;
 
     bool isContiguous = true;
+    int normalize;
     int dim;
 };
 
@@ -130,7 +131,8 @@ template <typename TI, typename TO, typename Tcheck>
 int RfftDriver<TI, TO, Tcheck>::ParseCmdLineArgs(int argc, char* argv[])
 {
     inflags.Parse(argc, argv);
-    dim = inflags.GetValueInt("dim");
+    dim       = inflags.GetValueInt("dim");
+    normalize = inflags.GetValueInt("norm");
     if(inflags.GetValueInt("time") == 1)
     {
         miopenEnableProfiling(GetHandle(), true);
@@ -183,6 +185,7 @@ int RfftDriver<TI, TO, Tcheck>::AddCmdLineArgs()
     inflags.AddInputFlag("is-contiguous", 'c', "1", "is-contiguous (Default=1)", "int");
     inflags.AddInputFlag("iter", 'i', "10", "Number of Iterations (Default=10)", "int");
     inflags.AddInputFlag("dim", 'd', "-1", "dim (Default=-1)", "int");
+    inflags.AddInputFlag("norm", 'n', "0", "Norm (Default=0 - backward)", "int");
     inflags.AddInputFlag("verify", 'V', "1", "Verify Each Layer (Default=1)", "int");
     inflags.AddInputFlag("time", 't', "0", "Time Each Layer (Default=0)", "int");
     inflags.AddInputFlag(
@@ -293,6 +296,18 @@ int RfftDriver<TI, TO, Tcheck>::RunForwardGPU()
     // Description
     rocfft_plan_description desc = nullptr;
     rocfft_plan_description_create(&desc);
+    float scaleFactor = 1.0;
+    // Forward
+    if(normalize == 1)
+    {
+        scaleFactor = 1.0 / selectedDimSize;
+    }
+    // Ortho
+    else if(normalize == 2)
+    {
+        scaleFactor = 1.0 / sqrt(selectedDimSize);
+    }
+    rocfft_plan_description_set_scale_factor(desc, scaleFactor);
     rocfft_plan_description_set_data_layout(desc,
                                             rocfft_array_type_real,
                                             rocfft_array_type_hermitian_interleaved,
