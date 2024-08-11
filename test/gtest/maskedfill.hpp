@@ -50,15 +50,18 @@ struct MaskedFillTestCase /* MaskedFillTestParameters */ {
 		}
 	}
 	MaskedFillTestCase(std :: vector<size_t> const size, std :: vector<size_t> const strides): size {size}, strides {strides} {}
-	friend std :: ostream const & operator<< (std :: ostream & os, MaskedFillTestCase const & parameters) {
-		os << "{{";
+	friend std :: ostream & operator<< (std :: ostream & os, MaskedFillTestCase const & parameters) {
+		assert(parameters.size.size() == parameters.strides.size());
+		std :: stringstream sizestringstream, stridesstringstream;
+		sizestringstream << "{"; stridesstringstream << "{";
 		for (auto dimension = 0; dimension < parameters.size.size(); ++dimension) {
-			os << parameters.size[dimension];
-			if (dimension < parameters.size.size() - 1)
-				os << ", ";
-
+			sizestringstream << parameters.size[dimension]; stridesstringstream << parameters.strides[dimension];
+			if (dimension < parameters.size.size() - 1) {
+				sizestringstream << ", "; stridesstringstream << ", ";
+			}
 		}
-		return os << "}}";
+		sizestringstream << "}"; stridesstringstream << "}";
+		return os << "{" << sizestringstream.str() << ", " << stridesstringstream.str() << "}";
 	}
 };
 std :: vector<MaskedFillTestCase> const MaskedFillTestConfigs(miopenMaskedFillDirection_t const direction) {
