@@ -75,6 +75,13 @@ struct ProblemDescription : ProblemDescriptionBase
     const std::vector<int>& GetDims() const { return dims; }
     bool GetKeepdim() const { return keepdim; }
 
+    bool IsValidDims() const
+    {
+        auto size = inputDesc.GetLengths().size();
+        return std::all_of(
+            dims.begin(), dims.end(), [size](int dim) { return dim >= 0 && dim < size; });
+    }
+
     bool IsSameType() const
     {
         if(isForward)

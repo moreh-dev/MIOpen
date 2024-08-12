@@ -56,6 +56,8 @@ bool IsImprovementOverROCmBackward(const miopen::logsumexp::ProblemDescription& 
 bool LogsumexpBackward::IsApplicable([[maybe_unused]] const ExecutionContext& context,
                                      const miopen::logsumexp::ProblemDescription& problem) const
 {
+    if(!problem.IsValidDims())
+        return false;
     if(!problem.IsSameType())
         return false;
     if(!problem.IsAllPacked())
