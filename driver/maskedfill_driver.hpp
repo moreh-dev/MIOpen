@@ -75,8 +75,8 @@ template <typename Tgpu, typename Tref = Tgpu> class MaskedFillDriver: public Dr
 template <typename Tgpu, typename Tref> int MaskedFillDriver<Tgpu, Tref> :: AddCmdLineArgs() {
     inflags.AddInputFlag("forw", 'F', "1", "Run only Forward MaskedFill (Default=1)", "int");
 
-	inflags.AddTensorFlag("input", 'I', "2x2", "Tensor descriptor for the input tensor (default = 2x2)");
-	inflags.AddTensorFlag("mask", 'm', "2x2", "Tensor descriptor for the boolean mask (default = 2x2)");
+	inflags.AddTensorFlag("input", 'I', "2x2", "");
+	inflags.AddTensorFlag("mask", 'm', "", "Identical to the input tensor descriptor");
 
     inflags.AddInputFlag("iter", 'i', "10", "Number of Iterations (Default=10)", "int");
     inflags.AddInputFlag("verify", 'V', "1", "Verify Each Layer (Default=1)", "int");
@@ -94,7 +94,7 @@ template <typename Tgpu, typename Tref> int MaskedFillDriver<Tgpu, Tref> :: Pars
 }
 template <typename Tgpu, typename Tref> int MaskedFillDriver<Tgpu, Tref> :: GetandSetData() {
 	auto const input	= inflags.GetValueTensor("input");
-	auto const mask		= inflags.GetValueTensor("mask");
+	auto const mask		= inflags.GetValueTensor("mask").FillMissing(input);
 	SetTensorNd(inputDesc,	input.lengths,	input.strides,	data_type);
 	SetTensorNd(outputDesc,	input.lengths,	input.strides,	data_type);
 	SetTensorNd(maskDesc,	mask.lengths,	mask.strides,	miopenInt8);
@@ -168,7 +168,7 @@ template <typename Tgpu, typename Tref> int MaskedFillDriver<Tgpu, Tref> :: Veri
 
 		value
 	);
-	auto const error = miopen :: rms_range(output, hostoutput);
+	auto const error = miopen :: range_product(output, hostoutput, 0, miopen :: sum, miopen :: abs_diff);
 	if (error == 0) {
 		std :: cout << "Forward MaskedFill Verifies OK on CPU reference" << std :: endl;
 	} else {
@@ -219,7 +219,7 @@ template <typename Tgpu, typename Tref> int MaskedFillDriver<Tgpu, Tref> :: Veri
 
 		mask.data()
 	);
-	auto const error = miopen :: rms_range(output, hostoutput);
+	auto const error = miopen :: range_product(output, hostoutput, 0, miopen :: sum, miopen :: abs_diff);
 	if (error == 0) {
 		std :: cout << "Backward MaskedFill Verifies OK on CPU reference" << std :: endl;
 	} else {
