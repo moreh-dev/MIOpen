@@ -31,7 +31,10 @@
 
 namespace miopen :: solver :: maskedfill {
 
-	constexpr auto minimumnonimprovementnumel = 524288;
+	constexpr auto  float32contiguousfwdminimumnonimprovementnumel =  524288;
+	constexpr auto  float16contiguousfwdminimumnonimprovementnumel = 4194304;
+	constexpr auto bfloat16contiguousfwdminimumnonimprovementnumel = 4194304;
+	constexpr auto      noncontiguousfwdminimumnonimprovementnumel = 1089000;
 	using MaskedFillSolver = NonTunableSolverBase<ExecutionContext, miopen :: maskedfill :: ProblemDescription>;
 	struct MaskedFill: MaskedFillSolver {
 		std :: string const & SolverDbId() const override { return GetSolverDbId<MaskedFill>(); }

@@ -36,9 +36,20 @@
 namespace miopen :: solver :: maskedfill {
 
 	bool IsImprovementOverROCm(miopen :: maskedfill :: ProblemDescription const & problem) {
-		if (problem.IsAllContiguous()) {
-			return problem.GetOutputDesc().GetElementSize() < minimumnonimprovementnumel;
-		} else return true;
+		if (problem.IsBackward()) return true;
+		else {
+			if (problem.IsAllContiguous()) {
+				switch (problem.GetOutputDesc().GetType()) {
+					case miopenFloat:
+					return problem.GetOutputDesc().GetElementSize() < float32contiguousfwdminimumnonimprovementnumel;
+					case miopenHalf:
+					return problem.GetOutputDesc().GetElementSize() < float16contiguousfwdminimumnonimprovementnumel;
+					case miopenBFloat16:
+					return problem.GetOutputDesc().GetElementSize() < bfloat16contiguousfwdminimumnonimprovementnumel;
+				}
+			} else return problem.GetOutputDesc().GetElementSize() < noncontiguousfwdminimumnonimprovementnumel;
+		}
+		return false;
 	}
 	bool MaskedFill :: IsApplicable(ExecutionContext const & context, miopen :: maskedfill :: ProblemDescription const & problem) const {
 		if (!IsImprovementOverROCm(problem)) return false;

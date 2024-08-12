@@ -40,9 +40,12 @@ struct MaskedFillBackwardTestBFloat16: MaskedFillBackwardTest<bfloat16> {};
 
 TEST_P(MaskedFillForwardTestFloat, Ok) {
 	if (!MIOPEN_TEST_ALL || (miopen :: env :: enabled(MIOPEN_TEST_ALL) && miopen :: env :: value(MIOPEN_TEST_FLOAT_ARG) == "--float")) {
-		auto const size = GetParam().GetSize();
-		if (std :: accumulate(size.begin(), size.end(), 1, std :: multiplies<>()) >= miopen :: solver :: maskedfill :: minimumnonimprovementnumel) GTEST_SKIP();
-		RunTest();
+		try {
+			RunTest();
+		} catch (const miopen :: Exception & e) {
+			if (e.status == miopenStatusNotImplemented) return;
+			throw e;
+		}
 		Verify();
 	} else {
 		GTEST_SKIP();
@@ -51,9 +54,12 @@ TEST_P(MaskedFillForwardTestFloat, Ok) {
 
 TEST_P(MaskedFillBackwardTestFloat, Ok) {
 	if (!MIOPEN_TEST_ALL || (miopen :: env :: enabled(MIOPEN_TEST_ALL) && miopen :: env :: value(MIOPEN_TEST_FLOAT_ARG) == "--float")) {
-		auto const size = GetParam().GetSize();
-		if (std :: accumulate(size.begin(), size.end(), 1, std :: multiplies<>()) >= miopen :: solver :: maskedfill :: minimumnonimprovementnumel) GTEST_SKIP();
-		RunTest();
+		try {
+			RunTest();
+		} catch (const miopen :: Exception & e) {
+			if (e.status == miopenStatusNotImplemented) return;
+			throw e;
+		}
 		Verify();
 	} else {
 		GTEST_SKIP();
@@ -62,9 +68,12 @@ TEST_P(MaskedFillBackwardTestFloat, Ok) {
 
 TEST_P(MaskedFillForwardTestHalf, Ok) {
 	if (!MIOPEN_TEST_ALL || (miopen :: env :: enabled(MIOPEN_TEST_ALL) && miopen :: env :: value(MIOPEN_TEST_FLOAT_ARG) == "--half")) {
-		auto const size = GetParam().GetSize();
-		if (std :: accumulate(size.begin(), size.end(), 1, std :: multiplies<>()) >= miopen :: solver :: maskedfill :: minimumnonimprovementnumel) GTEST_SKIP();
-		RunTest();
+		try {
+			RunTest();
+		} catch (const miopen :: Exception & e) {
+			if (e.status == miopenStatusNotImplemented) return;
+			throw e;
+		}
 		Verify();
 	} else {
 		GTEST_SKIP();
@@ -73,9 +82,12 @@ TEST_P(MaskedFillForwardTestHalf, Ok) {
 
 TEST_P(MaskedFillBackwardTestHalf, Ok) {
 	if (!MIOPEN_TEST_ALL || (miopen :: env :: enabled(MIOPEN_TEST_ALL) && miopen :: env :: value(MIOPEN_TEST_FLOAT_ARG) == "--half")) {
-		auto const size = GetParam().GetSize();
-		if (std :: accumulate(size.begin(), size.end(), 1, std :: multiplies<>()) >= miopen :: solver :: maskedfill :: minimumnonimprovementnumel) GTEST_SKIP();
-		RunTest();
+		try {
+			RunTest();
+		} catch (const miopen :: Exception & e) {
+			if (e.status == miopenStatusNotImplemented) return;
+			throw e;
+		}
 		Verify();
 	} else {
 		GTEST_SKIP();
@@ -84,9 +96,12 @@ TEST_P(MaskedFillBackwardTestHalf, Ok) {
 
 TEST_P(MaskedFillForwardTestBFloat16, Ok) {
 	if (!MIOPEN_TEST_ALL || (miopen :: env :: enabled(MIOPEN_TEST_ALL) && miopen :: env :: value(MIOPEN_TEST_FLOAT_ARG) == "--bfloat16")) {
-		auto const size = GetParam().GetSize();
-		if (std :: accumulate(size.begin(), size.end(), 1, std :: multiplies<>()) >= miopen :: solver :: maskedfill :: minimumnonimprovementnumel) GTEST_SKIP();
-		RunTest();
+		try {
+			RunTest();
+		} catch (const miopen :: Exception & e) {
+			if (e.status == miopenStatusNotImplemented) return;
+			throw e;
+		}
 		Verify();
 	} else {
 		GTEST_SKIP();
@@ -95,9 +110,12 @@ TEST_P(MaskedFillForwardTestBFloat16, Ok) {
 
 TEST_P(MaskedFillBackwardTestBFloat16, Ok) {
 	if (!MIOPEN_TEST_ALL || (miopen :: env :: enabled(MIOPEN_TEST_ALL) && miopen :: env :: value(MIOPEN_TEST_FLOAT_ARG) == "--bfloat16")) {
-		auto const size = GetParam().GetSize();
-		if (std :: accumulate(size.begin(), size.end(), 1, std :: multiplies<>()) >= miopen :: solver :: maskedfill :: minimumnonimprovementnumel) GTEST_SKIP();
-		RunTest();
+		try {
+			RunTest();
+		} catch (const miopen :: Exception & e) {
+			if (e.status == miopenStatusNotImplemented) return;
+			throw e;
+		}
 		Verify();
 	} else {
 		GTEST_SKIP();
