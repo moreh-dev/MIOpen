@@ -24,107 +24,185 @@
  *
  *******************************************************************************/
 
-# include "maskedfill.hpp"
+#include "maskedfill.hpp"
 
-# include <miopen/env.hpp>
+#include <miopen/env.hpp>
 
-MIOPEN_DECLARE_ENV_VAR_BOOL	(MIOPEN_TEST_ALL)
-MIOPEN_DECLARE_ENV_VAR_STR	(MIOPEN_TEST_FLOAT_ARG)
+MIOPEN_DECLARE_ENV_VAR_BOOL(MIOPEN_TEST_ALL)
+MIOPEN_DECLARE_ENV_VAR_STR(MIOPEN_TEST_FLOAT_ARG)
 
-struct MaskedFillForwardTestFloat: MaskedFillForwardTest<float> {};
-struct MaskedFillBackwardTestFloat: MaskedFillBackwardTest<float> {};
-struct MaskedFillForwardTestHalf: MaskedFillForwardTest<half> {};
-struct MaskedFillBackwardTestHalf: MaskedFillBackwardTest<half> {};
-struct MaskedFillForwardTestBFloat16: MaskedFillForwardTest<bfloat16> {};
-struct MaskedFillBackwardTestBFloat16: MaskedFillBackwardTest<bfloat16> {};
+struct MaskedFillForwardTestFloat : MaskedFillForwardTest<float>
+{
+};
+struct MaskedFillBackwardTestFloat : MaskedFillBackwardTest<float>
+{
+};
+struct MaskedFillForwardTestHalf : MaskedFillForwardTest<half>
+{
+};
+struct MaskedFillBackwardTestHalf : MaskedFillBackwardTest<half>
+{
+};
+struct MaskedFillForwardTestBFloat16 : MaskedFillForwardTest<bfloat16>
+{
+};
+struct MaskedFillBackwardTestBFloat16 : MaskedFillBackwardTest<bfloat16>
+{
+};
 
-TEST_P(MaskedFillForwardTestFloat, Ok) {
-	if (!MIOPEN_TEST_ALL || (miopen :: env :: enabled(MIOPEN_TEST_ALL) && miopen :: env :: value(MIOPEN_TEST_FLOAT_ARG) == "--float")) {
-		try {
-			RunTest();
-		} catch (const miopen :: Exception & e) {
-			if (e.status == miopenStatusNotImplemented) return;
-			throw e;
-		}
-		Verify();
-	} else {
-		GTEST_SKIP();
-	}
+TEST_P(MaskedFillForwardTestFloat, Ok)
+{
+    if(!MIOPEN_TEST_ALL || (miopen ::env ::enabled(MIOPEN_TEST_ALL) &&
+                            miopen ::env ::value(MIOPEN_TEST_FLOAT_ARG) == "--float"))
+    {
+        try
+        {
+            RunTest();
+        }
+        catch(const miopen ::Exception& e)
+        {
+            if(e.status == miopenStatusNotImplemented)
+                return;
+            throw e;
+        }
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
 }
 
-TEST_P(MaskedFillBackwardTestFloat, Ok) {
-	if (!MIOPEN_TEST_ALL || (miopen :: env :: enabled(MIOPEN_TEST_ALL) && miopen :: env :: value(MIOPEN_TEST_FLOAT_ARG) == "--float")) {
-		try {
-			RunTest();
-		} catch (const miopen :: Exception & e) {
-			if (e.status == miopenStatusNotImplemented) return;
-			throw e;
-		}
-		Verify();
-	} else {
-		GTEST_SKIP();
-	}
+TEST_P(MaskedFillBackwardTestFloat, Ok)
+{
+    if(!MIOPEN_TEST_ALL || (miopen ::env ::enabled(MIOPEN_TEST_ALL) &&
+                            miopen ::env ::value(MIOPEN_TEST_FLOAT_ARG) == "--float"))
+    {
+        try
+        {
+            RunTest();
+        }
+        catch(const miopen ::Exception& e)
+        {
+            if(e.status == miopenStatusNotImplemented)
+                return;
+            throw e;
+        }
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
 }
 
-TEST_P(MaskedFillForwardTestHalf, Ok) {
-	if (!MIOPEN_TEST_ALL || (miopen :: env :: enabled(MIOPEN_TEST_ALL) && miopen :: env :: value(MIOPEN_TEST_FLOAT_ARG) == "--half")) {
-		try {
-			RunTest();
-		} catch (const miopen :: Exception & e) {
-			if (e.status == miopenStatusNotImplemented) return;
-			throw e;
-		}
-		Verify();
-	} else {
-		GTEST_SKIP();
-	}
+TEST_P(MaskedFillForwardTestHalf, Ok)
+{
+    if(!MIOPEN_TEST_ALL || (miopen ::env ::enabled(MIOPEN_TEST_ALL) &&
+                            miopen ::env ::value(MIOPEN_TEST_FLOAT_ARG) == "--half"))
+    {
+        try
+        {
+            RunTest();
+        }
+        catch(const miopen ::Exception& e)
+        {
+            if(e.status == miopenStatusNotImplemented)
+                return;
+            throw e;
+        }
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
 }
 
-TEST_P(MaskedFillBackwardTestHalf, Ok) {
-	if (!MIOPEN_TEST_ALL || (miopen :: env :: enabled(MIOPEN_TEST_ALL) && miopen :: env :: value(MIOPEN_TEST_FLOAT_ARG) == "--half")) {
-		try {
-			RunTest();
-		} catch (const miopen :: Exception & e) {
-			if (e.status == miopenStatusNotImplemented) return;
-			throw e;
-		}
-		Verify();
-	} else {
-		GTEST_SKIP();
-	}
+TEST_P(MaskedFillBackwardTestHalf, Ok)
+{
+    if(!MIOPEN_TEST_ALL || (miopen ::env ::enabled(MIOPEN_TEST_ALL) &&
+                            miopen ::env ::value(MIOPEN_TEST_FLOAT_ARG) == "--half"))
+    {
+        try
+        {
+            RunTest();
+        }
+        catch(const miopen ::Exception& e)
+        {
+            if(e.status == miopenStatusNotImplemented)
+                return;
+            throw e;
+        }
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
 }
 
-TEST_P(MaskedFillForwardTestBFloat16, Ok) {
-	if (!MIOPEN_TEST_ALL || (miopen :: env :: enabled(MIOPEN_TEST_ALL) && miopen :: env :: value(MIOPEN_TEST_FLOAT_ARG) == "--bfloat16")) {
-		try {
-			RunTest();
-		} catch (const miopen :: Exception & e) {
-			if (e.status == miopenStatusNotImplemented) return;
-			throw e;
-		}
-		Verify();
-	} else {
-		GTEST_SKIP();
-	}
+TEST_P(MaskedFillForwardTestBFloat16, Ok)
+{
+    if(!MIOPEN_TEST_ALL || (miopen ::env ::enabled(MIOPEN_TEST_ALL) &&
+                            miopen ::env ::value(MIOPEN_TEST_FLOAT_ARG) == "--bfloat16"))
+    {
+        try
+        {
+            RunTest();
+        }
+        catch(const miopen ::Exception& e)
+        {
+            if(e.status == miopenStatusNotImplemented)
+                return;
+            throw e;
+        }
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
 }
 
-TEST_P(MaskedFillBackwardTestBFloat16, Ok) {
-	if (!MIOPEN_TEST_ALL || (miopen :: env :: enabled(MIOPEN_TEST_ALL) && miopen :: env :: value(MIOPEN_TEST_FLOAT_ARG) == "--bfloat16")) {
-		try {
-			RunTest();
-		} catch (const miopen :: Exception & e) {
-			if (e.status == miopenStatusNotImplemented) return;
-			throw e;
-		}
-		Verify();
-	} else {
-		GTEST_SKIP();
-	}
+TEST_P(MaskedFillBackwardTestBFloat16, Ok)
+{
+    if(!MIOPEN_TEST_ALL || (miopen ::env ::enabled(MIOPEN_TEST_ALL) &&
+                            miopen ::env ::value(MIOPEN_TEST_FLOAT_ARG) == "--bfloat16"))
+    {
+        try
+        {
+            RunTest();
+        }
+        catch(const miopen ::Exception& e)
+        {
+            if(e.status == miopenStatusNotImplemented)
+                return;
+            throw e;
+        }
+        Verify();
+    }
+    else
+    {
+        GTEST_SKIP();
+    }
 }
 
-INSTANTIATE_TEST_SUITE_P(, MaskedFillForwardTestFloat,		testing :: ValuesIn(MaskedFillTestConfigs(MIOPEN_MASKEDFILL_FORWARD)));
-INSTANTIATE_TEST_SUITE_P(, MaskedFillBackwardTestFloat,		testing :: ValuesIn(MaskedFillTestConfigs(MIOPEN_MASKEDFILL_BACKWARD)));
-INSTANTIATE_TEST_SUITE_P(, MaskedFillForwardTestHalf,		testing :: ValuesIn(MaskedFillTestConfigs(MIOPEN_MASKEDFILL_FORWARD)));
-INSTANTIATE_TEST_SUITE_P(, MaskedFillBackwardTestHalf,		testing :: ValuesIn(MaskedFillTestConfigs(MIOPEN_MASKEDFILL_BACKWARD)));
-INSTANTIATE_TEST_SUITE_P(, MaskedFillForwardTestBFloat16,	testing :: ValuesIn(MaskedFillTestConfigs(MIOPEN_MASKEDFILL_FORWARD)));
-INSTANTIATE_TEST_SUITE_P(, MaskedFillBackwardTestBFloat16,	testing :: ValuesIn(MaskedFillTestConfigs(MIOPEN_MASKEDFILL_BACKWARD)));
+INSTANTIATE_TEST_SUITE_P(,
+                         MaskedFillForwardTestFloat,
+                         testing ::ValuesIn(MaskedFillTestConfigs(MIOPEN_MASKEDFILL_FORWARD)));
+INSTANTIATE_TEST_SUITE_P(,
+                         MaskedFillBackwardTestFloat,
+                         testing ::ValuesIn(MaskedFillTestConfigs(MIOPEN_MASKEDFILL_BACKWARD)));
+INSTANTIATE_TEST_SUITE_P(,
+                         MaskedFillForwardTestHalf,
+                         testing ::ValuesIn(MaskedFillTestConfigs(MIOPEN_MASKEDFILL_FORWARD)));
+INSTANTIATE_TEST_SUITE_P(,
+                         MaskedFillBackwardTestHalf,
+                         testing ::ValuesIn(MaskedFillTestConfigs(MIOPEN_MASKEDFILL_BACKWARD)));
+INSTANTIATE_TEST_SUITE_P(,
+                         MaskedFillForwardTestBFloat16,
+                         testing ::ValuesIn(MaskedFillTestConfigs(MIOPEN_MASKEDFILL_FORWARD)));
+INSTANTIATE_TEST_SUITE_P(,
+                         MaskedFillBackwardTestBFloat16,
+                         testing ::ValuesIn(MaskedFillTestConfigs(MIOPEN_MASKEDFILL_BACKWARD)));

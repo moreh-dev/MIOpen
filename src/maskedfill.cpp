@@ -24,86 +24,86 @@
  *
  *******************************************************************************/
 
-# include <miopen/maskedfill.hpp>
+#include <miopen/maskedfill.hpp>
 
-# include <miopen/maskedfill/problem_description.hpp>
-# include <miopen/maskedfill/invoke_params.hpp>
-# include <miopen/maskedfill/solvers.hpp>
+#include <miopen/maskedfill/problem_description.hpp>
+#include <miopen/maskedfill/invoke_params.hpp>
+#include <miopen/maskedfill/solvers.hpp>
 
-# include <miopen/find_solution.hpp>
+#include <miopen/find_solution.hpp>
 
 namespace miopen {
 
-	miopenStatus_t MaskedFillForward(
-		Handle & handle,
+miopenStatus_t MaskedFillForward(Handle& handle,
 
-		TensorDescriptor const & inputDesc,
-		ConstData_t const input,
-		TensorDescriptor const & outputDesc,
-		Data_t output,
+                                 TensorDescriptor const& inputDesc,
+                                 ConstData_t const input,
+                                 TensorDescriptor const& outputDesc,
+                                 Data_t output,
 
-		TensorDescriptor const & maskDesc,
-		ConstData_t const mask,
+                                 TensorDescriptor const& maskDesc,
+                                 ConstData_t const mask,
 
-		float const value
-	) {
-		auto const problem = maskedfill :: ProblemDescription(inputDesc, outputDesc, maskDesc, MIOPEN_MASKEDFILL_FORWARD);
-		auto const algo = AlgorithmName {"MaskedFillForward"};
-		auto const invoke_params = [&] {
-			auto tmp = maskedfill :: InvokeParams {};
-			tmp.type = InvokeType :: Run;
+                                 float const value)
+{
+    auto const problem =
+        maskedfill ::ProblemDescription(inputDesc, outputDesc, maskDesc, MIOPEN_MASKEDFILL_FORWARD);
+    auto const algo          = AlgorithmName{"MaskedFillForward"};
+    auto const invoke_params = [&] {
+        auto tmp = maskedfill ::InvokeParams{};
+        tmp.type = InvokeType ::Run;
 
-			tmp.inputDesc = & inputDesc;
-			tmp.input = input;
-			tmp.outputDesc = & outputDesc;
-			tmp.output = output;
+        tmp.inputDesc  = &inputDesc;
+        tmp.input      = input;
+        tmp.outputDesc = &outputDesc;
+        tmp.output     = output;
 
-			tmp.maskDesc = & maskDesc;
-			tmp.mask = mask;
+        tmp.maskDesc = &maskDesc;
+        tmp.mask     = mask;
 
-			tmp.value = value;
+        tmp.value = value;
 
-			return tmp;
-		}();
-		auto const solvers = solver :: SolverContainer<solver :: maskedfill :: MaskedFill> {};
-		solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
-		return miopenStatusSuccess;
-	}
-
-	miopenStatus_t MaskedFillBackward(
-		Handle & handle,
-
-		TensorDescriptor const & outputGradientDesc,
-		ConstData_t const outputGradient,
-		TensorDescriptor const & inputGradientDesc,
-		Data_t inputGradient,
-
-		TensorDescriptor const & maskDesc,
-		ConstData_t const mask,
-
-		float const value
-	) {
-		auto const problem = maskedfill :: ProblemDescription(outputGradientDesc, inputGradientDesc, maskDesc, MIOPEN_MASKEDFILL_BACKWARD);
-		auto const algo = AlgorithmName {"MaskedFillBackward"};
-		auto const invoke_params = [&] {
-			auto tmp = maskedfill :: InvokeParams {};
-			tmp.type = InvokeType :: Run;
-
-			tmp.inputDesc = & outputGradientDesc;
-			tmp.input = outputGradient;
-			tmp.outputDesc = & inputGradientDesc;
-			tmp.output = inputGradient;
-
-			tmp.maskDesc = & maskDesc;
-			tmp.mask = mask;
-
-			tmp.value = value;
-
-			return tmp;
-		}();
-		auto const solvers = solver :: SolverContainer<solver :: maskedfill :: MaskedFill> {};
-		solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
-		return miopenStatusSuccess;
-	}
-
+        return tmp;
+    }();
+    auto const solvers = solver ::SolverContainer<solver ::maskedfill ::MaskedFill>{};
+    solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
+    return miopenStatusSuccess;
 }
+
+miopenStatus_t MaskedFillBackward(Handle& handle,
+
+                                  TensorDescriptor const& outputGradientDesc,
+                                  ConstData_t const outputGradient,
+                                  TensorDescriptor const& inputGradientDesc,
+                                  Data_t inputGradient,
+
+                                  TensorDescriptor const& maskDesc,
+                                  ConstData_t const mask,
+
+                                  float const value)
+{
+    auto const problem = maskedfill ::ProblemDescription(
+        outputGradientDesc, inputGradientDesc, maskDesc, MIOPEN_MASKEDFILL_BACKWARD);
+    auto const algo          = AlgorithmName{"MaskedFillBackward"};
+    auto const invoke_params = [&] {
+        auto tmp = maskedfill ::InvokeParams{};
+        tmp.type = InvokeType ::Run;
+
+        tmp.inputDesc  = &outputGradientDesc;
+        tmp.input      = outputGradient;
+        tmp.outputDesc = &inputGradientDesc;
+        tmp.output     = inputGradient;
+
+        tmp.maskDesc = &maskDesc;
+        tmp.mask     = mask;
+
+        tmp.value = value;
+
+        return tmp;
+    }();
+    auto const solvers = solver ::SolverContainer<solver ::maskedfill ::MaskedFill>{};
+    solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
+    return miopenStatusSuccess;
+}
+
+} // namespace miopen

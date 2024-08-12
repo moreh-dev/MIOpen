@@ -24,30 +24,31 @@
  *
  *******************************************************************************/
 
-# pragma once
+#pragma once
 
-# include <miopen/invoke_params.hpp>
+#include <miopen/invoke_params.hpp>
 
-namespace miopen :: maskedfill {
+namespace miopen ::maskedfill {
 
-	struct InvokeParams: miopen :: InvokeParams {
-		InvokeParams() = default;
+struct InvokeParams : miopen ::InvokeParams
+{
+    InvokeParams() = default;
 
-		TensorDescriptor const * inputDesc = nullptr;
-		ConstData_t input = nullptr;
-		TensorDescriptor const * outputDesc = nullptr;
-		Data_t output = nullptr;
+    TensorDescriptor const* inputDesc  = nullptr;
+    ConstData_t input                  = nullptr;
+    TensorDescriptor const* outputDesc = nullptr;
+    Data_t output                      = nullptr;
 
-		TensorDescriptor const * maskDesc = nullptr;
-		ConstData_t mask = nullptr;
+    TensorDescriptor const* maskDesc = nullptr;
+    ConstData_t mask                 = nullptr;
 
-		float value = 0;
+    float value = 0;
 
-		Data_t workspace = nullptr;
-		Data_t GetWorkspace() const { return workspace; }
+    Data_t workspace = nullptr;
+    Data_t GetWorkspace() const { return workspace; }
 
-		std :: size_t workspace_size = 0;
-		std :: size_t GetWorkspaceSize() const { return workspace_size; }
-	};
+    std ::size_t workspace_size = 0;
+    std ::size_t GetWorkspaceSize() const { return workspace_size; }
+};
 
-}
+} // namespace miopen::maskedfill

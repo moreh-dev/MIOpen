@@ -24,14 +24,18 @@
  *
  *******************************************************************************/
 
-# include "maskedfill_driver.hpp"
-# include "registry_driver_maker.hpp"
+#include "maskedfill_driver.hpp"
+#include "registry_driver_maker.hpp"
 
-static Driver * makeDriver(std :: string const & base_arg) {
-	if (base_arg == "maskedfill")		return new MaskedFillDriver<float> {};
-	if (base_arg == "maskedfillfp16")	return new MaskedFillDriver<float16>();
-	if (base_arg == "maskedfillbfp16")	return new MaskedFillDriver<bfloat16>();
-	return nullptr;
+static Driver* makeDriver(std ::string const& base_arg)
+{
+    if(base_arg == "maskedfill")
+        return new MaskedFillDriver<float>{};
+    if(base_arg == "maskedfillfp16")
+        return new MaskedFillDriver<float16>();
+    if(base_arg == "maskedfillbfp16")
+        return new MaskedFillDriver<bfloat16>();
+    return nullptr;
 }
 
 REGISTER_DRIVER_MAKER(makeDriver);

@@ -24,44 +24,40 @@
  *
  *******************************************************************************/
 
-# ifndef MIOPEN_MASKEDFILL_HPP_
-# define MIOPEN_MASKEDFILL_HPP_
+#ifndef MIOPEN_MASKEDFILL_HPP_
+#define MIOPEN_MASKEDFILL_HPP_
 
-# include <miopen/common.hpp>
+#include <miopen/common.hpp>
 
 namespace miopen {
 
-	struct Handle;
-	struct TensorDescriptor;
+struct Handle;
+struct TensorDescriptor;
 
-	miopenStatus_t MaskedFillForward(
-		Handle & handle,
+miopenStatus_t MaskedFillForward(Handle& handle,
 
-		TensorDescriptor const & inputDesc,
-		ConstData_t const input,
-		TensorDescriptor const & outputDesc,
-		Data_t output,
+                                 TensorDescriptor const& inputDesc,
+                                 ConstData_t const input,
+                                 TensorDescriptor const& outputDesc,
+                                 Data_t output,
 
-		TensorDescriptor const & maskDesc,
-		ConstData_t const mask,
+                                 TensorDescriptor const& maskDesc,
+                                 ConstData_t const mask,
 
-		float const value
-	);
+                                 float const value);
 
-	miopenStatus_t MaskedFillBackward(
-		Handle & handle,
+miopenStatus_t MaskedFillBackward(Handle& handle,
 
-		TensorDescriptor const & outputGradientDesc,
-		ConstData_t const outputGradient,
-		TensorDescriptor const & inputGradientDesc,
-		Data_t inputGradient,
+                                  TensorDescriptor const& outputGradientDesc,
+                                  ConstData_t const outputGradient,
+                                  TensorDescriptor const& inputGradientDesc,
+                                  Data_t inputGradient,
 
-		TensorDescriptor const & maskDesc,
-		ConstData_t const mask,
+                                  TensorDescriptor const& maskDesc,
+                                  ConstData_t const mask,
 
-		float const value
-	);
+                                  float const value);
 
-}
+} // namespace miopen
 
-# endif
+#endif

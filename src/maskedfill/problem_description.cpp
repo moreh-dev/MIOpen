@@ -24,18 +24,20 @@
  *
  *******************************************************************************/
 
-# include <miopen/maskedfill/problem_description.hpp>
+#include <miopen/maskedfill/problem_description.hpp>
 
-namespace miopen :: maskedfill {
+namespace miopen ::maskedfill {
 
-	NetworkConfig ProblemDescription :: MakeNetworkConfig() const {
-		std :: ostringstream ss;
-		auto const dtype = outputDesc.GetType();
-		auto const numel = outputDesc.GetElementSize();
-		ss << "dtype" << dtype;
-		ss << "numel" << numel;
-		if (IsAllContiguous()) ss << "contiguous";
-		return NetworkConfig {ss.str()};
-	}
-
+NetworkConfig ProblemDescription ::MakeNetworkConfig() const
+{
+    std ::ostringstream ss;
+    auto const dtype = outputDesc.GetType();
+    auto const numel = outputDesc.GetElementSize();
+    ss << "dtype" << dtype;
+    ss << "numel" << numel;
+    if(IsAllContiguous())
+        ss << "contiguous";
+    return NetworkConfig{ss.str()};
 }
+
+} // namespace miopen::maskedfill

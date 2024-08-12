@@ -24,44 +24,46 @@
  *
  *******************************************************************************/
 
-# ifndef MLO_MASKEDFILLHOST_H_
-# define MLO_MASKEDFILLHOST_H_
+#ifndef MLO_MASKEDFILLHOST_H_
+#define MLO_MASKEDFILLHOST_H_
 
-# include <miopen/errors.hpp>
-# include <miopen/tensor.hpp>
+#include <miopen/errors.hpp>
+#include <miopen/tensor.hpp>
 
-template <typename Tgpu, typename Tcheck> int mloMaskedFillForwardRunHost(
-    miopenTensorDescriptor_t const outputDesc,
+template <typename Tgpu, typename Tcheck>
+int mloMaskedFillForwardRunHost(miopenTensorDescriptor_t const outputDesc,
 
-    Tgpu const * const input,
-    Tcheck * const hostoutput,
+                                Tgpu const* const input,
+                                Tcheck* const hostoutput,
 
-    int8_t const * const mask,
+                                int8_t const* const mask,
 
-    Tgpu const value
-) {
-	auto const size = miopen :: deref(outputDesc).GetLengths();
-	auto const numel = std :: accumulate(size.begin(), size.end(), 1, std :: multiplies<> {});
-	for (auto i = 0; i < numel; ++i) {
-		hostoutput[i] = mask[i]? value : input[i];
-	}
-	return 0;
+                                Tgpu const value)
+{
+    auto const size  = miopen ::deref(outputDesc).GetLengths();
+    auto const numel = std ::accumulate(size.begin(), size.end(), 1, std ::multiplies<>{});
+    for(auto i = 0; i < numel; ++i)
+    {
+        hostoutput[i] = mask[i] ? value : input[i];
+    }
+    return 0;
 }
 
-template <typename Tgpu, typename Tcheck> int mloMaskedFillBackwardRunHost(
-    miopenTensorDescriptor_t const outputDesc,
+template <typename Tgpu, typename Tcheck>
+int mloMaskedFillBackwardRunHost(miopenTensorDescriptor_t const outputDesc,
 
-    Tgpu const * const input,
-    Tcheck * const hostoutput,
+                                 Tgpu const* const input,
+                                 Tcheck* const hostoutput,
 
-    int8_t const * const mask
-) {
-	auto const size = miopen :: deref(outputDesc).GetLengths();
-	auto const numel = std :: accumulate(size.begin(), size.end(), 1, std :: multiplies<> {});
-	for (auto i = 0; i < numel; ++i) {
-		hostoutput[i] = mask[i]? 0 : input[i];
-	}
-	return 0;
+                                 int8_t const* const mask)
+{
+    auto const size  = miopen ::deref(outputDesc).GetLengths();
+    auto const numel = std ::accumulate(size.begin(), size.end(), 1, std ::multiplies<>{});
+    for(auto i = 0; i < numel; ++i)
+    {
+        hostoutput[i] = mask[i] ? 0 : input[i];
+    }
+    return 0;
 }
 
-# endif
+#endif

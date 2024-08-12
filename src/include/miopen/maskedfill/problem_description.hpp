@@ -24,38 +24,58 @@
  *
  *******************************************************************************/
 
-# pragma once
+#pragma once
 
-# include <miopen/problem_description_base.hpp>
+#include <miopen/problem_description_base.hpp>
 
-# include <miopen/tensor.hpp>
+#include <miopen/tensor.hpp>
 
-namespace miopen :: maskedfill {
+namespace miopen ::maskedfill {
 
-	struct ProblemDescription: ProblemDescriptionBase {
-		ProblemDescription(TensorDescriptor const & inputDesc_, TensorDescriptor const & outputDesc_, TensorDescriptor const & maskDesc_, miopenMaskedFillDirection_t const direction_): inputDesc(inputDesc_), outputDesc(outputDesc_), maskDesc(maskDesc_), direction(direction_) {
-			auto const dtype = outputDesc.GetType();
-			if (inputDesc.GetType() != dtype)		MIOPEN_THROW(miopenStatusBadParm, "MaskedFill: Tensor types do not match.");
-			if (maskDesc.GetType() != miopenInt8)	MIOPEN_THROW(miopenStatusBadParm, "MaskedFill: Mask should be a tensor of 8-bit integers.");
-			auto const outputLengths	= outputDesc.GetLengths();
-			auto const inputLengths		= inputDesc.GetLengths();
-			auto const maskLengths		= maskDesc.GetLengths();
-			if (inputLengths.size()	!= outputLengths.size()) MIOPEN_THROW(miopenStatusBadParm, "MaskedFill: Tensor dimension lengths do not match.");
-			if (maskLengths.size()	!= outputLengths.size()) MIOPEN_THROW(miopenStatusBadParm, "MaskedFill: Tensor dimension lengths do not match.");
-			for (auto i = 0; i < outputLengths.size(); ++i) {
-				if (inputLengths[i]	!= outputLengths[i]) MIOPEN_THROW(miopenStatusBadParm, "MaskedFill: Tensor dimension lengths do not match.");
-				if (maskLengths[i]	!= outputLengths[i]) MIOPEN_THROW(miopenStatusBadParm, "MaskedFill: Tensor dimension lengths do not match.");
-			}
-		}
-		TensorDescriptor const & GetOutputDesc() const { return outputDesc; }
-		bool const IsBackward() const { return direction == MIOPEN_MASKEDFILL_BACKWARD; }
-		bool const IsAllContiguous() const { return outputDesc.IsContiguous() && inputDesc.IsContiguous() && maskDesc.IsContiguous(); }
-		NetworkConfig MakeNetworkConfig() const override;
-		private:
-		TensorDescriptor inputDesc;
-		TensorDescriptor outputDesc;
-		TensorDescriptor maskDesc;
-		miopenMaskedFillDirection_t direction;
-	};
+struct ProblemDescription : ProblemDescriptionBase
+{
+    ProblemDescription(TensorDescriptor const& inputDesc_,
+                       TensorDescriptor const& outputDesc_,
+                       TensorDescriptor const& maskDesc_,
+                       miopenMaskedFillDirection_t const direction_)
+        : inputDesc(inputDesc_), outputDesc(outputDesc_), maskDesc(maskDesc_), direction(direction_)
+    {
+        auto const dtype = outputDesc.GetType();
+        if(inputDesc.GetType() != dtype)
+            MIOPEN_THROW(miopenStatusBadParm, "MaskedFill: Tensor types do not match.");
+        if(maskDesc.GetType() != miopenInt8)
+            MIOPEN_THROW(miopenStatusBadParm,
+                         "MaskedFill: Mask should be a tensor of 8-bit integers.");
+        auto const outputLengths = outputDesc.GetLengths();
+        auto const inputLengths  = inputDesc.GetLengths();
+        auto const maskLengths   = maskDesc.GetLengths();
+        if(inputLengths.size() != outputLengths.size())
+            MIOPEN_THROW(miopenStatusBadParm, "MaskedFill: Tensor dimension lengths do not match.");
+        if(maskLengths.size() != outputLengths.size())
+            MIOPEN_THROW(miopenStatusBadParm, "MaskedFill: Tensor dimension lengths do not match.");
+        for(auto i = 0; i < outputLengths.size(); ++i)
+        {
+            if(inputLengths[i] != outputLengths[i])
+                MIOPEN_THROW(miopenStatusBadParm,
+                             "MaskedFill: Tensor dimension lengths do not match.");
+            if(maskLengths[i] != outputLengths[i])
+                MIOPEN_THROW(miopenStatusBadParm,
+                             "MaskedFill: Tensor dimension lengths do not match.");
+        }
+    }
+    TensorDescriptor const& GetOutputDesc() const { return outputDesc; }
+    bool const IsBackward() const { return direction == MIOPEN_MASKEDFILL_BACKWARD; }
+    bool const IsAllContiguous() const
+    {
+        return outputDesc.IsContiguous() && inputDesc.IsContiguous() && maskDesc.IsContiguous();
+    }
+    NetworkConfig MakeNetworkConfig() const override;
 
-}
+private:
+    TensorDescriptor inputDesc;
+    TensorDescriptor outputDesc;
+    TensorDescriptor maskDesc;
+    miopenMaskedFillDirection_t direction;
+};
+
+} // namespace miopen::maskedfill
