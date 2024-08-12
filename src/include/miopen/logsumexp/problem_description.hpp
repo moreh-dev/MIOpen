@@ -64,7 +64,6 @@ struct ProblemDescription : ProblemDescriptionBase
           dims(dims_),
           keepdim(keepdim_),
           isForward(false)
-
     {
     }
 
