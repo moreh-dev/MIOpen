@@ -126,7 +126,7 @@ template <typename T = float> class MaskedFillTest: public testing :: TestWithPa
 		SetTensorLayout(mask.desc);
 		mask_dev = handle.Write(mask.data);
 
-		value = prng :: gen_descreet_uniform_sign<float>(1, 100);
+		value = prng :: gen_descreet_uniform_sign<float>(1e-2, 100);
 	}
 
 	public:
@@ -175,8 +175,8 @@ template <typename T = float> class MaskedFillTest: public testing :: TestWithPa
 		}
 	}
 	void Verify() const {
-		auto const error = miopen :: rms_range(output, ref_output);
 		EXPECT_TRUE(miopen :: range_distance(output) == miopen :: range_distance(ref_output));
+		auto const error = miopen :: range_product(output, ref_output, 0, miopen :: sum, miopen :: abs_diff);
 		EXPECT_TRUE(error == 0) << "Outputs do not match each other: `error` = " << error;
 	}
 };
