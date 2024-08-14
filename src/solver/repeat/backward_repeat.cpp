@@ -34,7 +34,7 @@
 #include <miopen/tensor_view_utils.hpp>
 
 #define LOCAL_SIZE 1024
-#define LOCAL_SIZE_64 64
+#define LOCAL_SIZE_128 128
 #define LIMIT_SMALL_K 16
 
 namespace miopen {
@@ -75,8 +75,8 @@ ConvSolution RepeatBackward::GetSolution(const ExecutionContext& context,
 
         if(K > LIMIT_SMALL_K)
         {
-            xlocalsize = LOCAL_SIZE_64;
-            xgridsize  = N * LOCAL_SIZE_64;
+            xlocalsize = LOCAL_SIZE_128;
+            xgridsize  = N * LOCAL_SIZE_128;
             ylocalsize = 1;
             ygridsize  = 1;
             zlocalsize = 1;

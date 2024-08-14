@@ -33,7 +33,7 @@
 #include "float_types.h"
 #include "tensor_view.hpp"
 
-#define LOCAL_SIZE_64 64
+#define LOCAL_SIZE_128 128
 
 template <typename T>
 __device__ void RepeatForwardImpl(const T* __restrict__ x,
@@ -73,10 +73,10 @@ __device__ void RepeatLargeKBackwardImpl(const T* __restrict__ dy,
     if(gid >= N)
         return;
 
-    __shared__ FLOAT_ACCUM ltmp[LOCAL_SIZE_64];
+    __shared__ FLOAT_ACCUM ltmp[LOCAL_SIZE_128];
 
     FLOAT_ACCUM sum = static_cast<FLOAT_ACCUM>(0.0);
-    for(uint64_t k = lid; k < K; k += LOCAL_SIZE_64)
+    for(uint64_t k = lid; k < K; k += LOCAL_SIZE_128)
     {
         tensor_layout_t<5> dy_ncdhw(dy_tv, gid + k * N);
         FLOAT_ACCUM val = CVT_FLOAT2ACCUM(dy[dy_tv.get_tensor_view_idx(dy_ncdhw)]);
@@ -86,8 +86,10 @@ __device__ void RepeatLargeKBackwardImpl(const T* __restrict__ dy,
     ltmp[lid] = sum;
     __syncthreads();
 
-    if(lid < 32)
+    if(lid < 64)
     {
+        ltmp[lid] += ltmp[lid + 64];
+        __syncthreads();
         ltmp[lid] += ltmp[lid + 32];
         __syncthreads();
         ltmp[lid] += ltmp[lid + 16];
