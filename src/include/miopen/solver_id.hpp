@@ -59,7 +59,8 @@ enum class Primitive
     Cat,
     Mha,
     Softmax,
-    Adam
+    Adam,
+    Item
 };
 
 struct MIOPEN_INTERNALS_EXPORT Id

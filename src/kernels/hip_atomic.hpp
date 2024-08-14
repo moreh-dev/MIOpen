@@ -11,8 +11,8 @@
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ *all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -47,26 +47,23 @@ __device__ static inline ushort ____half_as_ushort(__half x)
 
 __device__ inline void atomic_add_g(ushort* addr, const float val)
 {
-    float val_       = bfloat16_to_float(val);
     size_t offset    = reinterpret_cast<size_t>(addr) & 0x2;
     bool is_32_align = offset;
     uint32_t* addr_as_uint32_t =
         reinterpret_cast<uint32_t*>(reinterpret_cast<char*>(addr) - offset);
     uint32_t current = *addr_as_uint32_t;
 
-    uint32_t expected, next;
-    ushort current_ushort, next_ushort;
-    float next_float;
+    uint32_t expected;
 
     do
     {
-        expected       = current;
-        current_ushort = is_32_align ? current >> 16 : current & 0xffff;
+        expected              = current;
+        ushort current_ushort = is_32_align ? current >> 16 : current & 0xffff;
 
-        next_float  = __uint_as_float(static_cast<uint32_t>(current_ushort) << 16) + val_;
-        next_ushort = static_cast<ushort>(__float_as_uint(next_float) >> 16);
-        next        = is_32_align ? (current & 0xffff) | (next_ushort << 16)
-                                  : (current & 0xffff0000) | next_ushort;
+        float next_float   = __uint_as_float(static_cast<uint32_t>(current_ushort) << 16) + val;
+        ushort next_ushort = static_cast<ushort>(__float_as_uint(next_float) >> 16);
+        uint32_t next      = is_32_align ? (current & 0xffff) | (next_ushort << 16)
+                                         : (current & 0xffff0000) | next_ushort;
 
         current = atomicCAS(addr_as_uint32_t, expected, next);
     } while(current != expected);
@@ -80,26 +77,19 @@ __device__ inline void atomic_add_g(__half* addr, const __half val)
         reinterpret_cast<uint32_t*>(reinterpret_cast<size_t>(addr) - offset);
     uint32_t current = *addr_as_uint32_t;
 
-    uint32_t expected, next;
-    ushort current_ushort, next_ushort;
+    uint32_t expected;
 
     do
     {
-        expected       = current;
-        current_ushort = is_32_align ? current >> 16 : current & 0xffff;
+        expected              = current;
+        ushort current_ushort = is_32_align ? current >> 16 : current & 0xffff;
 
-        next_ushort = ____half_as_ushort(__ushort_as___half(current_ushort) + val);
-        next        = is_32_align ? (current & 0xffff) | (next_ushort << 16)
-                                  : (current & 0xffff0000) | next_ushort;
+        ushort next_ushort = ____half_as_ushort(__ushort_as___half(current_ushort) + val);
+        uint32_t next      = is_32_align ? (current & 0xffff) | (next_ushort << 16)
+                                         : (current & 0xffff0000) | next_ushort;
 
         current = atomicCAS(addr_as_uint32_t, expected, next);
     } while(current != expected);
 }
 
 __device__ inline void atomic_add_g(float* addr, const float val) { atomicAdd(addr, val); }
-
-__device__ inline void atomic_add_g(_Float16* addr, const _Float16 val)
-{
-    __half val_half = static_cast<__half>(val);
-    atomic_add_g(reinterpret_cast<__half*>(addr), val_half);
-}
