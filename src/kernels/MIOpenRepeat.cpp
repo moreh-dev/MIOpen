@@ -31,7 +31,6 @@
 #endif
 
 #include "float_types.h"
-#include "hip_atomic.hpp"
 #include "tensor_view.hpp"
 
 template <typename T>
@@ -60,29 +59,28 @@ __device__ void RepeatForwardImpl(const T* __restrict__ x,
 }
 
 template <typename T>
-__device__ void RepeatBackwardImpl(const T* __restrict__ dy,
-                                   T* __restrict__ dx,
-                                   uint64_t inout_size,
-                                   uint64_t offset,
-                                   tensor_view_t<5> dy_tv,
-                                   tensor_view_t<5> dx_tv)
+__device__ void RepeatLargeKBackwardImpl(const T* __restrict__ dy,
+                                         T* __restrict__ dx,
+                                         uint64_t N,
+                                         uint64_t K,
+                                         uint64_t offset,
+                                         tensor_view_t<5> dy_tv,
+                                         tensor_view_t<5> dx_tv)
 {
-    const uint64_t gid = threadIdx.x + blockIdx.x * blockDim.x;
-    if(gid >= inout_size)
-        return;
+    const uint64_t gid = blockIdx.x;
+    const uint64_t lid = threadIdx.x;
+}
 
-    // get output index
-    tensor_layout_t<5> output_grad_ncdhw(dy_tv, gid);
+template <typename T>
+__device__ void RepeatSmallKBackwardImpl(const T* __restrict__ dy,
+                                         T* __restrict__ dx,
+                                         uint64_t N,
+                                         uint64_t K,
+                                         uint64_t offset,
+                                         tensor_view_t<5> dy_tv,
+                                         tensor_view_t<5> dx_tv)
+{
 
-    // get input index
-    tensor_layout_t<5> input_grad_ncdhw(dx_tv, 0);
-    for(uint64_t i = offset; i < 5; i++)
-    {
-        input_grad_ncdhw.layout[i - offset] = output_grad_ncdhw.layout[i] % dx_tv.size[i - offset];
-    }
-
-    atomic_add_g(&dx[dx_tv.get_tensor_view_idx(input_grad_ncdhw)],
-                 dy[dy_tv.get_tensor_view_idx(output_grad_ncdhw)]);
 }
 
 extern "C" __global__ void RepeatForward(const FLOAT* __restrict__ x,
@@ -95,12 +93,24 @@ extern "C" __global__ void RepeatForward(const FLOAT* __restrict__ x,
     RepeatForwardImpl<FLOAT>(x, y, inout_size, offset, x_tv, y_tv);
 }
 
-extern "C" __global__ void RepeatBackward(const FLOAT* __restrict__ dy,
+extern "C" __global__ void RepeatLargeKBackward(const FLOAT* __restrict__ dy,
                                           FLOAT* __restrict__ dx,
-                                          uint64_t inout_size,
+                                          uint64_t N,
+                                          uint64_t K,
                                           uint64_t offset,
                                           tensor_view_t<5> dy_tv,
                                           tensor_view_t<5> dx_tv)
 {
-    RepeatBackwardImpl<FLOAT>(dy, dx, inout_size, offset, dy_tv, dx_tv);
+    RepeatLargeKBackwardImpl<FLOAT>(dy, dx, N, K, offset, dy_tv, dx_tv);
+}
+
+extern "C" __global__ void RepeatSmallKBackward(const FLOAT* __restrict__ dy,
+                                          FLOAT* __restrict__ dx,
+                                          uint64_t N,
+                                          uint64_t K,
+                                          uint64_t offset,
+                                          tensor_view_t<5> dy_tv,
+                                          tensor_view_t<5> dx_tv)
+{
+    RepeatSmallKBackwardImpl<FLOAT>(dy, dx, N, K, offset, dy_tv, dx_tv);
 }
