@@ -73,7 +73,7 @@ using namespace repeat;
 
 TEST_P(RepeatForwardTestFloat, RepeatTestFw)
 {
-    if(env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--float"))
+    if(!MIOPEN_TEST_ALL || (env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--float")))
     {
         RunTest();
         Verify();
@@ -86,7 +86,7 @@ TEST_P(RepeatForwardTestFloat, RepeatTestFw)
 
 TEST_P(RepeatForwardTestHalf, RepeatTestFw)
 {
-    if(env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--half"))
+    if(!MIOPEN_TEST_ALL || (env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--half")))
     {
         RunTest();
         Verify();
@@ -99,7 +99,7 @@ TEST_P(RepeatForwardTestHalf, RepeatTestFw)
 
 TEST_P(RepeatForwardTestBFloat16, RepeatTestFw)
 {
-    if(env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--bfloat16"))
+    if(!MIOPEN_TEST_ALL || (env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--bfloat16")))
     {
         RunTest();
         Verify();
@@ -112,7 +112,7 @@ TEST_P(RepeatForwardTestBFloat16, RepeatTestFw)
 
 TEST_P(RepeatBackwardTestFloat, RepeatTestBw)
 {
-    if(env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--float"))
+    if(!MIOPEN_TEST_ALL || (env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--float")))
     {
         RunTest();
         Verify();
@@ -125,7 +125,7 @@ TEST_P(RepeatBackwardTestFloat, RepeatTestBw)
 
 TEST_P(RepeatBackwardTestHalf, RepeatTestBw)
 {
-    if(env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--half"))
+    if(!MIOPEN_TEST_ALL || (env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--half")))
     {
         RunTest();
         Verify();
@@ -138,7 +138,7 @@ TEST_P(RepeatBackwardTestHalf, RepeatTestBw)
 
 TEST_P(RepeatBackwardTestBFloat16, RepeatTestBw)
 {
-    if(env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--bfloat16"))
+    if(!MIOPEN_TEST_ALL || (env::enabled(MIOPEN_TEST_ALL) && (GetFloatArg() == "--bfloat16")))
     {
         RunTest();
         Verify();
