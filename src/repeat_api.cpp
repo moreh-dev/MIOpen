@@ -25,7 +25,6 @@
  *******************************************************************************/
 
 #include <miopen/repeat.hpp>
-#include <miopen/sum.hpp>
 #include <miopen/errors.hpp>
 #include <miopen/handle.hpp>
 #include <miopen/logger.hpp>

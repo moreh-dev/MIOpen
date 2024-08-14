@@ -32,36 +32,31 @@
 
 #include "float_types.h"
 #include "hip_atomic.hpp"
-#include "tensor_utils.hpp"
+#include "tensor_view.hpp"
 
 template <typename T>
 __device__ void RepeatForwardImpl(const T* __restrict__ x,
                                   T* __restrict__ y,
                                   uint64_t inout_size,
                                   uint64_t offset,
-                                  const uint64_t input_dimensions[5],
-                                  const uint64_t output_dimensions[5],
-                                  const uint64_t input_strides[5],
-                                  const uint64_t output_strides[5])
+                                  tensor_view_t<5> x_tv,
+                                  tensor_view_t<5> y_tv)
 {
     const uint64_t gid = threadIdx.x + blockIdx.x * blockDim.x;
     if(gid >= inout_size)
         return;
 
     // get output index
-    uint64_t o[5];
-    GET_NCDHW(o, gid, output_dimensions);
+    tensor_layout_t<5> output_ncdhw(y_tv, gid);
 
     // get input index
-    uint64_t n[5] = {0, 0, 0, 0, 0};
+    tensor_layout_t<5> input_ncdhw(x_tv, 0);
     for(uint64_t i = offset; i < 5; i++)
     {
-        n[i - offset] = o[i] % input_dimensions[i - offset];
+        input_ncdhw.layout[i - offset] = output_ncdhw.layout[i] % x_tv.size[i - offset];
     }
 
-    uint64_t input_index  = GET_STRIDED_INDEX(n, input_strides);
-    uint64_t output_index = GET_STRIDED_INDEX(o, output_strides);
-    y[output_index]       = x[input_index];
+    y[y_tv.get_tensor_view_idx(output_ncdhw)] = x[x_tv.get_tensor_view_idx(input_ncdhw)];
 }
 
 template <typename T>
@@ -69,61 +64,43 @@ __device__ void RepeatBackwardImpl(const T* __restrict__ dy,
                                    T* __restrict__ dx,
                                    uint64_t inout_size,
                                    uint64_t offset,
-                                   const uint64_t output_grad_dimensions[5],
-                                   const uint64_t input_grad_dimensions[5],
-                                   const uint64_t output_grad_strides[5],
-                                   const uint64_t input_grad_strides[5])
+                                   tensor_view_t<5> dy_tv,
+                                   tensor_view_t<5> dx_tv)
 {
     const uint64_t gid = threadIdx.x + blockIdx.x * blockDim.x;
     if(gid >= inout_size)
         return;
 
     // get output index
-    uint64_t o[5];
-    GET_NCDHW(o, gid, output_grad_dimensions);
+    tensor_layout_t<5> output_grad_ncdhw(dy_tv, gid);
 
     // get input index
-    uint64_t n[5] = {0, 0, 0, 0, 0};
+    tensor_layout_t<5> input_grad_ncdhw(dx_tv, 0);
     for(uint64_t i = offset; i < 5; i++)
     {
-        n[i - offset] = o[i] % input_grad_dimensions[i - offset];
+        input_grad_ncdhw.layout[i - offset] = output_grad_ncdhw.layout[i] % dx_tv.size[i - offset];
     }
 
-    uint64_t input_grad_index  = GET_STRIDED_INDEX(n, input_grad_strides);
-    uint64_t output_grad_index = GET_STRIDED_INDEX(o, output_grad_strides);
-    atomic_add_g(&dx[input_grad_index], dy[output_grad_index]);
+    atomic_add_g(&dx[dx_tv.get_tensor_view_idx(input_grad_ncdhw)],
+                 dy[dy_tv.get_tensor_view_idx(output_grad_ncdhw)]);
 }
 
 extern "C" __global__ void RepeatForward(const FLOAT* __restrict__ x,
                                          FLOAT* __restrict__ y,
                                          uint64_t inout_size,
                                          uint64_t offset,
-                                         tensor_view input_tv,
-                                         tensor_view output_tv)
+                                         tensor_view_t<5> x_tv,
+                                         tensor_view_t<5> y_tv)
 {
-    RepeatForwardImpl<FLOAT>(x,
-                             y,
-                             inout_size,
-                             offset,
-                             input_tv.dimensions,
-                             output_tv.dimensions,
-                             input_tv.strides,
-                             output_tv.strides);
+    RepeatForwardImpl<FLOAT>(x, y, inout_size, offset, x_tv, y_tv);
 }
 
 extern "C" __global__ void RepeatBackward(const FLOAT* __restrict__ dy,
                                           FLOAT* __restrict__ dx,
                                           uint64_t inout_size,
                                           uint64_t offset,
-                                          tensor_view output_grad_tv,
-                                          tensor_view input_grad_tv)
+                                          tensor_view_t<5> dy_tv,
+                                          tensor_view_t<5> dx_tv)
 {
-    RepeatBackwardImpl<FLOAT>(dy,
-                              dx,
-                              inout_size,
-                              offset,
-                              output_grad_tv.dimensions,
-                              input_grad_tv.dimensions,
-                              output_grad_tv.strides,
-                              input_grad_tv.strides);
+    RepeatBackwardImpl<FLOAT>(dy, dx, inout_size, offset, dy_tv, dx_tv);
 }

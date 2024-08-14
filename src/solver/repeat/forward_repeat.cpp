@@ -30,7 +30,7 @@
 #include <miopen/repeat/solvers.hpp>
 #include <miopen/repeat.hpp>
 #include <miopen/target_properties.hpp>
-#include "../../kernels/tensor_utils.hpp"
+#include <miopen/tensor_view_utils.hpp>
 
 #define LOCAL_SIZE 1024
 
@@ -108,22 +108,10 @@ ConvSolution RepeatForward::GetSolution(const ExecutionContext& context,
             auto inout_size =
                 std::accumulate(ydims.begin(), ydims.end(), 1ULL, std::multiplies<size_t>{});
 
-            tensor_view input_tv;
-            tensor_view output_tv;
+            auto x_tv = get_inner_expanded_tv<5>(*(params.xDyDesc));
+            auto y_tv = get_inner_expanded_tv<5>(*(params.yDxDesc));
 
-            for(int i = 0; i < xdims.size(); ++i)
-            {
-                input_tv.dimensions[i] = xdims[i];
-                input_tv.strides[i]    = xstrides[i];
-            }
-
-            for(int i = 0; i < ydims.size(); ++i)
-            {
-                output_tv.dimensions[i] = ydims[i];
-                output_tv.strides[i]    = ystrides[i];
-            }
-
-            kernel(params.xDy, params.yDx, inout_size, offset, input_tv, output_tv);
+            kernel(params.xDy, params.yDx, inout_size, offset, x_tv, y_tv);
         };
     };
 

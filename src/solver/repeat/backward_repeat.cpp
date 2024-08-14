@@ -31,7 +31,7 @@
 #include <miopen/repeat.hpp>
 #include <miopen/target_properties.hpp>
 #include <hip/hip_runtime.h>
-#include "../../kernels/tensor_utils.hpp"
+#include <miopen/tensor_view_utils.hpp>
 
 #define LOCAL_SIZE 1024
 
@@ -113,24 +113,12 @@ ConvSolution RepeatBackward::GetSolution(const ExecutionContext& context,
             auto dx_size =
                 std::accumulate(dxdims.begin(), dxdims.end(), 1ULL, std::multiplies<size_t>{});
 
-            tensor_view output_grad_tv;
-            tensor_view input_grad_tv;
-
-            for(int i = 0; i < dydims.size(); ++i)
-            {
-                output_grad_tv.dimensions[i] = dydims[i];
-                output_grad_tv.strides[i]    = dystrides[i];
-            }
-
-            for(int i = 0; i < dxdims.size(); ++i)
-            {
-                input_grad_tv.dimensions[i] = dxdims[i];
-                input_grad_tv.strides[i]    = dxstrides[i];
-            }
+            auto dy_tv = get_inner_expanded_tv<5>(*(params.xDyDesc));
+            auto dx_tv = get_inner_expanded_tv<5>(*(params.yDxDesc));
 
             hipMemset(params.yDx, 0, dx_size * GetTypeSize(params.yDxDesc->GetType()));
 
-            kernel(params.xDy, params.yDx, inout_size, offset, output_grad_tv, input_grad_tv);
+            kernel(params.xDy, params.yDx, inout_size, offset, dy_tv, dx_tv);
         };
     };
 
