@@ -201,7 +201,7 @@ protected:
     {
         auto&& handle  = get_handle();
         repeat_config  = GetParam();
-        auto gen_value = [](auto...) { return prng::gen_descreet_uniform_sign<T>(1e-2, 100); };
+        auto gen_value = [](auto...) { return prng::gen_descreet_uniform_sign<T>(1e-4, 1); };
 
         sizes     = repeat_config.sizes;
         num_sizes = repeat_config.num_sizes;

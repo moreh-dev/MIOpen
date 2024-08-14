@@ -34,6 +34,8 @@
 #include <miopen/tensor_view_utils.hpp>
 
 #define LOCAL_SIZE 1024
+#define LOCAL_SIZE_64 64
+#define LIMIT_SMALL_K 16
 
 namespace miopen {
 
@@ -60,21 +62,48 @@ ConvSolution RepeatBackward::GetSolution(const ExecutionContext& context,
     auto dydims = problem.GetDyDesc().GetLengths();
     auto dxdims = problem.GetDxDesc().GetLengths();
 
-    auto output_size =
-        std::accumulate(dydims.begin(), dydims.end(), 1ULL, std::multiplies<size_t>{});
+    auto N = std::accumulate(dxdims.begin(), dxdims.end(), 1ULL, std::multiplies<size_t>{});
+    auto K = std::accumulate(dydims.begin(), dydims.end(), 1ULL, std::multiplies<size_t>{}) / N;
 
     {
-        size_t xlocalsize = LOCAL_SIZE;
-        size_t xgridsize  = AlignUp(output_size, xlocalsize);
-        size_t ylocalsize = 1;
-        size_t ygridsize  = 1;
-        size_t zlocalsize = 1;
-        size_t zgridsize  = 1;
+        size_t xlocalsize;
+        size_t xgridsize;
+        size_t ylocalsize;
+        size_t ygridsize;
+        size_t zlocalsize;
+        size_t zgridsize;
+
+        if(K > LIMIT_SMALL_K)
+        {
+            xlocalsize = LOCAL_SIZE_64;
+            xgridsize  = N * LOCAL_SIZE_64;
+            ylocalsize = 1;
+            ygridsize  = 1;
+            zlocalsize = 1;
+            zgridsize  = 1;
+        }
+        else
+        {
+            xlocalsize = LOCAL_SIZE;
+            xgridsize  = AlignUp(N, xlocalsize);
+            ylocalsize = 1;
+            ygridsize  = 1;
+            zlocalsize = 1;
+            zgridsize  = 1;
+        }
 
         auto kernel = KernelInfo{};
 
-        kernel.kernel_file = "MIOpenRepeat.cpp";
-        kernel.kernel_name = "RepeatBackward";
+        if(K > LIMIT_SMALL_K)
+        {
+            kernel.kernel_file = "MIOpenRepeat.cpp";
+            kernel.kernel_name = "RepeatLargeKBackward";
+        }
+        else
+        {
+            kernel.kernel_file = "MIOpenRepeat.cpp";
+            kernel.kernel_name = "RepeatSmallKBackward";
+        }
 
         const auto build_params = KernelBuildParameters{
             {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
@@ -101,24 +130,24 @@ ConvSolution RepeatBackward::GetSolution(const ExecutionContext& context,
             decltype(auto) kernel = handle_.Run(kernels.front());
             decltype(auto) params = raw_params.CastTo<miopen::repeat::InvokeParams>();
 
-            auto dydims    = params.xDyDesc->GetLengths();
-            auto dxdims    = params.yDxDesc->GetLengths();
-            auto dystrides = params.xDyDesc->GetStrides();
-            auto dxstrides = params.yDxDesc->GetStrides();
-            auto offset    = params.offset;
+            auto dydims = params.xDyDesc->GetLengths();
+            auto dxdims = params.yDxDesc->GetLengths();
 
-            auto inout_size =
-                std::accumulate(dydims.begin(), dydims.end(), 1ULL, std::multiplies<size_t>{});
-
-            auto dx_size =
-                std::accumulate(dxdims.begin(), dxdims.end(), 1ULL, std::multiplies<size_t>{});
+            auto N = std::accumulate(dxdims.begin(), dxdims.end(), 1ULL, std::multiplies<size_t>{});
+            auto K =
+                std::accumulate(dydims.begin(), dydims.end(), 1ULL, std::multiplies<size_t>{}) / N;
 
             auto dy_tv = get_inner_expanded_tv<5>(*(params.xDyDesc));
             auto dx_tv = get_inner_expanded_tv<5>(*(params.yDxDesc));
 
-            hipMemset(params.yDx, 0, dx_size * GetTypeSize(params.yDxDesc->GetType()));
+            hipMemset(params.yDx, 0, N * GetTypeSize(params.yDxDesc->GetType()));
 
-            kernel(params.xDy, params.yDx, inout_size, offset, dy_tv, dx_tv);
+            kernel(params.xDy,
+                   params.yDx,
+                   static_cast<uint64_t>(N),
+                   static_cast<uint64_t>(K),
+                   dy_tv,
+                   dx_tv);
         };
     };
 
