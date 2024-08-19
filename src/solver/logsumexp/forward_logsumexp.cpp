@@ -188,8 +188,31 @@ LogsumexpForward::GetSolution([[maybe_unused]] const ExecutionContext& context,
             }
             int64_t N = static_cast<int64_t>(input_grad_numel) / K;
 
-            auto input_tv  = get_inner_expanded_tv<5>(*(params.inputDesc));
-            auto output_tv = get_inner_expanded_tv<5>(*(params.outputDesc));
+            auto input_strides  = params.inputDesc->GetStrides();
+            auto output_strides = params.outputDesc->GetStrides();
+
+            for(int64_t d = input_dims.size() - 1; d >= 0; --d)
+            {
+                if(!(std::find(dims_vector.begin(), dims_vector.end(), d) != dims_vector.end()))
+                    continue;
+                for(int64_t dd = input_dims.size() - 1; dd > d; --dd)
+                {
+                    if(std::find(dims_vector.begin(), dims_vector.end(), dd) != dims_vector.end())
+                        continue;
+                    std::swap(input_dims[d], input_dims[dd]);
+                    std::swap(input_strides[d], input_strides[dd]);
+                    std::swap(output_dims[d], output_dims[dd]);
+                    std::swap(output_strides[d], output_strides[dd]);
+                }
+            }
+
+            auto new_inputDesc =
+                TensorDescriptor(params.inputDesc->GetType(), input_dims, input_strides);
+            auto new_outputDesc =
+                TensorDescriptor(params.outputDesc->GetType(), output_dims, output_strides);
+
+            auto input_tv  = get_inner_expanded_tv<5>(new_inputDesc);
+            auto output_tv = get_inner_expanded_tv<5>(new_outputDesc);
 
             kernel(params.input, params.output, N, K, input_tv, output_tv);
         };
