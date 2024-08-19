@@ -156,7 +156,7 @@ int LogsumexpDriver<Tgpu, Tref>::AddCmdLineArgs()
     inflags.AddInputFlag("InputDims",
                          'I',
                          "16,16,16",
-                         "The dimensional lengths of the input tensor (Default=16x16x16)",
+                         "The dimensional lengths of the input tensor (Default=16,16,16)",
                          "string");
     inflags.AddInputFlag("Dims", 'D', "0", "The dimensions to reduce (Default=0)", "string");
     inflags.AddInputFlag("iter", 'i', "10", "Number of iterations (Default=10)", "int");
