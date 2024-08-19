@@ -331,7 +331,8 @@ int LogsumexpDriver<Tgpu, Tref>::RunForwardGPU()
 template <typename Tgpu, typename Tref>
 int LogsumexpDriver<Tgpu, Tref>::RunForwardCPU()
 {
-    mloLogsumexpForwardRunHost<Tgpu, Tref>(inputDesc, outputDesc, input.data(), output_host.data());
+    mloLogsumexpForwardRunHost<Tgpu, Tref>(
+        inputDesc, outputDesc, input.data(), output_host.data(), dims);
 
     return miopenStatusSuccess;
 }
