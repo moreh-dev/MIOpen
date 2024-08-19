@@ -33,7 +33,6 @@
 static void LogCmdLogsumexp(const miopenTensorDescriptor_t inputDesc,
                             const int* dims,
                             const int num_dims,
-                            const bool keepdim,
                             bool is_fwd)
 {
     if(miopen::IsLoggingCmd())
@@ -85,8 +84,6 @@ static void LogCmdLogsumexp(const miopenTensorDescriptor_t inputDesc,
             ss << dims[i] << " ";
         }
 
-        ss << " -keepdim " << ((keepdim) ? "true" : "false");
-
         ss << " -F " << ((is_fwd) ? "true" : "false");
 
         MIOPEN_LOG_DRIVER_CMD(ss.str());
@@ -99,12 +96,11 @@ extern "C" miopenStatus_t miopenLogsumexpForward(miopenHandle_t handle,
                                                  const miopenTensorDescriptor_t outputDesc,
                                                  void* output,
                                                  const int* dims,
-                                                 const int num_dims,
-                                                 const bool keepdim)
+                                                 const int num_dims)
 {
-    MIOPEN_LOG_FUNCTION(handle, inputDesc, input, outputDesc, output, dims, num_dims, keepdim);
+    MIOPEN_LOG_FUNCTION(handle, inputDesc, input, outputDesc, output, dims, num_dims);
 
-    LogCmdLogsumexp(inputDesc, dims, num_dims, keepdim, true);
+    LogCmdLogsumexp(inputDesc, dims, num_dims, true);
 
     return miopen::try_([&] {
         miopen::LogsumexpForward(miopen::deref(handle),
@@ -113,8 +109,7 @@ extern "C" miopenStatus_t miopenLogsumexpForward(miopenHandle_t handle,
                                  miopen::deref(outputDesc),
                                  DataCast(output),
                                  dims,
-                                 num_dims,
-                                 keepdim);
+                                 num_dims);
     });
 }
 
@@ -128,8 +123,7 @@ extern "C" miopenStatus_t miopenLogsumexpBackward(miopenHandle_t handle,
                                                   const miopenTensorDescriptor_t outputGradDesc,
                                                   const void* outputGrad,
                                                   const int* dims,
-                                                  const int num_dims,
-                                                  const bool keepdim)
+                                                  const int num_dims)
 {
     MIOPEN_LOG_FUNCTION(handle,
                         inputDesc,
@@ -141,10 +135,9 @@ extern "C" miopenStatus_t miopenLogsumexpBackward(miopenHandle_t handle,
                         outputGradDesc,
                         outputGrad,
                         dims,
-                        num_dims,
-                        keepdim);
+                        num_dims);
 
-    LogCmdLogsumexp(inputDesc, dims, num_dims, keepdim, false);
+    LogCmdLogsumexp(inputDesc, dims, num_dims, false);
 
     return miopen::try_([&] {
         miopen::LogsumexpBackward(miopen::deref(handle),
@@ -157,7 +150,6 @@ extern "C" miopenStatus_t miopenLogsumexpBackward(miopenHandle_t handle,
                                   miopen::deref(outputGradDesc),
                                   DataCast(outputGrad),
                                   dims,
-                                  num_dims,
-                                  keepdim);
+                                  num_dims);
     });
 }

@@ -61,7 +61,6 @@ NetworkConfig ProblemDescription::MakeNetworkConfig() const
     }
 
     ss << "dtype-" << dtype << "-";
-    ss << "keepdim-" << keepdim;
 
     return NetworkConfig{ss.str()};
 }

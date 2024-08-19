@@ -40,8 +40,7 @@ MIOPEN_INTERNALS_EXPORT miopenStatus_t LogsumexpForward(Handle& handle,
                                                         const TensorDescriptor& outputDesc,
                                                         Data_t output,
                                                         const int* dims,
-                                                        int num_dims,
-                                                        bool keepdim);
+                                                        int num_dims);
 
 MIOPEN_INTERNALS_EXPORT miopenStatus_t LogsumexpBackward(Handle& handle,
                                                          const TensorDescriptor& inputDesc,
@@ -53,8 +52,7 @@ MIOPEN_INTERNALS_EXPORT miopenStatus_t LogsumexpBackward(Handle& handle,
                                                          const TensorDescriptor& outputGradDesc,
                                                          ConstData_t outputGrad,
                                                          const int* dims,
-                                                         int num_dims,
-                                                         bool keepdim);
+                                                         int num_dims);
 
 } // namespace miopen
 

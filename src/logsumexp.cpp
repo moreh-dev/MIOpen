@@ -41,12 +41,11 @@ miopenStatus_t LogsumexpForward(Handle& handle,
                                 const TensorDescriptor& outputDesc,
                                 Data_t output,
                                 const int* dims,
-                                int num_dims,
-                                bool keepdim)
+                                int num_dims)
 {
     std::vector dims_vector(dims, dims + num_dims);
 
-    const auto problem = logsumexp::ProblemDescription{inputDesc, outputDesc, dims_vector, keepdim};
+    const auto problem = logsumexp::ProblemDescription{inputDesc, outputDesc, dims_vector};
 
     const auto invoke_params = [&]() {
         auto tmp       = logsumexp::LogsumexpForwardInvokeParams{};
@@ -56,7 +55,6 @@ miopenStatus_t LogsumexpForward(Handle& handle,
         tmp.input      = input;
         tmp.output     = output;
         tmp.dims       = &dims_vector;
-        tmp.keepdim    = keepdim;
         return tmp;
     }();
 
@@ -78,13 +76,12 @@ miopenStatus_t LogsumexpBackward(Handle& handle,
                                  const TensorDescriptor& outputGradDesc,
                                  ConstData_t outputGrad,
                                  const int* dims,
-                                 int num_dims,
-                                 bool keepdim)
+                                 int num_dims)
 {
     std::vector dims_vector(dims, dims + num_dims);
 
     const auto problem = logsumexp::ProblemDescription{
-        inputDesc, inputGradDesc, outputDesc, outputGradDesc, dims_vector, keepdim};
+        inputDesc, inputGradDesc, outputDesc, outputGradDesc, dims_vector};
 
     const auto invoke_params = [&]() {
         auto tmp           = logsumexp::LogsumexpBackwardInvokeParams{};
@@ -98,7 +95,6 @@ miopenStatus_t LogsumexpBackward(Handle& handle,
         tmp.output         = output;
         tmp.outputGrad     = outputGrad;
         tmp.dims           = &dims_vector;
-        tmp.keepdim        = keepdim;
         return tmp;
     }();
 

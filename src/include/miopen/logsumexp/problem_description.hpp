@@ -41,13 +41,8 @@ struct ProblemDescription : ProblemDescriptionBase
 {
     ProblemDescription(const TensorDescriptor& inputDesc_,
                        const TensorDescriptor& outputDesc_,
-                       const std::vector<int>& dims_,
-                       const bool keepdim_)
-        : inputDesc(inputDesc_),
-          outputDesc(outputDesc_),
-          dims(dims_),
-          keepdim(keepdim_),
-          isForward(true)
+                       const std::vector<int>& dims_)
+        : inputDesc(inputDesc_), outputDesc(outputDesc_), dims(dims_), isForward(true)
     {
     }
 
@@ -55,14 +50,12 @@ struct ProblemDescription : ProblemDescriptionBase
                        const TensorDescriptor& inputGradDesc_,
                        const TensorDescriptor& outputDesc_,
                        const TensorDescriptor& outputGradDesc_,
-                       const std::vector<int>& dims_,
-                       const bool keepdim_)
+                       const std::vector<int>& dims_)
         : inputDesc(inputDesc_),
           inputGradDesc(inputGradDesc_),
           outputDesc(outputDesc_),
           outputGradDesc(outputGradDesc_),
           dims(dims_),
-          keepdim(keepdim_),
           isForward(false)
     {
     }
@@ -73,7 +66,6 @@ struct ProblemDescription : ProblemDescriptionBase
     const TensorDescriptor& GetOutputGradDesc() const { return outputGradDesc; }
 
     const std::vector<int>& GetDims() const { return dims; }
-    bool GetKeepdim() const { return keepdim; }
 
     bool IsValidDims() const
     {
@@ -132,7 +124,6 @@ private:
     TensorDescriptor outputGradDesc;
 
     std::vector<int> dims;
-    bool keepdim;
 
     const bool isForward;
 };

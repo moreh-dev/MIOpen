@@ -43,7 +43,6 @@ struct LogsumexpForwardInvokeParams : public miopen::InvokeParams
     Data_t output     = nullptr;
 
     const std::vector<int>* dims = nullptr;
-    bool keepdim;
 
     std::size_t GetWorkspaceSize() const { return 0; }
     Data_t GetWorkspace() const { return nullptr; }
@@ -64,7 +63,6 @@ struct LogsumexpBackwardInvokeParams : public miopen::InvokeParams
     ConstData_t outputGrad = nullptr;
 
     const std::vector<int>* dims = nullptr;
-    bool keepdim;
 
     std::size_t GetWorkspaceSize() const { return 0; }
     Data_t GetWorkspace() const { return nullptr; }

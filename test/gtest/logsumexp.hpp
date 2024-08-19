@@ -43,12 +43,11 @@ struct LogsumexpTestCase
     size_t W;
     int32_t* dims;
     int32_t num_dims;
-    bool keepdim;
 
     friend std::ostream& operator<<(std::ostream& os, const LogsumexpTestCase& tc)
     {
         return os << "N: " << tc.N << " C: " << tc.C << " D: " << tc.D << " H: " << tc.H
-                  << " W: " << tc.W << " num_dims: " << tc.num_dims << " keepdim: " << tc.keepdim;
+                  << " W: " << tc.W << " num_dims: " << tc.num_dims;
     }
 
     std::vector<size_t> GetInput()
@@ -182,47 +181,47 @@ struct LogsumexpTestCase
 std::vector<LogsumexpTestCase> LogsumexpTestConfigs()
 {
     return {
-        {400, 0, 0, 0, 0, new int32_t[1]{0}, 1, true},
-        {800, 0, 0, 0, 0, new int32_t[1]{0}, 1, true},
-        {12, 40, 0, 0, 0, new int32_t[1]{0}, 1, true},
-        {16, 120, 0, 0, 0, new int32_t[1]{0}, 1, true},
-        {256, 32, 0, 0, 0, new int32_t[1]{0}, 1, true},
-        {1000, 48, 0, 0, 0, new int32_t[1]{0}, 1, true},
-        {32, 24, 0, 0, 0, new int32_t[2]{0, 1}, 2, true},
-        {12, 36, 0, 0, 0, new int32_t[2]{0, 1}, 2, false},
-        {12, 18, 0, 0, 10, new int32_t[1]{0}, 1, false},
-        {256, 32, 0, 0, 5, new int32_t[1]{0}, 1, true},
-        {32, 80, 0, 0, 5, new int32_t[1]{1}, 1, true},
-        {32, 96, 0, 0, 16, new int32_t[1]{4}, 1, false},
-        {16, 32, 0, 0, 12, new int32_t[2]{0, 1}, 2, true},
-        {36, 256, 0, 0, 6, new int32_t[2]{0, 4}, 2, true},
-        {12, 24, 0, 0, 2, new int32_t[3]{0, 1, 4}, 3, false},
-        {6, 6, 0, 6, 6, new int32_t[1]{0}, 1, false},
-        {16, 32, 0, 16, 32, new int32_t[1]{3}, 1, true},
-        {32, 64, 0, 16, 16, new int32_t[2]{0, 3}, 2, false},
-        {128, 128, 0, 4, 8, new int32_t[2]{0, 3}, 2, true},
-        {256, 256, 0, 2, 4, new int32_t[2]{0, 3}, 2, false},
-        {512, 512, 0, 1, 2, new int32_t[2]{0, 3}, 2, true},
-        {124, 1024, 0, 1, 1, new int32_t[2]{0, 3}, 2, false},
-        {12, 6, 0, 10, 5, new int32_t[3]{0, 1, 3}, 3, true},
-        {6, 6, 6, 6, 6, new int32_t[1]{0}, 1, true},
-        {12, 12, 12, 12, 12, new int32_t[1]{3}, 1, false},
-        {16, 16, 8, 32, 8, new int32_t[1]{4}, 1, false},
-        {16, 16, 16, 8, 16, new int32_t[2]{0, 1}, 2, true},
-        {12, 16, 2, 6, 6, new int32_t[3]{0, 1, 2}, 3, false},
-        {16, 256, 6, 2, 12, new int32_t[3]{0, 3, 4}, 3, true},
-        {2, 3, 2, 10, 5, new int32_t[3]{0, 1, 2}, 3, true},
-        {8, 16, 24, 10, 5, new int32_t[3]{0, 1, 4}, 3, false},
-        {6, 3, 3, 5, 16, new int32_t[4]{0, 1, 2, 3}, 4, true},
-        {12, 6, 3, 2, 6, new int32_t[4]{0, 1, 2, 3}, 4, false},
-        {16, 8, 16, 2, 2, new int32_t[4]{0, 1, 3, 4}, 4, true},
-        {11, 16, 2, 2, 5, new int32_t[4]{0, 1, 2, 3}, 4, false},
-        {14, 6, 2, 10, 5, new int32_t[4]{0, 1, 2, 4}, 4, true},
-        {16, 2, 2, 2, 4, new int32_t[5]{0, 1, 2, 3, 4}, 5, false},
-        {6, 6, 4, 2, 2, new int32_t[5]{0, 1, 2, 3, 4}, 5, true},
-        {12, 2, 4, 2, 2, new int32_t[5]{0, 1, 2, 3, 4}, 5, false},
-        {2, 3, 12, 1, 5, new int32_t[5]{0, 1, 2, 3, 4}, 5, true},
-        {2, 2, 6, 12, 2, new int32_t[5]{0, 1, 2, 3, 4}, 5, false},
+        {400, 0, 0, 0, 0, new int32_t[1]{0}, 1},
+        {800, 0, 0, 0, 0, new int32_t[1]{0}, 1},
+        {12, 40, 0, 0, 0, new int32_t[1]{0}, 1},
+        {16, 120, 0, 0, 0, new int32_t[1]{0}, 1},
+        {256, 32, 0, 0, 0, new int32_t[1]{0}, 1},
+        {1000, 48, 0, 0, 0, new int32_t[1]{0}, 1},
+        {32, 24, 0, 0, 0, new int32_t[2]{0, 1}, 2},
+        {12, 36, 0, 0, 0, new int32_t[2]{0, 1}, 2},
+        {12, 18, 0, 0, 10, new int32_t[1]{0}, 1},
+        {256, 32, 0, 0, 5, new int32_t[1]{0}, 1},
+        {32, 80, 0, 0, 5, new int32_t[1]{1}, 1},
+        {32, 96, 0, 0, 16, new int32_t[1]{4}, 1},
+        {16, 32, 0, 0, 12, new int32_t[2]{0, 1}, 2},
+        {36, 256, 0, 0, 6, new int32_t[2]{0, 4}, 2},
+        {12, 24, 0, 0, 2, new int32_t[3]{0, 1, 4}, 3},
+        {6, 6, 0, 6, 6, new int32_t[1]{0}, 1},
+        {16, 32, 0, 16, 32, new int32_t[1]{3}, 1},
+        {32, 64, 0, 16, 16, new int32_t[2]{0, 3}, 2},
+        {128, 128, 0, 4, 8, new int32_t[2]{0, 3}, 2},
+        {256, 256, 0, 2, 4, new int32_t[2]{0, 3}, 2},
+        {512, 512, 0, 1, 2, new int32_t[2]{0, 3}, 2},
+        {124, 1024, 0, 1, 1, new int32_t[2]{0, 3}, 2},
+        {12, 6, 0, 10, 5, new int32_t[3]{0, 1, 3}, 3},
+        {6, 6, 6, 6, 6, new int32_t[1]{0}, 1},
+        {12, 12, 12, 12, 12, new int32_t[1]{3}, 1},
+        {16, 16, 8, 32, 8, new int32_t[1]{4}, 1},
+        {16, 16, 16, 8, 16, new int32_t[2]{0, 1}, 2},
+        {12, 16, 2, 6, 6, new int32_t[3]{0, 1, 2}, 3},
+        {16, 256, 6, 2, 12, new int32_t[3]{0, 3, 4}, 3},
+        {2, 3, 2, 10, 5, new int32_t[3]{0, 1, 2}, 3},
+        {8, 16, 24, 10, 5, new int32_t[3]{0, 1, 4}, 3},
+        {6, 3, 3, 5, 16, new int32_t[4]{0, 1, 2, 3}, 4},
+        {12, 6, 3, 2, 6, new int32_t[4]{0, 1, 2, 3}, 4},
+        {16, 8, 16, 2, 2, new int32_t[4]{0, 1, 3, 4}, 4},
+        {11, 16, 2, 2, 5, new int32_t[4]{0, 1, 2, 3}, 4},
+        {14, 6, 2, 10, 5, new int32_t[4]{0, 1, 2, 4}, 4},
+        {16, 2, 2, 2, 4, new int32_t[5]{0, 1, 2, 3, 4}, 5},
+        {6, 6, 4, 2, 2, new int32_t[5]{0, 1, 2, 3, 4}, 5},
+        {12, 2, 4, 2, 2, new int32_t[5]{0, 1, 2, 3, 4}, 5},
+        {2, 3, 12, 1, 5, new int32_t[5]{0, 1, 2, 3, 4}, 5},
+        {2, 2, 6, 12, 2, new int32_t[5]{0, 1, 2, 3, 4}, 5},
     };
 }
 
@@ -245,8 +244,6 @@ protected:
         {
             dims[i] = dims_vector[i];
         }
-
-        keepdim = logsumexp_config.keepdim;
 
         auto input_dims = logsumexp_config.GetInput();
 
@@ -277,14 +274,8 @@ protected:
         cpu_logsumexp_forward(input, ref_output);
         miopenStatus_t status;
 
-        status = miopen::LogsumexpForward(handle,
-                                          input.desc,
-                                          input_dev.get(),
-                                          output.desc,
-                                          output_dev.get(),
-                                          dims,
-                                          num_dims,
-                                          keepdim);
+        status = miopen::LogsumexpForward(
+            handle, input.desc, input_dev.get(), output.desc, output_dev.get(), dims, num_dims);
 
         EXPECT_EQ(status, miopenStatusSuccess);
 
@@ -316,8 +307,6 @@ protected:
 
     int32_t* dims;
     int32_t num_dims;
-
-    bool keepdim;
 };
 
 template <typename T = float>
@@ -339,8 +328,6 @@ protected:
         {
             dims[i] = dims_vector[i];
         }
-
-        keepdim = logsumexp_config.keepdim;
 
         auto input_dims = logsumexp_config.GetInput();
 
@@ -391,8 +378,7 @@ protected:
                                            output_grad.desc,
                                            output_grad_dev.get(),
                                            dims,
-                                           num_dims,
-                                           keepdim);
+                                           num_dims);
 
         EXPECT_EQ(status, miopenStatusSuccess);
 
@@ -428,6 +414,4 @@ protected:
 
     int32_t* dims;
     int32_t num_dims;
-
-    bool keepdim;
 };

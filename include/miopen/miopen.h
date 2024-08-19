@@ -7638,7 +7638,6 @@ MIOPEN_EXPORT miopenStatus_t miopenGetitemBackward(miopenHandle_t handle,
  * @param output        Output tensor (output)
  * @param dims          Dimensions to reduce (input)
  * @param num_dims      Number of dimensions to reduce (input)
- * @param keepdim       Flag indicating whether to keep the reduced dimensions (input)
  * @return              miopenStatus_t
  */
 MIOPEN_EXPORT miopenStatus_t miopenLogsumexpForward(miopenHandle_t handle,
@@ -7647,8 +7646,7 @@ MIOPEN_EXPORT miopenStatus_t miopenLogsumexpForward(miopenHandle_t handle,
                                                     const miopenTensorDescriptor_t outputDesc,
                                                     void* output,
                                                     const int* dims,
-                                                    const int num_dims,
-                                                    const bool keepdim);
+                                                    const int num_dims);
 
 /*!
  * @brief Execute a logsumexp backward layer
@@ -7664,7 +7662,6 @@ MIOPEN_EXPORT miopenStatus_t miopenLogsumexpForward(miopenHandle_t handle,
  * @param outputGrad        Output gradient tensor (input)
  * @param dims              Dimensions to reduce (input)
  * @param num_dims          Number of dimensions to reduce (input)
- * @param keepdim           Flag indicating whether to keep the reduced dimensions (input)
  * @return                  miopenStatus_t
  */
 MIOPEN_EXPORT miopenStatus_t miopenLogsumexpBackward(miopenHandle_t handle,
@@ -7677,8 +7674,7 @@ MIOPEN_EXPORT miopenStatus_t miopenLogsumexpBackward(miopenHandle_t handle,
                                                      const miopenTensorDescriptor_t outputGradDesc,
                                                      const void* outputGrad,
                                                      const int* dims,
-                                                     const int num_dims,
-                                                     const bool keepdim);
+                                                     const int num_dims);
 
 /** @} */
 // CLOSEOUT LOGSUMEXP DOXYGEN GROUP

@@ -64,7 +64,6 @@ public:
     int GetandSetData() override;
     std::vector<int> GetInputTensorLengthsFromCmdLine();
     std::vector<int> GetDimsFromCmdLine();
-    bool GetKeepDimFromCmdLine();
 
     int AllocateBuffersAndCopy() override;
 
@@ -107,8 +106,6 @@ private:
     std::vector<Tref> output_host;
 
     std::vector<int> dims;
-
-    bool keepdim;
 };
 
 template <typename Tgpu, typename Tref>
@@ -136,8 +133,7 @@ int LogsumexpDriver<Tgpu, Tref>::GetandSetData()
     std::copy(input_len.begin(), input_len.end(), output_len.begin());
     std::copy(input_len.begin(), input_len.end(), output_grad_len.begin());
 
-    dims    = GetDimsFromCmdLine();
-    keepdim = GetKeepDimFromCmdLine();
+    dims = GetDimsFromCmdLine();
 
     for(const auto& dim : dims)
     {
@@ -163,7 +159,6 @@ int LogsumexpDriver<Tgpu, Tref>::AddCmdLineArgs()
                          "The dimensional lengths of the input tensor (Default=16x16x16)",
                          "string");
     inflags.AddInputFlag("Dims", 'D', "0", "The dimensions to reduce (Default=0)", "string");
-    inflags.AddInputFlag("KeepDim", 'K', "1", "Keep the reduced dimensions (Default=1)", "int");
     inflags.AddInputFlag("iter", 'i', "10", "Number of iterations (Default=10)", "int");
     inflags.AddInputFlag("verify", 'v', "1", "Verify the results (Default=1)", "int");
     inflags.AddInputFlag("time", 't', "0", "Time Each Layer (Default=0)", "int");
@@ -231,14 +226,6 @@ std::vector<int> LogsumexpDriver<Tgpu, Tref>::GetDimsFromCmdLine()
     dims_.push_back(dim);
 
     return (dims_);
-}
-
-template <typename Tgpu, typename Tref>
-bool LogsumexpDriver<Tgpu, Tref>::GetKeepDimFromCmdLine()
-{
-    int keepdim_ = inflags.GetValueInt("KeepDim");
-
-    return (keepdim_ == 1 ? true : false);
 }
 
 template <typename Tgpu, typename Tref>
@@ -316,8 +303,7 @@ int LogsumexpDriver<Tgpu, Tref>::RunForwardGPU()
                                outputDesc,
                                output_dev->GetMem(),
                                dims.data(),
-                               dims.size(),
-                               keepdim);
+                               dims.size());
         float time = 0.0;
         miopenGetKernelTime(GetHandle(), &time);
         kernel_total_time += time;
@@ -371,8 +357,7 @@ int LogsumexpDriver<Tgpu, Tref>::RunBackwardGPU()
                                 outputGradDesc,
                                 output_grad_dev->GetMem(),
                                 dims.data(),
-                                dims.size(),
-                                keepdim);
+                                dims.size());
         float time = 0.0;
         miopenGetKernelTime(GetHandle(), &time);
         kernel_total_time += time;
