@@ -235,7 +235,7 @@ protected:
         logsumexp_config = GetParam();
         auto gen_value   = [](auto...) { return prng::gen_descreet_uniform_sign<T>(1e-2, 100); };
 
-        std::vector<int32_t> dims_vector = logsumexp_config.GetDims();
+        dims_vector = logsumexp_config.GetDims();
 
         dims     = logsumexp_config.dims;
         num_dims = logsumexp_config.num_dims;
@@ -271,7 +271,7 @@ protected:
     {
         auto&& handle = get_handle();
 
-        cpu_logsumexp_forward(input, ref_output);
+        cpu_logsumexp_forward(input, ref_output, dims_vector);
         miopenStatus_t status;
 
         status = miopen::LogsumexpForward(
@@ -307,6 +307,8 @@ protected:
 
     int32_t* dims;
     int32_t num_dims;
+
+    std::vector<int32_t> dims_vector;
 };
 
 template <typename T = float>

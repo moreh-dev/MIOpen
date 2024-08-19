@@ -31,12 +31,27 @@
 #include <vector>
 
 template <class T>
-void cpu_logsumexp_forward(tensor<T> input, tensor<T>& output)
+void cpu_logsumexp_forward(tensor<T> input, tensor<T>& output, std::vector<int32_t> dims_vector)
 {
     auto input_dims     = input.desc.GetLengths();
     auto input_strides  = input.desc.GetStrides();
     auto output_dims    = output.desc.GetLengths();
     auto output_strides = output.desc.GetStrides();
+
+    for(int64_t d = input_dims.size() - 1; d >= 0; --d)
+    {
+        if(!(std::find(dims_vector.begin(), dims_vector.end(), d) != dims_vector.end()))
+            continue;
+        for(int64_t dd = input_dims.size() - 1; dd > d; --dd)
+        {
+            if(std::find(dims_vector.begin(), dims_vector.end(), dd) != dims_vector.end())
+                continue;
+            std::swap(input_dims[d], input_dims[dd]);
+            std::swap(input_strides[d], input_strides[dd]);
+            std::swap(output_dims[d], output_dims[dd]);
+            std::swap(output_strides[d], output_strides[dd]);
+        }
+    }
 
     auto input_numel =
         std::accumulate(input_dims.begin(), input_dims.end(), 1LL, std::multiplies<int64_t>());
