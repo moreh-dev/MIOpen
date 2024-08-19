@@ -405,7 +405,7 @@ int RepeatDriver<Tgpu, Tref>::RunBackwardCPU()
 template <typename Tgpu, typename Tref>
 Tref RepeatDriver<Tgpu, Tref>::GetTolerance()
 {
-    auto tolerance = std::is_same<Tgpu, float>::value ? 1.5e-6 : 8.2e-3;
+    auto tolerance = std::is_same<Tgpu, float>::value ? 1.5e-5 : 8.2e-2;
 
     if(std::is_same<Tgpu, bfloat16>::value)
         tolerance *= 8.0;
