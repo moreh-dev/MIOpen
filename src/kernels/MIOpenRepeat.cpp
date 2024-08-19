@@ -73,14 +73,27 @@ __device__ void RepeatLargeKBackwardImpl(const T* __restrict__ dy,
     if(gid >= N)
         return;
 
+    uint64_t repeat[5];
+    for(uint64_t i = 0; i < 5; i++)
+    {
+        repeat[i] = dy_tv.size[i] / dx_tv.size[i];
+    }
+
     __shared__ FLOAT_ACCUM ltmp[LOCAL_SIZE_128];
 
     FLOAT_ACCUM sum = static_cast<FLOAT_ACCUM>(0.0);
+    tensor_layout_t<5> dx_ncdhw(dx_tv, gid);
+    tensor_layout_t<5> dy_ncdhw(dy_tv, 0);
+
     for(uint64_t k = lid; k < K; k += LOCAL_SIZE_128)
     {
-        tensor_layout_t<5> dy_ncdhw(dy_tv, gid + k * N);
-        FLOAT_ACCUM val = CVT_FLOAT2ACCUM(dy[dy_tv.get_tensor_view_idx(dy_ncdhw)]);
-        sum += val;
+        uint64_t tmp_k = k;
+        for(int64_t i = 4; i >= 0; i--)
+        {
+            dy_ncdhw.layout[i] = dx_ncdhw.layout[i] + (tmp_k % repeat[i]) * dx_tv.size[i];
+            tmp_k /= repeat[i];
+        }
+        sum += CVT_FLOAT2ACCUM(dy[dy_tv.get_tensor_view_idx(dy_ncdhw)]);
     }
 
     ltmp[lid] = sum;
@@ -122,15 +135,27 @@ __device__ void RepeatSmallKBackwardImpl(const T* __restrict__ dy,
     if(gid >= N)
         return;
 
+    uint64_t repeat[5];
+    for(uint64_t i = 0; i < 5; i++)
+    {
+        repeat[i] = dy_tv.size[i] / dx_tv.size[i];
+    }
+
     FLOAT_ACCUM sum = static_cast<FLOAT_ACCUM>(0.0);
+    tensor_layout_t<5> dx_ncdhw(dx_tv, gid);
+    tensor_layout_t<5> dy_ncdhw(dy_tv, 0);
 
     for(uint64_t k = 0; k < K; k++)
     {
-        tensor_layout_t<5> dy_ncdhw(dy_tv, gid + k * N);
+        uint64_t tmp_k = k;
+        for(int64_t i = 4; i >= 0; i--)
+        {
+            dy_ncdhw.layout[i] = dx_ncdhw.layout[i] + (tmp_k % repeat[i]) * dx_tv.size[i];
+            tmp_k /= repeat[i];
+        }
         sum += CVT_FLOAT2ACCUM(dy[dy_tv.get_tensor_view_idx(dy_ncdhw)]);
     }
 
-    tensor_layout_t<5> dx_ncdhw(dx_tv, gid);
     dx[dx_tv.get_tensor_view_idx(dx_ncdhw)] = CVT_ACCUM2FLOAT(sum);
 }
 
