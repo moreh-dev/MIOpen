@@ -65,6 +65,7 @@ __device__ void RepeatLargeKBackwardImpl(const T* __restrict__ dy,
                                          T* __restrict__ dx,
                                          uint64_t N,
                                          uint64_t K,
+                                         uint64_t offset,
                                          tensor_view_t<5> dy_tv,
                                          tensor_view_t<5> dx_tv)
 {
@@ -73,10 +74,16 @@ __device__ void RepeatLargeKBackwardImpl(const T* __restrict__ dy,
     if(gid >= N)
         return;
 
-    uint64_t repeat[5];
-    for(uint64_t i = 0; i < 5; i++)
+    uint64_t repeat[5] = {1, 1, 1, 1, 1};
+
+    for(uint64_t i = 0; i < offset; i++)
     {
-        repeat[i] = dy_tv.size[i] / dx_tv.size[i];
+        repeat[i] = dy_tv.size[i];
+    }
+
+    for(uint64_t i = offset; i < 5; i++)
+    {
+        repeat[i] = dy_tv.size[i] / dx_tv.size[i - offset];
     }
 
     __shared__ FLOAT_ACCUM ltmp[LOCAL_SIZE_128];
@@ -88,9 +95,15 @@ __device__ void RepeatLargeKBackwardImpl(const T* __restrict__ dy,
     for(uint64_t k = lid; k < K; k += LOCAL_SIZE_128)
     {
         uint64_t tmp_k = k;
-        for(int64_t i = 4; i >= 0; i--)
+        for(int64_t i = 4; i >= static_cast<int64_t>(offset); i--)
         {
-            dy_ncdhw.layout[i] = dx_ncdhw.layout[i] + (tmp_k % repeat[i]) * dx_tv.size[i];
+            dy_ncdhw.layout[i] =
+                dx_ncdhw.layout[i - offset] + (tmp_k % repeat[i]) * dx_tv.size[i - offset];
+            tmp_k /= repeat[i];
+        }
+        for(int64_t i = static_cast<int64_t>(offset) - 1; i >= 0; i--)
+        {
+            dy_ncdhw.layout[i] = tmp_k % repeat[i];
             tmp_k /= repeat[i];
         }
         sum += CVT_FLOAT2ACCUM(dy[dy_tv.get_tensor_view_idx(dy_ncdhw)]);
@@ -128,6 +141,7 @@ __device__ void RepeatSmallKBackwardImpl(const T* __restrict__ dy,
                                          T* __restrict__ dx,
                                          uint64_t N,
                                          uint64_t K,
+                                         uint64_t offset,
                                          tensor_view_t<5> dy_tv,
                                          tensor_view_t<5> dx_tv)
 {
@@ -135,10 +149,16 @@ __device__ void RepeatSmallKBackwardImpl(const T* __restrict__ dy,
     if(gid >= N)
         return;
 
-    uint64_t repeat[5];
-    for(uint64_t i = 0; i < 5; i++)
+    uint64_t repeat[5] = {1, 1, 1, 1, 1};
+
+    for(uint64_t i = 0; i < offset; i++)
     {
-        repeat[i] = dy_tv.size[i] / dx_tv.size[i];
+        repeat[i] = dy_tv.size[i];
+    }
+
+    for(uint64_t i = offset; i < 5; i++)
+    {
+        repeat[i] = dy_tv.size[i] / dx_tv.size[i - offset];
     }
 
     FLOAT_ACCUM sum = static_cast<FLOAT_ACCUM>(0.0);
@@ -148,9 +168,15 @@ __device__ void RepeatSmallKBackwardImpl(const T* __restrict__ dy,
     for(uint64_t k = 0; k < K; k++)
     {
         uint64_t tmp_k = k;
-        for(int64_t i = 4; i >= 0; i--)
+        for(int64_t i = 4; i >= static_cast<int64_t>(offset); i--)
         {
-            dy_ncdhw.layout[i] = dx_ncdhw.layout[i] + (tmp_k % repeat[i]) * dx_tv.size[i];
+            dy_ncdhw.layout[i] =
+                dx_ncdhw.layout[i - offset] + (tmp_k % repeat[i]) * dx_tv.size[i - offset];
+            tmp_k /= repeat[i];
+        }
+        for(int64_t i = static_cast<int64_t>(offset) - 1; i >= 0; i--)
+        {
+            dy_ncdhw.layout[i] = tmp_k % repeat[i];
             tmp_k /= repeat[i];
         }
         sum += CVT_FLOAT2ACCUM(dy[dy_tv.get_tensor_view_idx(dy_ncdhw)]);
@@ -173,18 +199,20 @@ extern "C" __global__ void RepeatLargeKBackward(const FLOAT* __restrict__ dy,
                                                 FLOAT* __restrict__ dx,
                                                 uint64_t N,
                                                 uint64_t K,
+                                                uint64_t offset,
                                                 tensor_view_t<5> dy_tv,
                                                 tensor_view_t<5> dx_tv)
 {
-    RepeatLargeKBackwardImpl<FLOAT>(dy, dx, N, K, dy_tv, dx_tv);
+    RepeatLargeKBackwardImpl<FLOAT>(dy, dx, N, K, offset, dy_tv, dx_tv);
 }
 
 extern "C" __global__ void RepeatSmallKBackward(const FLOAT* __restrict__ dy,
                                                 FLOAT* __restrict__ dx,
                                                 uint64_t N,
                                                 uint64_t K,
+                                                uint64_t offset,
                                                 tensor_view_t<5> dy_tv,
                                                 tensor_view_t<5> dx_tv)
 {
-    RepeatSmallKBackwardImpl<FLOAT>(dy, dx, N, K, dy_tv, dx_tv);
+    RepeatSmallKBackwardImpl<FLOAT>(dy, dx, N, K, offset, dy_tv, dx_tv);
 }

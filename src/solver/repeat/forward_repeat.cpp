@@ -44,9 +44,7 @@ bool RepeatForward::IsApplicable(const ExecutionContext& context,
                                  const miopen::repeat::ProblemDescription& problem) const
 {
     if(!problem.IsSameType())
-    {
         return false;
-    }
     return true;
 }
 

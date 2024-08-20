@@ -43,13 +43,24 @@ namespace solver {
 
 namespace repeat {
 
+std::size_t sizeof_kernel_FLOAT_ACCUM(const miopen::repeat::ProblemDescription& problem)
+{
+    const auto datatype = problem.GetDyDesc().GetType();
+    return get_data_size(datatype);
+}
+
+std::size_t sizeof_local_memory(const miopen::repeat::ProblemDescription& problem)
+{
+    return LOCAL_SIZE_128 * sizeof_kernel_FLOAT_ACCUM(problem);
+}
+
 bool RepeatBackward::IsApplicable(const ExecutionContext& context,
                                   const miopen::repeat::ProblemDescription& problem) const
 {
     if(!problem.IsSameType())
-    {
         return false;
-    }
+    if(!(sizeof_local_memory(problem) <= TargetProperties::GetMaxLocalMemorySize()))
+        return false;
     return true;
 }
 
@@ -132,6 +143,7 @@ ConvSolution RepeatBackward::GetSolution(const ExecutionContext& context,
 
             auto dydims = params.xDyDesc->GetLengths();
             auto dxdims = params.yDxDesc->GetLengths();
+            auto offset = params.offset;
 
             auto N = std::accumulate(dxdims.begin(), dxdims.end(), 1ULL, std::multiplies<size_t>{});
             auto K =
@@ -146,6 +158,7 @@ ConvSolution RepeatBackward::GetSolution(const ExecutionContext& context,
                    params.yDx,
                    static_cast<uint64_t>(N),
                    static_cast<uint64_t>(K),
+                   static_cast<uint64_t>(offset),
                    dy_tv,
                    dx_tv);
         };
