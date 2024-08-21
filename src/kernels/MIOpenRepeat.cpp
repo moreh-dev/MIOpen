@@ -74,7 +74,7 @@ __device__ void RepeatLargeKBackwardImpl(const T* __restrict__ dy,
     if(gid >= N)
         return;
 
-    uint64_t repeat[5] = {1, 1, 1, 1, 1};
+    uint64_t repeat[5];
 
     for(uint64_t i = 0; i < offset; i++)
     {
@@ -149,7 +149,7 @@ __device__ void RepeatSmallKBackwardImpl(const T* __restrict__ dy,
     if(gid >= N)
         return;
 
-    uint64_t repeat[5] = {1, 1, 1, 1, 1};
+    uint64_t repeat[5];
 
     for(uint64_t i = 0; i < offset; i++)
     {
