@@ -31,44 +31,35 @@
 #include <miopen/tensor.hpp>
 #include <miopen/handle.hpp>
 
-static void LogCmdMaskedFill(miopenTensorDescriptor_t const inputDesc, bool const is_fwd)
+static void LogCmdMaskedFill(miopenTensorDescriptor_t const outputDesc, bool const is_fwd)
 {
     if(miopen::IsLoggingCmd())
     {
         std::stringstream ss;
-        auto const dtype = miopen::deref(inputDesc).GetType();
-        if(dtype == miopenHalf)
-        {
-            ss << "maskedfillfp16";
-        }
-        else if(dtype == miopenFloat)
-        {
+
+        auto const dtype = miopen::deref(outputDesc).GetType();
+        if(dtype == miopenFloat)
             ss << "maskedfillfp32";
-        }
-        else if(dtype == miopenBFloat16)
-        {
+        else if(dtype == miopenHalf)
             ss << "maskedfillfp16";
-        }
-        int32_t size{0};
-        miopenGetTensorDescriptorSize(inputDesc, &size);
-        ss << " -n " << miopen::deref(inputDesc).GetLengths()[0] << " -c "
-           << miopen::deref(inputDesc).GetLengths()[1];
-        if(size == 5)
-        {
-            ss << " -D " << miopen::deref(inputDesc).GetLengths()[2] << " -H "
-               << miopen::deref(inputDesc).GetLengths()[3] << " -W "
-               << miopen::deref(inputDesc).GetLengths()[4];
-        }
-        else if(size == 4)
-        {
-            ss << " -H " << miopen::deref(inputDesc).GetLengths()[2] << " -W "
-               << miopen::deref(inputDesc).GetLengths()[3];
-        }
-        else if(size == 3)
-        {
-            ss << " -W " << miopen::deref(inputDesc).GetLengths()[2];
-        }
+        else if(dtype == miopenBFloat16)
+            ss << "maskedfillbfp16";
+
+        auto size = 0;
+        miopenGetTensorDescriptorSize(outputDesc, &size);
+        if(size >= 1)
+            ss << " -n " << miopen::deref(outputDesc).GetLengths()[0];
+        if(size >= 2)
+            ss << " -c " << miopen::deref(outputDesc).GetLengths()[1];
+        if(size >= 3)
+            ss << " -D " << miopen::deref(outputDesc).GetLengths()[2];
+        if(size >= 4)
+            ss << " -H " << miopen::deref(outputDesc).GetLengths()[3];
+        if(size >= 5)
+            ss << " -W " << miopen::deref(outputDesc).GetLengths()[4];
+
         ss << " -F " << (is_fwd ? "1" : "2");
+
         MIOPEN_LOG_DRIVER_CMD(ss.str());
     }
 }
@@ -83,7 +74,7 @@ extern "C" miopenStatus_t miopenMaskedFillForward(const miopenHandle_t handle,
                                                   const float value)
 {
     MIOPEN_LOG_FUNCTION(handle, inputDesc, input, outputDesc, output, maskDesc, mask, value);
-    LogCmdMaskedFill(inputDesc, true);
+    LogCmdMaskedFill(outputDesc, true);
     return miopen::try_([&] {
         miopen::MaskedFillForward(miopen::deref(handle),
                                   miopen::deref(inputDesc),
@@ -114,7 +105,7 @@ miopenMaskedFillBackward(const miopenHandle_t handle,
                         maskDesc,
                         mask,
                         value);
-    LogCmdMaskedFill(outputGradientDesc, false);
+    LogCmdMaskedFill(inputGradientDesc, false);
     return miopen::try_([&] {
         miopen::MaskedFillBackward(miopen::deref(handle),
                                    miopen::deref(outputGradientDesc),
