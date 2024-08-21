@@ -74,15 +74,12 @@ static void LogCmdMaskedFill(miopenTensorDescriptor_t const inputDesc, bool cons
 }
 
 extern "C" miopenStatus_t miopenMaskedFillForward(const miopenHandle_t handle,
-
                                                   const miopenTensorDescriptor_t inputDesc,
                                                   const void* input,
                                                   const miopenTensorDescriptor_t outputDesc,
                                                   void* output,
-
                                                   const miopenTensorDescriptor_t maskDesc,
                                                   const void* mask,
-
                                                   const float value)
 {
     MIOPEN_LOG_FUNCTION(handle, inputDesc, input, outputDesc, output, maskDesc, mask, value);
@@ -101,15 +98,12 @@ extern "C" miopenStatus_t miopenMaskedFillForward(const miopenHandle_t handle,
 
 extern "C" miopenStatus_t
 miopenMaskedFillBackward(const miopenHandle_t handle,
-
                          const miopenTensorDescriptor_t outputGradientDesc,
                          const void* outputGradient,
                          const miopenTensorDescriptor_t inputGradientDesc,
                          void* inputGradient,
-
                          const miopenTensorDescriptor_t maskDesc,
                          const void* mask,
-
                          const float value)
 {
     MIOPEN_LOG_FUNCTION(handle,

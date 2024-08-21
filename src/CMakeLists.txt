@@ -155,6 +155,8 @@ set( MIOpen_Source
     lock_file.cpp
     logger.cpp
     lrn_api.cpp
+    maskedfill/problem_description.cpp
+    maskedfill_api.cpp
     mha/mha_descriptor.cpp
     mha/problem_description.cpp
     op_args.cpp
@@ -292,6 +294,7 @@ set( MIOpen_Source
     solver/layernorm/forward_layernorm2d_ck.cpp
     solver/layernorm/forward_layernorm4d_ck.cpp
     solver/layernorm/forward_t5layernorm.cpp
+    solver/maskedfill/maskedfill.cpp
     solver/mha/mha_solver_backward.cpp
     solver/mha/mha_solver_forward.cpp
     solver/pooling/forward2d.cpp
@@ -315,9 +318,6 @@ set( MIOpen_Source
     tensor_api.cpp
     transformers_adam_w_api.cpp
     seq_tensor.cpp
-    solver/maskedfill/maskedfill.cpp
-    maskedfill_api.cpp
-    maskedfill/problem_description.cpp
 )
 
 if(MIOPEN_ENABLE_AI_KERNEL_TUNING OR MIOPEN_ENABLE_AI_IMMED_MODE_FALLBACK)
@@ -636,6 +636,7 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         kernel_cache.cpp
         layernorm.cpp
         lrn.cpp
+        maskedfill.cpp
         mlo_dir_conv.cpp
         exec_utils.cpp
         ocl/activ_ocl.cpp
@@ -661,7 +662,6 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         reducecalculation.cpp
         reduceextreme.cpp
         transformers_adam_w.cpp
-        maskedfill.cpp
         ${PROJECT_BINARY_DIR}/db_path.cpp
         )
 

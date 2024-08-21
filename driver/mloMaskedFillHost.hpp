@@ -32,12 +32,9 @@
 
 template <typename Tgpu, typename Tcheck>
 int mloMaskedFillForwardRunHost(miopenTensorDescriptor_t const outputDesc,
-
                                 Tgpu const* const input,
                                 Tcheck* const hostoutput,
-
                                 int8_t const* const mask,
-
                                 Tgpu const value)
 {
     auto const size  = miopen::deref(outputDesc).GetLengths();
@@ -51,10 +48,8 @@ int mloMaskedFillForwardRunHost(miopenTensorDescriptor_t const outputDesc,
 
 template <typename Tgpu, typename Tcheck>
 int mloMaskedFillBackwardRunHost(miopenTensorDescriptor_t const outputDesc,
-
                                  Tgpu const* const input,
                                  Tcheck* const hostoutput,
-
                                  int8_t const* const mask)
 {
     auto const size  = miopen::deref(outputDesc).GetLengths();

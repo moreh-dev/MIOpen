@@ -7639,61 +7639,47 @@ typedef enum
 
 /*! @brief Execute a masked fill forward layer
  *
- *  @param handle		MIOpen handle (input)
- *
- *  @param inputDesc	Tensor descriptor for the input tensor (input)
- *  @param input		Input tensor (input)
- *  @param outputDesc	Tensor descriptor for the output tensor (input)
- *  @param output		Output tensor (output)
- *
- *  @param maskDesc		Tensor descriptor for the boolean mask (input)
- *  @param mask			Boolean mask (input)
- *
- *  @param value		Value to fill with (input)
- *
- *  @return				miopenStatus_t
+ * @param handle        MIOpen handle (input)
+ * @param inputDesc     Tensor descriptor for the input tensor (input)
+ * @param input		    Input tensor (input)
+ * @param outputDesc    Tensor descriptor for the output tensor (input)
+ * @param output		Output tensor (output)
+ * @param maskDesc		Tensor descriptor for the boolean mask (input)
+ * @param mask			Boolean mask (input)
+ * @param value         Value to fill with (input)
+ * @return				miopenStatus_t
  */
 
 MIOPEN_EXPORT miopenStatus_t miopenMaskedFillForward(const miopenHandle_t handle,
-
                                                      const miopenTensorDescriptor_t inputDesc,
                                                      const void* input,
                                                      const miopenTensorDescriptor_t outputDesc,
                                                      void* output,
-
                                                      const miopenTensorDescriptor_t maskDesc,
                                                      const void* mask,
-
                                                      const float value);
 
 /*! @brief Execute a masked fill backward layer
  *
- *  @param handle				MIOpen handle (input)
- *
- *  @param outputGradientDesc	Tensor descriptor for the gradient of the output (input)
- *  @param outputGradient		Gradient of the output (input)
- *  @param inputGradientDesc	Tensor descriptor for the gradient of the input (input)
- *  @param inputGradient		Gradient of the input (output)
- *
- *  @param maskDesc				Tensor descriptor for the boolean mask (input)
- *  @param mask					Boolean mask (input)
- *
- *  @param value				Value to fill with (input)
- *
- *  @return						miopenStatus_t
+ * @param handle				MIOpen handle (input)
+ * @param outputGradientDesc    Tensor descriptor for the gradient of the output (input)
+ * @param outputGradient		Gradient of the output (input)
+ * @param inputGradientDesc     Tensor descriptor for the gradient of the input (input)
+ * @param inputGradient	        Gradient of the input (output)
+ * @param maskDesc				Tensor descriptor for the boolean mask (input)
+ * @param mask					Boolean mask (input)
+ * @param value				    Value to fill with (input)
+ * @return						miopenStatus_t
  */
 
 MIOPEN_EXPORT miopenStatus_t
 miopenMaskedFillBackward(const miopenHandle_t handle,
-
                          const miopenTensorDescriptor_t outputGradientDesc,
                          const void* outputGradient,
                          const miopenTensorDescriptor_t inputGradientDesc,
                          void* inputGradient,
-
                          const miopenTensorDescriptor_t maskDesc,
                          const void* mask,
-
                          const float value);
 
 /**
