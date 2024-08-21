@@ -208,9 +208,8 @@ inline std::string ParseBaseArg(int argc, char* argv[])
        arg != "adamwfp16" && arg != "ampadamw" && arg != "transformersadamw" &&
        arg != "transformersadamwfp16" && arg != "transformersampadamw" && arg != "getitem" &&
        arg != "getitemfp16" && arg != "getitembfp16" && arg != "reducecalculation" &&
-       arg != "reducecalculationfp16" && arg != "reducecalculationbfp16" &&
-       arg != "maskedfill" && arg != "maskedfillfp16" && arg != "maskedfillbfp16" &&
-       arg != "--version")
+       arg != "reducecalculationfp16" && arg != "reducecalculationbfp16" && arg != "maskedfill" &&
+       arg != "maskedfillfp16" && arg != "maskedfillbfp16" && arg != "--version")
     {
         printf("FAILED: Invalid Base Input Argument\n");
         Usage();

@@ -26,11 +26,11 @@
 
 #include <miopen/maskedfill/problem_description.hpp>
 
-namespace miopen ::maskedfill {
+namespace miopen::maskedfill {
 
-NetworkConfig ProblemDescription ::MakeNetworkConfig() const
+NetworkConfig ProblemDescription::MakeNetworkConfig() const
 {
-    std ::ostringstream ss;
+    std::ostringstream ss;
     auto const dtype = outputDesc.GetType();
     auto const numel = outputDesc.GetElementSize();
     ss << "dtype" << dtype;

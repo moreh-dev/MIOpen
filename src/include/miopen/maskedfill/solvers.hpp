@@ -29,22 +29,21 @@
 #include <miopen/solver.hpp>
 #include <miopen/maskedfill/problem_description.hpp>
 
-namespace miopen ::solver ::maskedfill {
+namespace miopen::solver::maskedfill {
 
 constexpr auto float32contiguousfwdminimumnonimprovementnumel  = 524288;
 constexpr auto float16contiguousfwdminimumnonimprovementnumel  = 4194304;
 constexpr auto bfloat16contiguousfwdminimumnonimprovementnumel = 4194304;
 constexpr auto noncontiguousfwdminimumnonimprovementnumel      = 1089000;
 using MaskedFillSolver =
-    NonTunableSolverBase<ExecutionContext, miopen ::maskedfill ::ProblemDescription>;
+    NonTunableSolverBase<ExecutionContext, miopen::maskedfill::ProblemDescription>;
 struct MaskedFill : MaskedFillSolver
 {
-    std ::string const& SolverDbId() const override { return GetSolverDbId<MaskedFill>(); }
+    std::string const& SolverDbId() const override { return GetSolverDbId<MaskedFill>(); }
     bool IsApplicable(ExecutionContext const& context,
-                      miopen ::maskedfill ::ProblemDescription const& problem) const override;
-    ConvSolution
-    GetSolution(ExecutionContext const& context,
-                miopen ::maskedfill ::ProblemDescription const& problem) const override;
+                      miopen::maskedfill::ProblemDescription const& problem) const override;
+    ConvSolution GetSolution(ExecutionContext const& context,
+                             miopen::maskedfill::ProblemDescription const& problem) const override;
 };
 
 } // namespace miopen::solver::maskedfill

@@ -27,7 +27,7 @@
 #include "maskedfill_driver.hpp"
 #include "registry_driver_maker.hpp"
 
-static Driver* makeDriver(std ::string const& base_arg)
+static Driver* makeDriver(std::string const& base_arg)
 {
     if(base_arg == "maskedfill")
         return new MaskedFillDriver<float>{};

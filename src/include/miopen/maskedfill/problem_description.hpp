@@ -30,7 +30,7 @@
 
 #include <miopen/tensor.hpp>
 
-namespace miopen ::maskedfill {
+namespace miopen::maskedfill {
 
 struct ProblemDescription : ProblemDescriptionBase
 {

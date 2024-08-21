@@ -40,8 +40,8 @@ int mloMaskedFillForwardRunHost(miopenTensorDescriptor_t const outputDesc,
 
                                 Tgpu const value)
 {
-    auto const size  = miopen ::deref(outputDesc).GetLengths();
-    auto const numel = std ::accumulate(size.begin(), size.end(), 1, std ::multiplies<>{});
+    auto const size  = miopen::deref(outputDesc).GetLengths();
+    auto const numel = std::accumulate(size.begin(), size.end(), 1, std::multiplies<>{});
     for(auto i = 0; i < numel; ++i)
     {
         hostoutput[i] = mask[i] ? value : input[i];
@@ -57,8 +57,8 @@ int mloMaskedFillBackwardRunHost(miopenTensorDescriptor_t const outputDesc,
 
                                  int8_t const* const mask)
 {
-    auto const size  = miopen ::deref(outputDesc).GetLengths();
-    auto const numel = std ::accumulate(size.begin(), size.end(), 1, std ::multiplies<>{});
+    auto const size  = miopen::deref(outputDesc).GetLengths();
+    auto const numel = std::accumulate(size.begin(), size.end(), 1, std::multiplies<>{});
     for(auto i = 0; i < numel; ++i)
     {
         hostoutput[i] = mask[i] ? 0 : input[i];

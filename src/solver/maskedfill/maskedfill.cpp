@@ -33,9 +33,9 @@
 
 #define LOCAL_SIZE 256
 
-namespace miopen ::solver ::maskedfill {
+namespace miopen::solver::maskedfill {
 
-bool IsImprovementOverROCm(miopen ::maskedfill ::ProblemDescription const& problem)
+bool IsImprovementOverROCm(miopen::maskedfill::ProblemDescription const& problem)
 {
     if(problem.IsBackward())
         return true;
@@ -62,16 +62,16 @@ bool IsImprovementOverROCm(miopen ::maskedfill ::ProblemDescription const& probl
     }
     return false;
 }
-bool MaskedFill ::IsApplicable(ExecutionContext const& context,
-                               miopen ::maskedfill ::ProblemDescription const& problem) const
+bool MaskedFill::IsApplicable(ExecutionContext const& context,
+                              miopen::maskedfill::ProblemDescription const& problem) const
 {
     if(!IsImprovementOverROCm(problem))
         return false;
     return true;
 }
 
-ConvSolution MaskedFill ::GetSolution(ExecutionContext const& context,
-                                      miopen ::maskedfill ::ProblemDescription const& problem) const
+ConvSolution MaskedFill::GetSolution(ExecutionContext const& context,
+                                     miopen::maskedfill::ProblemDescription const& problem) const
 {
     auto result = ConvSolution{miopenStatusSuccess};
     {
@@ -97,7 +97,7 @@ ConvSolution MaskedFill ::GetSolution(ExecutionContext const& context,
             {"MIOPEN_USE_BFP16", static_cast<int>(dtype == miopenBFloat16)},
             {"LOCAL_SIZE", LOCAL_SIZE},
         };
-        kernel.comp_options = buildparams.GenerateFor(kbp ::HIP{});
+        kernel.comp_options = buildparams.GenerateFor(kbp::HIP{});
         kernel.l_wk.push_back(xlocalsize);
         kernel.l_wk.push_back(ylocalsize);
         kernel.l_wk.push_back(zlocalsize);
@@ -108,10 +108,10 @@ ConvSolution MaskedFill ::GetSolution(ExecutionContext const& context,
     }
     if(problem.IsAllContiguous())
     {
-        result.invoker_factory = [](std ::vector<Kernel> const& kernels) {
+        result.invoker_factory = [](std::vector<Kernel> const& kernels) {
             return [=](Handle const& handle, AnyInvokeParams const& rawparams) {
                 decltype(auto) kernel = handle.Run(kernels.front());
-                decltype(auto) params = rawparams.CastTo<miopen ::maskedfill ::InvokeParams>();
+                decltype(auto) params = rawparams.CastTo<miopen::maskedfill::InvokeParams>();
                 auto const numel      = params.outputDesc->GetElementSize();
                 kernel(params.input,
                        params.output,
@@ -123,10 +123,10 @@ ConvSolution MaskedFill ::GetSolution(ExecutionContext const& context,
     }
     else
     {
-        result.invoker_factory = [](std ::vector<Kernel> const& kernels) {
+        result.invoker_factory = [](std::vector<Kernel> const& kernels) {
             return [=](Handle const& handle, AnyInvokeParams const& rawparams) {
                 decltype(auto) kernel = handle.Run(kernels.front());
-                decltype(auto) params = rawparams.CastTo<miopen ::maskedfill ::InvokeParams>();
+                decltype(auto) params = rawparams.CastTo<miopen::maskedfill::InvokeParams>();
                 auto const numel      = params.outputDesc->GetElementSize();
                 kernel(params.input,
                        get_inner_expanded_tv<5>(*params.inputDesc),

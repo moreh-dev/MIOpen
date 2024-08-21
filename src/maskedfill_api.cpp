@@ -33,10 +33,10 @@
 
 static void LogCmdMaskedFill(miopenTensorDescriptor_t const inputDesc, bool const is_fwd)
 {
-    if(miopen ::IsLoggingCmd())
+    if(miopen::IsLoggingCmd())
     {
-        std ::stringstream ss;
-        auto const dtype = miopen ::deref(inputDesc).GetType();
+        std::stringstream ss;
+        auto const dtype = miopen::deref(inputDesc).GetType();
         if(dtype == miopenHalf)
         {
             ss << "maskedfillfp16";
@@ -51,22 +51,22 @@ static void LogCmdMaskedFill(miopenTensorDescriptor_t const inputDesc, bool cons
         }
         int32_t size{0};
         miopenGetTensorDescriptorSize(inputDesc, &size);
-        ss << " -n " << miopen ::deref(inputDesc).GetLengths()[0] << " -c "
-           << miopen ::deref(inputDesc).GetLengths()[1];
+        ss << " -n " << miopen::deref(inputDesc).GetLengths()[0] << " -c "
+           << miopen::deref(inputDesc).GetLengths()[1];
         if(size == 5)
         {
-            ss << " -D " << miopen ::deref(inputDesc).GetLengths()[2] << " -H "
-               << miopen ::deref(inputDesc).GetLengths()[3] << " -W "
-               << miopen ::deref(inputDesc).GetLengths()[4];
+            ss << " -D " << miopen::deref(inputDesc).GetLengths()[2] << " -H "
+               << miopen::deref(inputDesc).GetLengths()[3] << " -W "
+               << miopen::deref(inputDesc).GetLengths()[4];
         }
         else if(size == 4)
         {
-            ss << " -H " << miopen ::deref(inputDesc).GetLengths()[2] << " -W "
-               << miopen ::deref(inputDesc).GetLengths()[3];
+            ss << " -H " << miopen::deref(inputDesc).GetLengths()[2] << " -W "
+               << miopen::deref(inputDesc).GetLengths()[3];
         }
         else if(size == 3)
         {
-            ss << " -W " << miopen ::deref(inputDesc).GetLengths()[2];
+            ss << " -W " << miopen::deref(inputDesc).GetLengths()[2];
         }
         ss << " -F " << (is_fwd ? "1" : "2");
         MIOPEN_LOG_DRIVER_CMD(ss.str());
@@ -87,15 +87,15 @@ extern "C" miopenStatus_t miopenMaskedFillForward(const miopenHandle_t handle,
 {
     MIOPEN_LOG_FUNCTION(handle, inputDesc, input, outputDesc, output, maskDesc, mask, value);
     LogCmdMaskedFill(inputDesc, true);
-    return miopen ::try_([&] {
-        miopen ::MaskedFillForward(miopen ::deref(handle),
-                                   miopen ::deref(inputDesc),
-                                   DataCast(input),
-                                   miopen ::deref(outputDesc),
-                                   DataCast(output),
-                                   miopen ::deref(maskDesc),
-                                   DataCast(mask),
-                                   value);
+    return miopen::try_([&] {
+        miopen::MaskedFillForward(miopen::deref(handle),
+                                  miopen::deref(inputDesc),
+                                  DataCast(input),
+                                  miopen::deref(outputDesc),
+                                  DataCast(output),
+                                  miopen::deref(maskDesc),
+                                  DataCast(mask),
+                                  value);
     });
 }
 
@@ -121,14 +121,14 @@ miopenMaskedFillBackward(const miopenHandle_t handle,
                         mask,
                         value);
     LogCmdMaskedFill(outputGradientDesc, false);
-    return miopen ::try_([&] {
-        miopen ::MaskedFillBackward(miopen ::deref(handle),
-                                    miopen ::deref(outputGradientDesc),
-                                    DataCast(outputGradient),
-                                    miopen ::deref(inputGradientDesc),
-                                    DataCast(inputGradient),
-                                    miopen ::deref(maskDesc),
-                                    DataCast(mask),
-                                    value);
+    return miopen::try_([&] {
+        miopen::MaskedFillBackward(miopen::deref(handle),
+                                   miopen::deref(outputGradientDesc),
+                                   DataCast(outputGradient),
+                                   miopen::deref(inputGradientDesc),
+                                   DataCast(inputGradient),
+                                   miopen::deref(maskDesc),
+                                   DataCast(mask),
+                                   value);
     });
 }

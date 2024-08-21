@@ -28,9 +28,9 @@
 
 #include <miopen/invoke_params.hpp>
 
-namespace miopen ::maskedfill {
+namespace miopen::maskedfill {
 
-struct InvokeParams : miopen ::InvokeParams
+struct InvokeParams : miopen::InvokeParams
 {
     InvokeParams() = default;
 
@@ -47,8 +47,8 @@ struct InvokeParams : miopen ::InvokeParams
     Data_t workspace = nullptr;
     Data_t GetWorkspace() const { return workspace; }
 
-    std ::size_t workspace_size = 0;
-    std ::size_t GetWorkspaceSize() const { return workspace_size; }
+    std::size_t workspace_size = 0;
+    std::size_t GetWorkspaceSize() const { return workspace_size; }
 };
 
 } // namespace miopen::maskedfill
