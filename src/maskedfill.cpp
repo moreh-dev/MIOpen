@@ -35,15 +35,12 @@
 namespace miopen {
 
 miopenStatus_t MaskedFillForward(Handle& handle,
-
                                  TensorDescriptor const& inputDesc,
                                  ConstData_t const input,
                                  TensorDescriptor const& outputDesc,
                                  Data_t output,
-
                                  TensorDescriptor const& maskDesc,
                                  ConstData_t const mask,
-
                                  float const value)
 {
     auto const problem =
@@ -71,15 +68,12 @@ miopenStatus_t MaskedFillForward(Handle& handle,
 }
 
 miopenStatus_t MaskedFillBackward(Handle& handle,
-
                                   TensorDescriptor const& outputGradientDesc,
                                   ConstData_t const outputGradient,
                                   TensorDescriptor const& inputGradientDesc,
                                   Data_t inputGradient,
-
                                   TensorDescriptor const& maskDesc,
                                   ConstData_t const mask,
-
                                   float const value)
 {
     auto const problem = maskedfill::ProblemDescription(

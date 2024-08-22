@@ -153,30 +153,24 @@ public:
         miopenStatus_t status;
         if (!is_backward) {
             status = miopen::MaskedFillForward(handle,
-
                                                input.desc,
                                                input_dev.get(),
                                                output.desc,
                                                output_dev.get(),
-
                                                mask.desc,
                                                mask_dev.get(),
-
                                                value);
             EXPECT_EQ(status, miopenStatusSuccess);
             output.data = handle.Read<T>(output_dev, output.data.size());
             cpu_maskedfill_forward<T, 5>(input, ref_output, mask, value);
         } else {
             status = miopen::MaskedFillBackward(handle,
-
                                                 input.desc,
                                                 input_dev.get(),
                                                 output.desc,
                                                 output_dev.get(),
-
                                                 mask.desc,
                                                 mask_dev.get(),
-
                                                 value);
             EXPECT_EQ(status, miopenStatusSuccess);
             output.data = handle.Read<T>(output_dev, output.data.size());
