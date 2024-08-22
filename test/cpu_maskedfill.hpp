@@ -28,6 +28,7 @@
 #define GUARD_CPU_MASKEDFILL_HPP
 
 #include "tensor_holder.hpp"
+#include <miopen/tensor_view_utils.hpp>
 
 template <class T, size_t dim>
 void cpu_maskedfill_forward(tensor<T> const& input,
