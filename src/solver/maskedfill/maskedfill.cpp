@@ -46,20 +46,16 @@ bool IsImprovementOverROCm(miopen::maskedfill::ProblemDescription const& problem
             switch(problem.GetOutputDesc().GetType())
             {
             case miopenFloat:
-                return problem.GetOutputDesc().GetElementSize() <
-                       float32contiguousfwdminimumnonimprovementnumel;
+                return problem.GetOutputDesc().GetElementSize() < float32_contiguous_fwd_infimum;
             case miopenHalf:
-                return problem.GetOutputDesc().GetElementSize() <
-                       float16contiguousfwdminimumnonimprovementnumel;
+                return problem.GetOutputDesc().GetElementSize() < float16_contiguous_fwd_infimum;
             case miopenBFloat16:
-                return problem.GetOutputDesc().GetElementSize() <
-                       bfloat16contiguousfwdminimumnonimprovementnumel;
+                return problem.GetOutputDesc().GetElementSize() < bfloat16_contiguous_fwd_infimum;
             default: return false;
             }
         }
         else
-            return problem.GetOutputDesc().GetElementSize() <
-                   noncontiguousfwdminimumnonimprovementnumel;
+            return problem.GetOutputDesc().GetElementSize() < noncontiguous_fwd_infimum;
     }
 }
 bool MaskedFill::IsApplicable(ExecutionContext const& context,

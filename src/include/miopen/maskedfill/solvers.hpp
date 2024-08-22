@@ -31,10 +31,13 @@
 
 namespace miopen::solver::maskedfill {
 
-constexpr auto float32contiguousfwdminimumnonimprovementnumel  = 524288;
-constexpr auto float16contiguousfwdminimumnonimprovementnumel  = 4194304;
-constexpr auto bfloat16contiguousfwdminimumnonimprovementnumel = 4194304;
-constexpr auto noncontiguousfwdminimumnonimprovementnumel      = 1089000;
+// The (known) infimums of the `numel`s in which there wasn't an improvement, by dtype, contiguity,
+// and direction
+constexpr auto float32_contiguous_fwd_infimum  = 524288;
+constexpr auto float16_contiguous_fwd_infimum  = 4194304;
+constexpr auto bfloat16_contiguous_fwd_infimum = 4194304;
+constexpr auto noncontiguous_fwd_infimum       = 1089000;
+
 using MaskedFillSolver =
     NonTunableSolverBase<ExecutionContext, miopen::maskedfill::ProblemDescription>;
 struct MaskedFill : MaskedFillSolver
