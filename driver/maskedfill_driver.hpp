@@ -104,11 +104,13 @@ int MaskedFillDriver<Tgpu, Tref>::ParseCmdLineArgs(int argc, char* argv[])
 template <typename Tgpu, typename Tref>
 int MaskedFillDriver<Tgpu, Tref>::GetandSetData()
 {
-    auto const input = inflags.GetValueTensor("input");
-    auto const mask  = inflags.GetValueTensor("mask").FillMissing(input);
-    SetTensorNd(inputDesc, input.lengths, input.strides, data_type);
-    SetTensorNd(outputDesc, input.lengths, input.strides, data_type);
-    SetTensorNd(maskDesc, mask.lengths, mask.strides, miopenInt8);
+    auto const inputTensorParameters = inflags.GetValueTensor("input");
+    auto const maskTensorParameters =
+        inflags.GetValueTensor("mask").FillMissing(inputTensorParameters);
+    SetTensorNd(inputDesc, inputTensorParameters.lengths, inputTensorParameters.strides, data_type);
+    SetTensorNd(
+        outputDesc, inputTensorParameters.lengths, inputTensorParameters.strides, data_type);
+    SetTensorNd(maskDesc, maskTensorParameters.lengths, maskTensorParameters.strides, miopenInt8);
     value = prng::gen_0_to_B<Tgpu>(static_cast<Tgpu>(1));
     return 0;
 }

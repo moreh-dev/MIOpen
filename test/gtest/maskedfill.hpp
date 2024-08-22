@@ -43,7 +43,7 @@ struct MaskedFillTestCase /* MaskedFillTestParameters */
     std::vector<size_t> const& GetSize() const { return size; };
     std::vector<size_t> strides;
     std::vector<size_t> const& GetStrides() const { return strides; };
-    MaskedFillTestCase(std::vector<size_t> const size) : size{size}, strides(size.size(), 1)
+    MaskedFillTestCase(std::vector<size_t> const size_) : size{size_}, strides(size_.size(), 1)
     {
         auto stride = 1;
         for(signed i = size.size() - 1; i >= 0; --i)
@@ -52,8 +52,8 @@ struct MaskedFillTestCase /* MaskedFillTestParameters */
             stride *= size[i];
         }
     }
-    MaskedFillTestCase(std::vector<size_t> const size, std::vector<size_t> const strides)
-        : size{size}, strides{strides}
+    MaskedFillTestCase(std::vector<size_t> const size_, std::vector<size_t> const strides_)
+        : size{size_}, strides{strides_}
     {
     }
     friend std::ostream& operator<<(std::ostream& os, MaskedFillTestCase const& parameters)

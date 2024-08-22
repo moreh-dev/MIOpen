@@ -54,13 +54,13 @@ bool IsImprovementOverROCm(miopen::maskedfill::ProblemDescription const& problem
             case miopenBFloat16:
                 return problem.GetOutputDesc().GetElementSize() <
                        bfloat16contiguousfwdminimumnonimprovementnumel;
+            default: return false;
             }
         }
         else
             return problem.GetOutputDesc().GetElementSize() <
                    noncontiguousfwdminimumnonimprovementnumel;
     }
-    return false;
 }
 bool MaskedFill::IsApplicable(ExecutionContext const& context,
                               miopen::maskedfill::ProblemDescription const& problem) const
