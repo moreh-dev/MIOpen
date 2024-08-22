@@ -55,16 +55,7 @@ TEST_P(MaskedFillForwardTestFloat, Ok)
     if(!MIOPEN_TEST_ALL || (miopen::env::enabled(MIOPEN_TEST_ALL) &&
                             miopen::env::value(MIOPEN_TEST_FLOAT_ARG) == "--float"))
     {
-        try
-        {
-            RunTest();
-        }
-        catch(const miopen::Exception& e)
-        {
-            if(e.status == miopenStatusNotImplemented)
-                return;
-            throw e;
-        }
+        RunTest();
         Verify();
     }
     else
@@ -78,16 +69,7 @@ TEST_P(MaskedFillBackwardTestFloat, Ok)
     if(!MIOPEN_TEST_ALL || (miopen::env::enabled(MIOPEN_TEST_ALL) &&
                             miopen::env::value(MIOPEN_TEST_FLOAT_ARG) == "--float"))
     {
-        try
-        {
-            RunTest();
-        }
-        catch(const miopen::Exception& e)
-        {
-            if(e.status == miopenStatusNotImplemented)
-                return;
-            throw e;
-        }
+        RunTest();
         Verify();
     }
     else
@@ -101,16 +83,7 @@ TEST_P(MaskedFillForwardTestHalf, Ok)
     if(!MIOPEN_TEST_ALL || (miopen::env::enabled(MIOPEN_TEST_ALL) &&
                             miopen::env::value(MIOPEN_TEST_FLOAT_ARG) == "--half"))
     {
-        try
-        {
-            RunTest();
-        }
-        catch(const miopen::Exception& e)
-        {
-            if(e.status == miopenStatusNotImplemented)
-                return;
-            throw e;
-        }
+        RunTest();
         Verify();
     }
     else
@@ -124,16 +97,7 @@ TEST_P(MaskedFillBackwardTestHalf, Ok)
     if(!MIOPEN_TEST_ALL || (miopen::env::enabled(MIOPEN_TEST_ALL) &&
                             miopen::env::value(MIOPEN_TEST_FLOAT_ARG) == "--half"))
     {
-        try
-        {
-            RunTest();
-        }
-        catch(const miopen::Exception& e)
-        {
-            if(e.status == miopenStatusNotImplemented)
-                return;
-            throw e;
-        }
+        RunTest();
         Verify();
     }
     else
@@ -147,16 +111,7 @@ TEST_P(MaskedFillForwardTestBFloat16, Ok)
     if(!MIOPEN_TEST_ALL || (miopen::env::enabled(MIOPEN_TEST_ALL) &&
                             miopen::env::value(MIOPEN_TEST_FLOAT_ARG) == "--bfloat16"))
     {
-        try
-        {
-            RunTest();
-        }
-        catch(const miopen::Exception& e)
-        {
-            if(e.status == miopenStatusNotImplemented)
-                return;
-            throw e;
-        }
+        RunTest();
         Verify();
     }
     else
@@ -170,16 +125,7 @@ TEST_P(MaskedFillBackwardTestBFloat16, Ok)
     if(!MIOPEN_TEST_ALL || (miopen::env::enabled(MIOPEN_TEST_ALL) &&
                             miopen::env::value(MIOPEN_TEST_FLOAT_ARG) == "--bfloat16"))
     {
-        try
-        {
-            RunTest();
-        }
-        catch(const miopen::Exception& e)
-        {
-            if(e.status == miopenStatusNotImplemented)
-                return;
-            throw e;
-        }
+        RunTest();
         Verify();
     }
     else

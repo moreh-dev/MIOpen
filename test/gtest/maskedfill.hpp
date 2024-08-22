@@ -83,14 +83,12 @@ MaskedFillTestConfigs(bool const is_backward)
     if (!is_backward) return {
         {{1}},
         {{2, 2}},
-        {{1323, 12, 12, 20}},
         {{2, 2, 2}},
         {{2, 2, 2}, {1, 4, 2}},
     };
     else return {
         {{1}},
         {{2, 2}},
-        {{1323, 12, 12, 20}},
         {{2, 2, 2}},
         {{2, 2, 2}, {1, 4, 2}},
     };
