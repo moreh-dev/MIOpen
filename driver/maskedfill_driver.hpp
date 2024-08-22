@@ -133,7 +133,7 @@ int MaskedFillDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     for(auto i = 0; i < inputsize; ++i)
         input[i] = prng::gen_0_to_B<Tgpu>(static_cast<Tgpu>(1));
     for(auto i = 0; i < masksize; ++i)
-        mask[i] = prng::gen_0_to_B<int8_t>(1);
+        mask[i] = prng::gen_0_to_B<int8_t>(2); // `B` = `2`, for internally, there is a `% B`.
 
     if(input_dev->ToGPU(GetStream(), input.data()) != 0)
         std::cerr << "Error copying (input) to GPU, size: " << input_dev->GetSize() << std::endl;
