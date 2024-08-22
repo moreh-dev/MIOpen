@@ -81,8 +81,13 @@ int MaskedFillDriver<Tgpu, Tref>::AddCmdLineArgs()
 {
     inflags.AddInputFlag("forw", 'F', "1", "Run only Forward MaskedFill (Default=1)", "int");
 
-    inflags.AddTensorFlag("input", 'I', "2x2", "");
-    inflags.AddTensorFlag("mask", 'm', "", "Identical to the input tensor descriptor");
+    inflags.AddTensorFlag(
+        "input", 'I', "2x2", "Tensor descriptor for the input tensor (default = 2x2)");
+    inflags.AddTensorFlag("mask",
+                          'm',
+                          "",
+                          "Tensor descriptor for the boolean mask (default = Identical to the "
+                          "input tensor descriptor)");
 
     inflags.AddInputFlag("iter", 'i', "10", "Number of Iterations (Default=10)", "int");
     inflags.AddInputFlag("verify", 'V', "1", "Verify Each Layer (Default=1)", "int");
