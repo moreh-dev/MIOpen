@@ -37,6 +37,10 @@ NetworkConfig ProblemDescription::MakeNetworkConfig() const
     ss << "numel" << numel;
     if(IsAllContiguous())
         ss << "contiguous";
+    if(IsBackward())
+        ss << "backward";
+    else
+        ss << "forward";
     return NetworkConfig{ss.str()};
 }
 
