@@ -7628,15 +7628,6 @@ MIOPEN_EXPORT miopenStatus_t miopenGetitemBackward(miopenHandle_t handle,
  *  @{
  */
 
-/*! @enum miopenMaskedFillDirection_t
- */
-
-typedef enum
-{
-    MIOPEN_MASKEDFILL_FORWARD,
-    MIOPEN_MASKEDFILL_BACKWARD
-} miopenMaskedFillDirection_t;
-
 /*! @brief Execute a masked fill forward layer
  *
  * @param handle        MIOpen handle (input)

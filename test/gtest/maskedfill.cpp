@@ -190,19 +190,19 @@ TEST_P(MaskedFillBackwardTestBFloat16, Ok)
 
 INSTANTIATE_TEST_SUITE_P(,
                          MaskedFillForwardTestFloat,
-                         testing::ValuesIn(MaskedFillTestConfigs(MIOPEN_MASKEDFILL_FORWARD)));
+                         testing::ValuesIn(MaskedFillTestConfigs(false)));
 INSTANTIATE_TEST_SUITE_P(,
                          MaskedFillBackwardTestFloat,
-                         testing::ValuesIn(MaskedFillTestConfigs(MIOPEN_MASKEDFILL_BACKWARD)));
+                         testing::ValuesIn(MaskedFillTestConfigs(true)));
 INSTANTIATE_TEST_SUITE_P(,
                          MaskedFillForwardTestHalf,
-                         testing::ValuesIn(MaskedFillTestConfigs(MIOPEN_MASKEDFILL_FORWARD)));
+                         testing::ValuesIn(MaskedFillTestConfigs(false)));
 INSTANTIATE_TEST_SUITE_P(,
                          MaskedFillBackwardTestHalf,
-                         testing::ValuesIn(MaskedFillTestConfigs(MIOPEN_MASKEDFILL_BACKWARD)));
+                         testing::ValuesIn(MaskedFillTestConfigs(true)));
 INSTANTIATE_TEST_SUITE_P(,
                          MaskedFillForwardTestBFloat16,
-                         testing::ValuesIn(MaskedFillTestConfigs(MIOPEN_MASKEDFILL_FORWARD)));
+                         testing::ValuesIn(MaskedFillTestConfigs(false)));
 INSTANTIATE_TEST_SUITE_P(,
                          MaskedFillBackwardTestBFloat16,
-                         testing::ValuesIn(MaskedFillTestConfigs(MIOPEN_MASKEDFILL_BACKWARD)));
+                         testing::ValuesIn(MaskedFillTestConfigs(true)));

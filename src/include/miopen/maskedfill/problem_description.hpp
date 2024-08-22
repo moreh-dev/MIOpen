@@ -37,8 +37,8 @@ struct ProblemDescription : ProblemDescriptionBase
     ProblemDescription(TensorDescriptor const& inputDesc_,
                        TensorDescriptor const& outputDesc_,
                        TensorDescriptor const& maskDesc_,
-                       miopenMaskedFillDirection_t const direction_)
-        : inputDesc(inputDesc_), outputDesc(outputDesc_), maskDesc(maskDesc_), direction(direction_)
+                       bool const is_backward_)
+        : inputDesc(inputDesc_), outputDesc(outputDesc_), maskDesc(maskDesc_), is_backward {is_backward_}
     {
         auto const dtype = outputDesc.GetType();
         if(inputDesc.GetType() != dtype)
@@ -64,7 +64,7 @@ struct ProblemDescription : ProblemDescriptionBase
         }
     }
     TensorDescriptor const& GetOutputDesc() const { return outputDesc; }
-    bool const IsBackward() const { return direction == MIOPEN_MASKEDFILL_BACKWARD; }
+    bool const IsBackward() const { return is_backward; }
     bool const IsAllContiguous() const
     {
         return outputDesc.IsContiguous() && inputDesc.IsContiguous() && maskDesc.IsContiguous();
@@ -75,7 +75,7 @@ private:
     TensorDescriptor inputDesc;
     TensorDescriptor outputDesc;
     TensorDescriptor maskDesc;
-    miopenMaskedFillDirection_t direction;
+    bool is_backward;
 };
 
 } // namespace miopen::maskedfill

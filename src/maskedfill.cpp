@@ -47,7 +47,7 @@ miopenStatus_t MaskedFillForward(Handle& handle,
                                  float const value)
 {
     auto const problem =
-        maskedfill::ProblemDescription(inputDesc, outputDesc, maskDesc, MIOPEN_MASKEDFILL_FORWARD);
+        maskedfill::ProblemDescription(inputDesc, outputDesc, maskDesc, false);
     auto const algo          = AlgorithmName{"MaskedFillForward"};
     auto const invoke_params = [&] {
         auto tmp = maskedfill::InvokeParams{};
@@ -83,7 +83,7 @@ miopenStatus_t MaskedFillBackward(Handle& handle,
                                   float const value)
 {
     auto const problem = maskedfill::ProblemDescription(
-        outputGradientDesc, inputGradientDesc, maskDesc, MIOPEN_MASKEDFILL_BACKWARD);
+        outputGradientDesc, inputGradientDesc, maskDesc, true);
     auto const algo          = AlgorithmName{"MaskedFillBackward"};
     auto const invoke_params = [&] {
         auto tmp = maskedfill::InvokeParams{};

@@ -78,28 +78,22 @@ struct MaskedFillTestCase /* MaskedFillTestParameters */
     }
 };
 std::vector<MaskedFillTestCase> const
-MaskedFillTestConfigs(miopenMaskedFillDirection_t const direction)
+MaskedFillTestConfigs(bool const is_backward)
 {
-    switch(direction)
-    {
-    case MIOPEN_MASKEDFILL_FORWARD:
-        return {
-            {{1}},
-            {{2, 2}},
-            {{1323, 12, 12, 20}},
-            {{2, 2, 2}},
-            {{2, 2, 2}, {1, 4, 2}},
-        };
-        break;
-    case MIOPEN_MASKEDFILL_BACKWARD:
-        return {
-            {{1}},
-            {{2, 2}},
-            {{1323, 12, 12, 20}},
-            {{2, 2, 2}},
-            {{2, 2, 2}, {1, 4, 2}},
-        };
-    }
+    if (!is_backward) return {
+        {{1}},
+        {{2, 2}},
+        {{1323, 12, 12, 20}},
+        {{2, 2, 2}},
+        {{2, 2, 2}, {1, 4, 2}},
+    };
+    else return {
+        {{1}},
+        {{2, 2}},
+        {{1323, 12, 12, 20}},
+        {{2, 2, 2}},
+        {{2, 2, 2}, {1, 4, 2}},
+    };
 }
 
 inline int SetTensorLayout(miopen::TensorDescriptor& desc)
@@ -110,7 +104,7 @@ inline int SetTensorLayout(miopen::TensorDescriptor& desc)
 template <typename T = float>
 class MaskedFillTest : public testing::TestWithParam<MaskedFillTestCase>
 {
-    miopenMaskedFillDirection_t const direction;
+    bool const is_backward;
     tensor<T> input, output, ref_output;
     tensor<int8_t>
         mask; // `tensor<bool>`s aren't implemented (because `miopen_type<bool>` isn't implemented)
@@ -150,16 +144,14 @@ class MaskedFillTest : public testing::TestWithParam<MaskedFillTestCase>
     }
 
 public:
-    MaskedFillTest(miopenMaskedFillDirection_t _direction) : direction(_direction) {}
+    MaskedFillTest(bool const is_backward_) : is_backward {is_backward_} {}
 
     void RunTest()
     {
         auto&& handle = get_handle();
 
         miopenStatus_t status;
-        switch(direction)
-        {
-        case MIOPEN_MASKEDFILL_FORWARD:
+        if (!is_backward) {
             status = miopen::MaskedFillForward(handle,
 
                                                input.desc,
@@ -174,8 +166,7 @@ public:
             EXPECT_EQ(status, miopenStatusSuccess);
             output.data = handle.Read<T>(output_dev, output.data.size());
             cpu_maskedfill_forward<T, 5>(input, ref_output, mask, value);
-            break;
-        case MIOPEN_MASKEDFILL_BACKWARD:
+        } else {
             status = miopen::MaskedFillBackward(handle,
 
                                                 input.desc,
@@ -204,11 +195,11 @@ public:
 template <typename T = float>
 struct MaskedFillForwardTest : MaskedFillTest<T>
 {
-    MaskedFillForwardTest() : MaskedFillTest<T>{MIOPEN_MASKEDFILL_FORWARD} {}
+    MaskedFillForwardTest() : MaskedFillTest<T>{false} {}
 };
 
 template <typename T = float>
 struct MaskedFillBackwardTest : MaskedFillTest<T>
 {
-    MaskedFillBackwardTest() : MaskedFillTest<T>{MIOPEN_MASKEDFILL_BACKWARD} {}
+    MaskedFillBackwardTest() : MaskedFillTest<T>{true} {}
 };
