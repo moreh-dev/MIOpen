@@ -36,21 +36,21 @@ struct TensorDescriptor;
 
 miopenStatus_t MaskedFillForward(Handle& handle,
                                  TensorDescriptor const& inputDesc,
-                                 ConstData_t const input,
+                                 ConstData_t input,
                                  TensorDescriptor const& outputDesc,
                                  Data_t output,
                                  TensorDescriptor const& maskDesc,
-                                 ConstData_t const mask,
-                                 float const value);
+                                 ConstData_t mask,
+                                 float value);
 
 miopenStatus_t MaskedFillBackward(Handle& handle,
                                   TensorDescriptor const& outputGradientDesc,
-                                  ConstData_t const outputGradient,
+                                  ConstData_t outputGradient,
                                   TensorDescriptor const& inputGradientDesc,
                                   Data_t inputGradient,
                                   TensorDescriptor const& maskDesc,
-                                  ConstData_t const mask,
-                                  float const value);
+                                  ConstData_t mask,
+                                  float value);
 
 } // namespace miopen
 

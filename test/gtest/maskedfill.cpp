@@ -134,21 +134,21 @@ TEST_P(MaskedFillBackwardTestBFloat16, Ok)
     }
 }
 
-INSTANTIATE_TEST_SUITE_P(,
+INSTANTIATE_TEST_SUITE_P(MaskedFillTestSet,
                          MaskedFillForwardTestFloat,
                          testing::ValuesIn(MaskedFillTestConfigs(false)));
-INSTANTIATE_TEST_SUITE_P(,
+INSTANTIATE_TEST_SUITE_P(MaskedFillTestSet,
                          MaskedFillBackwardTestFloat,
                          testing::ValuesIn(MaskedFillTestConfigs(true)));
-INSTANTIATE_TEST_SUITE_P(,
+INSTANTIATE_TEST_SUITE_P(MaskedFillTestSet,
                          MaskedFillForwardTestHalf,
                          testing::ValuesIn(MaskedFillTestConfigs(false)));
-INSTANTIATE_TEST_SUITE_P(,
+INSTANTIATE_TEST_SUITE_P(MaskedFillTestSet,
                          MaskedFillBackwardTestHalf,
                          testing::ValuesIn(MaskedFillTestConfigs(true)));
-INSTANTIATE_TEST_SUITE_P(,
+INSTANTIATE_TEST_SUITE_P(MaskedFillTestSet,
                          MaskedFillForwardTestBFloat16,
                          testing::ValuesIn(MaskedFillTestConfigs(false)));
-INSTANTIATE_TEST_SUITE_P(,
+INSTANTIATE_TEST_SUITE_P(MaskedFillTestSet,
                          MaskedFillBackwardTestBFloat16,
                          testing::ValuesIn(MaskedFillTestConfigs(true)));

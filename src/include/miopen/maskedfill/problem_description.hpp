@@ -64,8 +64,8 @@ struct ProblemDescription : ProblemDescriptionBase
         }
     }
     TensorDescriptor const& GetOutputDesc() const { return outputDesc; }
-    bool const IsBackward() const { return is_backward; }
-    bool const IsAllContiguous() const
+    bool IsBackward() const { return is_backward; }
+    bool IsAllContiguous() const
     {
         return outputDesc.IsContiguous() && inputDesc.IsContiguous() && maskDesc.IsContiguous();
     }

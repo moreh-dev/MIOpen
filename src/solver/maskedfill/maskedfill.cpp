@@ -58,7 +58,7 @@ bool IsImprovementOverROCm(miopen::maskedfill::ProblemDescription const& problem
             return problem.GetOutputDesc().GetElementSize() < noncontiguous_fwd_infimum;
     }
 }
-bool MaskedFill::IsApplicable(ExecutionContext const& context,
+bool MaskedFill::IsApplicable([[maybe_unused]] ExecutionContext const& context,
                               miopen::maskedfill::ProblemDescription const& problem) const
 {
     if(!IsImprovementOverROCm(problem))
@@ -66,7 +66,7 @@ bool MaskedFill::IsApplicable(ExecutionContext const& context,
     return true;
 }
 
-ConvSolution MaskedFill::GetSolution(ExecutionContext const& context,
+ConvSolution MaskedFill::GetSolution([[maybe_unused]] ExecutionContext const& context,
                                      miopen::maskedfill::ProblemDescription const& problem) const
 {
     auto result = ConvSolution{miopenStatusSuccess};
