@@ -686,19 +686,6 @@ inline SolverRegistrar::SolverRegistrar(IdRegistryData& registry)
 
     Register(registry,
              ++id,
-             Primitive::SoftMarginLoss,
-             softmarginloss::SoftMarginLossForward{}.SolverDbId());
-    Register(registry,
-             ++id,
-             Primitive::SoftMarginLoss,
-             softmarginloss::SoftMarginLossBackward{}.SolverDbId());
-    Register(registry,
-             ++id,
-             Primitive::MultiMarginLoss,
-             multimarginloss::MultiMarginLossForward{}.SolverDbId());
-
-    Register(registry,
-             ++id,
              Primitive::AdaptiveMaxPool,
              adaptivemaxpool::AdaptiveMaxPoolForward1d{}.SolverDbId());
     Register(registry,

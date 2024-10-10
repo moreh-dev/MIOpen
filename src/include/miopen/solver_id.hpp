@@ -62,9 +62,6 @@ enum class Primitive
     Item,
     RoPE,
     ReLU,
-    Kthvalue,
-    SoftMarginLoss,
-    MultiMarginLoss,
     AdaptiveMaxPool,
 };
 
