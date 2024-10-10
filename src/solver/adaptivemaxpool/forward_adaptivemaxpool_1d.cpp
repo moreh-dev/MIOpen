@@ -43,19 +43,6 @@ namespace solver {
 
 namespace adaptivemaxpool {
 
-bool IsOverRocmFwd1d(const miopen::adaptivemaxpool::FwdProblemDescription& problem)
-{
-    auto in_nelems   = problem.GetInputDesc().GetLengths()[-1];
-    auto out_nelems  = problem.GetOutputDesc().GetLengths()[-1];
-    auto in_over_out = static_cast<float>(in_nelems) / out_nelems;
-
-    if(in_over_out < 56)
-    {
-        return true;
-    }
-    return false;
-}
-
 bool AdaptiveMaxPoolForward1d::IsApplicable(
     const ExecutionContext&, const miopen::adaptivemaxpool::FwdProblemDescription& problem) const
 {
@@ -63,10 +50,6 @@ bool AdaptiveMaxPoolForward1d::IsApplicable(
     {
         return false;
     }
-    // if(!IsOverRocmFwd1d(problem))
-    // {
-    //     return false;
-    // }
     if(!(problem.GetInputDesc().GetType() == miopenFloat ||
          problem.GetInputDesc().GetType() == miopenHalf ||
          problem.GetInputDesc().GetType() == miopenBFloat16))

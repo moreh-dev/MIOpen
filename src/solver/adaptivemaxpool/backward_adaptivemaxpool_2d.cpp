@@ -45,34 +45,9 @@ namespace adaptivemaxpool {
 
 bool IsOverRocmBwd2d(const miopen::adaptivemaxpool::BwdProblemDescription& problem)
 {
-    if(problem.IsAllContiguous())
+    if(!problem.IsAllContiguous())
     {
-        return false;
-    }
-    else
-    {
-        auto dtype       = problem.GetInputGradDesc().GetType();
-        auto in_nelems   = problem.GetInputGradDesc().GetElementSize();
-        auto out_nelems  = problem.GetOutputGradDesc().GetElementSize();
-        auto in_over_out = static_cast<float>(in_nelems) / out_nelems;
-
-        if(dtype == miopenFloat)
-        {
-            if(in_nelems > 3801600)
-                return true;
-        }
-        else if(dtype == miopenHalf)
-        {
-            if(in_over_out == 1 || (in_over_out >= 1024 && in_over_out <= 4096))
-                return true;
-        }
-        else if(dtype == miopenBFloat16)
-        {
-            if(in_over_out < 13 || (in_over_out >= 1024 && in_over_out <= 4096))
-            {
-                return true;
-            }
-        }
+        return true;
     }
     return false;
 }
@@ -85,10 +60,10 @@ bool AdaptiveMaxPoolBackward2d::IsApplicable(
     {
         return false;
     }
-    // if(!IsOverRocmBwd2d(problem))
-    // {
-    //     return false;
-    // }
+    if(!IsOverRocmBwd2d(problem))
+    {
+        return false;
+    }
     if(!(problem.GetInputGradDesc().GetType() == miopenFloat ||
          problem.GetInputGradDesc().GetType() == miopenHalf ||
          problem.GetInputGradDesc().GetType() == miopenBFloat16))

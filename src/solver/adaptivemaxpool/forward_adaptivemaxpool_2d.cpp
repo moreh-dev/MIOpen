@@ -43,25 +43,6 @@ namespace solver {
 
 namespace adaptivemaxpool {
 
-bool IsOverRocmFwd2d(const miopen::adaptivemaxpool::FwdProblemDescription& problem)
-{
-    auto in_nelems   = problem.GetInputDesc().GetElementSize();
-    auto out_nelems  = problem.GetOutputDesc().GetElementSize();
-    auto in_over_out = static_cast<float>(in_nelems) / out_nelems;
-
-    if(problem.IsAllContiguous())
-    {
-        if((in_over_out < 13) || (in_over_out >= 100 && in_over_out <= 112))
-            return true;
-    }
-    else
-    {
-        if(in_over_out < 248)
-            return true;
-    }
-    return false;
-}
-
 bool AdaptiveMaxPoolForward2d::IsApplicable(
     const ExecutionContext&, const miopen::adaptivemaxpool::FwdProblemDescription& problem) const
 {
@@ -69,10 +50,6 @@ bool AdaptiveMaxPoolForward2d::IsApplicable(
     {
         return false;
     }
-    // if(!IsOverRocmFwd2d(problem))
-    // {
-    //     return false;
-    // }
     if(!(problem.GetInputDesc().GetType() == miopenFloat ||
          problem.GetInputDesc().GetType() == miopenHalf ||
          problem.GetInputDesc().GetType() == miopenBFloat16))
