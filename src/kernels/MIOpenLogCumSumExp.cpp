@@ -49,7 +49,7 @@ __device__ inline void CumulativeReductionSumScan(const uint64_t& lid, FLOAT_ACC
     stride = LOCAL_SIZE / 2;
     while(stride > 0)
     {
-        int idx = (lid + 1) * stride * 2 - 1;
+        uint64_t idx = (lid + 1) * stride * 2 - 1;
         if((idx + stride) < LOCAL_SIZE)
             cumsum[idx + stride] += cumsum[idx];
         stride /= 2;
@@ -78,29 +78,27 @@ __device__ void LogCumSumExpForwardContiguousSmallCumDimStride1(const DTYPE* __r
 
     __shared__ FLOAT_ACCUM otmp[LOCAL_SIZE];
 
-    int lid = threadIdx.y;
+    uint64_t lid = threadIdx.y;
 
-    auto xid = blockIdx.x * blockDim.x + threadIdx.x;
-    auto yid = blockIdx.y * blockDim.y + threadIdx.y;
+    uint64_t xid = blockIdx.x * blockDim.x + threadIdx.x;
+    uint64_t yid = blockIdx.y * blockDim.y + threadIdx.y;
 
-    int idx = yid - exclusive;
-    if(0 <= idx && idx < reduce_size - exclusive)
+    if(exclusive <= yid && yid < reduce_size)
     {
-        idx       = (reverse ? reduce_size - idx - 1 : idx);
-        otmp[lid] = exp(CVT_FLOAT2ACCUM(input[xid * reduce_size + idx]));
+        uint64_t idx = (reverse ? reduce_size - yid + exclusive - 1 : yid - exclusive);
+        otmp[lid]    = exp(CVT_FLOAT2ACCUM(input[xid * reduce_size + idx]));
     }
     else
     {
-        otmp[lid] = 0;
+        otmp[lid] = CVT_FP32_2ACCUM(0.0f);
     }
     __syncthreads();
 
     CumulativeReductionSumScan<LOCAL_SIZE>(lid, otmp);
 
-    idx = yid;
-    if(idx < reduce_size)
+    if(yid < reduce_size)
     {
-        idx                             = (reverse ? reduce_size - idx - 1 : idx);
+        uint64_t idx                    = (reverse ? reduce_size - yid - 1 : yid);
         output[xid * reduce_size + idx] = CVT_ACCUM2FLOAT(log(otmp[lid]));
     }
 }
@@ -144,7 +142,7 @@ __device__ void LogCumSumExpForwardSmallCumDim(const DTYPE* __restrict__ input,
     }
     else
     {
-        otmp[lid] = 0;
+        otmp[lid] = CVT_FP32_2ACCUM(0.0f);
     }
     __syncthreads();
 
@@ -182,53 +180,52 @@ LogCumSumExpBackwardContiguousSmallCumDimStride1(const DTYPE* __restrict__ input
      */
 
     __shared__ FLOAT_ACCUM otmp[LOCAL_SIZE];
-    int lid  = threadIdx.y;
-    auto xid = blockIdx.x * blockDim.x + threadIdx.x;
-    auto yid = blockIdx.y * blockDim.y + threadIdx.y;
+    uint64_t lid = threadIdx.y;
+    uint64_t xid = blockIdx.x * blockDim.x + threadIdx.x;
+    uint64_t yid = blockIdx.y * blockDim.y + threadIdx.y;
 
-    FLOAT_ACCUM output_v, output_grad_v = 0;
+    FLOAT_ACCUM output_v, output_grad_v = CVT_FP32_2ACCUM(0.0f);
     if(exclusive <= yid && yid < reduce_size)
     {
-        auto idx      = (reverse ? reduce_size - yid - 1 : yid);
+        uint64_t idx  = (reverse ? reduce_size - yid - 1 : yid);
         output_grad_v = CVT_FLOAT2ACCUM(output_grad[xid * reduce_size + idx]);
         output_v      = CVT_FLOAT2ACCUM(output[xid * reduce_size + idx]);
     }
 
     // LogCumSumExp pos_reverse_logcumsumexp
-    otmp[lid] = 0;
-    if(output_grad_v > 0)
+    otmp[lid] = CVT_FP32_2ACCUM(0.0f);
+    if(output_grad_v > CVT_FP32_2ACCUM(0.0f))
         otmp[lid] = exp(log(output_grad_v) - output_v);
     __syncthreads();
     CumulativeReductionSumScan<LOCAL_SIZE>(lid, otmp);
-    auto pos_reverse_logcumsumexp =
+    FLOAT_ACCUM pos_reverse_logcumsumexp =
         ((reverse ? exclusive <= lid : lid + exclusive < reduce_size)
              ? log(otmp[reverse ? reduce_size - (lid - exclusive) - 1 : (lid + exclusive)])
-             : 0.0f);
+             : CVT_FP32_2ACCUM(0.0f));
     //------------------------------------------------------------------------------------
 
     __syncthreads();
 
     // LogCumSumExp neg_reverse_logcumsumexp
-    otmp[lid] = 0;
-    if(output_grad_v < 0)
+    otmp[lid] = CVT_FP32_2ACCUM(0.0f);
+    if(output_grad_v < CVT_FP32_2ACCUM(0.0f))
         otmp[lid] = exp(log(-output_grad_v) - output_v);
     __syncthreads();
     CumulativeReductionSumScan<LOCAL_SIZE>(lid, otmp);
-    auto neg_reverse_logcumsumexp =
+    FLOAT_ACCUM neg_reverse_logcumsumexp =
         ((reverse ? exclusive <= lid : lid + exclusive < reduce_size)
              ? log(otmp[reverse ? reduce_size - (lid - exclusive) - 1 : (lid + exclusive)])
-             : 0.0f);
+             : CVT_FP32_2ACCUM(0.0f));
     //------------------------------------------------------------------------------------
 
     // Calculate Input Gradient
     if(yid < reduce_size)
     {
-        auto idx               = yid;
-        auto input_v           = CVT_FLOAT2ACCUM(input[xid * reduce_size + idx]);
+        FLOAT_ACCUM input_v    = CVT_FLOAT2ACCUM(input[xid * reduce_size + yid]);
         FLOAT_ACCUM output_pos = exp(pos_reverse_logcumsumexp + input_v);
         FLOAT_ACCUM output_neg = exp(neg_reverse_logcumsumexp + input_v);
 
-        input_grad[xid * reduce_size + idx] = CVT_ACCUM2FLOAT(output_pos - output_neg);
+        input_grad[xid * reduce_size + yid] = CVT_ACCUM2FLOAT(output_pos - output_neg);
     }
     //------------------------------------------------------------------------------------
 }
@@ -268,7 +265,7 @@ __device__ void LogCumSumExpBackwardSmallCumDim(const DTYPE* __restrict__ input,
     tensor_layout_t<NDIMS> tensor_layout(output_tv, xid);
     output_tv.size[dim] = reduce_size;
 
-    FLOAT_ACCUM output_v, output_grad_v = 0;
+    FLOAT_ACCUM output_v, output_grad_v = CVT_FP32_2ACCUM(0.0f);
     if(exclusive <= yid && yid < reduce_size)
     {
         tensor_layout.layout[dim] = (reverse ? reduce_size - yid - 1 : yid);
@@ -277,38 +274,38 @@ __device__ void LogCumSumExpBackwardSmallCumDim(const DTYPE* __restrict__ input,
     }
 
     // LogCumSumExp pos_reverse_logcumsumexp
-    if(output_grad_v > 0)
+    if(output_grad_v > CVT_FP32_2ACCUM(0.0f))
         otmp[lid] = exp(log(output_grad_v) - output_v);
     else
-        otmp[lid] = 0;
+        otmp[lid] = CVT_FP32_2ACCUM(0.0f);
     __syncthreads();
     CumulativeReductionSumScan<LOCAL_SIZE>(lid, otmp);
-    auto pos_reverse_logcumsumexp =
+    FLOAT_ACCUM pos_reverse_logcumsumexp =
         ((reverse ? exclusive <= lid : lid + exclusive < reduce_size)
              ? log(otmp[reverse ? reduce_size - (lid - exclusive) - 1 : (lid + exclusive)])
-             : 0.0f);
+             : CVT_FP32_2ACCUM(0.0f));
     //------------------------------------------------------------------------------------
 
     __syncthreads();
 
     // LogCumSumExp neg_reverse_logcumsumexp
-    if(output_grad_v < 0)
+    if(output_grad_v < CVT_FP32_2ACCUM(0.0f))
         otmp[lid] = exp(log(-output_grad_v) - output_v);
     else
-        otmp[lid] = 0;
+        otmp[lid] = CVT_FP32_2ACCUM(0.0f);
     __syncthreads();
     CumulativeReductionSumScan<LOCAL_SIZE>(lid, otmp);
-    auto neg_reverse_logcumsumexp =
+    FLOAT_ACCUM neg_reverse_logcumsumexp =
         ((reverse ? exclusive <= lid : lid + exclusive < reduce_size)
              ? log(otmp[reverse ? reduce_size - (lid - exclusive) - 1 : (lid + exclusive)])
-             : 0.0f);
+             : CVT_FP32_2ACCUM(0.0f));
     //------------------------------------------------------------------------------------
 
     // Calculate Input Gradient
     if(yid < reduce_size)
     {
         tensor_layout.layout[dim] = yid;
-        auto input_v = CVT_FLOAT2ACCUM(input[input_tv.get_tensor_view_idx(tensor_layout)]);
+        FLOAT_ACCUM input_v = CVT_FLOAT2ACCUM(input[input_tv.get_tensor_view_idx(tensor_layout)]);
         FLOAT_ACCUM output_pos = exp(pos_reverse_logcumsumexp + input_v);
         FLOAT_ACCUM output_neg = exp(neg_reverse_logcumsumexp + input_v);
 
