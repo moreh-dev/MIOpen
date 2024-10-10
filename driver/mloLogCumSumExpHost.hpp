@@ -132,23 +132,30 @@ int mloLogCumSumExpBackwardRunHost(const miopenTensorDescriptor_t inputDesc,
         }
     });
 
-    // LogCumSumExpForward pos_reverse_logcumsumexp
-    mloLogCumSumExpForwardRunHost(/*inputDesc=*/&baseDesc,
-                                  /*outputDesc=*/&baseDesc,
-                                  /*input=*/log_grad_positive.data(),
-                                  /*output_host=*/pos_reverse_logcumsumexp.data(),
-                                  dim,
-                                  /*exclusive=*/false,
-                                  reverse);
-
-    // LogCumSumExpForward neg_reverse_logcumsumexp
-    mloLogCumSumExpForwardRunHost(/*inputDesc=*/&baseDesc,
-                                  /*outputDesc=*/&baseDesc,
-                                  /*input=*/log_grad_negative.data(),
-                                  /*output_host=*/neg_reverse_logcumsumexp.data(),
-                                  dim,
-                                  /*exclusive=*/false,
-                                  reverse);
+    par_ford(2)([&](int T) {
+        if(T == 0)
+        {
+            // LogCumSumExpForward pos_reverse_logcumsumexp
+            mloLogCumSumExpForwardRunHost(/*inputDesc=*/&baseDesc,
+                                          /*outputDesc=*/&baseDesc,
+                                          /*input=*/log_grad_positive.data(),
+                                          /*output_host=*/pos_reverse_logcumsumexp.data(),
+                                          dim,
+                                          /*exclusive=*/false,
+                                          reverse);
+        }
+        if(T == 1)
+        {
+            // LogCumSumExpForward neg_reverse_logcumsumexp
+            mloLogCumSumExpForwardRunHost(/*inputDesc=*/&baseDesc,
+                                          /*outputDesc=*/&baseDesc,
+                                          /*input=*/log_grad_negative.data(),
+                                          /*output_host=*/neg_reverse_logcumsumexp.data(),
+                                          dim,
+                                          /*exclusive=*/false,
+                                          reverse);
+        }
+    });
 
     // LogCumSumExpBackwardStep2
     par_ford(size)([&](int idx) {

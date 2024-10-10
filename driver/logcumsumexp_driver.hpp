@@ -91,8 +91,6 @@ public:
 private:
     InputFlags inflags;
 
-    bool runForwardGPU = false;
-
     miopenTensorDescriptor_t inputDesc;
     miopenTensorDescriptor_t outputDesc;
     miopenTensorDescriptor_t doutputDesc;
@@ -230,9 +228,23 @@ int LogCumSumExpDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     for(int i = 0; i < doutput_sz; i++)
         doutput[i] = prng::gen_A_to_B<Tgpu>(static_cast<Tgpu>(-1), static_cast<Tgpu>(1));
 
+    // Init Output tensor for backward
+    {
+        auto status = mloLogCumSumExpForwardRunHost<Tgpu, Tgpu>(
+            inputDesc, outputDesc, input.data(), output.data(), dim, exclusive, reverse);
+        MIOPEN_THROW_IF(status != miopenStatusSuccess,
+                        "Init Output Tensor: Error in mloLogCumSumExpForwardRunHost");
+    }
+
     if(input_dev->ToGPU(GetStream(), input.data()) != 0)
     {
         std::cerr << "Error copying (input) to GPU, size: " << input_dev->GetSize() << std::endl;
+        return miopenStatusInternalError;
+    }
+
+    if(output_dev->ToGPU(GetStream(), output.data()) != 0)
+    {
+        std::cerr << "Error copying (output) to GPU, size: " << output_dev->GetSize() << std::endl;
         return miopenStatusInternalError;
     }
 
@@ -296,7 +308,6 @@ int LogCumSumExpDriver<Tgpu, Tref>::RunForwardGPU()
         return miopenStatusInternalError;
     }
 
-    runForwardGPU = true;
     return miopenStatusSuccess;
 }
 
@@ -312,15 +323,6 @@ int LogCumSumExpDriver<Tgpu, Tref>::RunForwardCPU()
 template <typename Tgpu, typename Tref>
 int LogCumSumExpDriver<Tgpu, Tref>::RunBackwardGPU()
 {
-    if(!runForwardGPU)
-    {
-        auto status = mloLogCumSumExpForwardRunHost<Tgpu, Tgpu>(
-            inputDesc, outputDesc, input.data(), output.data(), dim, exclusive, reverse);
-        MIOPEN_THROW_IF(status != miopenStatusSuccess,
-                        "Error in mloLogCumSumExpForwardRunHost when calculate output tensor for "
-                        "RunBackwardGPU");
-    }
-
     float kernel_total_time = 0;
     float kernel_first_time = 0;
 
