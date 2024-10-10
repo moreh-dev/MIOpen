@@ -34,12 +34,14 @@ namespace miopen {
 
 struct NetworkConfig;
 
-namespace adaptiveavgpool {
+namespace adaptivemaxpool {
 
 struct FwdProblemDescription : ProblemDescriptionBase
 {
-    FwdProblemDescription(const TensorDescriptor& inputDesc_, const TensorDescriptor& outputDesc_)
-        : inputDesc(inputDesc_), outputDesc(outputDesc_)
+    FwdProblemDescription(const TensorDescriptor& inputDesc_,
+                          const TensorDescriptor& outputDesc_,
+                          const TensorDescriptor& indicesDesc_)
+        : inputDesc(inputDesc_), outputDesc(outputDesc_), indicesDesc(indicesDesc_)
     {
         IsValidLength();
         IsValidDims();
@@ -58,7 +60,7 @@ struct FwdProblemDescription : ProblemDescriptionBase
            outputDesc.GetLengths().size() != input_dims)
         {
             MIOPEN_THROW(miopenStatusBadParm,
-                         "AdaptiveAvgPool: Input and output tensor sizes do not match.");
+                         "AdaptiveMaxPool: Input and output tensor sizes do not match.");
         }
 
         if(input_dims == 3)
@@ -66,7 +68,7 @@ struct FwdProblemDescription : ProblemDescriptionBase
             if(outputDesc.GetLengths()[2] > inputDesc.GetLengths()[2])
             {
                 MIOPEN_THROW(miopenStatusBadParm,
-                             "AdaptiveAvgPool: Input tensor sizes are too small compare to output "
+                             "AdaptiveMaxPool: Input tensor sizes are too small compare to output "
                              "tensor sizes.");
             }
         }
@@ -76,7 +78,7 @@ struct FwdProblemDescription : ProblemDescriptionBase
                outputDesc.GetLengths()[3] > inputDesc.GetLengths()[3])
             {
                 MIOPEN_THROW(miopenStatusBadParm,
-                             "AdaptiveAvgPool: Input tensor sizes are too small compare to output "
+                             "AdaptiveMaxPool: Input tensor sizes are too small compare to output "
                              "tensor sizes.");
             }
         }
@@ -87,8 +89,16 @@ struct FwdProblemDescription : ProblemDescriptionBase
                outputDesc.GetLengths()[4] > inputDesc.GetLengths()[4])
             {
                 MIOPEN_THROW(miopenStatusBadParm,
-                             "AdaptiveAvgPool: Input tensor sizes are too small compare to output "
+                             "AdaptiveMaxPool: Input tensor sizes are too small compare to output "
                              "tensor sizes.");
+            }
+        }
+        if(indicesDesc.GetElementSize() != 1)
+        {
+            if(outputDesc.GetLengths() != indicesDesc.GetLengths())
+            {
+                MIOPEN_THROW(miopenStatusBadParm,
+                             "AdaptiveMaxPool: Indices and output tensor sizes do not match.");
             }
         }
 
@@ -100,7 +110,7 @@ struct FwdProblemDescription : ProblemDescriptionBase
         if(inputDesc.GetLengths().size() > 5 || inputDesc.GetLengths().size() < 3)
         {
             MIOPEN_THROW(miopenStatusBadParm,
-                         "AdaptiveAvgPool: Only 3D, 4D and 5D tensors are supported.");
+                         "AdaptiveMaxPool: Only 3D, 4D and 5D tensors are supported.");
         }
 
         return true;
@@ -113,7 +123,7 @@ struct FwdProblemDescription : ProblemDescriptionBase
         if(inputDesc.GetType() != outputDesc.GetType())
         {
             MIOPEN_THROW(miopenStatusBadParm,
-                         "AdaptiveAvgPool: Input and output tensor types do not match.");
+                         "AdaptiveMaxPool: Input and output tensor types do not match.");
         }
 
         return true;
@@ -124,13 +134,15 @@ struct FwdProblemDescription : ProblemDescriptionBase
 protected:
     TensorDescriptor inputDesc;
     TensorDescriptor outputDesc;
+    TensorDescriptor indicesDesc;
 };
 
 struct BwdProblemDescription : ProblemDescriptionBase
 {
-    BwdProblemDescription(const TensorDescriptor& outputGradDesc_,
+    BwdProblemDescription(const TensorDescriptor& indicesDesc_,
+                          const TensorDescriptor& outputGradDesc_,
                           const TensorDescriptor& inputGradDesc_)
-        : outputGradDesc(outputGradDesc_), inputGradDesc(inputGradDesc_)
+        : indicesDesc(indicesDesc_), outputGradDesc(outputGradDesc_), inputGradDesc(inputGradDesc_)
     {
         IsValidLength();
         IsValidDims();
@@ -149,7 +161,7 @@ struct BwdProblemDescription : ProblemDescriptionBase
            outputGradDesc.GetLengths().size() != input_dims)
         {
             MIOPEN_THROW(miopenStatusBadParm,
-                         "AdaptiveAvgPool: Input grad and output grad tensor sizes do not match.");
+                         "AdaptiveMaxPool: Input grad and output grad tensor sizes do not match.");
         }
 
         if(input_dims == 3)
@@ -157,7 +169,7 @@ struct BwdProblemDescription : ProblemDescriptionBase
             if(outputGradDesc.GetLengths()[2] > inputGradDesc.GetLengths()[2])
             {
                 MIOPEN_THROW(miopenStatusBadParm,
-                             "AdaptiveAvgPool: Input grad tensor sizes are too small compare to "
+                             "AdaptiveMaxPool: Input grad tensor sizes are too small compare to "
                              "output grad tensor sizes.");
             }
         }
@@ -167,7 +179,7 @@ struct BwdProblemDescription : ProblemDescriptionBase
                outputGradDesc.GetLengths()[3] > inputGradDesc.GetLengths()[3])
             {
                 MIOPEN_THROW(miopenStatusBadParm,
-                             "AdaptiveAvgPool: Input grad tensor sizes are too small compare to "
+                             "AdaptiveMaxPool: Input grad tensor sizes are too small compare to "
                              "output grad tensor sizes.");
             }
         }
@@ -178,8 +190,16 @@ struct BwdProblemDescription : ProblemDescriptionBase
                outputGradDesc.GetLengths()[4] > inputGradDesc.GetLengths()[4])
             {
                 MIOPEN_THROW(miopenStatusBadParm,
-                             "AdaptiveAvgPool: Input grad tensor sizes are too small compare to "
+                             "AdaptiveMaxPool: Input grad tensor sizes are too small compare to "
                              "output grad tensor sizes.");
+            }
+        }
+        if(indicesDesc.GetElementSize() != 1)
+        {
+            if(outputGradDesc.GetLengths() != indicesDesc.GetLengths())
+            {
+                MIOPEN_THROW(miopenStatusBadParm,
+                             "AdaptiveMaxPool: Indices and output grad tensor sizes do not match.");
             }
         }
 
@@ -191,7 +211,7 @@ struct BwdProblemDescription : ProblemDescriptionBase
         if(inputGradDesc.GetLengths().size() > 5 || inputGradDesc.GetLengths().size() < 3)
         {
             MIOPEN_THROW(miopenStatusBadParm,
-                         "AdaptiveAvgPool: Only 3D, 4D and 5D tensors are supported.");
+                         "AdaptiveMaxPool: Only 3D, 4D and 5D tensors are supported.");
         }
 
         return true;
@@ -207,7 +227,7 @@ struct BwdProblemDescription : ProblemDescriptionBase
         if(inputGradDesc.GetType() != outputGradDesc.GetType())
         {
             MIOPEN_THROW(miopenStatusBadParm,
-                         "AdaptiveAvgPool: Input grad and output grad tensor types do not match.");
+                         "AdaptiveMaxPool: Input grad and output grad tensor types do not match.");
         }
 
         return true;
@@ -216,10 +236,11 @@ struct BwdProblemDescription : ProblemDescriptionBase
     NetworkConfig MakeNetworkConfig() const override;
 
 protected:
+    TensorDescriptor indicesDesc;
     TensorDescriptor outputGradDesc;
     TensorDescriptor inputGradDesc;
 };
 
-} // namespace adaptiveavgpool
+} // namespace adaptivemaxpool
 
 } // namespace miopen

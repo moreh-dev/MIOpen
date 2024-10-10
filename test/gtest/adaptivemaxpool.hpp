@@ -23,13 +23,13 @@
  * SOFTWARE.
  *
  *******************************************************************************/
-#include "cpu_adaptiveavgpool.hpp"
+#include "cpu_adaptivemaxpool.hpp"
 #include "get_handle.hpp"
 #include "tensor_holder.hpp"
 #include "verify.hpp"
 #include <gtest/gtest.h>
 #include <iostream>
-#include <miopen/adaptiveavgpool.hpp>
+#include <miopen/adaptivemaxpool.hpp>
 #include <miopen/miopen.h>
 #include <vector>
 
@@ -47,16 +47,17 @@ inline std::ostream& operator<<(std::ostream& os, const std::vector<T>& v)
     return os;
 }
 
-struct AdaptiveAvgPoolTestCase
+struct AdaptiveMaxPoolTestCase
 {
     std::vector<size_t> input_dims;
     std::vector<size_t> output_dims;
+    bool use_indices   = true;
     bool is_contiguous = true;
 
-    friend std::ostream& operator<<(std::ostream& os, const AdaptiveAvgPoolTestCase& tc)
+    friend std::ostream& operator<<(std::ostream& os, const AdaptiveMaxPoolTestCase& tc)
     {
         return os << " input_dims:" << tc.input_dims << " output_dims:" << tc.output_dims
-                  << "is_contiguous:" << tc.is_contiguous;
+                  << " use_indices:" << tc.use_indices << "is_contiguous:" << tc.is_contiguous;
     }
 
     std::vector<size_t> GetInput() const { return input_dims; }
@@ -76,87 +77,109 @@ struct AdaptiveAvgPoolTestCase
     }
 };
 
-inline std::vector<AdaptiveAvgPoolTestCase> AdaptiveAvgPoolTestConfigsFwdFp32()
+inline std::vector<AdaptiveMaxPoolTestCase> AdaptiveMaxPoolTestConfigsFwdFp32()
 {
     return {
-        {{64, 768, 17}, {10}, false},
-        {{64, 768, 17}, {10}, true},
-        {{64, 78, 17, 17}, {10, 10}, false},
-        {{64, 78, 17, 17}, {10, 10}, true},
-        {{6, 18, 18, 18, 18}, {5, 5, 5}, false},
-        {{6, 18, 18, 18, 18}, {5, 5, 5}, true},
+        {{64, 768, 17}, {10}, false, false},
+        {{64, 768, 17}, {10}, false, true},
+        {{64, 78, 17, 17}, {10, 10}, false, false},
+        {{64, 78, 17, 17}, {10, 10}, false, true},
+        {{6, 18, 18, 18, 18}, {5, 5, 5}, false, false},
+        {{6, 18, 18, 18, 18}, {5, 5, 5}, false, true},
+        {{64, 768, 17}, {10}, true, false},
+        {{64, 768, 17}, {10}, true, true},
+        {{64, 78, 17, 17}, {10, 10}, true, false},
+        {{64, 78, 17, 17}, {10, 10}, true, true},
+        {{6, 18, 18, 18, 18}, {5, 5, 5}, true, false},
+        {{6, 18, 18, 18, 18}, {5, 5, 5}, true, true},
     };
 }
 
-inline std::vector<AdaptiveAvgPoolTestCase> AdaptiveAvgPoolTestConfigsFwdFp16()
+inline std::vector<AdaptiveMaxPoolTestCase> AdaptiveMaxPoolTestConfigsFwdFp16()
 {
     return {
-        {{64, 768, 17}, {10}, false},
-        {{64, 768, 17}, {10}, true},
-        {{64, 78, 17, 17}, {10, 10}, false},
-        {{64, 78, 17, 17}, {10, 10}, true},
-        {{6, 18, 18, 18, 18}, {5, 5, 5}, false},
-        {{6, 18, 18, 18, 18}, {5, 5, 5}, true},
+        {{64, 768, 17}, {10}, false, false},
+        {{64, 768, 17}, {10}, false, true},
+        {{64, 78, 17, 17}, {10, 10}, false, false},
+        {{64, 78, 17, 17}, {10, 10}, false, true},
+        {{6, 18, 18, 18, 18}, {5, 5, 5}, false, false},
+        {{6, 18, 18, 18, 18}, {5, 5, 5}, false, true},
+        {{64, 768, 17}, {10}, true, false},
+        {{64, 768, 17}, {10}, true, true},
+        {{64, 78, 17, 17}, {10, 10}, true, false},
+        {{64, 78, 17, 17}, {10, 10}, true, true},
+        {{6, 18, 18, 18, 18}, {5, 5, 5}, true, false},
+        {{6, 18, 18, 18, 18}, {5, 5, 5}, true, true},
     };
 }
 
-inline std::vector<AdaptiveAvgPoolTestCase> AdaptiveAvgPoolTestConfigsFwdBfp16()
+inline std::vector<AdaptiveMaxPoolTestCase> AdaptiveMaxPoolTestConfigsFwdBfp16()
 {
     return {
-        {{64, 768, 17}, {10}, false},
-        {{64, 768, 17}, {10}, true},
-        {{64, 78, 17, 17}, {10, 10}, false},
-        {{64, 78, 17, 17}, {10, 10}, true},
-        {{6, 18, 18, 18, 18}, {5, 5, 5}, false},
-        {{6, 18, 18, 18, 18}, {5, 5, 5}, true},
+        {{64, 768, 17}, {10}, false, false},
+        {{64, 768, 17}, {10}, false, true},
+        {{64, 78, 17, 17}, {10, 10}, false, false},
+        {{64, 78, 17, 17}, {10, 10}, false, true},
+        {{6, 18, 18, 18, 18}, {5, 5, 5}, false, false},
+        {{6, 18, 18, 18, 18}, {5, 5, 5}, false, true},
+        {{64, 768, 17}, {10}, true, false},
+        {{64, 768, 17}, {10}, true, true},
+        {{64, 78, 17, 17}, {10, 10}, true, false},
+        {{64, 78, 17, 17}, {10, 10}, true, true},
+        {{6, 18, 18, 18, 18}, {5, 5, 5}, true, false},
+        {{6, 18, 18, 18, 18}, {5, 5, 5}, true, true},
     };
 }
 
-inline std::vector<AdaptiveAvgPoolTestCase> AdaptiveAvgPoolTestConfigsBwdFp32()
+inline std::vector<AdaptiveMaxPoolTestCase> AdaptiveMaxPoolTestConfigsBwdFp32()
 {
     return {
-        {{64, 768, 17}, {10}, false},
-        {{64, 768, 17}, {10}, true},
-        {{64, 206, 17, 17}, {10, 10}, false},
-        {{6, 18, 18, 18, 18}, {5, 5, 5}, false},
-        {{6, 18, 18, 18, 18}, {18, 18, 18}, true},
+        {{64, 768, 17}, {10}, true, false},
+        {{64, 768, 17}, {10}, true, true},
+        {{64, 206, 17, 17}, {10, 10}, true, false},
+        {{64, 206, 17, 17}, {10, 10}, true, true},
+        {{6, 18, 18, 18, 18}, {5, 5, 5}, true, false},
+        {{6, 18, 18, 18, 18}, {18, 18, 18}, true, true},
     };
 }
 
-inline std::vector<AdaptiveAvgPoolTestCase> AdaptiveAvgPoolTestConfigsBwdFp16()
+inline std::vector<AdaptiveMaxPoolTestCase> AdaptiveMaxPoolTestConfigsBwdFp16()
 {
     return {
-        {{64, 768, 17}, {10}, false},
-        {{64, 768, 17}, {10}, true},
-        {{64, 28, 35, 35}, {35, 35}, false},
-        {{6, 28, 35, 35, 35}, {10, 10, 10}, false},
-        {{6, 28, 35, 35, 35}, {35, 35, 35}, true},
+        {{64, 768, 17}, {10}, true, false},
+        {{64, 768, 17}, {10}, true, true},
+        {{64, 28, 35, 35}, {35, 35}, true, false},
+        {{64, 28, 35, 35}, {35, 35}, true, true},
+        {{6, 28, 35, 35, 35}, {10, 10, 10}, true, false},
+        {{6, 28, 35, 35, 35}, {35, 35, 35}, true, true},
     };
 }
 
-inline std::vector<AdaptiveAvgPoolTestCase> AdaptiveAvgPoolTestConfigsBwdBfp16()
+inline std::vector<AdaptiveMaxPoolTestCase> AdaptiveMaxPoolTestConfigsBwdBfp16()
 {
     return {
-        {{64, 768, 17}, {10}, false},
-        {{64, 768, 17}, {10}, true},
-        {{64, 208, 9, 9}, {7, 7}, false},
-        {{6, 18, 12, 12, 12}, {5, 5, 5}, false},
-        {{6, 18, 12, 12, 12}, {12, 12, 12}, true},
+        {{64, 768, 17}, {10}, true, false},
+        {{64, 768, 17}, {10}, true, true},
+        {{64, 208, 9, 9}, {7, 7}, true, false},
+        {{64, 208, 9, 9}, {7, 7}, true, true},
+        {{6, 18, 12, 12, 12}, {5, 5, 5}, true, false},
+        {{6, 18, 12, 12, 12}, {12, 12, 12}, true, true},
     };
 }
 
 // FORWARD TEST
 template <typename T = float>
-struct AdaptiveAvgPoolTestFwd : public ::testing::TestWithParam<AdaptiveAvgPoolTestCase>
+struct AdaptiveMaxPoolTestFwd : public ::testing::TestWithParam<AdaptiveMaxPoolTestCase>
 {
 protected:
     void SetUp() override
     {
         auto&& handle                     = get_handle();
-        adaptiveavgpool_config            = GetParam();
-        auto in_dim                       = adaptiveavgpool_config.GetInput();
-        auto in_strides                   = adaptiveavgpool_config.ComputeStrides(in_dim);
-        auto out_dim                      = adaptiveavgpool_config.GetOutput();
+        adaptivemaxpool_config            = GetParam();
+        use_indices                       = adaptivemaxpool_config.use_indices;
+        auto in_dim                       = adaptivemaxpool_config.GetInput();
+        auto in_strides                   = adaptivemaxpool_config.ComputeStrides(in_dim);
+        auto out_dim                      = adaptivemaxpool_config.GetOutput();
         N                                 = in_dim[0];
         C                                 = in_dim[1];
         std::vector<size_t> out_dim_final = {N, C};
@@ -208,8 +231,27 @@ protected:
         ref_output = tensor<T>{out_dim_final};
         std::fill(ref_output.begin(), ref_output.end(), std::numeric_limits<T>::quiet_NaN());
 
+        if(use_indices)
+        {
+            indices = tensor<size_t>{out_dim_final};
+            std::fill(indices.begin(), indices.end(), std::numeric_limits<size_t>::quiet_NaN());
+
+            ref_indices = tensor<size_t>{out_dim_final};
+            std::fill(
+                ref_indices.begin(), ref_indices.end(), std::numeric_limits<size_t>::quiet_NaN());
+        }
+        else
+        {
+            indices     = tensor<size_t>{1};
+            ref_indices = tensor<size_t>{1};
+        }
+
         input_dev  = handle.Write(input.data);
         output_dev = handle.Write(output.data);
+        if(use_indices)
+        {
+            indices_dev = handle.Write(indices.data);
+        }
     }
 
     void RunTest()
@@ -220,56 +262,79 @@ protected:
         auto dims = input.desc.GetNumDims();
         if(dims == 3)
         {
-            cpu_adaptiveavgpool_forward_1d<T>(input, ref_output, N, C, H, OH);
+            cpu_adaptivemaxpool_forward_1d<T>(input, ref_output, ref_indices, N, C, H, OH);
         }
         else if(dims == 4)
         {
-            cpu_adaptiveavgpool_forward_2d<T>(input, ref_output, N, C, H, W, OH, OW);
+            cpu_adaptivemaxpool_forward_2d<T>(input, ref_output, ref_indices, N, C, H, W, OH, OW);
         }
         else if(dims == 5)
         {
-            cpu_adaptiveavgpool_forward_3d<T>(input, ref_output, N, C, D, H, W, OD, OH, OW);
+            cpu_adaptivemaxpool_forward_3d<T>(
+                input, ref_output, ref_indices, N, C, D, H, W, OD, OH, OW);
         }
-        status = miopen::adaptiveavgpool::AdaptiveAvgPoolForward(
-            handle, input.desc, input_dev.get(), output.desc, output_dev.get());
+        status = miopen::adaptivemaxpool::AdaptiveMaxPoolForward(handle,
+                                                                 input.desc,
+                                                                 input_dev.get(),
+                                                                 output.desc,
+                                                                 output_dev.get(),
+                                                                 indices.desc,
+                                                                 indices_dev.get());
         ASSERT_EQ(status, miopenStatusSuccess);
 
         output.data = handle.Read<T>(output_dev, output.data.size());
+        if(use_indices)
+        {
+            indices.data = handle.Read<size_t>(indices_dev, indices.data.size());
+        }
     }
 
     void Verify()
     {
-        double threshold = std::numeric_limits<T>::epsilon();
-
-        auto error = miopen::rms_range(ref_output, output);
+        double threshold  = std::numeric_limits<T>::epsilon();
+        auto error_output = miopen::rms_range(ref_output, output);
 
         ASSERT_EQ(miopen::range_distance(ref_output), miopen::range_distance(output));
-        EXPECT_LT(error, threshold * 10) << "Error forward Output beyond 10xthreshold : " << error
-                                         << " Tolerance: " << threshold * 10;
+        EXPECT_LT(error_output, threshold * 10)
+            << "Error forward Output beyond 10xthreshold : " << error_output
+            << " Tolerance: " << threshold * 10;
+
+        if(use_indices)
+        {
+            double threshold_indices = std::numeric_limits<uint64_t>::epsilon();
+            auto error_indices       = miopen::rms_range(ref_indices, indices);
+
+            ASSERT_EQ(miopen::range_distance(ref_indices), miopen::range_distance(indices));
+            EXPECT_EQ(error_indices, threshold_indices) << "Error forward Indices";
+        }
     }
-    AdaptiveAvgPoolTestCase adaptiveavgpool_config;
+    AdaptiveMaxPoolTestCase adaptivemaxpool_config;
 
     tensor<T> input;
     tensor<T> output;
     tensor<T> ref_output;
+    tensor<size_t> indices;
+    tensor<size_t> ref_indices;
 
     size_t N, C, D, H, W, OD, OH, OW;
+    bool use_indices;
 
     miopen::Allocator::ManageDataPtr input_dev;
     miopen::Allocator::ManageDataPtr output_dev;
+    miopen::Allocator::ManageDataPtr indices_dev;
 };
 
 // BACKWARD TEST
 template <typename T = float>
-struct AdaptiveAvgPoolTestBwd : public ::testing::TestWithParam<AdaptiveAvgPoolTestCase>
+struct AdaptiveMaxPoolTestBwd : public ::testing::TestWithParam<AdaptiveMaxPoolTestCase>
 {
 protected:
     void SetUp() override
     {
         auto&& handle                          = get_handle();
-        adaptiveavgpool_config                 = GetParam();
-        auto in_grad_dim                       = adaptiveavgpool_config.GetInput();
-        auto out_grad_dim                      = adaptiveavgpool_config.GetOutput();
+        adaptivemaxpool_config                 = GetParam();
+        auto in_grad_dim                       = adaptivemaxpool_config.GetInput();
+        auto out_grad_dim                      = adaptivemaxpool_config.GetOutput();
         N                                      = in_grad_dim[0];
         C                                      = in_grad_dim[1];
         std::vector<size_t> out_grad_dim_final = {N, C};
@@ -310,7 +375,12 @@ protected:
             out_grad_dim_final.push_back(OH);
             out_grad_dim_final.push_back(OW);
         }
-        auto out_grad_strides = adaptiveavgpool_config.ComputeStrides(out_grad_dim_final);
+        auto out_grad_strides = adaptivemaxpool_config.ComputeStrides(out_grad_dim_final);
+
+        auto gen_indices_value = [](auto...) {
+            return prng::gen_A_to_B<size_t>(static_cast<size_t>(0), static_cast<size_t>(10));
+        };
+        indices = tensor<size_t>{out_grad_dim_final}.generate(gen_indices_value);
 
         auto gen_output_grad_value = [](auto...) {
             return prng::gen_A_to_B<T>(static_cast<T>(-10.0f), static_cast<T>(10.0f));
@@ -325,6 +395,7 @@ protected:
         std::fill(
             ref_input_grad.begin(), ref_input_grad.end(), std::numeric_limits<T>::quiet_NaN());
 
+        indices_dev     = handle.Write(indices.data);
         output_grad_dev = handle.Write(output_grad.data);
         input_grad_dev  = handle.Write(input_grad.data);
     }
@@ -338,19 +409,25 @@ protected:
         auto dims = input_grad.desc.GetNumDims();
         if(dims == 3)
         {
-            cpu_adaptiveavgpool_backward_1d<T>(output_grad, ref_input_grad, N, C, H, OH);
+            cpu_adaptivemaxpool_backward_1d<T>(indices, output_grad, ref_input_grad, N, C, H, OH);
         }
         else if(dims == 4)
         {
-            cpu_adaptiveavgpool_backward_2d<T>(output_grad, ref_input_grad, N, C, H, W, OH, OW);
+            cpu_adaptivemaxpool_backward_2d<T>(
+                indices, output_grad, ref_input_grad, N, C, H, W, OH, OW);
         }
         else if(dims == 5)
         {
-            cpu_adaptiveavgpool_backward_3d<T>(
-                output_grad, ref_input_grad, N, C, D, H, W, OD, OH, OW);
+            cpu_adaptivemaxpool_backward_3d<T>(
+                indices, output_grad, ref_input_grad, N, C, D, H, W, OD, OH, OW);
         }
-        status = miopen::adaptiveavgpool::AdaptiveAvgPoolBackward(
-            handle, output_grad.desc, output_grad_dev.get(), input_grad.desc, input_grad_dev.get());
+        status = miopen::adaptivemaxpool::AdaptiveMaxPoolBackward(handle,
+                                                                  indices.desc,
+                                                                  indices_dev.get(),
+                                                                  output_grad.desc,
+                                                                  output_grad_dev.get(),
+                                                                  input_grad.desc,
+                                                                  input_grad_dev.get());
 
         ASSERT_EQ(status, miopenStatusSuccess);
 
@@ -366,14 +443,16 @@ protected:
             << "Error backward Input Gradient beyond 10xthreshold : " << error
             << " Tolerance: " << threshold * 10;
     }
-    AdaptiveAvgPoolTestCase adaptiveavgpool_config;
+    AdaptiveMaxPoolTestCase adaptivemaxpool_config;
 
+    tensor<size_t> indices;
     tensor<T> output_grad;
     tensor<T> input_grad;
     tensor<T> ref_input_grad;
 
     size_t N, C, D, H, W, OD, OH, OW;
 
+    miopen::Allocator::ManageDataPtr indices_dev;
     miopen::Allocator::ManageDataPtr output_grad_dev;
     miopen::Allocator::ManageDataPtr input_grad_dev;
 };

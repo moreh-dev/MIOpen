@@ -32,14 +32,16 @@
 #include "tensor_view.hpp"
 
 template <typename TI, typename TO>
-__device__ void adaptiveAvgPoolForward1d(const TI* __restrict__ input,
+__device__ void adaptiveMaxPoolForward1d(const TI* __restrict__ input,
                                          TO* __restrict__ output,
+                                         uint64_t* __restrict__ indices,
                                          uint64_t N,
                                          uint64_t C,
                                          uint64_t H,
                                          uint64_t OH,
                                          tensor_view_t<3> input_tv,
-                                         tensor_view_t<3> output_tv)
+                                         tensor_view_t<3> output_tv,
+                                         tensor_view_t<3> indices_tv)
 {
     uint64_t gid = threadIdx.x + blockIdx.x * blockDim.x;
     uint64_t nc = gid / OH, oh = gid % OH;
@@ -48,35 +50,58 @@ __device__ void adaptiveAvgPoolForward1d(const TI* __restrict__ input,
         return;
 
     uint64_t h  = oh * H / OH;
-    uint64_t kh = (((oh + 1) * H + OH - 1) / OH) - h;
+    uint64_t kh = ((oh + 1) * H + OH - 1) / OH;
 
-    FLOAT_ACCUM sum = 0;
-    for(uint64_t ih = h; ih < (h + kh); ++ih)
+    FLOAT_ACCUM m = -INFINITY;
+    if(!indices)
     {
-        sum += CVT_FLOAT2ACCUM(input[input_tv.get_tensor_view_idx({n, c, ih})]);
+        for(uint64_t ih = h; ih < kh; ++ih)
+        {
+            m = max(m, CVT_FLOAT2ACCUM(input[input_tv.get_tensor_view_idx({n, c, ih})]));
+        }
+        output[output_tv.get_tensor_view_idx({n, c, oh})] = CVT_ACCUM2FLOAT(m);
     }
-    output[output_tv.get_tensor_view_idx({n, c, oh})] = CVT_ACCUM2FLOAT(sum / kh);
+    else
+    {
+        uint64_t mi = 0;
+        for(uint64_t ih = h; ih < kh; ++ih)
+        {
+            FLOAT_ACCUM input_val =
+                CVT_FLOAT2ACCUM(input[input_tv.get_tensor_view_idx({n, c, ih})]);
+            if(m < input_val)
+            {
+                m  = input_val;
+                mi = ih;
+            }
+        }
+        output[output_tv.get_tensor_view_idx({n, c, oh})]   = CVT_ACCUM2FLOAT(m);
+        indices[indices_tv.get_tensor_view_idx({n, c, oh})] = mi;
+    }
 }
-extern "C" __global__ void AdaptiveAvgPoolForward1d(const INPUT_TYPE* __restrict__ input,
+extern "C" __global__ void AdaptiveMaxPoolForward1d(const INPUT_TYPE* __restrict__ input,
                                                     OUTPUT_TYPE* __restrict__ output,
+                                                    uint64_t* __restrict__ indices,
                                                     uint64_t N,
                                                     uint64_t C,
                                                     uint64_t H,
                                                     uint64_t OH,
                                                     tensor_view_t<3> input_tv,
-                                                    tensor_view_t<3> output_tv)
+                                                    tensor_view_t<3> output_tv,
+                                                    tensor_view_t<3> indices_tv)
 {
-    adaptiveAvgPoolForward1d<INPUT_TYPE, OUTPUT_TYPE>(
-        input, output, N, C, H, OH, input_tv, output_tv);
+    adaptiveMaxPoolForward1d<INPUT_TYPE, OUTPUT_TYPE>(
+        input, output, indices, N, C, H, OH, input_tv, output_tv, indices_tv);
 }
 
 template <typename TI, typename TO>
-__device__ void adaptiveAvgPoolBackward1d(const TI* __restrict__ output_grad,
+__device__ void adaptiveMaxPoolBackward1d(const uint64_t* __restrict__ indices,
+                                          const TI* __restrict__ output_grad,
                                           TO* __restrict__ input_grad,
                                           uint64_t N,
                                           uint64_t C,
                                           uint64_t H,
                                           uint64_t OH,
+                                          tensor_view_t<3> indices_tv,
                                           tensor_view_t<3> output_grad_tv,
                                           tensor_view_t<3> input_grad_tv)
 {
@@ -92,28 +117,34 @@ __device__ void adaptiveAvgPoolBackward1d(const TI* __restrict__ output_grad,
     FLOAT_ACCUM grad = 0;
     for(uint64_t ih = oh; ih < (oh + koh); ++ih)
     {
-        uint64_t kh = ((ih + 1) * H + OH - 1) / OH - (ih * H) / OH;
-        grad += CVT_FLOAT2ACCUM(output_grad[output_grad_tv.get_tensor_view_idx({n, c, ih})]) / kh;
+        uint64_t idx = indices[indices_tv.get_tensor_view_idx({n, c, ih})];
+        if(idx == h)
+        {
+            grad += CVT_FLOAT2ACCUM(output_grad[output_grad_tv.get_tensor_view_idx({n, c, ih})]);
+        }
     }
     input_grad[input_grad_tv.get_tensor_view_idx({n, c, h})] = CVT_ACCUM2FLOAT(grad);
 }
 
-extern "C" __global__ void AdaptiveAvgPoolBackward1d(const INPUT_TYPE* __restrict__ output_grad,
+extern "C" __global__ void AdaptiveMaxPoolBackward1d(const uint64_t* __restrict__ indices,
+                                                     const INPUT_TYPE* __restrict__ output_grad,
                                                      OUTPUT_TYPE* __restrict__ input_grad,
                                                      uint64_t N,
                                                      uint64_t C,
                                                      uint64_t H,
                                                      uint64_t OH,
+                                                     tensor_view_t<3> indices_tv,
                                                      tensor_view_t<3> output_grad_tv,
                                                      tensor_view_t<3> input_grad_tv)
 {
-    adaptiveAvgPoolBackward1d<INPUT_TYPE, OUTPUT_TYPE>(
-        output_grad, input_grad, N, C, H, OH, output_grad_tv, input_grad_tv);
+    adaptiveMaxPoolBackward1d<INPUT_TYPE, OUTPUT_TYPE>(
+        indices, output_grad, input_grad, N, C, H, OH, indices_tv, output_grad_tv, input_grad_tv);
 }
 
 template <typename TI, typename TO>
-__device__ void adaptiveAvgPoolForward2d(const TI* __restrict__ input,
+__device__ void adaptiveMaxPoolForward2d(const TI* __restrict__ input,
                                          TO* __restrict__ output,
+                                         uint64_t* __restrict__ indices,
                                          uint64_t N,
                                          uint64_t C,
                                          uint64_t H,
@@ -121,7 +152,8 @@ __device__ void adaptiveAvgPoolForward2d(const TI* __restrict__ input,
                                          uint64_t OH,
                                          uint64_t OW,
                                          tensor_view_t<4> input_tv,
-                                         tensor_view_t<4> output_tv)
+                                         tensor_view_t<4> output_tv,
+                                         tensor_view_t<4> indices_tv)
 {
     uint64_t gid  = threadIdx.x + blockIdx.x * blockDim.x;
     uint64_t ncoh = gid / OW, ow = gid % OW;
@@ -132,25 +164,47 @@ __device__ void adaptiveAvgPoolForward2d(const TI* __restrict__ input,
         return;
 
     uint64_t h  = (oh * H) / OH;
-    uint64_t kh = (((oh + 1) * H + OH - 1) / OH) - h;
+    uint64_t kh = ((oh + 1) * H + OH - 1) / OH;
 
     uint64_t w  = (ow * W) / OW;
-    uint64_t kw = (((ow + 1) * W + OW - 1) / OW) - w;
+    uint64_t kw = ((ow + 1) * W + OW - 1) / OW;
 
-    FLOAT_ACCUM divider = static_cast<FLOAT_ACCUM>(kh * kw);
-    FLOAT_ACCUM sum     = 0;
-    for(uint64_t ih = h; ih < (h + kh); ++ih)
+    FLOAT_ACCUM m = -INFINITY;
+    if(!indices)
     {
-        for(uint64_t iw = w; iw < (w + kw); ++iw)
+        for(uint64_t ih = h; ih < kh; ++ih)
         {
-            sum += CVT_FLOAT2ACCUM(input[input_tv.get_tensor_view_idx({n, c, ih, iw})]);
+            for(uint64_t iw = w; iw < kw; ++iw)
+            {
+                m = max(m, CVT_FLOAT2ACCUM(input[input_tv.get_tensor_view_idx({n, c, ih, iw})]));
+            }
         }
+        output[output_tv.get_tensor_view_idx({n, c, oh, ow})] = CVT_ACCUM2FLOAT(m);
     }
-    output[output_tv.get_tensor_view_idx({n, c, oh, ow})] = CVT_ACCUM2FLOAT(sum / divider);
+    else
+    {
+        uint64_t mi = 0;
+        for(uint64_t ih = h; ih < kh; ++ih)
+        {
+            for(uint64_t iw = w; iw < kw; ++iw)
+            {
+                FLOAT_ACCUM input_val =
+                    CVT_FLOAT2ACCUM(input[input_tv.get_tensor_view_idx({n, c, ih, iw})]);
+                if(m < input_val)
+                {
+                    m  = input_val;
+                    mi = ih * W + iw;
+                }
+            }
+        }
+        output[output_tv.get_tensor_view_idx({n, c, oh, ow})]   = CVT_ACCUM2FLOAT(m);
+        indices[indices_tv.get_tensor_view_idx({n, c, oh, ow})] = mi;
+    }
 }
 
-extern "C" __global__ void AdaptiveAvgPoolForward2d(const INPUT_TYPE* __restrict__ input,
+extern "C" __global__ void AdaptiveMaxPoolForward2d(const INPUT_TYPE* __restrict__ input,
                                                     OUTPUT_TYPE* __restrict__ output,
+                                                    uint64_t* __restrict__ indices,
                                                     uint64_t N,
                                                     uint64_t C,
                                                     uint64_t H,
@@ -158,14 +212,16 @@ extern "C" __global__ void AdaptiveAvgPoolForward2d(const INPUT_TYPE* __restrict
                                                     uint64_t OH,
                                                     uint64_t OW,
                                                     tensor_view_t<4> input_tv,
-                                                    tensor_view_t<4> output_tv)
+                                                    tensor_view_t<4> output_tv,
+                                                    tensor_view_t<4> indices_tv)
 {
-    adaptiveAvgPoolForward2d<INPUT_TYPE, OUTPUT_TYPE>(
-        input, output, N, C, H, W, OH, OW, input_tv, output_tv);
+    adaptiveMaxPoolForward2d<INPUT_TYPE, OUTPUT_TYPE>(
+        input, output, indices, N, C, H, W, OH, OW, input_tv, output_tv, indices_tv);
 }
 
 template <typename TI, typename TO>
-__device__ void adaptiveAvgPoolBackward2d(const TI* __restrict__ output_grad,
+__device__ void adaptiveMaxPoolBackward2d(const uint64_t* __restrict__ indices,
+                                          const TI* __restrict__ output_grad,
                                           TO* __restrict__ input_grad,
                                           uint64_t N,
                                           uint64_t C,
@@ -173,6 +229,7 @@ __device__ void adaptiveAvgPoolBackward2d(const TI* __restrict__ output_grad,
                                           uint64_t W,
                                           uint64_t OH,
                                           uint64_t OW,
+                                          tensor_view_t<4> indices_tv,
                                           tensor_view_t<4> output_grad_tv,
                                           tensor_view_t<4> input_grad_tv)
 {
@@ -193,20 +250,21 @@ __device__ void adaptiveAvgPoolBackward2d(const TI* __restrict__ output_grad,
     FLOAT_ACCUM grad = 0;
     for(uint64_t ih = oh; ih < (oh + koh); ++ih)
     {
-        uint64_t kh = ((ih + 1) * H + OH - 1) / OH - (ih * H) / OH;
         for(uint64_t iw = ow; iw < (ow + kow); ++iw)
         {
-            uint64_t kw = ((iw + 1) * W + OW - 1) / OW - (iw * W) / OW;
-            grad +=
-                CVT_FLOAT2ACCUM(output_grad[output_grad_tv.get_tensor_view_idx({n, c, ih, iw})]) /
-                (kh * kw);
+            if(indices[indices_tv.get_tensor_view_idx({n, c, ih, iw})] == h * W + w)
+            {
+                grad += CVT_FLOAT2ACCUM(
+                    output_grad[output_grad_tv.get_tensor_view_idx({n, c, ih, iw})]);
+            }
         }
     }
 
     input_grad[input_grad_tv.get_tensor_view_idx({n, c, h, w})] = CVT_ACCUM2FLOAT(grad);
 }
 
-extern "C" __global__ void AdaptiveAvgPoolBackward2d(const INPUT_TYPE* __restrict__ output_grad,
+extern "C" __global__ void AdaptiveMaxPoolBackward2d(const uint64_t* __restrict__ indices,
+                                                     const INPUT_TYPE* __restrict__ output_grad,
                                                      OUTPUT_TYPE* __restrict__ input_grad,
                                                      uint64_t N,
                                                      uint64_t C,
@@ -214,16 +272,28 @@ extern "C" __global__ void AdaptiveAvgPoolBackward2d(const INPUT_TYPE* __restric
                                                      uint64_t W,
                                                      uint64_t OH,
                                                      uint64_t OW,
+                                                     tensor_view_t<4> indices_tv,
                                                      tensor_view_t<4> output_grad_tv,
                                                      tensor_view_t<4> input_grad_tv)
 {
-    adaptiveAvgPoolBackward2d<INPUT_TYPE, OUTPUT_TYPE>(
-        output_grad, input_grad, N, C, H, W, OH, OW, output_grad_tv, input_grad_tv);
+    adaptiveMaxPoolBackward2d<INPUT_TYPE, OUTPUT_TYPE>(indices,
+                                                       output_grad,
+                                                       input_grad,
+                                                       N,
+                                                       C,
+                                                       H,
+                                                       W,
+                                                       OH,
+                                                       OW,
+                                                       indices_tv,
+                                                       output_grad_tv,
+                                                       input_grad_tv);
 }
 
 template <typename TI, typename TO>
-__device__ void adaptiveAvgPoolForward3d(const TI* __restrict__ input,
+__device__ void adaptiveMaxPoolForward3d(const TI* __restrict__ input,
                                          TO* __restrict__ output,
+                                         uint64_t* __restrict__ indices,
                                          uint64_t N,
                                          uint64_t C,
                                          uint64_t D,
@@ -233,7 +303,8 @@ __device__ void adaptiveAvgPoolForward3d(const TI* __restrict__ input,
                                          uint64_t OH,
                                          uint64_t OW,
                                          tensor_view_t<5> input_tv,
-                                         tensor_view_t<5> output_tv)
+                                         tensor_view_t<5> output_tv,
+                                         tensor_view_t<5> indices_tv)
 {
     uint64_t gid    = threadIdx.x + blockIdx.x * blockDim.x;
     uint64_t ncodoh = gid / OW, ow = gid % OW;
@@ -244,32 +315,58 @@ __device__ void adaptiveAvgPoolForward3d(const TI* __restrict__ input,
     if(n >= N)
         return;
     uint64_t d  = (od * D) / OD;
-    uint64_t kd = ((od + 1) * D + OD - 1) / OD - d;
+    uint64_t kd = ((od + 1) * D + OD - 1) / OD;
 
     uint64_t h  = (oh * H) / OH;
-    uint64_t kh = ((oh + 1) * H + OH - 1) / OH - h;
+    uint64_t kh = ((oh + 1) * H + OH - 1) / OH;
 
     uint64_t w  = (ow * W) / OW;
-    uint64_t kw = ((ow + 1) * W + OW - 1) / OW - w;
+    uint64_t kw = ((ow + 1) * W + OW - 1) / OW;
 
-    FLOAT_ACCUM sum = 0;
-    for(uint64_t id = d; id < (d + kd); ++id)
+    FLOAT_ACCUM m = -INFINITY;
+    if(!indices)
     {
-        for(uint64_t ih = h; ih < (h + kh); ++ih)
+        for(uint64_t id = d; id < kd; ++id)
         {
-            for(uint64_t iw = w; iw < (w + kw); ++iw)
+            for(uint64_t ih = h; ih < kh; ++ih)
             {
-                sum += CVT_FLOAT2ACCUM(input[input_tv.get_tensor_view_idx({n, c, id, ih, iw})]);
+                for(uint64_t iw = w; iw < kw; ++iw)
+                {
+                    m = max(
+                        m,
+                        CVT_FLOAT2ACCUM(input[input_tv.get_tensor_view_idx({n, c, id, ih, iw})]));
+                }
             }
         }
+        output[output_tv.get_tensor_view_idx({n, c, od, oh, ow})] = CVT_ACCUM2FLOAT(m);
     }
-
-    output[output_tv.get_tensor_view_idx({n, c, od, oh, ow})] =
-        CVT_ACCUM2FLOAT(sum / (kd * kh * kw));
+    else
+    {
+        uint64_t mi = 0;
+        for(uint64_t id = d; id < kd; ++id)
+        {
+            for(uint64_t ih = h; ih < kh; ++ih)
+            {
+                for(uint64_t iw = w; iw < kw; ++iw)
+                {
+                    FLOAT_ACCUM input_val =
+                        CVT_FLOAT2ACCUM(input[input_tv.get_tensor_view_idx({n, c, id, ih, iw})]);
+                    if(m < input_val)
+                    {
+                        m  = input_val;
+                        mi = (id * H + ih) * W + iw;
+                    }
+                }
+            }
+        }
+        output[output_tv.get_tensor_view_idx({n, c, od, oh, ow})]   = CVT_ACCUM2FLOAT(m);
+        indices[indices_tv.get_tensor_view_idx({n, c, od, oh, ow})] = mi;
+    }
 }
 
-extern "C" __global__ void AdaptiveAvgPoolForward3d(const INPUT_TYPE* __restrict__ input,
+extern "C" __global__ void AdaptiveMaxPoolForward3d(const INPUT_TYPE* __restrict__ input,
                                                     OUTPUT_TYPE* __restrict__ output,
+                                                    uint64_t* __restrict__ indices,
                                                     uint64_t N,
                                                     uint64_t C,
                                                     uint64_t D,
@@ -279,14 +376,16 @@ extern "C" __global__ void AdaptiveAvgPoolForward3d(const INPUT_TYPE* __restrict
                                                     uint64_t OH,
                                                     uint64_t OW,
                                                     tensor_view_t<5> input_tv,
-                                                    tensor_view_t<5> output_tv)
+                                                    tensor_view_t<5> output_tv,
+                                                    tensor_view_t<5> indices_tv)
 {
-    adaptiveAvgPoolForward3d<INPUT_TYPE, OUTPUT_TYPE>(
-        input, output, N, C, D, H, W, OD, OH, OW, input_tv, output_tv);
+    adaptiveMaxPoolForward3d<INPUT_TYPE, OUTPUT_TYPE>(
+        input, output, indices, N, C, D, H, W, OD, OH, OW, input_tv, output_tv, indices_tv);
 }
 
 template <typename TI, typename TO>
-__device__ void adaptiveAvgPoolBackward3d(const TI* __restrict__ output_grad,
+__device__ void adaptiveMaxPoolBackward3d(const uint64_t* __restrict__ indices,
+                                          const TI* __restrict__ output_grad,
                                           TO* __restrict__ input_grad,
                                           uint64_t N,
                                           uint64_t C,
@@ -296,6 +395,7 @@ __device__ void adaptiveAvgPoolBackward3d(const TI* __restrict__ output_grad,
                                           uint64_t OD,
                                           uint64_t OH,
                                           uint64_t OW,
+                                          tensor_view_t<5> indices_tv,
                                           tensor_view_t<5> output_grad_tv,
                                           tensor_view_t<5> input_grad_tv)
 {
@@ -320,16 +420,16 @@ __device__ void adaptiveAvgPoolBackward3d(const TI* __restrict__ output_grad,
     FLOAT_ACCUM grad = 0;
     for(uint64_t id = od; id < (od + kod); ++id)
     {
-        uint64_t kd = ((id + 1) * D + OD - 1) / OD - (id * D) / OD;
         for(uint64_t ih = oh; ih < (oh + koh); ++ih)
         {
-            uint64_t kh = ((ih + 1) * H + OH - 1) / OH - (ih * H) / OH;
             for(uint64_t iw = ow; iw < (ow + kow); ++iw)
             {
-                uint64_t kw = ((iw + 1) * W + OW - 1) / OW - (iw * W) / OW;
-                grad += CVT_FLOAT2ACCUM(
-                            output_grad[output_grad_tv.get_tensor_view_idx({n, c, id, ih, iw})]) /
-                        (kd * kh * kw);
+                if(indices[indices_tv.get_tensor_view_idx({n, c, id, ih, iw})] ==
+                   (d * H + h) * W + w)
+                {
+                    grad += CVT_FLOAT2ACCUM(
+                        output_grad[output_grad_tv.get_tensor_view_idx({n, c, id, ih, iw})]);
+                }
             }
         }
     }
@@ -337,7 +437,8 @@ __device__ void adaptiveAvgPoolBackward3d(const TI* __restrict__ output_grad,
     input_grad[input_grad_tv.get_tensor_view_idx({n, c, d, h, w})] = CVT_ACCUM2FLOAT(grad);
 }
 
-extern "C" __global__ void AdaptiveAvgPoolBackward3d(const INPUT_TYPE* __restrict__ output_grad,
+extern "C" __global__ void AdaptiveMaxPoolBackward3d(const uint64_t* __restrict__ indices,
+                                                     const INPUT_TYPE* __restrict__ output_grad,
                                                      OUTPUT_TYPE* __restrict__ input_grad,
                                                      uint64_t N,
                                                      uint64_t C,
@@ -347,9 +448,22 @@ extern "C" __global__ void AdaptiveAvgPoolBackward3d(const INPUT_TYPE* __restric
                                                      uint64_t OD,
                                                      uint64_t OH,
                                                      uint64_t OW,
+                                                     tensor_view_t<5> indices_tv,
                                                      tensor_view_t<5> output_grad_tv,
                                                      tensor_view_t<5> input_grad_tv)
 {
-    adaptiveAvgPoolBackward3d<INPUT_TYPE, OUTPUT_TYPE>(
-        output_grad, input_grad, N, C, D, H, W, OD, OH, OW, output_grad_tv, input_grad_tv);
+    adaptiveMaxPoolBackward3d<INPUT_TYPE, OUTPUT_TYPE>(indices,
+                                                       output_grad,
+                                                       input_grad,
+                                                       N,
+                                                       C,
+                                                       D,
+                                                       H,
+                                                       W,
+                                                       OD,
+                                                       OH,
+                                                       OW,
+                                                       indices_tv,
+                                                       output_grad_tv,
+                                                       input_grad_tv);
 }

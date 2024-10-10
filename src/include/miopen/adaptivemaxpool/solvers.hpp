@@ -29,7 +29,7 @@
 #include <miopen/conv_solution.hpp>
 #include <miopen/execution_context.hpp>
 #include <miopen/solver.hpp>
-#include <miopen/adaptiveavgpool/problem_description.hpp>
+#include <miopen/adaptivemaxpool/problem_description.hpp>
 #include <miopen/kernel_build_params.hpp>
 #include <miopen/kernel_info.hpp>
 #include <miopen/mlo_internal.hpp>
@@ -38,7 +38,7 @@ namespace miopen {
 
 namespace solver {
 
-namespace adaptiveavgpool {
+namespace adaptivemaxpool {
 
 const auto make_hip_kernel = [](std::vector<size_t> localsize,
                                 std::vector<size_t> gridsize,
@@ -55,105 +55,105 @@ const auto make_hip_kernel = [](std::vector<size_t> localsize,
         build_params.GenerateFor(kbp::HIP{}), localsize, gridsize, kernel_file, kernel_name};
 };
 
-using AdaptiveAvgPoolForward =
-    NonTunableSolverBase<ExecutionContext, miopen::adaptiveavgpool::FwdProblemDescription>;
+using AdaptiveMaxPoolForward =
+    NonTunableSolverBase<ExecutionContext, miopen::adaptivemaxpool::FwdProblemDescription>;
 
-using AdaptiveAvgPoolBackward =
-    NonTunableSolverBase<ExecutionContext, miopen::adaptiveavgpool::BwdProblemDescription>;
+using AdaptiveMaxPoolBackward =
+    NonTunableSolverBase<ExecutionContext, miopen::adaptivemaxpool::BwdProblemDescription>;
 
 // FORWARD
-struct AdaptiveAvgPoolForward1d final : AdaptiveAvgPoolForward
+struct AdaptiveMaxPoolForward1d final : AdaptiveMaxPoolForward
 {
     const std::string& SolverDbId() const override
     {
-        return GetSolverDbId<AdaptiveAvgPoolForward1d>();
+        return GetSolverDbId<AdaptiveMaxPoolForward1d>();
     }
 
     bool IsApplicable(const ExecutionContext& context,
-                      const miopen::adaptiveavgpool::FwdProblemDescription& problem) const override;
+                      const miopen::adaptivemaxpool::FwdProblemDescription& problem) const override;
 
     ConvSolution
     GetSolution(const ExecutionContext& context,
-                const miopen::adaptiveavgpool::FwdProblemDescription& problem) const override;
+                const miopen::adaptivemaxpool::FwdProblemDescription& problem) const override;
 };
 
-struct AdaptiveAvgPoolForward2d final : AdaptiveAvgPoolForward
+struct AdaptiveMaxPoolForward2d final : AdaptiveMaxPoolForward
 {
     const std::string& SolverDbId() const override
     {
-        return GetSolverDbId<AdaptiveAvgPoolForward2d>();
+        return GetSolverDbId<AdaptiveMaxPoolForward2d>();
     }
 
     bool IsApplicable(const ExecutionContext& context,
-                      const miopen::adaptiveavgpool::FwdProblemDescription& problem) const override;
+                      const miopen::adaptivemaxpool::FwdProblemDescription& problem) const override;
 
     ConvSolution
     GetSolution(const ExecutionContext& context,
-                const miopen::adaptiveavgpool::FwdProblemDescription& problem) const override;
+                const miopen::adaptivemaxpool::FwdProblemDescription& problem) const override;
 };
 
-struct AdaptiveAvgPoolForward3d final : AdaptiveAvgPoolForward
+struct AdaptiveMaxPoolForward3d final : AdaptiveMaxPoolForward
 {
     const std::string& SolverDbId() const override
     {
-        return GetSolverDbId<AdaptiveAvgPoolForward3d>();
+        return GetSolverDbId<AdaptiveMaxPoolForward3d>();
     }
 
     bool IsApplicable(const ExecutionContext& context,
-                      const miopen::adaptiveavgpool::FwdProblemDescription& problem) const override;
+                      const miopen::adaptivemaxpool::FwdProblemDescription& problem) const override;
 
     ConvSolution
     GetSolution(const ExecutionContext& context,
-                const miopen::adaptiveavgpool::FwdProblemDescription& problem) const override;
+                const miopen::adaptivemaxpool::FwdProblemDescription& problem) const override;
 };
 
 // BACKWARD
-struct AdaptiveAvgPoolBackward1d final : AdaptiveAvgPoolBackward
+struct AdaptiveMaxPoolBackward1d final : AdaptiveMaxPoolBackward
 {
     const std::string& SolverDbId() const override
     {
-        return GetSolverDbId<AdaptiveAvgPoolBackward1d>();
+        return GetSolverDbId<AdaptiveMaxPoolBackward1d>();
     }
 
     bool IsApplicable(const ExecutionContext& context,
-                      const miopen::adaptiveavgpool::BwdProblemDescription& problem) const override;
+                      const miopen::adaptivemaxpool::BwdProblemDescription& problem) const override;
 
     ConvSolution
     GetSolution(const ExecutionContext& context,
-                const miopen::adaptiveavgpool::BwdProblemDescription& problem) const override;
+                const miopen::adaptivemaxpool::BwdProblemDescription& problem) const override;
 };
 
-struct AdaptiveAvgPoolBackward2d final : AdaptiveAvgPoolBackward
+struct AdaptiveMaxPoolBackward2d final : AdaptiveMaxPoolBackward
 {
     const std::string& SolverDbId() const override
     {
-        return GetSolverDbId<AdaptiveAvgPoolBackward2d>();
+        return GetSolverDbId<AdaptiveMaxPoolBackward2d>();
     }
 
     bool IsApplicable(const ExecutionContext& context,
-                      const miopen::adaptiveavgpool::BwdProblemDescription& problem) const override;
+                      const miopen::adaptivemaxpool::BwdProblemDescription& problem) const override;
 
     ConvSolution
     GetSolution(const ExecutionContext& context,
-                const miopen::adaptiveavgpool::BwdProblemDescription& problem) const override;
+                const miopen::adaptivemaxpool::BwdProblemDescription& problem) const override;
 };
 
-struct AdaptiveAvgPoolBackward3d final : AdaptiveAvgPoolBackward
+struct AdaptiveMaxPoolBackward3d final : AdaptiveMaxPoolBackward
 {
     const std::string& SolverDbId() const override
     {
-        return GetSolverDbId<AdaptiveAvgPoolBackward3d>();
+        return GetSolverDbId<AdaptiveMaxPoolBackward3d>();
     }
 
     bool IsApplicable(const ExecutionContext& context,
-                      const miopen::adaptiveavgpool::BwdProblemDescription& problem) const override;
+                      const miopen::adaptivemaxpool::BwdProblemDescription& problem) const override;
 
     ConvSolution
     GetSolution(const ExecutionContext& context,
-                const miopen::adaptiveavgpool::BwdProblemDescription& problem) const override;
+                const miopen::adaptivemaxpool::BwdProblemDescription& problem) const override;
 };
 
-} // namespace adaptiveavgpool
+} // namespace adaptivemaxpool
 
 } // namespace solver
 

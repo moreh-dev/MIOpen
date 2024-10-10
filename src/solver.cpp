@@ -26,7 +26,7 @@
 
 #include <miopen/activ/solvers.hpp>
 #include <miopen/adam/solvers.hpp>
-#include <miopen/adaptiveavgpool/solvers.hpp>
+#include <miopen/adaptivemaxpool/solvers.hpp>
 #include <miopen/batchnorm/solvers.hpp>
 #include <miopen/cat/solvers.hpp>
 #include <miopen/conv/solvers.hpp>
@@ -703,28 +703,28 @@ inline SolverRegistrar::SolverRegistrar(IdRegistryData& registry)
 
     Register(registry,
              ++id,
-             Primitive::AdaptiveAvgPool,
-             adaptiveavgpool::AdaptiveAvgPoolForward1d{}.SolverDbId());
+             Primitive::AdaptiveMaxPool,
+             adaptivemaxpool::AdaptiveMaxPoolForward1d{}.SolverDbId());
     Register(registry,
              ++id,
-             Primitive::AdaptiveAvgPool,
-             adaptiveavgpool::AdaptiveAvgPoolForward2d{}.SolverDbId());
+             Primitive::AdaptiveMaxPool,
+             adaptivemaxpool::AdaptiveMaxPoolForward2d{}.SolverDbId());
     Register(registry,
              ++id,
-             Primitive::AdaptiveAvgPool,
-             adaptiveavgpool::AdaptiveAvgPoolForward3d{}.SolverDbId());
+             Primitive::AdaptiveMaxPool,
+             adaptivemaxpool::AdaptiveMaxPoolForward3d{}.SolverDbId());
     Register(registry,
              ++id,
-             Primitive::AdaptiveAvgPool,
-             adaptiveavgpool::AdaptiveAvgPoolBackward1d{}.SolverDbId());
+             Primitive::AdaptiveMaxPool,
+             adaptivemaxpool::AdaptiveMaxPoolBackward1d{}.SolverDbId());
     Register(registry,
              ++id,
-             Primitive::AdaptiveAvgPool,
-             adaptiveavgpool::AdaptiveAvgPoolBackward2d{}.SolverDbId());
+             Primitive::AdaptiveMaxPool,
+             adaptivemaxpool::AdaptiveMaxPoolBackward2d{}.SolverDbId());
     Register(registry,
              ++id,
-             Primitive::AdaptiveAvgPool,
-             adaptiveavgpool::AdaptiveAvgPoolBackward3d{}.SolverDbId());
+             Primitive::AdaptiveMaxPool,
+             adaptivemaxpool::AdaptiveMaxPoolBackward3d{}.SolverDbId());
     // IMPORTANT: New solvers should be added to the end of the function!
 }
 

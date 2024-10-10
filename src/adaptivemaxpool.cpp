@@ -23,76 +23,85 @@
  * SOFTWARE.
  *
  *******************************************************************************/
-#include <miopen/adaptiveavgpool.hpp>
+#include <miopen/adaptivemaxpool.hpp>
 #include <miopen/kernel_cache.hpp>
 #include <miopen/float_equal.hpp>
 #include <miopen/tensor.hpp>
-#include <miopen/adaptiveavgpool/invoke_params.hpp>
-#include <miopen/adaptiveavgpool/solvers.hpp>
+#include <miopen/adaptivemaxpool/invoke_params.hpp>
+#include <miopen/adaptivemaxpool/solvers.hpp>
 #include <miopen/find_solution.hpp>
 
 namespace miopen {
 
-namespace adaptiveavgpool {
+namespace adaptivemaxpool {
 
-miopenStatus_t AdaptiveAvgPoolForward(Handle& handle,
+miopenStatus_t AdaptiveMaxPoolForward(Handle& handle,
                                       const TensorDescriptor& inputDesc,
                                       ConstData_t input,
                                       const TensorDescriptor& outputDesc,
-                                      Data_t output)
+                                      Data_t output,
+                                      const TensorDescriptor& indicesDesc,
+                                      Data_t indices)
 {
-    const auto problem = adaptiveavgpool::FwdProblemDescription{inputDesc, outputDesc};
+    const auto problem = adaptivemaxpool::FwdProblemDescription{inputDesc, outputDesc, indicesDesc};
 
     const auto invoke_params = [&]() {
-        auto tmp       = adaptiveavgpool::FwdInvokeParams{};
-        tmp.inputDesc  = &inputDesc;
-        tmp.outputDesc = &outputDesc;
+        auto tmp        = adaptivemaxpool::FwdInvokeParams{};
+        tmp.inputDesc   = &inputDesc;
+        tmp.outputDesc  = &outputDesc;
+        tmp.indicesDesc = &indicesDesc;
 
-        tmp.input  = input;
-        tmp.output = output;
+        tmp.input   = input;
+        tmp.output  = output;
+        tmp.indices = indices;
 
         return tmp;
     }();
-    const auto algo = AlgorithmName{"AdaptiveAvgPoolForward"};
+    const auto algo = AlgorithmName{"AdaptiveMaxPoolForward"};
     const auto solvers =
-        solver::SolverContainer<solver::adaptiveavgpool::AdaptiveAvgPoolForward1d,
-                                solver::adaptiveavgpool::AdaptiveAvgPoolForward2d,
-                                solver::adaptiveavgpool::AdaptiveAvgPoolForward3d>{};
+        solver::SolverContainer<solver::adaptivemaxpool::AdaptiveMaxPoolForward1d,
+                                solver::adaptivemaxpool::AdaptiveMaxPoolForward2d,
+                                solver::adaptivemaxpool::AdaptiveMaxPoolForward3d>{};
 
     solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
 
     return miopenStatusSuccess;
 }
 
-miopenStatus_t AdaptiveAvgPoolBackward(Handle& handle,
+miopenStatus_t AdaptiveMaxPoolBackward(Handle& handle,
+                                       const TensorDescriptor& indicesDesc,
+                                       ConstData_t indices,
                                        const TensorDescriptor& outputGradDesc,
                                        ConstData_t output_grad,
                                        const TensorDescriptor& inputGradDesc,
                                        Data_t input_grad)
 {
-    const auto problem = adaptiveavgpool::BwdProblemDescription{outputGradDesc, inputGradDesc};
+    const auto problem =
+        adaptivemaxpool::BwdProblemDescription{indicesDesc, outputGradDesc, inputGradDesc};
 
     const auto invoke_params = [&]() {
-        auto tmp           = adaptiveavgpool::BwdInvokeParams{};
+        auto tmp           = adaptivemaxpool::BwdInvokeParams{};
+        tmp.indicesDesc    = &indicesDesc;
         tmp.outputGradDesc = &outputGradDesc;
         tmp.inputGradDesc  = &inputGradDesc;
 
+        tmp.indices     = indices;
         tmp.output_grad = output_grad;
         tmp.input_grad  = input_grad;
 
         return tmp;
     }();
-    const auto algo = AlgorithmName{"AdaptiveAvgPoolBackward"};
+    const auto algo = AlgorithmName{"AdaptiveMaxPoolBackward"};
     const auto solvers =
-        solver::SolverContainer<solver::adaptiveavgpool::AdaptiveAvgPoolBackward1d,
-                                solver::adaptiveavgpool::AdaptiveAvgPoolBackward2d,
-                                solver::adaptiveavgpool::AdaptiveAvgPoolBackward3d>{};
+        solver::SolverContainer<solver::adaptivemaxpool::AdaptiveMaxPoolBackward1d,
+                                solver::adaptivemaxpool::AdaptiveMaxPoolBackward2d,
+                                solver::adaptivemaxpool::AdaptiveMaxPoolBackward3d>{};
 
     solvers.ExecutePrimitive(handle, problem, algo, invoke_params);
 
     return miopenStatusSuccess;
 }
 
-} // namespace adaptiveavgpool
+} // namespace adaptivemaxpool
 
 } // namespace miopen

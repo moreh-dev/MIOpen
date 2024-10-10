@@ -72,7 +72,7 @@
  * @defgroup ReduceCalculation
  * @defgroup RotaryPositionalEmbeddings
  * @defgroup ReLU
- * @defgroup adaptiveavgpool
+ * @defgroup adaptivemaxpool
  *
  */
 
@@ -8005,13 +8005,13 @@ MIOPEN_EXPORT miopenStatus_t miopenMultiMarginLossForward(miopenHandle_t handle,
 #endif // MIOPEN_BETA_API
 
 #ifdef MIOPEN_BETA_API
-// adaptiveavgpool APIs
-/** @addtogroup adaptiveavgpool
+// adaptivemaxpool APIs
+/** @addtogroup adaptivemaxpool
  *
  *  @{
  */
 
-/*! @brief Execute an adaptiveavgpool forward layer
+/*! @brief Execute an adaptivemaxpool forward layer
  *
  * @param handle                   MIOpen handle (input)
  * @param inputDesc                Tensor descriptor for input tensor (input)
@@ -8020,13 +8020,16 @@ MIOPEN_EXPORT miopenStatus_t miopenMultiMarginLossForward(miopenHandle_t handle,
  * @param output                   Data tensor output (output)
  * @return                         miopenStatus_t
  */
-MIOPEN_EXPORT miopenStatus_t miopenAdaptiveAvgPoolForward(miopenHandle_t handle,
-                                                          const miopenTensorDescriptor_t inputDesc,
-                                                          const void* input,
-                                                          const miopenTensorDescriptor_t outputDesc,
-                                                          void* output);
+MIOPEN_EXPORT miopenStatus_t
+miopenAdaptiveMaxPoolForward(miopenHandle_t handle,
+                             const miopenTensorDescriptor_t inputDesc,
+                             const void* input,
+                             const miopenTensorDescriptor_t outputDesc,
+                             void* output,
+                             const miopenTensorDescriptor_t indicesDesc,
+                             void* indices);
 
-/*! @brief Execute an adaptiveavgpool backward layer
+/*! @brief Execute an adaptivemaxpool backward layer
  *
  * @param handle                   MIOpen handle (input)
  * @param outputGradDesc           Tensor descriptor for output grad tensor (input)
@@ -8036,13 +8039,15 @@ MIOPEN_EXPORT miopenStatus_t miopenAdaptiveAvgPoolForward(miopenHandle_t handle,
  * @return                         miopenStatus_t
  */
 MIOPEN_EXPORT miopenStatus_t
-miopenAdaptiveAvgPoolBackward(miopenHandle_t handle,
+miopenAdaptiveMaxPoolBackward(miopenHandle_t handle,
+                              const miopenTensorDescriptor_t indicesDesc,
+                              const void* indices,
                               const miopenTensorDescriptor_t outputGradDesc,
                               const void* output_grad,
                               const miopenTensorDescriptor_t inputGradDesc,
                               void* input_grad);
 /** @} */
-// CLOSEOUT adaptiveavgpool DOXYGEN GROUP
+// CLOSEOUT adaptivemaxpool DOXYGEN GROUP
 #endif // MIOPEN_BETA_API
 
 #ifdef __cplusplus

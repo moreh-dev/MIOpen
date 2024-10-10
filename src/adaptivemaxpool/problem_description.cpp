@@ -24,13 +24,13 @@
  *
  *******************************************************************************/
 
-#include <miopen/adaptiveavgpool/problem_description.hpp>
+#include <miopen/adaptivemaxpool/problem_description.hpp>
 #include <miopen/names.hpp>
 #include <sstream>
 
 namespace miopen {
 
-namespace adaptiveavgpool {
+namespace adaptivemaxpool {
 
 inline std::ostream& operator<<(std::ostream& os, const std::vector<size_t>& v)
 {
@@ -47,17 +47,19 @@ inline std::ostream& operator<<(std::ostream& os, const std::vector<size_t>& v)
 
 NetworkConfig FwdProblemDescription::MakeNetworkConfig() const
 {
-    auto input_size  = inputDesc.GetLengths();
-    auto output_size = outputDesc.GetLengths();
+    auto input_size   = inputDesc.GetLengths();
+    auto output_size  = outputDesc.GetLengths();
+    auto indices_size = indicesDesc.GetLengths();
 
     auto input_dtype = inputDesc.GetType();
 
     std::ostringstream ss;
 
-    ss << "adaptiveavgpool_fwd";
+    ss << "adaptivemaxpool_fwd";
     ss << "-input_dtype" << input_dtype;
-    ss << "-Is" << input_size;
+    ss << "-Xs" << input_size;
     ss << "-Os" << output_size;
+    ss << "-Is" << indices_size;
     ss << "-Con" << IsAllContiguous();
 
     return NetworkConfig{ss.str()};
@@ -65,24 +67,24 @@ NetworkConfig FwdProblemDescription::MakeNetworkConfig() const
 
 NetworkConfig BwdProblemDescription::MakeNetworkConfig() const
 {
-    auto input_grad_size    = inputGradDesc.GetLengths();
-    auto output_grad_size   = outputGradDesc.GetLengths();
-    auto input_grad_stride  = inputGradDesc.GetStrides();
-    auto output_grad_stride = outputGradDesc.GetStrides();
+    auto indices_size     = indicesDesc.GetLengths();
+    auto input_grad_size  = inputGradDesc.GetLengths();
+    auto output_grad_size = outputGradDesc.GetLengths();
 
     auto input_dtype = inputGradDesc.GetType();
 
     std::ostringstream ss;
 
-    ss << "adaptiveavgpool_bwd";
+    ss << "adaptivemaxpool_bwd";
     ss << "-input_dtype" << input_dtype;
-    ss << "-dIs" << input_grad_size;
+    ss << "-Is" << indices_size;
+    ss << "-dXs" << input_grad_size;
     ss << "-dOs" << output_grad_size;
     ss << "-Con" << IsAllContiguous();
 
     return NetworkConfig{ss.str()};
 }
 
-} // namespace adaptiveavgpool
+} // namespace adaptivemaxpool
 
 } // namespace miopen

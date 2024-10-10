@@ -23,72 +23,72 @@
  * SOFTWARE.
  *
  *******************************************************************************/
-#include "adaptiveavgpool.hpp"
+#include "adaptivemaxpool.hpp"
 #include "gtest/gtest.h"
 using float16 = half_float::half;
 
 // FORWARD TEST
-using GPU_AdaptiveAvgpool_fwd_FP32  = AdaptiveAvgPoolTestFwd<float>;
-using GPU_AdaptiveAvgpool_fwd_FP16  = AdaptiveAvgPoolTestFwd<float16>;
-using GPU_AdaptiveAvgpool_fwd_BFP16 = AdaptiveAvgPoolTestFwd<bfloat16>;
+using GPU_AdaptiveMaxpool_fwd_FP32  = AdaptiveMaxPoolTestFwd<float>;
+using GPU_AdaptiveMaxpool_fwd_FP16  = AdaptiveMaxPoolTestFwd<float16>;
+using GPU_AdaptiveMaxpool_fwd_BFP16 = AdaptiveMaxPoolTestFwd<bfloat16>;
 
-TEST_P(GPU_AdaptiveAvgpool_fwd_FP32, AdaptiveAvgPoolTestFwd)
+TEST_P(GPU_AdaptiveMaxpool_fwd_FP32, AdaptiveMaxPoolTestFwd)
 {
     RunTest();
     Verify();
 };
 
-TEST_P(GPU_AdaptiveAvgpool_fwd_FP16, AdaptiveAvgPoolTestFwd)
+TEST_P(GPU_AdaptiveMaxpool_fwd_FP16, AdaptiveMaxPoolTestFwd)
 {
     RunTest();
     Verify();
 };
 
-TEST_P(GPU_AdaptiveAvgpool_fwd_BFP16, AdaptiveAvgPoolTestFwd)
+TEST_P(GPU_AdaptiveMaxpool_fwd_BFP16, AdaptiveMaxPoolTestFwd)
 {
     RunTest();
     Verify();
 };
 
 INSTANTIATE_TEST_SUITE_P(Smoke,
-                         GPU_AdaptiveAvgpool_fwd_FP32,
-                         testing::ValuesIn(AdaptiveAvgPoolTestConfigsFwdFp32()));
+                         GPU_AdaptiveMaxpool_fwd_FP32,
+                         testing::ValuesIn(AdaptiveMaxPoolTestConfigsFwdFp32()));
 INSTANTIATE_TEST_SUITE_P(Smoke,
-                         GPU_AdaptiveAvgpool_fwd_FP16,
-                         testing::ValuesIn(AdaptiveAvgPoolTestConfigsFwdFp16()));
+                         GPU_AdaptiveMaxpool_fwd_FP16,
+                         testing::ValuesIn(AdaptiveMaxPoolTestConfigsFwdFp16()));
 INSTANTIATE_TEST_SUITE_P(Smoke,
-                         GPU_AdaptiveAvgpool_fwd_BFP16,
-                         testing::ValuesIn(AdaptiveAvgPoolTestConfigsFwdBfp16()));
+                         GPU_AdaptiveMaxpool_fwd_BFP16,
+                         testing::ValuesIn(AdaptiveMaxPoolTestConfigsFwdBfp16()));
 
 // BACKWARD TEST
-using GPU_AdaptiveAvgpool_bwd_FP32  = AdaptiveAvgPoolTestBwd<float>;
-using GPU_AdaptiveAvgpool_bwd_FP16  = AdaptiveAvgPoolTestBwd<float16>;
-using GPU_AdaptiveAvgpool_bwd_BFP16 = AdaptiveAvgPoolTestBwd<bfloat16>;
+using GPU_AdaptiveMaxpool_bwd_FP32  = AdaptiveMaxPoolTestBwd<float>;
+using GPU_AdaptiveMaxpool_bwd_FP16  = AdaptiveMaxPoolTestBwd<float16>;
+using GPU_AdaptiveMaxpool_bwd_BFP16 = AdaptiveMaxPoolTestBwd<bfloat16>;
 
-TEST_P(GPU_AdaptiveAvgpool_bwd_FP32, AdaptiveAvgPoolTestBwd)
+TEST_P(GPU_AdaptiveMaxpool_bwd_FP32, AdaptiveMaxPoolTestBwd)
 {
     RunTest();
     Verify();
 };
 
-TEST_P(GPU_AdaptiveAvgpool_bwd_FP16, AdaptiveAvgPoolTestBwd)
+TEST_P(GPU_AdaptiveMaxpool_bwd_FP16, AdaptiveMaxPoolTestBwd)
 {
     RunTest();
     Verify();
 };
 
-TEST_P(GPU_AdaptiveAvgpool_bwd_BFP16, AdaptiveAvgPoolTestBwd)
+TEST_P(GPU_AdaptiveMaxpool_bwd_BFP16, AdaptiveMaxPoolTestBwd)
 {
     RunTest();
     Verify();
 };
 
 INSTANTIATE_TEST_SUITE_P(Smoke,
-                         GPU_AdaptiveAvgpool_bwd_FP32,
-                         testing::ValuesIn(AdaptiveAvgPoolTestConfigsBwdFp32()));
+                         GPU_AdaptiveMaxpool_bwd_FP32,
+                         testing::ValuesIn(AdaptiveMaxPoolTestConfigsBwdFp32()));
 INSTANTIATE_TEST_SUITE_P(Smoke,
-                         GPU_AdaptiveAvgpool_bwd_FP16,
-                         testing::ValuesIn(AdaptiveAvgPoolTestConfigsBwdFp16()));
+                         GPU_AdaptiveMaxpool_bwd_FP16,
+                         testing::ValuesIn(AdaptiveMaxPoolTestConfigsBwdFp16()));
 INSTANTIATE_TEST_SUITE_P(Smoke,
-                         GPU_AdaptiveAvgpool_bwd_BFP16,
-                         testing::ValuesIn(AdaptiveAvgPoolTestConfigsBwdBfp16()));
+                         GPU_AdaptiveMaxpool_bwd_BFP16,
+                         testing::ValuesIn(AdaptiveMaxPoolTestConfigsBwdBfp16()));

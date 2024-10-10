@@ -28,22 +28,22 @@
 #include <miopen/execution_context.hpp>
 #include <miopen/invoke_params.hpp>
 #include <miopen/tensor_view_utils.hpp>
-#include <miopen/adaptiveavgpool/solvers.hpp>
+#include <miopen/adaptivemaxpool/solvers.hpp>
 
-#include <miopen/adaptiveavgpool/invoke_params.hpp>
+#include <miopen/adaptivemaxpool/invoke_params.hpp>
 #include <miopen/datatype.hpp>
-#include <miopen/adaptiveavgpool.hpp>
+#include <miopen/adaptivemaxpool.hpp>
 #include <miopen/target_properties.hpp>
 
-#define LOCAL_SIZE_FWD_3D 256
+#define LOCAL_SIZE_FWD_2D 256
 
 namespace miopen {
 
 namespace solver {
 
-namespace adaptiveavgpool {
+namespace adaptivemaxpool {
 
-bool IsOverRocmFwd3d(const miopen::adaptiveavgpool::FwdProblemDescription& problem)
+bool IsOverRocmFwd2d(const miopen::adaptivemaxpool::FwdProblemDescription& problem)
 {
     auto in_nelems   = problem.GetInputDesc().GetElementSize();
     auto out_nelems  = problem.GetOutputDesc().GetElementSize();
@@ -51,28 +51,28 @@ bool IsOverRocmFwd3d(const miopen::adaptiveavgpool::FwdProblemDescription& probl
 
     if(problem.IsAllContiguous())
     {
-        if(in_over_out <= 98)
+        if((in_over_out < 13) || (in_over_out >= 100 && in_over_out <= 112))
             return true;
     }
     else
     {
-        if(in_over_out < 8000)
+        if(in_over_out < 248)
             return true;
     }
     return false;
 }
 
-bool AdaptiveAvgPoolForward3d::IsApplicable(
-    const ExecutionContext&, const miopen::adaptiveavgpool::FwdProblemDescription& problem) const
+bool AdaptiveMaxPoolForward2d::IsApplicable(
+    const ExecutionContext&, const miopen::adaptivemaxpool::FwdProblemDescription& problem) const
 {
-    if(problem.GetInputDesc().GetNumDims() != 5 || problem.GetOutputDesc().GetNumDims() != 5)
+    if(problem.GetInputDesc().GetNumDims() != 4 || problem.GetOutputDesc().GetNumDims() != 4)
     {
         return false;
     }
-    if(!IsOverRocmFwd3d(problem))
-    {
-        return false;
-    }
+    // if(!IsOverRocmFwd2d(problem))
+    // {
+    //     return false;
+    // }
     if(!(problem.GetInputDesc().GetType() == miopenFloat ||
          problem.GetInputDesc().GetType() == miopenHalf ||
          problem.GetInputDesc().GetType() == miopenBFloat16))
@@ -80,9 +80,9 @@ bool AdaptiveAvgPoolForward3d::IsApplicable(
     return true;
 }
 
-ConvSolution AdaptiveAvgPoolForward3d::GetSolution(
+ConvSolution AdaptiveMaxPoolForward2d::GetSolution(
     const ExecutionContext& context,
-    const miopen::adaptiveavgpool::FwdProblemDescription& problem) const
+    const miopen::adaptivemaxpool::FwdProblemDescription& problem) const
 {
     std::ignore = context;
 
@@ -91,6 +91,7 @@ ConvSolution AdaptiveAvgPoolForward3d::GetSolution(
     auto output_dtype = miopen::GetDataType(problem.GetOutputDesc().GetType());
     auto dtype        = problem.GetOutputDesc().GetType();
     uint64_t N_total  = problem.GetNtotal();
+    float infinity    = std::numeric_limits<float>::max();
 
     auto build_params = KernelBuildParameters{
         {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
@@ -98,40 +99,52 @@ ConvSolution AdaptiveAvgPoolForward3d::GetSolution(
         {"MIOPEN_USE_FP64", static_cast<int>(dtype == miopenDouble)},
         {"MIOPEN_USE_BFP16", static_cast<int>(dtype == miopenBFloat16)},
         {"INPUT_TYPE", input_dtype == "bfloat16" ? "ushort" : input_dtype},
-        {"OUTPUT_TYPE", output_dtype == "bfloat16" ? "ushort" : output_dtype}};
+        {"OUTPUT_TYPE", output_dtype == "bfloat16" ? "ushort" : output_dtype},
+        {"INFINITY", infinity},
+    };
 
-    result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE_FWD_3D},
+    result.construction_params.push_back(make_hip_kernel({LOCAL_SIZE_FWD_2D},
                                                          {N_total},
-                                                         "MIOpenAdaptiveAvgPool.cpp",
-                                                         "AdaptiveAvgPoolForward3d",
+                                                         "MIOpenAdaptiveMaxPool.cpp",
+                                                         "AdaptiveMaxPoolForward2d",
                                                          build_params));
 
     result.invoker_factory = [](const std::vector<Kernel>& kernels) {
         return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
-            decltype(auto) params = raw_params.CastTo<miopen::adaptiveavgpool::FwdInvokeParams>();
+            decltype(auto) params = raw_params.CastTo<miopen::adaptivemaxpool::FwdInvokeParams>();
 
             decltype(auto) kernel = handle_.Run(kernels.front());
 
-            auto input_tv  = get_inner_expanded_tv<5>(deref(params.inputDesc));
-            auto output_tv = get_inner_expanded_tv<5>(deref(params.outputDesc));
+            auto input_tv   = get_inner_expanded_tv<4>(deref(params.inputDesc));
+            auto output_tv  = get_inner_expanded_tv<4>(deref(params.outputDesc));
+            auto indices_tv = get_inner_expanded_tv<4>(deref(params.indicesDesc));
 
             uint64_t N  = deref(params.inputDesc).GetLengths()[0];
             uint64_t C  = deref(params.inputDesc).GetLengths()[1];
-            uint64_t D  = deref(params.inputDesc).GetLengths()[2];
-            uint64_t H  = deref(params.inputDesc).GetLengths()[3];
-            uint64_t W  = deref(params.inputDesc).GetLengths()[4];
-            uint64_t OD = deref(params.outputDesc).GetLengths()[2];
-            uint64_t OH = deref(params.outputDesc).GetLengths()[3];
-            uint64_t OW = deref(params.outputDesc).GetLengths()[4];
+            uint64_t H  = deref(params.inputDesc).GetLengths()[2];
+            uint64_t W  = deref(params.inputDesc).GetLengths()[3];
+            uint64_t OH = deref(params.outputDesc).GetLengths()[2];
+            uint64_t OW = deref(params.outputDesc).GetLengths()[3];
 
-            kernel(params.input, params.output, N, C, D, H, W, OD, OH, OW, input_tv, output_tv);
+            kernel(params.input,
+                   params.output,
+                   params.indices,
+                   N,
+                   C,
+                   H,
+                   W,
+                   OH,
+                   OW,
+                   input_tv,
+                   output_tv,
+                   indices_tv);
         };
     };
 
     return result;
 }
 
-} // namespace adaptiveavgpool
+} // namespace adaptivemaxpool
 
 } // namespace solver
 

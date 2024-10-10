@@ -27,7 +27,7 @@
 
 #include "InputFlags.hpp"
 #include "driver.hpp"
-#include "mloAdaptiveAvgPoolHost.hpp"
+#include "mloAdaptiveMaxPoolHost.hpp"
 #include "random.hpp"
 #include "tensor_driver.hpp"
 #include "timer.hpp"
@@ -35,6 +35,7 @@
 #include <../test/tensor_holder.hpp>
 #include <../test/verify.hpp>
 
+#include <cstdint>
 #include <miopen/env.hpp>
 #include <miopen/handle.hpp>
 #include <miopen/miopen.h>
@@ -42,15 +43,16 @@
 #include <vector>
 
 template <typename Tgpu, typename Tref>
-class AdaptiveAvgPoolDriver : public Driver
+class AdaptiveMaxPoolDriver : public Driver
 {
 public:
-    AdaptiveAvgPoolDriver() : Driver()
+    AdaptiveMaxPoolDriver() : Driver()
     {
         miopenCreateTensorDescriptor(&inputDesc);
         miopenCreateTensorDescriptor(&outputDesc);
         miopenCreateTensorDescriptor(&inputGradDesc);
         miopenCreateTensorDescriptor(&outputGradDesc);
+        miopenCreateTensorDescriptor(&indicesDesc);
 
         data_type = miopen_type<Tgpu>{};
     }
@@ -73,12 +75,13 @@ public:
     Tref GetTolerance();
     int VerifyBackward() override;
     int VerifyForward() override;
-    ~AdaptiveAvgPoolDriver() override
+    ~AdaptiveMaxPoolDriver() override
     {
         miopenDestroyTensorDescriptor(inputDesc);
         miopenDestroyTensorDescriptor(outputDesc);
         miopenDestroyTensorDescriptor(inputGradDesc);
         miopenDestroyTensorDescriptor(outputGradDesc);
+        miopenDestroyTensorDescriptor(indicesDesc);
     }
 
 private:
@@ -90,11 +93,13 @@ private:
     miopenTensorDescriptor_t outputDesc;
     miopenTensorDescriptor_t inputGradDesc;
     miopenTensorDescriptor_t outputGradDesc;
+    miopenTensorDescriptor_t indicesDesc;
 
     std::unique_ptr<GPUMem> input_dev;
     std::unique_ptr<GPUMem> output_dev;
     std::unique_ptr<GPUMem> input_grad_dev;
     std::unique_ptr<GPUMem> output_grad_dev;
+    std::unique_ptr<GPUMem> indices_dev;
 
     std::vector<Tgpu> input;
     std::vector<Tgpu> output;
@@ -102,6 +107,8 @@ private:
     std::vector<Tgpu> input_grad;
     std::vector<Tref> input_grad_host;
     std::vector<Tgpu> output_grad;
+    std::vector<uint64_t> indices;
+    std::vector<uint64_t> indices_host;
 
     size_t N = 1, C = 1, D = 1, H = 1, W = 1, OD = 1, OH = 1, OW = 1;
 
@@ -111,7 +118,7 @@ private:
 };
 
 template <typename Tgpu, typename Tref>
-int AdaptiveAvgPoolDriver<Tgpu, Tref>::ParseCmdLineArgs(int argc, char* argv[])
+int AdaptiveMaxPoolDriver<Tgpu, Tref>::ParseCmdLineArgs(int argc, char* argv[])
 {
     inflags.Parse(argc, argv);
     isContiguous = inflags.GetValueInt("is-contiguous") == 1 ? true : false;
@@ -124,15 +131,16 @@ int AdaptiveAvgPoolDriver<Tgpu, Tref>::ParseCmdLineArgs(int argc, char* argv[])
 }
 
 template <typename Tgpu, typename Tref>
-int AdaptiveAvgPoolDriver<Tgpu, Tref>::GetandSetData()
+int AdaptiveMaxPoolDriver<Tgpu, Tref>::GetandSetData()
 {
     in_dim                     = inflags.GetValueTensor("input_dims").lengths;
     std::vector<int> in_stride = ComputeStrides(in_dim);
     out_dim                    = inflags.GetValueTensor("output_dims").lengths;
+
     if(in_dim.size() != out_dim.size() + 2)
     {
         MIOPEN_THROW(miopenStatusBadParm,
-                     "AdaptiveAvgPool: Input and output tensor sizes do not match.");
+                     "AdaptiveMaxPool: Input and output tensor sizes do not match.");
     }
     N                              = in_dim[0];
     C                              = in_dim[1];
@@ -167,7 +175,12 @@ int AdaptiveAvgPoolDriver<Tgpu, Tref>::GetandSetData()
         out_dim_final.push_back(OH);
         out_dim_final.push_back(OW);
     }
+
     std::vector<int> out_grad_stride = ComputeStrides(out_dim_final);
+    std::vector<int> indices_dim     = out_dim_final;
+
+    if(SetTensorNd(indicesDesc, indices_dim, miopen_type<uint64_t>{}) != miopenStatusSuccess)
+        MIOPEN_THROW("Error parsing indices tensor: " + inflags.GetValueStr("indices_dim") + ".");
     if(SetTensorNd(inputDesc, in_dim, in_stride, data_type) != miopenStatusSuccess)
         MIOPEN_THROW("Error parsing input tensor: " + inflags.GetValueStr("input_dims") + ".");
     if(SetTensorNd(outputDesc, out_dim_final, data_type) != miopenStatusSuccess)
@@ -184,7 +197,7 @@ int AdaptiveAvgPoolDriver<Tgpu, Tref>::GetandSetData()
 
 // Equivalent to: tensor.tranpose(0, -1).contiguous().tranpose(0, -1) incase contiguous = False
 template <typename Tgpu, typename Tref>
-std::vector<int> AdaptiveAvgPoolDriver<Tgpu, Tref>::ComputeStrides(std::vector<int> inputDim)
+std::vector<int> AdaptiveMaxPoolDriver<Tgpu, Tref>::ComputeStrides(std::vector<int> inputDim)
 {
     if(!isContiguous)
         std::swap(inputDim.front(), inputDim.back());
@@ -198,9 +211,9 @@ std::vector<int> AdaptiveAvgPoolDriver<Tgpu, Tref>::ComputeStrides(std::vector<i
 }
 
 template <typename Tgpu, typename Tref>
-int AdaptiveAvgPoolDriver<Tgpu, Tref>::AddCmdLineArgs()
+int AdaptiveMaxPoolDriver<Tgpu, Tref>::AddCmdLineArgs()
 {
-    inflags.AddInputFlag("forw", 'F', "1", "Run only Forward AdaptiveAvgPool (Default=1)", "int");
+    inflags.AddInputFlag("forw", 'F', "1", "Run only Forward AdaptiveMaxPool (Default=1)", "int");
     inflags.AddTensorFlag(
         "input_dims",
         'D',
@@ -222,10 +235,11 @@ int AdaptiveAvgPoolDriver<Tgpu, Tref>::AddCmdLineArgs()
 }
 
 template <typename Tgpu, typename Tref>
-int AdaptiveAvgPoolDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
+int AdaptiveMaxPoolDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
 {
-    size_t input_sz  = GetTensorSize(inputDesc);
-    size_t output_sz = GetTensorSize(outputDesc);
+    size_t input_sz   = GetTensorSize(inputDesc);
+    size_t output_sz  = GetTensorSize(outputDesc);
+    size_t indices_sz = GetTensorSize(indicesDesc);
 
     uint32_t ctx = 0;
 
@@ -233,6 +247,7 @@ int AdaptiveAvgPoolDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     output_dev      = std::unique_ptr<GPUMem>(new GPUMem(ctx, output_sz, sizeof(Tgpu)));
     input_grad_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, input_sz, sizeof(Tgpu)));
     output_grad_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, output_sz, sizeof(Tgpu)));
+    indices_dev     = std::unique_ptr<GPUMem>(new GPUMem(ctx, indices_sz, sizeof(uint64_t)));
 
     input       = std::vector<Tgpu>(input_sz, static_cast<Tgpu>(0));
     output      = std::vector<Tgpu>(output_sz, static_cast<Tgpu>(0));
@@ -241,6 +256,9 @@ int AdaptiveAvgPoolDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     input_grad      = std::vector<Tgpu>(input_sz, static_cast<Tgpu>(0));
     input_grad_host = std::vector<Tref>(input_sz, static_cast<Tref>(0));
     output_grad     = std::vector<Tgpu>(output_sz, static_cast<Tgpu>(0));
+
+    indices      = std::vector<uint64_t>(indices_sz, static_cast<uint64_t>(0));
+    indices_host = std::vector<uint64_t>(indices_sz, static_cast<uint64_t>(0));
 
     int status;
 
@@ -260,6 +278,13 @@ int AdaptiveAvgPoolDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     }
     status |= output_grad_dev->ToGPU(q, output_grad.data());
 
+    for(int i = 0; i < indices_sz; i++)
+    {
+        indices[i] =
+            prng::gen_A_to_B<uint64_t>(static_cast<uint64_t>(0), static_cast<uint64_t>(10));
+    }
+    status |= indices_dev->ToGPU(q, indices.data());
+
     if(status != 0)
     {
         std::cout << "Error copying data to GPU\n" << std::endl;
@@ -270,7 +295,7 @@ int AdaptiveAvgPoolDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
 }
 
 template <typename Tgpu, typename Tref>
-int AdaptiveAvgPoolDriver<Tgpu, Tref>::RunForwardGPU()
+int AdaptiveMaxPoolDriver<Tgpu, Tref>::RunForwardGPU()
 {
     float kernel_total_time = 0.0;
     float kernel_first_time = 0.0;
@@ -280,9 +305,14 @@ int AdaptiveAvgPoolDriver<Tgpu, Tref>::RunForwardGPU()
 
     for(int i = 0; i < inflags.GetValueInt("iter"); i++)
     {
-        auto status = miopenAdaptiveAvgPoolForward(
-            GetHandle(), inputDesc, input_dev->GetMem(), outputDesc, output_dev->GetMem());
-        MIOPEN_THROW_IF(status != miopenStatusSuccess, "Error in miopenAdaptiveAvgPoolForward");
+        auto status = miopenAdaptiveMaxPoolForward(GetHandle(),
+                                                   inputDesc,
+                                                   input_dev->GetMem(),
+                                                   outputDesc,
+                                                   output_dev->GetMem(),
+                                                   indicesDesc,
+                                                   indices_dev->GetMem());
+        MIOPEN_THROW_IF(status != miopenStatusSuccess, "Error in miopenAdaptiveMaxPoolForward");
 
         float time = 0.0;
         miopenGetKernelTime(GetHandle(), &time);
@@ -296,12 +326,12 @@ int AdaptiveAvgPoolDriver<Tgpu, Tref>::RunForwardGPU()
         STOP_TIME
         int iter = inflags.GetValueInt("iter");
         if(WALL_CLOCK)
-            std::cout << "Wall-clock Time Forward AdaptiveAvgPool Elapsed: "
+            std::cout << "Wall-clock Time Forward AdaptiveMaxPool Elapsed: "
                       << t.gettime_ms() / iter << " ms" << std::endl;
 
         float kernel_average_time =
             iter > 1 ? (kernel_total_time - kernel_first_time) / (iter - 1) : kernel_first_time;
-        std::cout << "GPU Kernel Time Forward AdaptiveAvgPool Elapsed: " << kernel_average_time
+        std::cout << "GPU Kernel Time Forward AdaptiveMaxPool Elapsed: " << kernel_average_time
                   << " ms" << std::endl;
     }
 
@@ -316,36 +346,66 @@ int AdaptiveAvgPoolDriver<Tgpu, Tref>::RunForwardGPU()
 }
 
 template <typename Tgpu, typename Tref>
-int AdaptiveAvgPoolDriver<Tgpu, Tref>::RunForwardCPU()
+int AdaptiveMaxPoolDriver<Tgpu, Tref>::RunForwardCPU()
 {
     int status = miopenStatusSuccess;
 
     if(in_dim.size() == 3)
     {
-        status = mloAdaptiveAvgPoolForward1dRunHost<Tgpu, Tref>(
-            inputDesc, outputDesc, input.data(), output_host.data(), N, C, H, OH);
+        status = mloAdaptiveMaxPoolForward1dRunHost<Tgpu, Tref>(inputDesc,
+                                                                outputDesc,
+                                                                indicesDesc,
+                                                                input.data(),
+                                                                output_host.data(),
+                                                                indices_host.data(),
+                                                                N,
+                                                                C,
+                                                                H,
+                                                                OH);
         MIOPEN_THROW_IF(status != miopenStatusSuccess,
-                        "Error in mloAdaptiveAvgPoolForward1dRunHost");
+                        "Error in mloAdaptiveMaxPoolForward1dRunHost");
     }
     else if(in_dim.size() == 4)
     {
-        status = mloAdaptiveAvgPoolForward2dRunHost<Tgpu, Tref>(
-            inputDesc, outputDesc, input.data(), output_host.data(), N, C, H, W, OH, OW);
+        status = mloAdaptiveMaxPoolForward2dRunHost<Tgpu, Tref>(inputDesc,
+                                                                outputDesc,
+                                                                indicesDesc,
+                                                                input.data(),
+                                                                output_host.data(),
+                                                                indices_host.data(),
+                                                                N,
+                                                                C,
+                                                                H,
+                                                                W,
+                                                                OH,
+                                                                OW);
         MIOPEN_THROW_IF(status != miopenStatusSuccess,
-                        "Error in mloAdaptiveAvgPoolForward2dRunHost");
+                        "Error in mloAdaptiveMaxPoolForward2dRunHost");
     }
     else if(in_dim.size() == 5)
     {
-        status = mloAdaptiveAvgPoolForward3dRunHost<Tgpu, Tref>(
-            inputDesc, outputDesc, input.data(), output_host.data(), N, C, D, H, W, OD, OH, OW);
+        status = mloAdaptiveMaxPoolForward3dRunHost<Tgpu, Tref>(inputDesc,
+                                                                outputDesc,
+                                                                indicesDesc,
+                                                                input.data(),
+                                                                output_host.data(),
+                                                                indices_host.data(),
+                                                                N,
+                                                                C,
+                                                                D,
+                                                                H,
+                                                                W,
+                                                                OD,
+                                                                OH,
+                                                                OW);
         MIOPEN_THROW_IF(status != miopenStatusSuccess,
-                        "Error in mloAdaptiveAvgPoolForward3dRunHost");
+                        "Error in mloAdaptiveMaxPoolForward3dRunHost");
     }
     return status;
 }
 
 template <typename Tgpu, typename Tref>
-int AdaptiveAvgPoolDriver<Tgpu, Tref>::RunBackwardGPU()
+int AdaptiveMaxPoolDriver<Tgpu, Tref>::RunBackwardGPU()
 {
     float kernel_total_time = 0.0;
     float kernel_first_time = 0.0;
@@ -355,12 +415,14 @@ int AdaptiveAvgPoolDriver<Tgpu, Tref>::RunBackwardGPU()
 
     for(int i = 0; i < inflags.GetValueInt("iter"); i++)
     {
-        auto status = miopenAdaptiveAvgPoolBackward(GetHandle(),
+        auto status = miopenAdaptiveMaxPoolBackward(GetHandle(),
+                                                    indicesDesc,
+                                                    indices_dev->GetMem(),
                                                     outputGradDesc,
                                                     output_grad_dev->GetMem(),
                                                     inputGradDesc,
                                                     input_grad_dev->GetMem());
-        MIOPEN_THROW_IF(status != miopenStatusSuccess, "Error in miopenAdaptiveAvgPoolBackward");
+        MIOPEN_THROW_IF(status != miopenStatusSuccess, "Error in miopenAdaptiveMaxPoolBackward");
 
         float time = 0.0;
         miopenGetKernelTime(GetHandle(), &time);
@@ -374,12 +436,12 @@ int AdaptiveAvgPoolDriver<Tgpu, Tref>::RunBackwardGPU()
         STOP_TIME
         int iter = inflags.GetValueInt("iter");
         if(WALL_CLOCK)
-            std::cout << "Wall-clock Time Backward AdaptiveAvgPool Elapsed: "
+            std::cout << "Wall-clock Time Backward AdaptiveMaxPool Elapsed: "
                       << t.gettime_ms() / iter << " ms" << std::endl;
 
         float kernel_average_time =
             iter > 1 ? (kernel_total_time - kernel_first_time) / (iter - 1) : kernel_first_time;
-        std::cout << "GPU Kernel Time Backward AdaptiveAvgPool Elapsed: " << kernel_average_time
+        std::cout << "GPU Kernel Time Backward AdaptiveMaxPool Elapsed: " << kernel_average_time
                   << " ms" << std::endl;
     }
 
@@ -394,21 +456,31 @@ int AdaptiveAvgPoolDriver<Tgpu, Tref>::RunBackwardGPU()
 }
 
 template <typename Tgpu, typename Tref>
-int AdaptiveAvgPoolDriver<Tgpu, Tref>::RunBackwardCPU()
+int AdaptiveMaxPoolDriver<Tgpu, Tref>::RunBackwardCPU()
 {
     int status = miopenStatusSuccess;
 
     if(in_dim.size() == 3)
     {
-        status = mloAdaptiveAvgPoolBackward1dRunHost<Tgpu, Tref>(
-            outputGradDesc, inputGradDesc, output_grad.data(), input_grad_host.data(), N, C, H, OH);
+        status = mloAdaptiveMaxPoolBackward1dRunHost<Tgpu, Tref>(indicesDesc,
+                                                                 outputGradDesc,
+                                                                 inputGradDesc,
+                                                                 indices.data(),
+                                                                 output_grad.data(),
+                                                                 input_grad_host.data(),
+                                                                 N,
+                                                                 C,
+                                                                 H,
+                                                                 OH);
         MIOPEN_THROW_IF(status != miopenStatusSuccess,
-                        "Error in mloAdaptiveAvgPoolBackward1dRunHost");
+                        "Error in mloAdaptiveMaxPoolBackward1dRunHost");
     }
     else if(in_dim.size() == 4)
     {
-        status = mloAdaptiveAvgPoolBackward2dRunHost<Tgpu, Tref>(outputGradDesc,
+        status = mloAdaptiveMaxPoolBackward2dRunHost<Tgpu, Tref>(indicesDesc,
+                                                                 outputGradDesc,
                                                                  inputGradDesc,
+                                                                 indices.data(),
                                                                  output_grad.data(),
                                                                  input_grad_host.data(),
                                                                  N,
@@ -418,12 +490,14 @@ int AdaptiveAvgPoolDriver<Tgpu, Tref>::RunBackwardCPU()
                                                                  OH,
                                                                  OW);
         MIOPEN_THROW_IF(status != miopenStatusSuccess,
-                        "Error in mloAdaptiveAvgPoolBackward2dRunHost");
+                        "Error in mloAdaptiveMaxPoolBackward2dRunHost");
     }
     else if(in_dim.size() == 5)
     {
-        status = mloAdaptiveAvgPoolBackward3dRunHost<Tgpu, Tref>(outputGradDesc,
+        status = mloAdaptiveMaxPoolBackward3dRunHost<Tgpu, Tref>(indicesDesc,
+                                                                 outputGradDesc,
                                                                  inputGradDesc,
+                                                                 indices.data(),
                                                                  output_grad.data(),
                                                                  input_grad_host.data(),
                                                                  N,
@@ -435,20 +509,20 @@ int AdaptiveAvgPoolDriver<Tgpu, Tref>::RunBackwardCPU()
                                                                  OH,
                                                                  OW);
         MIOPEN_THROW_IF(status != miopenStatusSuccess,
-                        "Error in mloAdaptiveAvgPoolBackward3dRunHost");
+                        "Error in mloAdaptiveMaxPoolBackward3dRunHost");
     }
     return status;
 }
 
 template <typename Tgpu, typename Tref>
-Tref AdaptiveAvgPoolDriver<Tgpu, Tref>::GetTolerance()
+Tref AdaptiveMaxPoolDriver<Tgpu, Tref>::GetTolerance()
 {
     Tref tolerance = std::numeric_limits<Tgpu>::epsilon() * 10;
     return tolerance;
 }
 
 template <typename Tgpu, typename Tref>
-int AdaptiveAvgPoolDriver<Tgpu, Tref>::VerifyForward()
+int AdaptiveMaxPoolDriver<Tgpu, Tref>::VerifyForward()
 {
     RunForwardCPU();
     const Tref tolerance = GetTolerance();
@@ -456,12 +530,12 @@ int AdaptiveAvgPoolDriver<Tgpu, Tref>::VerifyForward()
 
     if(!std::isfinite(error) || error > tolerance)
     {
-        std::cout << "Forward AdaptiveAvgPool FAILED: " << error << std::endl;
+        std::cout << "Forward AdaptiveMaxPool FAILED: " << error << std::endl;
         return EC_VerifyFwd;
     }
     else
     {
-        std::cout << "Forward AdaptiveAvgPool Verifies on CPU and GPU (err=" << error << ")"
+        std::cout << "Forward AdaptiveMaxPool Verifies on CPU and GPU (err=" << error << ")"
                   << std::endl;
     }
 
@@ -469,7 +543,7 @@ int AdaptiveAvgPoolDriver<Tgpu, Tref>::VerifyForward()
 }
 
 template <typename Tgpu, typename Tref>
-int AdaptiveAvgPoolDriver<Tgpu, Tref>::VerifyBackward()
+int AdaptiveMaxPoolDriver<Tgpu, Tref>::VerifyBackward()
 {
     RunBackwardCPU();
     const Tref tolerance = GetTolerance();
@@ -477,12 +551,12 @@ int AdaptiveAvgPoolDriver<Tgpu, Tref>::VerifyBackward()
 
     if(!std::isfinite(error) || error > tolerance)
     {
-        std::cout << "Backward AdaptiveAvgPool FAILED: " << error << std::endl;
+        std::cout << "Backward AdaptiveMaxPool FAILED: " << error << std::endl;
         return EC_VerifyBwd;
     }
     else
     {
-        std::cout << "Backward AdaptiveAvgPool Verifies on CPU and GPU (err=" << error << ")"
+        std::cout << "Backward AdaptiveMaxPool Verifies on CPU and GPU (err=" << error << ")"
                   << std::endl;
     }
     return miopenStatusSuccess;

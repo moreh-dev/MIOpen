@@ -23,18 +23,49 @@
  * SOFTWARE.
  *
  *******************************************************************************/
-#include "registry_driver_maker.hpp"
-#include "adaptiveavgpool_driver.hpp"
 
-static Driver* makeDriver(const std::string& base_arg)
+#pragma once
+
+#include <miopen/common.hpp>
+#include <miopen/invoke_params.hpp>
+#include <miopen/tensor.hpp>
+
+namespace miopen {
+namespace adaptivemaxpool {
+
+struct FwdInvokeParams : public miopen::InvokeParams
 {
-    if(base_arg == "adaptiveavgpool")
-        return new AdaptiveAvgPoolDriver<float, float>();
-    if(base_arg == "adaptiveavgpoolfp16")
-        return new AdaptiveAvgPoolDriver<float16, float>();
-    if(base_arg == "adaptiveavgpoolbfp16")
-        return new AdaptiveAvgPoolDriver<bfloat16, float>();
-    return nullptr;
-}
 
-REGISTER_DRIVER_MAKER(makeDriver);
+    FwdInvokeParams() = default;
+
+    const TensorDescriptor* inputDesc   = nullptr;
+    const TensorDescriptor* outputDesc  = nullptr;
+    const TensorDescriptor* indicesDesc = nullptr;
+
+    ConstData_t input = nullptr;
+    Data_t output     = nullptr;
+    Data_t indices    = nullptr;
+
+    std::size_t GetWorkspaceSize() const { return 0; }
+    Data_t GetWorkspace() const { return nullptr; }
+};
+
+struct BwdInvokeParams : public miopen::InvokeParams
+{
+
+    BwdInvokeParams() = default;
+
+    const TensorDescriptor* indicesDesc    = nullptr;
+    const TensorDescriptor* outputGradDesc = nullptr;
+    const TensorDescriptor* inputGradDesc  = nullptr;
+
+    ConstData_t indices     = nullptr;
+    ConstData_t output_grad = nullptr;
+    Data_t input_grad       = nullptr;
+
+    std::size_t GetWorkspaceSize() const { return 0; }
+    Data_t GetWorkspace() const { return nullptr; }
+};
+
+} // namespace adaptivemaxpool
+} // namespace miopen

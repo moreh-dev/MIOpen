@@ -31,21 +31,25 @@ namespace miopen {
 struct Handle;
 struct TensorDescriptor;
 
-namespace adaptiveavgpool {
+namespace adaptivemaxpool {
 
-MIOPEN_INTERNALS_EXPORT miopenStatus_t AdaptiveAvgPoolForward(Handle& handle,
+MIOPEN_INTERNALS_EXPORT miopenStatus_t AdaptiveMaxPoolForward(Handle& handle,
                                                               const TensorDescriptor& inputDesc,
                                                               ConstData_t input,
                                                               const TensorDescriptor& outputDesc,
-                                                              Data_t output);
+                                                              Data_t output,
+                                                              const TensorDescriptor& indicesDesc,
+                                                              Data_t indices);
 
 MIOPEN_INTERNALS_EXPORT miopenStatus_t
-AdaptiveAvgPoolBackward(Handle& handle,
+AdaptiveMaxPoolBackward(Handle& handle,
+                        const TensorDescriptor& indicesDesc,
+                        ConstData_t indices,
                         const TensorDescriptor& outputGradDesc,
                         ConstData_t output_grad,
                         const TensorDescriptor& inputGradDesc,
                         Data_t input_grad);
 
-} // namespace adaptiveavgpool
+} // namespace adaptivemaxpool
 
 } // namespace miopen

@@ -24,7 +24,8 @@
  *
  *******************************************************************************/
 
-#include <miopen/adaptiveavgpool.hpp>
+#include "miopen/miopen.h"
+#include <miopen/adaptivemaxpool.hpp>
 #include <miopen/errors.hpp>
 #include <miopen/handle.hpp>
 #include <miopen/logger.hpp>
@@ -43,8 +44,9 @@ inline std::ostream& operator<<(std::ostream& os, const std::vector<size_t>& v)
     return os;
 }
 
-static void LogCmdAdaptiveAvgPool(const miopenTensorDescriptor_t xDesc,
+static void LogCmdAdaptiveMaxPool(const miopenTensorDescriptor_t xDesc,
                                   const miopenTensorDescriptor_t oDesc,
+                                  const miopenTensorDescriptor_t iDesc,
                                   const bool is_fwd)
 {
     if(miopen::IsLoggingCmd())
@@ -53,58 +55,69 @@ static void LogCmdAdaptiveAvgPool(const miopenTensorDescriptor_t xDesc,
         auto dtype = miopen::deref(xDesc).GetType();
         if(dtype == miopenHalf)
         {
-            ss << "adaptiveavgpoolfp16";
+            ss << "adaptivemaxpoolfp16";
         }
         else if(dtype == miopenFloat)
         {
-            ss << "adaptiveavgpoolfp32";
+            ss << "adaptivemaxpoolfp32";
         }
         else if(dtype == miopenBFloat16)
         {
-            ss << "adaptiveavgpoolbfp16";
+            ss << "adaptivemaxpoolbfp16";
         }
 
         MIOPEN_LOG_FUNCTION(xDesc, oDesc, is_fwd);
-        ss << " -Is " << miopen::deref(xDesc).GetLengths();
+        ss << " -Xs " << miopen::deref(xDesc).GetLengths();
         ss << " -Os " << miopen::deref(oDesc).GetLengths();
-        ss << " -Si " << miopen::deref(xDesc).GetStrides();
+        ss << " -Is " << miopen::deref(iDesc).GetLengths();
+        ss << " -Sx " << miopen::deref(xDesc).GetStrides();
         ss << " -So " << miopen::deref(oDesc).GetStrides();
+        ss << " -Si " << miopen::deref(iDesc).GetStrides();
         ss << " -F " << ((is_fwd) ? "1" : "2");
 
         MIOPEN_LOG_DRIVER_CMD(ss.str());
     }
 }
 
-extern "C" miopenStatus_t miopenAdaptiveAvgPoolForward(miopenHandle_t handle,
+extern "C" miopenStatus_t miopenAdaptiveMaxPoolForward(miopenHandle_t handle,
                                                        const miopenTensorDescriptor_t inputDesc,
                                                        const void* input,
                                                        const miopenTensorDescriptor_t outputDesc,
-                                                       void* output)
+                                                       void* output,
+                                                       const miopenTensorDescriptor_t indicesDesc,
+                                                       void* indices)
 {
-    MIOPEN_LOG_FUNCTION(handle, inputDesc, input, outputDesc, output);
+    MIOPEN_LOG_FUNCTION(handle, inputDesc, input, outputDesc, output, indicesDesc, indices);
 
-    LogCmdAdaptiveAvgPool(inputDesc, outputDesc, true);
+    LogCmdAdaptiveMaxPool(inputDesc, outputDesc, indicesDesc, true);
     return miopen::try_([&] {
-        miopen::adaptiveavgpool::AdaptiveAvgPoolForward(miopen::deref(handle),
+        miopen::adaptivemaxpool::AdaptiveMaxPoolForward(miopen::deref(handle),
                                                         miopen::deref(inputDesc),
                                                         DataCast(input),
                                                         miopen::deref(outputDesc),
-                                                        DataCast(output));
+                                                        DataCast(output),
+                                                        miopen::deref(indicesDesc),
+                                                        DataCast(indices));
     });
 }
 
 extern "C" miopenStatus_t
-miopenAdaptiveAvgPoolBackward(miopenHandle_t handle,
+miopenAdaptiveMaxPoolBackward(miopenHandle_t handle,
+                              const miopenTensorDescriptor_t indicesDesc,
+                              const void* indices,
                               const miopenTensorDescriptor_t outputGradDesc,
                               const void* output_grad,
                               const miopenTensorDescriptor_t inputGradDesc,
                               void* input_grad)
 {
-    MIOPEN_LOG_FUNCTION(handle, outputGradDesc, output_grad, inputGradDesc, input_grad);
+    MIOPEN_LOG_FUNCTION(
+        handle, inputGradDesc, indices, outputGradDesc, output_grad, inputGradDesc, input_grad);
 
-    LogCmdAdaptiveAvgPool(inputGradDesc, outputGradDesc, false);
+    LogCmdAdaptiveMaxPool(inputGradDesc, outputGradDesc, indicesDesc, false);
     return miopen::try_([&] {
-        miopen::adaptiveavgpool::AdaptiveAvgPoolBackward(miopen::deref(handle),
+        miopen::adaptivemaxpool::AdaptiveMaxPoolBackward(miopen::deref(handle),
+                                                         miopen::deref(indicesDesc),
+                                                         DataCast(indices),
                                                          miopen::deref(outputGradDesc),
                                                          DataCast(output_grad),
                                                          miopen::deref(inputGradDesc),
