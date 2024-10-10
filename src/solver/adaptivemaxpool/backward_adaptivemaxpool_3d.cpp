@@ -49,12 +49,6 @@ bool IsOverRocmBwd3d(const miopen::adaptivemaxpool::BwdProblemDescription& probl
     {
         return true;
     }
-    else
-    {
-        if((problem.GetInputGradDesc().GetElementSize() /
-            problem.GetOutputGradDesc().GetElementSize()) == 1)
-            return true;
-    }
     return false;
 }
 
@@ -66,10 +60,10 @@ bool AdaptiveMaxPoolBackward3d::IsApplicable(
     {
         return false;
     }
-    // if(!IsOverRocmBwd3d(problem))
-    // {
-    //     return false;
-    // }
+    if(!IsOverRocmBwd3d(problem))
+    {
+        return false;
+    }
     if(!(problem.GetInputGradDesc().GetType() == miopenFloat ||
          problem.GetInputGradDesc().GetType() == miopenHalf ||
          problem.GetInputGradDesc().GetType() == miopenBFloat16))

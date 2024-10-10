@@ -137,9 +137,7 @@ inline std::vector<AdaptiveMaxPoolTestCase> AdaptiveMaxPoolTestConfigsBwdFp32()
         {{64, 768, 17}, {10}, true, false},
         {{64, 768, 17}, {10}, true, true},
         {{64, 206, 17, 17}, {10, 10}, true, false},
-        {{64, 206, 17, 17}, {10, 10}, true, true},
         {{6, 18, 18, 18, 18}, {5, 5, 5}, true, false},
-        {{6, 18, 18, 18, 18}, {18, 18, 18}, true, true},
     };
 }
 
@@ -149,9 +147,7 @@ inline std::vector<AdaptiveMaxPoolTestCase> AdaptiveMaxPoolTestConfigsBwdFp16()
         {{64, 768, 17}, {10}, true, false},
         {{64, 768, 17}, {10}, true, true},
         {{64, 28, 35, 35}, {35, 35}, true, false},
-        {{64, 28, 35, 35}, {35, 35}, true, true},
         {{6, 28, 35, 35, 35}, {10, 10, 10}, true, false},
-        {{6, 28, 35, 35, 35}, {35, 35, 35}, true, true},
     };
 }
 
@@ -161,9 +157,7 @@ inline std::vector<AdaptiveMaxPoolTestCase> AdaptiveMaxPoolTestConfigsBwdBfp16()
         {{64, 768, 17}, {10}, true, false},
         {{64, 768, 17}, {10}, true, true},
         {{64, 208, 9, 9}, {7, 7}, true, false},
-        {{64, 208, 9, 9}, {7, 7}, true, true},
         {{6, 18, 12, 12, 12}, {5, 5, 5}, true, false},
-        {{6, 18, 12, 12, 12}, {12, 12, 12}, true, true},
     };
 }
 

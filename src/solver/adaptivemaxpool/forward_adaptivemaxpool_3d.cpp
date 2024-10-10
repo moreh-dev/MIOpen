@@ -45,18 +45,16 @@ namespace adaptivemaxpool {
 
 bool IsOverRocmFwd3d(const miopen::adaptivemaxpool::FwdProblemDescription& problem)
 {
-    auto in_nelems   = problem.GetInputDesc().GetElementSize();
-    auto out_nelems  = problem.GetOutputDesc().GetElementSize();
-    auto in_over_out = static_cast<float>(in_nelems) / out_nelems;
+    auto out_nelems = problem.GetOutputDesc().GetElementSize();
 
     if(problem.IsAllContiguous())
     {
-        if(in_over_out <= 98)
+        if(out_nelems > 5640)
             return true;
     }
     else
     {
-        if(in_over_out < 8000)
+        if(out_nelems > 1920)
             return true;
     }
     return false;
@@ -69,10 +67,10 @@ bool AdaptiveMaxPoolForward3d::IsApplicable(
     {
         return false;
     }
-    // if(!IsOverRocmFwd3d(problem))
-    // {
-    //     return false;
-    // }
+    if(!IsOverRocmFwd3d(problem))
+    {
+        return false;
+    }
     if(!(problem.GetInputDesc().GetType() == miopenFloat ||
          problem.GetInputDesc().GetType() == miopenHalf ||
          problem.GetInputDesc().GetType() == miopenBFloat16))

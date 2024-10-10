@@ -43,24 +43,6 @@ namespace solver {
 
 namespace adaptivemaxpool {
 
-bool IsOverRocmBwd1d(const miopen::adaptivemaxpool::BwdProblemDescription& problem)
-{
-    if(!problem.IsAllContiguous())
-    {
-        return true;
-    }
-    else
-    {
-        auto mul_nc = problem.GetOutputGradDesc().GetLengths()[0] *
-                      problem.GetOutputGradDesc().GetLengths()[1];
-        if(mul_nc < 141312)
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
 bool AdaptiveMaxPoolBackward1d::IsApplicable(
     const ExecutionContext&, const miopen::adaptivemaxpool::BwdProblemDescription& problem) const
 {
@@ -69,10 +51,6 @@ bool AdaptiveMaxPoolBackward1d::IsApplicable(
     {
         return false;
     }
-    // if(!IsOverRocmBwd1d(problem))
-    // {
-    //     return false;
-    // }
     if(!(problem.GetInputGradDesc().GetType() == miopenFloat ||
          problem.GetInputGradDesc().GetType() == miopenHalf ||
          problem.GetInputGradDesc().GetType() == miopenBFloat16))

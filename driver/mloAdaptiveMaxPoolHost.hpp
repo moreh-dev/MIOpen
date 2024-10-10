@@ -25,7 +25,6 @@
  *******************************************************************************/
 #pragma once
 
-#include <cmath>
 #include <miopen/tensor.hpp>
 #include <miopen/tensor_view_utils.hpp>
 #include <../test/ford.hpp>
@@ -56,7 +55,7 @@ int32_t mloAdaptiveMaxPoolForward1dRunHost(const miopenTensorDescriptor_t inputD
         uint64_t h  = oh * H / OH;
         uint64_t kh = ((oh + 1) * H + OH - 1) / OH;
 
-        float m = std::numeric_limits<float>::lowest();
+        float m = -std::numeric_limits<float>::max();
         if(miopen::deref(indicesDesc).GetElementSize() == 0)
         {
             for(uint64_t ih = h; ih < kh; ++ih)
@@ -116,7 +115,7 @@ int32_t mloAdaptiveMaxPoolForward2dRunHost(const miopenTensorDescriptor_t inputD
         uint64_t w  = (ow * W) / OW;
         uint64_t kw = ((ow + 1) * W + OW - 1) / OW;
 
-        float m = 0;
+        float m = -std::numeric_limits<float>::max();
         if(miopen::deref(indicesDesc).GetElementSize() == 0)
         {
             for(uint64_t ih = h; ih < kh; ++ih)
@@ -190,7 +189,7 @@ int32_t mloAdaptiveMaxPoolForward3dRunHost(const miopenTensorDescriptor_t inputD
         uint64_t w  = (ow * W) / OW;
         uint64_t kw = ((ow + 1) * W + OW - 1) / OW;
 
-        float m = 0;
+        float m = -std::numeric_limits<float>::max();
         if(miopen::deref(indicesDesc).GetElementSize() == 0)
         {
             for(uint64_t id = d; id < kd; ++id)
