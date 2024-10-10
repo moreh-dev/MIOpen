@@ -107,8 +107,8 @@ private:
     std::vector<Tgpu> input_grad;
     std::vector<Tref> input_grad_host;
     std::vector<Tgpu> output_grad;
-    std::vector<uint64_t> indices;
-    std::vector<uint64_t> indices_host;
+    std::vector<int64_t> indices;
+    std::vector<int64_t> indices_host;
 
     size_t N = 1, C = 1, D = 1, H = 1, W = 1, OD = 1, OH = 1, OW = 1;
 
@@ -179,7 +179,7 @@ int AdaptiveMaxPoolDriver<Tgpu, Tref>::GetandSetData()
     std::vector<int> out_grad_stride = ComputeStrides(out_dim_final);
     std::vector<int> indices_dim     = out_dim_final;
 
-    if(SetTensorNd(indicesDesc, indices_dim, miopen_type<uint64_t>{}) != miopenStatusSuccess)
+    if(SetTensorNd(indicesDesc, indices_dim, miopen_type<int64_t>{}) != miopenStatusSuccess)
         MIOPEN_THROW("Error parsing indices tensor: " + inflags.GetValueStr("indices_dim") + ".");
     if(SetTensorNd(inputDesc, in_dim, in_stride, data_type) != miopenStatusSuccess)
         MIOPEN_THROW("Error parsing input tensor: " + inflags.GetValueStr("input_dims") + ".");
@@ -247,7 +247,7 @@ int AdaptiveMaxPoolDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     output_dev      = std::unique_ptr<GPUMem>(new GPUMem(ctx, output_sz, sizeof(Tgpu)));
     input_grad_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, input_sz, sizeof(Tgpu)));
     output_grad_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, output_sz, sizeof(Tgpu)));
-    indices_dev     = std::unique_ptr<GPUMem>(new GPUMem(ctx, indices_sz, sizeof(uint64_t)));
+    indices_dev     = std::unique_ptr<GPUMem>(new GPUMem(ctx, indices_sz, sizeof(int64_t)));
 
     input       = std::vector<Tgpu>(input_sz, static_cast<Tgpu>(0));
     output      = std::vector<Tgpu>(output_sz, static_cast<Tgpu>(0));
@@ -257,8 +257,8 @@ int AdaptiveMaxPoolDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     input_grad_host = std::vector<Tref>(input_sz, static_cast<Tref>(0));
     output_grad     = std::vector<Tgpu>(output_sz, static_cast<Tgpu>(0));
 
-    indices      = std::vector<uint64_t>(indices_sz, static_cast<uint64_t>(0));
-    indices_host = std::vector<uint64_t>(indices_sz, static_cast<uint64_t>(0));
+    indices      = std::vector<int64_t>(indices_sz, static_cast<int64_t>(0));
+    indices_host = std::vector<int64_t>(indices_sz, static_cast<int64_t>(0));
 
     int status;
 
@@ -280,8 +280,7 @@ int AdaptiveMaxPoolDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
 
     for(int i = 0; i < indices_sz; i++)
     {
-        indices[i] =
-            prng::gen_A_to_B<uint64_t>(static_cast<uint64_t>(0), static_cast<uint64_t>(10));
+        indices[i] = prng::gen_A_to_B<int64_t>(static_cast<int64_t>(0), static_cast<int64_t>(10));
     }
     status |= indices_dev->ToGPU(q, indices.data());
 

@@ -34,7 +34,7 @@
 template <typename TI, typename TO>
 __device__ void adaptiveMaxPoolForward1d(const TI* __restrict__ input,
                                          TO* __restrict__ output,
-                                         uint64_t* __restrict__ indices,
+                                         int64_t* __restrict__ indices,
                                          uint64_t N,
                                          uint64_t C,
                                          uint64_t H,
@@ -80,7 +80,7 @@ __device__ void adaptiveMaxPoolForward1d(const TI* __restrict__ input,
 }
 extern "C" __global__ void AdaptiveMaxPoolForward1d(const INPUT_TYPE* __restrict__ input,
                                                     OUTPUT_TYPE* __restrict__ output,
-                                                    uint64_t* __restrict__ indices,
+                                                    int64_t* __restrict__ indices,
                                                     uint64_t N,
                                                     uint64_t C,
                                                     uint64_t H,
@@ -94,7 +94,7 @@ extern "C" __global__ void AdaptiveMaxPoolForward1d(const INPUT_TYPE* __restrict
 }
 
 template <typename TI, typename TO>
-__device__ void adaptiveMaxPoolBackward1d(const uint64_t* __restrict__ indices,
+__device__ void adaptiveMaxPoolBackward1d(const int64_t* __restrict__ indices,
                                           const TI* __restrict__ output_grad,
                                           TO* __restrict__ input_grad,
                                           uint64_t N,
@@ -126,7 +126,7 @@ __device__ void adaptiveMaxPoolBackward1d(const uint64_t* __restrict__ indices,
     input_grad[input_grad_tv.get_tensor_view_idx({n, c, h})] = CVT_ACCUM2FLOAT(grad);
 }
 
-extern "C" __global__ void AdaptiveMaxPoolBackward1d(const uint64_t* __restrict__ indices,
+extern "C" __global__ void AdaptiveMaxPoolBackward1d(const int64_t* __restrict__ indices,
                                                      const INPUT_TYPE* __restrict__ output_grad,
                                                      OUTPUT_TYPE* __restrict__ input_grad,
                                                      uint64_t N,
@@ -144,7 +144,7 @@ extern "C" __global__ void AdaptiveMaxPoolBackward1d(const uint64_t* __restrict_
 template <typename TI, typename TO>
 __device__ void adaptiveMaxPoolForward2d(const TI* __restrict__ input,
                                          TO* __restrict__ output,
-                                         uint64_t* __restrict__ indices,
+                                         int64_t* __restrict__ indices,
                                          uint64_t N,
                                          uint64_t C,
                                          uint64_t H,
@@ -204,7 +204,7 @@ __device__ void adaptiveMaxPoolForward2d(const TI* __restrict__ input,
 
 extern "C" __global__ void AdaptiveMaxPoolForward2d(const INPUT_TYPE* __restrict__ input,
                                                     OUTPUT_TYPE* __restrict__ output,
-                                                    uint64_t* __restrict__ indices,
+                                                    int64_t* __restrict__ indices,
                                                     uint64_t N,
                                                     uint64_t C,
                                                     uint64_t H,
@@ -220,7 +220,7 @@ extern "C" __global__ void AdaptiveMaxPoolForward2d(const INPUT_TYPE* __restrict
 }
 
 template <typename TI, typename TO>
-__device__ void adaptiveMaxPoolBackward2d(const uint64_t* __restrict__ indices,
+__device__ void adaptiveMaxPoolBackward2d(const int64_t* __restrict__ indices,
                                           const TI* __restrict__ output_grad,
                                           TO* __restrict__ input_grad,
                                           uint64_t N,
@@ -263,7 +263,7 @@ __device__ void adaptiveMaxPoolBackward2d(const uint64_t* __restrict__ indices,
     input_grad[input_grad_tv.get_tensor_view_idx({n, c, h, w})] = CVT_ACCUM2FLOAT(grad);
 }
 
-extern "C" __global__ void AdaptiveMaxPoolBackward2d(const uint64_t* __restrict__ indices,
+extern "C" __global__ void AdaptiveMaxPoolBackward2d(const int64_t* __restrict__ indices,
                                                      const INPUT_TYPE* __restrict__ output_grad,
                                                      OUTPUT_TYPE* __restrict__ input_grad,
                                                      uint64_t N,
@@ -293,7 +293,7 @@ extern "C" __global__ void AdaptiveMaxPoolBackward2d(const uint64_t* __restrict_
 template <typename TI, typename TO>
 __device__ void adaptiveMaxPoolForward3d(const TI* __restrict__ input,
                                          TO* __restrict__ output,
-                                         uint64_t* __restrict__ indices,
+                                         int64_t* __restrict__ indices,
                                          uint64_t N,
                                          uint64_t C,
                                          uint64_t D,
@@ -366,7 +366,7 @@ __device__ void adaptiveMaxPoolForward3d(const TI* __restrict__ input,
 
 extern "C" __global__ void AdaptiveMaxPoolForward3d(const INPUT_TYPE* __restrict__ input,
                                                     OUTPUT_TYPE* __restrict__ output,
-                                                    uint64_t* __restrict__ indices,
+                                                    int64_t* __restrict__ indices,
                                                     uint64_t N,
                                                     uint64_t C,
                                                     uint64_t D,
@@ -384,7 +384,7 @@ extern "C" __global__ void AdaptiveMaxPoolForward3d(const INPUT_TYPE* __restrict
 }
 
 template <typename TI, typename TO>
-__device__ void adaptiveMaxPoolBackward3d(const uint64_t* __restrict__ indices,
+__device__ void adaptiveMaxPoolBackward3d(const int64_t* __restrict__ indices,
                                           const TI* __restrict__ output_grad,
                                           TO* __restrict__ input_grad,
                                           uint64_t N,
@@ -437,7 +437,7 @@ __device__ void adaptiveMaxPoolBackward3d(const uint64_t* __restrict__ indices,
     input_grad[input_grad_tv.get_tensor_view_idx({n, c, d, h, w})] = CVT_ACCUM2FLOAT(grad);
 }
 
-extern "C" __global__ void AdaptiveMaxPoolBackward3d(const uint64_t* __restrict__ indices,
+extern "C" __global__ void AdaptiveMaxPoolBackward3d(const int64_t* __restrict__ indices,
                                                      const INPUT_TYPE* __restrict__ output_grad,
                                                      OUTPUT_TYPE* __restrict__ input_grad,
                                                      uint64_t N,

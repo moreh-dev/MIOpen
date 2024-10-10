@@ -32,7 +32,7 @@
 template <class T>
 void cpu_adaptivemaxpool_forward_1d(tensor<T> input,
                                     tensor<T>& output,
-                                    tensor<size_t>& indices,
+                                    tensor<int64_t>& indices,
                                     size_t N,
                                     size_t C,
                                     size_t H,
@@ -82,7 +82,7 @@ void cpu_adaptivemaxpool_forward_1d(tensor<T> input,
 template <class T>
 void cpu_adaptivemaxpool_forward_2d(tensor<T> input,
                                     tensor<T>& output,
-                                    tensor<size_t>& indices,
+                                    tensor<int64_t>& indices,
                                     size_t N,
                                     size_t C,
                                     size_t H,
@@ -146,7 +146,7 @@ void cpu_adaptivemaxpool_forward_2d(tensor<T> input,
 template <class T>
 void cpu_adaptivemaxpool_forward_3d(tensor<T> input,
                                     tensor<T>& output,
-                                    tensor<size_t>& indices,
+                                    tensor<int64_t>& indices,
                                     size_t N,
                                     size_t C,
                                     size_t D,
@@ -221,7 +221,7 @@ void cpu_adaptivemaxpool_forward_3d(tensor<T> input,
 }
 
 template <class T>
-void cpu_adaptivemaxpool_backward_1d(tensor<size_t> indices,
+void cpu_adaptivemaxpool_backward_1d(tensor<int64_t> indices,
                                      tensor<T> output_grad,
                                      tensor<T>& input_grad,
                                      size_t N,
@@ -258,7 +258,7 @@ void cpu_adaptivemaxpool_backward_1d(tensor<size_t> indices,
 }
 
 template <class T>
-void cpu_adaptivemaxpool_backward_2d(tensor<size_t> indices,
+void cpu_adaptivemaxpool_backward_2d(tensor<int64_t> indices,
                                      tensor<T> output_grad,
                                      tensor<T>& input_grad,
                                      size_t N,
@@ -304,7 +304,7 @@ void cpu_adaptivemaxpool_backward_2d(tensor<size_t> indices,
 }
 
 template <class T>
-void cpu_adaptivemaxpool_backward_3d(tensor<size_t> indices,
+void cpu_adaptivemaxpool_backward_3d(tensor<int64_t> indices,
                                      tensor<T> output_grad,
                                      tensor<T>& input_grad,
                                      size_t N,

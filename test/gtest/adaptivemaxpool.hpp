@@ -27,6 +27,7 @@
 #include "get_handle.hpp"
 #include "tensor_holder.hpp"
 #include "verify.hpp"
+#include <cstdint>
 #include <gtest/gtest.h>
 #include <iostream>
 #include <miopen/adaptivemaxpool.hpp>
@@ -227,17 +228,17 @@ protected:
 
         if(use_indices)
         {
-            indices = tensor<size_t>{out_dim_final};
-            std::fill(indices.begin(), indices.end(), std::numeric_limits<size_t>::quiet_NaN());
+            indices = tensor<int64_t>{out_dim_final};
+            std::fill(indices.begin(), indices.end(), std::numeric_limits<int64_t>::quiet_NaN());
 
-            ref_indices = tensor<size_t>{out_dim_final};
+            ref_indices = tensor<int64_t>{out_dim_final};
             std::fill(
-                ref_indices.begin(), ref_indices.end(), std::numeric_limits<size_t>::quiet_NaN());
+                ref_indices.begin(), ref_indices.end(), std::numeric_limits<int64_t>::quiet_NaN());
         }
         else
         {
-            indices     = tensor<size_t>{1};
-            ref_indices = tensor<size_t>{1};
+            indices     = tensor<int64_t>{1};
+            ref_indices = tensor<int64_t>{1};
         }
 
         input_dev  = handle.Write(input.data);
@@ -279,7 +280,7 @@ protected:
         output.data = handle.Read<T>(output_dev, output.data.size());
         if(use_indices)
         {
-            indices.data = handle.Read<size_t>(indices_dev, indices.data.size());
+            indices.data = handle.Read<int64_t>(indices_dev, indices.data.size());
         }
     }
 
@@ -295,7 +296,7 @@ protected:
 
         if(use_indices)
         {
-            double threshold_indices = std::numeric_limits<uint64_t>::epsilon();
+            double threshold_indices = std::numeric_limits<int64_t>::epsilon();
             auto error_indices       = miopen::rms_range(ref_indices, indices);
 
             ASSERT_EQ(miopen::range_distance(ref_indices), miopen::range_distance(indices));
@@ -307,8 +308,8 @@ protected:
     tensor<T> input;
     tensor<T> output;
     tensor<T> ref_output;
-    tensor<size_t> indices;
-    tensor<size_t> ref_indices;
+    tensor<int64_t> indices;
+    tensor<int64_t> ref_indices;
 
     size_t N, C, D, H, W, OD, OH, OW;
     bool use_indices;
@@ -372,9 +373,9 @@ protected:
         auto out_grad_strides = adaptivemaxpool_config.ComputeStrides(out_grad_dim_final);
 
         auto gen_indices_value = [](auto...) {
-            return prng::gen_A_to_B<size_t>(static_cast<size_t>(0), static_cast<size_t>(10));
+            return prng::gen_A_to_B<int64_t>(static_cast<int64_t>(0), static_cast<int64_t>(10));
         };
-        indices = tensor<size_t>{out_grad_dim_final}.generate(gen_indices_value);
+        indices = tensor<int64_t>{out_grad_dim_final}.generate(gen_indices_value);
 
         auto gen_output_grad_value = [](auto...) {
             return prng::gen_A_to_B<T>(static_cast<T>(-10.0f), static_cast<T>(10.0f));
@@ -439,7 +440,7 @@ protected:
     }
     AdaptiveMaxPoolTestCase adaptivemaxpool_config;
 
-    tensor<size_t> indices;
+    tensor<int64_t> indices;
     tensor<T> output_grad;
     tensor<T> input_grad;
     tensor<T> ref_input_grad;
