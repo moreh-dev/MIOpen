@@ -61,7 +61,11 @@ enum class Primitive
     Adam,
     Item,
     RoPE,
-    ReLU
+    ReLU,
+    Kthvalue,
+    SoftMarginLoss,
+    MultiMarginLoss,
+    AdaptiveMaxPool,
 };
 
 struct MIOPEN_INTERNALS_EXPORT Id

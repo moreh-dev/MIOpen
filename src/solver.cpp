@@ -26,6 +26,7 @@
 
 #include <miopen/activ/solvers.hpp>
 #include <miopen/adam/solvers.hpp>
+#include <miopen/adaptivemaxpool/solvers.hpp>
 #include <miopen/batchnorm/solvers.hpp>
 #include <miopen/cat/solvers.hpp>
 #include <miopen/conv/solvers.hpp>
@@ -683,6 +684,43 @@ inline SolverRegistrar::SolverRegistrar(IdRegistryData& registry)
     Register(registry, ++id, Primitive::Activation, glu::GLUForward{}.SolverDbId());
     Register(registry, ++id, Primitive::Activation, glu::GLUBackward{}.SolverDbId());
 
+    Register(registry,
+             ++id,
+             Primitive::SoftMarginLoss,
+             softmarginloss::SoftMarginLossForward{}.SolverDbId());
+    Register(registry,
+             ++id,
+             Primitive::SoftMarginLoss,
+             softmarginloss::SoftMarginLossBackward{}.SolverDbId());
+    Register(registry,
+             ++id,
+             Primitive::MultiMarginLoss,
+             multimarginloss::MultiMarginLossForward{}.SolverDbId());
+
+    Register(registry,
+             ++id,
+             Primitive::AdaptiveMaxPool,
+             adaptivemaxpool::AdaptiveMaxPoolForward1d{}.SolverDbId());
+    Register(registry,
+             ++id,
+             Primitive::AdaptiveMaxPool,
+             adaptivemaxpool::AdaptiveMaxPoolForward2d{}.SolverDbId());
+    Register(registry,
+             ++id,
+             Primitive::AdaptiveMaxPool,
+             adaptivemaxpool::AdaptiveMaxPoolForward3d{}.SolverDbId());
+    Register(registry,
+             ++id,
+             Primitive::AdaptiveMaxPool,
+             adaptivemaxpool::AdaptiveMaxPoolBackward1d{}.SolverDbId());
+    Register(registry,
+             ++id,
+             Primitive::AdaptiveMaxPool,
+             adaptivemaxpool::AdaptiveMaxPoolBackward2d{}.SolverDbId());
+    Register(registry,
+             ++id,
+             Primitive::AdaptiveMaxPool,
+             adaptivemaxpool::AdaptiveMaxPoolBackward3d{}.SolverDbId());
     // IMPORTANT: New solvers should be added to the end of the function!
 }
 
