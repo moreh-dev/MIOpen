@@ -30,9 +30,10 @@
 #include <miopen/common.hpp>
 #include <miopen/tensor.hpp>
 #include "../../kernels/tensor_view.hpp"
+#include "miopen/errors.hpp"
 
 #include <algorithm>
-#include <cassert>
+#include <sstream>
 #include <vector>
 
 namespace miopen {
@@ -83,7 +84,26 @@ inline void slice_tv(tensor_view_t<N>& tensor_view, int32_t sliceCount, const in
 template <int N, typename T>
 inline void permute_tv(tensor_view_t<N>& tensor_view, std::vector<T> permute)
 {
-    assert(permute.size() == N);
+    // Validate permutation
+    {
+        MIOPEN_THROW_IF(
+            permute.size() != N,
+            (std::stringstream() << "Tensor view permute: Permutation size must be " << N).str());
+        std::vector<bool> exist(N, false);
+        for(auto idx : permute)
+        {
+            MIOPEN_THROW_IF(idx < 0 || N <= idx,
+                            (std::stringstream()
+                             << "Tensor view permute: Permutation value must be in range [" << 0
+                             << "," << N - 1 << "], while it is " << idx)
+                                .str());
+            MIOPEN_THROW_IF(exist[idx],
+                            (std::stringstream()
+                             << "Tensor view permute: Permutation value " << idx << " duplicate.")
+                                .str());
+            exist[idx] = true;
+        }
+    }
 
     uint64_t new_stride[N], new_size[N];
     for(auto i = 0; i < N; ++i)

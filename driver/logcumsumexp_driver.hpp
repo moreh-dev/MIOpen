@@ -119,6 +119,10 @@ int LogCumSumExpDriver<Tgpu, Tref>::ParseCmdLineArgs(int argc, char* argv[])
 {
     inflags.Parse(argc, argv);
 
+    dim       = inflags.GetValueInt("dim");
+    exclusive = (inflags.GetValueInt("exclusive") != 0);
+    reverse   = (inflags.GetValueInt("reverse") != 0);
+
     if(inflags.GetValueInt("time") == 1)
     {
         miopenEnableProfiling(GetHandle(), true);
@@ -145,10 +149,6 @@ int LogCumSumExpDriver<Tgpu, Tref>::ParseCmdLineArgs(int argc, char* argv[])
 template <typename Tgpu, typename Tref>
 int LogCumSumExpDriver<Tgpu, Tref>::GetandSetData()
 {
-    dim       = inflags.GetValueInt("dim");
-    exclusive = (inflags.GetValueInt("exclusive") != 0);
-    reverse   = (inflags.GetValueInt("reverse") != 0);
-
     auto lengths = inflags.GetValueTensor("input").lengths;
     auto strides = GetStrides(lengths, inflags.GetValueInt("Contiguous") != 0);
 

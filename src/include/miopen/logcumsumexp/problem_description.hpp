@@ -28,8 +28,6 @@
 #include <miopen/problem_description_base.hpp>
 #include <miopen/tensor.hpp>
 
-#include <sstream>
-
 namespace miopen {
 
 struct NetworkConfig;
