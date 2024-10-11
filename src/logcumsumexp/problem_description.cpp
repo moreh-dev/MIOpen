@@ -170,6 +170,7 @@ NetworkConfig ForwardProblemDescription::MakeNetworkConfig() const
 {
     auto dtype      = inputDesc.GetType();
     auto size       = inputDesc.GetElementSize();
+    auto ndims      = inputDesc.GetNumDims();
     auto inner_size = inputDesc.GetLengths()[dim];
     auto outer_size = size / inner_size;
 
@@ -179,6 +180,8 @@ NetworkConfig ForwardProblemDescription::MakeNetworkConfig() const
     ss << "dtype" << dtype;
     ss << "outer" << outer_size;
     ss << "inner" << inner_size;
+    ss << "ndims" << ndims;
+    ss << "sameStride" << IsSameStride();
     ss << "packed" << IsAllPacked();
     ss << "dimstride1" << IsAllDimStride1();
 
@@ -189,6 +192,7 @@ NetworkConfig BackwardProblemDescription::MakeNetworkConfig() const
 {
     auto dtype      = inputDesc.GetType();
     auto size       = inputDesc.GetElementSize();
+    auto ndims      = inputDesc.GetNumDims();
     auto inner_size = inputDesc.GetLengths()[dim];
     auto outer_size = size / inner_size;
 
@@ -198,6 +202,8 @@ NetworkConfig BackwardProblemDescription::MakeNetworkConfig() const
     ss << "dtype" << dtype;
     ss << "outer" << outer_size;
     ss << "inner" << inner_size;
+    ss << "ndims" << ndims;
+    ss << "sameStride" << IsSameStride();
     ss << "packed" << IsAllPacked();
     ss << "dimstride1" << IsAllDimStride1();
 

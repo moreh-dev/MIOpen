@@ -61,8 +61,6 @@ bool ForwardSmallCumDim::IsApplicable(
         return false;
     if(problem.GetInputDesc().GetLengths()[problem.GetDim()] > LOCAL_SIZE_MAX)
         return false;
-    if(!problem.IsAllPacked())
-        return false;
     if(problem.GetInputDesc().GetNumDims() > VIEW_DIMS)
         return false;
     if(!(problem.GetInputDesc().GetType() == miopenFloat ||
