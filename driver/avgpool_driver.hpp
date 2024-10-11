@@ -161,7 +161,7 @@ int AvgPoolDriver<Tgpu, Tref>::GetandSetData()
     {
         int ref = ksp_dim - stride.size();
         if(ref < 0)
-            MIOPEN_THROW("Invalid kernel size");
+            MIOPEN_THROW("Invalid stride size");
         while((ref--) != 0)
             stride.push_back(stride[0]);
     }
@@ -169,7 +169,7 @@ int AvgPoolDriver<Tgpu, Tref>::GetandSetData()
     {
         int ref = ksp_dim - padding.size();
         if(ref < 0)
-            MIOPEN_THROW("Invalid kernel size");
+            MIOPEN_THROW("Invalid padding size");
         while((ref--) != 0)
             padding.push_back(padding[0]);
     }
