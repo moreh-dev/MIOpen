@@ -91,10 +91,9 @@ LogCumSumExpTestConfigs(const std::vector<std::vector<size_t>>& SizeList)
     auto&& handle = get_handle();
     for(const auto& lengths : SizeList)
     {
-        auto out_strides = GetStrides(lengths, true);
         for(auto contiguous : contiguouss)
         {
-            auto input_strides = GetStrides(lengths, contiguous);
+            auto stride = GetStrides(lengths, contiguous);
             for(auto dim : dims)
             {
                 for(auto exclusive : exclusives)
@@ -105,17 +104,15 @@ LogCumSumExpTestConfigs(const std::vector<std::vector<size_t>>& SizeList)
                                .IsApplicable(miopen::ExecutionContext(&handle),
                                              miopen::logcumsumexp::ForwardProblemDescription(
                                                  miopen::TensorDescriptor(
-                                                     miopen_type<float>{}, lengths, input_strides),
+                                                     miopen_type<float>{}, lengths, stride),
                                                  miopen::TensorDescriptor(
-                                                     miopen_type<float>{}, lengths, out_strides),
+                                                     miopen_type<float>{}, lengths, stride),
                                                  dim)) ||
                            miopen::solver::logcumsumexp::ForwardSmallCumDim().IsApplicable(
                                miopen::ExecutionContext(&handle),
                                miopen::logcumsumexp::ForwardProblemDescription(
-                                   miopen::TensorDescriptor(
-                                       miopen_type<float>{}, lengths, input_strides),
-                                   miopen::TensorDescriptor(
-                                       miopen_type<float>{}, lengths, out_strides),
+                                   miopen::TensorDescriptor(miopen_type<float>{}, lengths, stride),
+                                   miopen::TensorDescriptor(miopen_type<float>{}, lengths, stride),
                                    dim)))
                             tcs.push_back({lengths, dim, exclusive, reverse, contiguous});
                     }
@@ -183,11 +180,11 @@ protected:
 
         auto lengths = logcumsumexp_config.lengths;
 
-        auto input_strides = GetStrides(lengths, logcumsumexp_config.contiguous);
-        input              = tensor<T>{lengths, input_strides}.generate(gen_value);
+        auto strides = GetStrides(lengths, logcumsumexp_config.contiguous);
+        input        = tensor<T>{lengths, strides}.generate(gen_value);
 
-        output     = tensor<T>{lengths};
-        ref_output = tensor<T>{lengths};
+        output     = tensor<T>{lengths, strides};
+        ref_output = tensor<T>{lengths, strides};
 
         input_dev  = handle.Write(input.data);
         output_dev = handle.Write(output.data);
@@ -261,12 +258,12 @@ protected:
 
         auto lengths = logcumsumexp_config.lengths;
 
-        auto input_strides = GetStrides(lengths, logcumsumexp_config.contiguous);
-        input              = tensor<T>{lengths, input_strides}.generate(gen_value_input);
-        dinput             = tensor<T>{lengths, input_strides};
+        auto strides = GetStrides(lengths, logcumsumexp_config.contiguous);
+        input        = tensor<T>{lengths, strides}.generate(gen_value_input);
+        dinput       = tensor<T>{lengths, strides};
 
-        output  = tensor<T>{lengths};
-        doutput = tensor<T>{lengths}.generate(gen_value_doutput);
+        output  = tensor<T>{lengths, strides};
+        doutput = tensor<T>{lengths, strides}.generate(gen_value_doutput);
 
         // Calculate output tensor value by forwarding input tensor
         cpu_logcumsumexp_forward(input,
@@ -275,7 +272,7 @@ protected:
                                  logcumsumexp_config.exclusive,
                                  logcumsumexp_config.reverse);
 
-        ref_dinput = tensor<T>{lengths, input_strides};
+        ref_dinput = tensor<T>{lengths, strides};
 
         input_dev   = handle.Write(input.data);
         output_dev  = handle.Write(output.data);

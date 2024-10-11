@@ -155,10 +155,10 @@ int LogCumSumExpDriver<Tgpu, Tref>::GetandSetData()
     if(SetTensorNd(inputDesc, lengths, strides, data_type) != miopenStatusSuccess)
         MIOPEN_THROW("Error parsing input tensor: " + inflags.GetValueStr("input") + ".");
 
-    if(SetTensorNd(outputDesc, lengths, data_type) != miopenStatusSuccess)
+    if(SetTensorNd(outputDesc, lengths, strides, data_type) != miopenStatusSuccess)
         MIOPEN_THROW("Error parsing output tensor" + inflags.GetValueStr("input") + ".");
 
-    if(SetTensorNd(doutputDesc, lengths, data_type) != miopenStatusSuccess)
+    if(SetTensorNd(doutputDesc, lengths, strides, data_type) != miopenStatusSuccess)
         MIOPEN_THROW("Error parsing output gradient tensor" + inflags.GetValueStr("input") + ".");
 
     if(SetTensorNd(dinputDesc, lengths, strides, data_type) != miopenStatusSuccess)
