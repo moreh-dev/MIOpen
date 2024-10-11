@@ -152,18 +152,24 @@ int AvgPoolDriver<Tgpu, Tref>::GetandSetData()
     if(ksize.size() != ksp_dim)
     {
         int ref = ksp_dim - ksize.size();
+        if(ref < 0)
+            MIOPEN_THROW("Invalid kernel size");
         while((ref--) != 0)
             ksize.push_back(ksize[0]);
     }
     if(stride.size() != ksp_dim)
     {
         int ref = ksp_dim - stride.size();
+        if(ref < 0)
+            MIOPEN_THROW("Invalid kernel size");
         while((ref--) != 0)
             stride.push_back(stride[0]);
     }
     if(padding.size() != ksp_dim)
     {
         int ref = ksp_dim - padding.size();
+        if(ref < 0)
+            MIOPEN_THROW("Invalid kernel size");
         while((ref--) != 0)
             padding.push_back(padding[0]);
     }
