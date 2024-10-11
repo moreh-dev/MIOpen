@@ -125,6 +125,14 @@ int AvgPoolDriver<Tgpu, Tref>::ParseCmdLineArgs(int argc, char* argv[])
     {
         miopenEnableProfiling(GetHandle(), true);
     }
+
+    forw = inflags.GetValueInt("forw");
+
+    if(forw != 0 && forw != 1)
+    {
+        MIOPEN_THROW("Invalid Forward Mode");
+    }
+
     return miopenStatusSuccess;
 }
 
@@ -251,21 +259,23 @@ int AvgPoolDriver<Tgpu, Tref>::AddCmdLineArgs()
         'p',
         "0x0",
         "Implicit zero padding to be added on both sides D1,D2,... Example: 0x0.");
-    inflags.AddInputFlag("ceil_mode",
-                         'c',
-                         "1",
-                         "When 1, will use ceil instead of floor to compute the output shape.",
-                         "int");
-    inflags.AddInputFlag("count_include_pad",
-                         'P',
-                         "0",
-                         "When 1, will include the zero-padding in the averaging calculation.",
-                         "int");
+    inflags.AddInputFlag(
+        "ceil_mode",
+        'c',
+        "1",
+        "When 1, will use ceil instead of floor to compute the output shape (Default=1).",
+        "int");
+    inflags.AddInputFlag(
+        "count_include_pad",
+        'P',
+        "0",
+        "When 1, will include the zero-padding in the averaging calculation (Default=0).",
+        "int");
     inflags.AddInputFlag("divisor_override",
                          'd',
                          "0",
                          "If specified, it will be used as divisor, otherwise size of the pooling "
-                         "region will be used.",
+                         "region will be used (Default=0).",
                          "int");
 
     inflags.AddInputFlag("is-contiguous", 'C', "1", "is-contiguous (Default=1)", "int");

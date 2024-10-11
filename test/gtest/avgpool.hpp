@@ -202,19 +202,19 @@ protected:
         auto dims = input.desc.GetNumDims();
         if(dims == 4)
         {
-            cpu_avgpool_forward_2d(input,
-                                   ref_output,
-                                   static_cast<long>(N),
-                                   static_cast<long>(C),
-                                   static_cast<long>(H),
-                                   static_cast<long>(W),
-                                   static_cast<long>(OH),
-                                   static_cast<long>(OW),
-                                   ksize_long,
-                                   stride_long,
-                                   padding_long,
-                                   count_include_pad,
-                                   divisor_override);
+            cpu_avgpool_forward_2d<T>(input,
+                                      ref_output,
+                                      static_cast<long>(N),
+                                      static_cast<long>(C),
+                                      static_cast<long>(H),
+                                      static_cast<long>(W),
+                                      static_cast<long>(OH),
+                                      static_cast<long>(OW),
+                                      ksize_long,
+                                      stride_long,
+                                      padding_long,
+                                      count_include_pad,
+                                      divisor_override);
         }
         else if(dims == 5)
         {
@@ -250,7 +250,6 @@ protected:
                                                  padding.GetSize() == 3 ? padding[2] : padding[1],
                                                  count_include_pad,
                                                  divisor_override);
-        fflush(stdout);
         ASSERT_EQ(status, miopenStatusSuccess);
 
         output.data = handle.Read<T>(output_dev, output.data.size());
@@ -369,19 +368,19 @@ protected:
         auto dims = input_grad.desc.GetNumDims();
         if(dims == 4)
         {
-            cpu_avgpool_backward_2d(output_grad,
-                                    ref_input_grad,
-                                    static_cast<long>(N),
-                                    static_cast<long>(C),
-                                    static_cast<long>(H),
-                                    static_cast<long>(W),
-                                    static_cast<long>(OH),
-                                    static_cast<long>(OW),
-                                    ksize,
-                                    stride,
-                                    padding,
-                                    count_include_pad,
-                                    static_cast<long>(divisor_override));
+            cpu_avgpool_backward_2d<T>(output_grad,
+                                       ref_input_grad,
+                                       static_cast<long>(N),
+                                       static_cast<long>(C),
+                                       static_cast<long>(H),
+                                       static_cast<long>(W),
+                                       static_cast<long>(OH),
+                                       static_cast<long>(OW),
+                                       ksize,
+                                       stride,
+                                       padding,
+                                       count_include_pad,
+                                       static_cast<long>(divisor_override));
         }
         else if(dims == 5)
         {

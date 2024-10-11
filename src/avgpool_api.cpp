@@ -43,8 +43,17 @@ inline std::ostream& operator<<(std::ostream& os, const std::vector<size_t>& v)
     return os;
 }
 
-static void LogCmdAvgPool(const miopenTensorDescriptor_t xDesc,
+static void LogCmdAvgPool(const miopenTensorDescriptor_t iDesc,
                           const miopenTensorDescriptor_t oDesc,
+                          const int64_t KD,
+                          const int64_t KH,
+                          const int64_t KW,
+                          const int64_t SD,
+                          const int64_t SH,
+                          const int64_t SW,
+                          const int64_t PD,
+                          const int64_t PH,
+                          const int64_t PW,
                           const bool count_include_pad,
                           const int64_t divisor_override,
                           const bool is_fwd)
@@ -52,7 +61,7 @@ static void LogCmdAvgPool(const miopenTensorDescriptor_t xDesc,
     if(miopen::IsLoggingCmd())
     {
         std::stringstream ss;
-        auto dtype = miopen::deref(xDesc).GetType();
+        auto dtype = miopen::deref(iDesc).GetType();
         if(dtype == miopenHalf)
         {
             ss << "avgpoolfp16";
@@ -66,11 +75,20 @@ static void LogCmdAvgPool(const miopenTensorDescriptor_t xDesc,
             ss << "avgpoolbfp16";
         }
 
-        MIOPEN_LOG_FUNCTION(xDesc, oDesc, count_include_pad, divisor_override);
-        ss << " -Is " << miopen::deref(xDesc).GetLengths();
+        MIOPEN_LOG_FUNCTION(iDesc, oDesc, count_include_pad, divisor_override);
+        ss << " -Is " << miopen::deref(iDesc).GetLengths();
         ss << " -Os " << miopen::deref(oDesc).GetLengths();
-        ss << " -Si " << miopen::deref(xDesc).GetStrides();
+        ss << " -Si " << miopen::deref(iDesc).GetStrides();
         ss << " -So " << miopen::deref(oDesc).GetStrides();
+        ss << " -KD " << KD;
+        ss << " -KH " << KH;
+        ss << " -KW " << KW;
+        ss << " -SD " << SD;
+        ss << " -SH " << SH;
+        ss << " -SW " << SW;
+        ss << " -PD " << PD;
+        ss << " -PH " << PH;
+        ss << " -PW " << PW;
         ss << " -Cp " << count_include_pad;
         ss << " -Do " << divisor_override;
         ss << " -F " << ((is_fwd) ? "1" : "2");
@@ -113,7 +131,20 @@ extern "C" miopenStatus_t miopenAvgPoolForward(miopenHandle_t handle,
                         count_include_pad,
                         divisor_override);
 
-    LogCmdAvgPool(inputDesc, outputDesc, count_include_pad, divisor_override, true);
+    LogCmdAvgPool(inputDesc,
+                  outputDesc,
+                  KD,
+                  KH,
+                  KW,
+                  SD,
+                  SH,
+                  SW,
+                  PD,
+                  PH,
+                  PW,
+                  count_include_pad,
+                  divisor_override,
+                  true);
     return miopen::try_([&] {
         miopen::avgpool::AvgPoolForward(miopen::deref(handle),
                                         miopen::deref(inputDesc),
@@ -168,7 +199,20 @@ extern "C" miopenStatus_t miopenAvgPoolBackward(miopenHandle_t handle,
                         count_include_pad,
                         divisor_override);
 
-    LogCmdAvgPool(inputGradDesc, outputGradDesc, count_include_pad, divisor_override, false);
+    LogCmdAvgPool(inputGradDesc,
+                  outputGradDesc,
+                  KD,
+                  KH,
+                  KW,
+                  SD,
+                  SH,
+                  SW,
+                  PD,
+                  PH,
+                  PW,
+                  count_include_pad,
+                  divisor_override,
+                  false);
     return miopen::try_([&] {
         miopen::avgpool::AvgPoolBackward(miopen::deref(handle),
                                          miopen::deref(outputGradDesc),
