@@ -106,7 +106,6 @@ __device__ void LogCumSumExpForwardContiguousSmallCumDimStride1(const DTYPE* __r
 template <typename DTYPE, uint32_t NDIMS, uint64_t LOCAL_SIZE>
 __device__ void LogCumSumExpForwardSmallCumDim(const DTYPE* __restrict__ input,
                                                DTYPE* __restrict__ output,
-                                               const uint64_t dim,
                                                const bool exclusive,
                                                const bool reverse,
                                                tensor_view_t<NDIMS> input_tv,
@@ -128,11 +127,10 @@ __device__ void LogCumSumExpForwardSmallCumDim(const DTYPE* __restrict__ input,
     uint64_t yid = blockIdx.y * blockDim.y + threadIdx.y;
     uint64_t lid = threadIdx.y;
 
+    const uint64_t dim   = NDIMS - 1;
     uint64_t reduce_size = input_tv.size[dim];
 
-    input_tv.size[dim] = 1;
     tensor_layout_t<NDIMS> tensor_layout(input_tv, xid);
-    input_tv.size[dim] = reduce_size;
 
     if(exclusive <= yid && yid < reduce_size)
     {
@@ -235,7 +233,6 @@ __device__ void LogCumSumExpBackwardSmallCumDim(const DTYPE* __restrict__ input,
                                                 const DTYPE* __restrict__ output,
                                                 const DTYPE* __restrict__ output_grad,
                                                 DTYPE* __restrict__ input_grad,
-                                                const uint64_t dim,
                                                 const bool exclusive,
                                                 const bool reverse,
                                                 tensor_view_t<NDIMS> input_tv,
@@ -259,11 +256,10 @@ __device__ void LogCumSumExpBackwardSmallCumDim(const DTYPE* __restrict__ input,
     uint64_t yid = blockIdx.y * blockDim.y + threadIdx.y;
     uint64_t lid = threadIdx.y;
 
+    const uint64_t dim   = NDIMS - 1;
     uint64_t reduce_size = output_tv.size[dim];
 
-    output_tv.size[dim] = 1;
     tensor_layout_t<NDIMS> tensor_layout(output_tv, xid);
-    output_tv.size[dim] = reduce_size;
 
     FLOAT_ACCUM output_v, output_grad_v = CVT_FP32_2ACCUM(0.0f);
     if(exclusive <= yid && yid < reduce_size)
@@ -343,7 +339,6 @@ LogCumSumExpBackwardContiguousSmallCumDimStride1(const FLOAT* input,
 #ifdef VIEW_DIMS
 extern "C" __global__ void LogCumSumExpForwardSmallCumDim(const FLOAT* input,
                                                           FLOAT* output,
-                                                          const uint64_t dim,
                                                           const bool exclusive,
                                                           const bool reverse,
                                                           tensor_view_t<VIEW_DIMS> input_tv,
@@ -351,14 +346,13 @@ extern "C" __global__ void LogCumSumExpForwardSmallCumDim(const FLOAT* input,
 {
     // instantiate the kernel
     LogCumSumExpForwardSmallCumDim<FLOAT, VIEW_DIMS, REDUCE_SIZE>(
-        input, output, dim, exclusive, reverse, input_tv, output_tv);
+        input, output, exclusive, reverse, input_tv, output_tv);
 }
 
 extern "C" __global__ void LogCumSumExpBackwardSmallCumDim(const FLOAT* input,
                                                            const FLOAT* output,
                                                            const FLOAT* output_grad,
                                                            FLOAT* input_grad,
-                                                           const uint64_t dim,
                                                            const bool exclusive,
                                                            const bool reverse,
                                                            tensor_view_t<VIEW_DIMS> input_tv,
@@ -370,7 +364,6 @@ extern "C" __global__ void LogCumSumExpBackwardSmallCumDim(const FLOAT* input,
                                                                    output,
                                                                    output_grad,
                                                                    input_grad,
-                                                                   dim,
                                                                    exclusive,
                                                                    reverse,
                                                                    input_tv,

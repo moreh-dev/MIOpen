@@ -31,6 +31,10 @@
 #include <miopen/tensor.hpp>
 #include "../../kernels/tensor_view.hpp"
 
+#include <algorithm>
+#include <cassert>
+#include <vector>
+
 namespace miopen {
 
 template <int N>
@@ -74,6 +78,21 @@ inline void slice_tv(tensor_view_t<N>& tensor_view, int32_t sliceCount, const in
         tensor_view.size[dim] = (len + step - 1) / step;
         tensor_view.stride[dim] *= step;
     }
+}
+
+template <int N, typename T>
+inline void permute_tv(tensor_view_t<N>& tensor_view, std::vector<T> permute)
+{
+    assert(permute.size() == N);
+
+    uint64_t new_stride[N], new_size[N];
+    for(auto i = 0; i < N; ++i)
+    {
+        new_stride[i] = tensor_view.stride[permute[i]];
+        new_size[i]   = tensor_view.size[permute[i]];
+    }
+    std::copy(new_stride, new_stride + N, tensor_view.stride);
+    std::copy(new_size, new_size + N, tensor_view.size);
 }
 
 } // namespace miopen

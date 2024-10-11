@@ -116,12 +116,21 @@ ConvSolution BackwardSmallCumDim::GetSolution(
             auto output_tv  = get_inner_expanded_tv<VIEW_DIMS>(deref(params.outputDesc));
             auto doutput_tv = get_inner_expanded_tv<VIEW_DIMS>(deref(params.doutputDesc));
             auto dinput_tv  = get_inner_expanded_tv<VIEW_DIMS>(deref(params.dinputDesc));
-            auto kernel     = handle_.Run(kernels[0]);
+
+            std::vector<int> permute(VIEW_DIMS);
+            std::iota(permute.begin(), permute.end(), 0);
+            std::rotate(permute.begin() + true_dim, permute.begin() + true_dim + 1, permute.end());
+
+            permute_tv(input_tv, permute);
+            permute_tv(output_tv, permute);
+            permute_tv(doutput_tv, permute);
+            permute_tv(dinput_tv, permute);
+
+            auto kernel = handle_.Run(kernels[0]);
             kernel(params.input,
                    params.output,
                    params.doutput,
                    params.dinput,
-                   static_cast<int64_t>(true_dim),
                    params.exclusive,
                    params.reverse,
                    input_tv,

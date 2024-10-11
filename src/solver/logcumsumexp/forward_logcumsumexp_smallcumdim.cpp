@@ -118,14 +118,17 @@ ConvSolution ForwardSmallCumDim::GetSolution(
             const unsigned int true_dim = ((params.dim % ndims) + ndims) % ndims;
             auto input_tv               = get_inner_expanded_tv<VIEW_DIMS>(deref(params.inputDesc));
             auto output_tv = get_inner_expanded_tv<VIEW_DIMS>(deref(params.outputDesc));
-            auto kernel    = handle_.Run(kernels[0]);
-            kernel(params.input,
-                   params.output,
-                   static_cast<int64_t>(true_dim),
-                   params.exclusive,
-                   params.reverse,
-                   input_tv,
-                   output_tv);
+
+            std::vector<int> permute(VIEW_DIMS);
+            std::iota(permute.begin(), permute.end(), 0);
+            std::rotate(permute.begin() + true_dim, permute.begin() + true_dim + 1, permute.end());
+
+            permute_tv(input_tv, permute);
+            permute_tv(output_tv, permute);
+
+            auto kernel = handle_.Run(kernels[0]);
+            kernel(
+                params.input, params.output, params.exclusive, params.reverse, input_tv, output_tv);
         };
     };
 
