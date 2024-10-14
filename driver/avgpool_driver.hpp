@@ -84,8 +84,6 @@ public:
 private:
     InputFlags inflags;
 
-    int forw;
-
     miopenTensorDescriptor_t inputDesc;
     miopenTensorDescriptor_t outputDesc;
     miopenTensorDescriptor_t inputGradDesc;
@@ -124,13 +122,6 @@ int AvgPoolDriver<Tgpu, Tref>::ParseCmdLineArgs(int argc, char* argv[])
     if(inflags.GetValueInt("time") == 1)
     {
         miopenEnableProfiling(GetHandle(), true);
-    }
-
-    forw = inflags.GetValueInt("forw");
-
-    if(forw != 0 && forw != 1)
-    {
-        MIOPEN_THROW("Invalid Forward Mode");
     }
 
     return miopenStatusSuccess;
