@@ -72,6 +72,7 @@
  * @defgroup ReduceCalculation
  * @defgroup RotaryPositionalEmbeddings
  * @defgroup ReLU
+ * @defgroup adaptivemaxpool
  *
  */
 
@@ -7789,6 +7790,52 @@ MIOPEN_EXPORT miopenStatus_t miopenPReLUBackward(miopenHandle_t handle,
 
 /** @} */
 // CLOSEOUT RELU DOXYGEN GROUP
+#endif // MIOPEN_BETA_API
+
+#ifdef MIOPEN_BETA_API
+// adaptivemaxpool APIs
+/** @addtogroup adaptivemaxpool
+ *
+ *  @{
+ */
+
+/*! @brief Execute an adaptivemaxpool forward layer
+ *
+ * @param handle                   MIOpen handle (input)
+ * @param inputDesc                Tensor descriptor for input tensor (input)
+ * @param input                    Data tensor input (input)
+ * @param outputDesc               Tensor descriptor for output tensor (input)
+ * @param output                   Data tensor output (output)
+ * @return                         miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t
+miopenAdaptiveMaxPoolForward(miopenHandle_t handle,
+                             const miopenTensorDescriptor_t inputDesc,
+                             const void* input,
+                             const miopenTensorDescriptor_t outputDesc,
+                             void* output,
+                             const miopenTensorDescriptor_t indicesDesc,
+                             void* indices);
+
+/*! @brief Execute an adaptivemaxpool backward layer
+ *
+ * @param handle                   MIOpen handle (input)
+ * @param outputGradDesc           Tensor descriptor for output grad tensor (input)
+ * @param output_grad              Data tensor output grad (input)
+ * @param inputGradDesc            Tensor descriptor for input grad tensor (input)
+ * @param input_grad               Data tensor input grad (output)
+ * @return                         miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t
+miopenAdaptiveMaxPoolBackward(miopenHandle_t handle,
+                              const miopenTensorDescriptor_t indicesDesc,
+                              const void* indices,
+                              const miopenTensorDescriptor_t outputGradDesc,
+                              const void* output_grad,
+                              const miopenTensorDescriptor_t inputGradDesc,
+                              void* input_grad);
+/** @} */
+// CLOSEOUT adaptivemaxpool DOXYGEN GROUP
 #endif // MIOPEN_BETA_API
 
 #ifdef __cplusplus
