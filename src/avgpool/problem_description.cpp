@@ -59,10 +59,7 @@ NetworkConfig FwdProblemDescription::MakeNetworkConfig() const
     ss << "-input_dtype" << input_dtype;
     ss << "-Is" << input_size;
     ss << "-Os" << output_size;
-    ss << "-Si" << input_stride;
-    ss << "-So" << output_stride;
-    ss << "-Cp " << count_include_pad;
-    ss << "-Do " << divisor_override;
+    ss << "-Ic" << IsAllContiguous();
 
     return NetworkConfig{ss.str()};
 }
@@ -82,10 +79,7 @@ NetworkConfig BwdProblemDescription::MakeNetworkConfig() const
     ss << "-input_dtype" << input_dtype;
     ss << "-dIs" << input_grad_size;
     ss << "-dOs" << output_grad_size;
-    ss << "-dSi" << input_grad_stride;
-    ss << "-dSo" << output_grad_stride;
-    ss << "-Cp " << count_include_pad;
-    ss << "-Do " << divisor_override;
+    ss << "-Ic" << IsAllContiguous();
 
     return NetworkConfig{ss.str()};
 }

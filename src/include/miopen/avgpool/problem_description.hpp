@@ -67,8 +67,8 @@ struct FwdProblemDescription : ProblemDescription
         IsValidDims();
     }
 
-    const TensorDescriptor GetInputDesc() const { return inputDesc; }
-    const TensorDescriptor GetOutputDesc() const { return outputDesc; }
+    const TensorDescriptor& GetInputDesc() const { return inputDesc; }
+    const TensorDescriptor& GetOutputDesc() const { return outputDesc; }
     auto GetNtotal() const { return outputDesc.GetElementSize(); }
 
     bool IsValidLength() const
@@ -130,8 +130,8 @@ struct BwdProblemDescription : ProblemDescription
         IsValidDims();
     }
 
-    auto GetOutputGradDesc() const { return outputGradDesc; }
-    auto GetInputGradDesc() const { return inputGradDesc; }
+    const TensorDescriptor& GetOutputGradDesc() const { return outputGradDesc; }
+    const TensorDescriptor& GetInputGradDesc() const { return inputGradDesc; }
     auto GetNtotal() const { return inputGradDesc.GetElementSize(); }
 
     bool IsValidLength() const

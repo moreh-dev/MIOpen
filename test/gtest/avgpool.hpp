@@ -133,16 +133,6 @@ protected:
         padding      = tensor<int64_t>{in_dim.size() - 2};
         padding.data = avgpool_config.padding;
 
-        ksize_long   = tensor<long>{in_dim.size() - 2};
-        stride_long  = tensor<long>{in_dim.size() - 2};
-        padding_long = tensor<long>{in_dim.size() - 2};
-        for(int i = 0; i < in_dim.size() - 2; i++)
-        {
-            ksize_long.data[i]   = static_cast<long>(ksize.data[i]);
-            stride_long.data[i]  = static_cast<long>(stride.data[i]);
-            padding_long.data[i] = static_cast<long>(padding.data[i]);
-        }
-
         ceil_mode         = avgpool_config.ceil_mode;
         count_include_pad = avgpool_config.count_include_pad;
         divisor_override  = avgpool_config.divisor_override;
@@ -204,15 +194,15 @@ protected:
         {
             cpu_avgpool_forward_2d<T>(input,
                                       ref_output,
-                                      static_cast<long>(N),
-                                      static_cast<long>(C),
-                                      static_cast<long>(H),
-                                      static_cast<long>(W),
-                                      static_cast<long>(OH),
-                                      static_cast<long>(OW),
-                                      ksize_long,
-                                      stride_long,
-                                      padding_long,
+                                      N,
+                                      C,
+                                      H,
+                                      W,
+                                      OH,
+                                      OW,
+                                      ksize,
+                                      stride,
+                                      padding,
                                       count_include_pad,
                                       divisor_override);
         }
@@ -220,17 +210,17 @@ protected:
         {
             cpu_avgpool_forward_3d<T>(input,
                                       ref_output,
-                                      static_cast<long>(N),
-                                      static_cast<long>(C),
-                                      static_cast<long>(D),
-                                      static_cast<long>(H),
-                                      static_cast<long>(W),
-                                      static_cast<long>(OD),
-                                      static_cast<long>(OH),
-                                      static_cast<long>(OW),
-                                      ksize_long,
-                                      stride_long,
-                                      padding_long,
+                                      N,
+                                      C,
+                                      D,
+                                      H,
+                                      W,
+                                      OD,
+                                      OH,
+                                      OW,
+                                      ksize,
+                                      stride,
+                                      padding,
                                       count_include_pad,
                                       divisor_override);
         }
@@ -270,11 +260,8 @@ protected:
     tensor<T> output;
     tensor<T> ref_output;
     tensor<int64_t> ksize;
-    tensor<long> ksize_long;
     tensor<int64_t> stride;
-    tensor<long> stride_long;
     tensor<int64_t> padding;
-    tensor<long> padding_long;
 
     bool ceil_mode;
     bool count_include_pad;
@@ -370,35 +357,35 @@ protected:
         {
             cpu_avgpool_backward_2d<T>(output_grad,
                                        ref_input_grad,
-                                       static_cast<long>(N),
-                                       static_cast<long>(C),
-                                       static_cast<long>(H),
-                                       static_cast<long>(W),
-                                       static_cast<long>(OH),
-                                       static_cast<long>(OW),
+                                       N,
+                                       C,
+                                       H,
+                                       W,
+                                       OH,
+                                       OW,
                                        ksize,
                                        stride,
                                        padding,
                                        count_include_pad,
-                                       static_cast<long>(divisor_override));
+                                       divisor_override);
         }
         else if(dims == 5)
         {
             cpu_avgpool_backward_3d<T>(output_grad,
                                        ref_input_grad,
-                                       static_cast<long>(N),
-                                       static_cast<long>(C),
-                                       static_cast<long>(D),
-                                       static_cast<long>(H),
-                                       static_cast<long>(W),
-                                       static_cast<long>(OD),
-                                       static_cast<long>(OH),
-                                       static_cast<long>(OW),
+                                       N,
+                                       C,
+                                       D,
+                                       H,
+                                       W,
+                                       OD,
+                                       OH,
+                                       OW,
                                        ksize,
                                        stride,
                                        padding,
                                        count_include_pad,
-                                       static_cast<long>(divisor_override));
+                                       divisor_override);
         }
         status = miopen::avgpool::AvgPoolBackward(handle,
                                                   output_grad.desc,

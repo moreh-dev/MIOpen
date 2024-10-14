@@ -44,7 +44,6 @@ struct FwdInvokeParams : public miopen::InvokeParams
 
     ConstData_t input = nullptr;
     Data_t output     = nullptr;
-    ConstData_t ksize = nullptr;
 
     int64_t KD               = 0;
     int64_t KH               = 0;
@@ -72,7 +71,6 @@ struct BwdInvokeParams : public miopen::InvokeParams
 
     ConstData_t output_grad = nullptr;
     Data_t input_grad       = nullptr;
-    ConstData_t ksize       = nullptr;
 
     int64_t KD               = 0;
     int64_t KH               = 0;
