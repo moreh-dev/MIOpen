@@ -35,7 +35,6 @@
 #include <../test/tensor_holder.hpp>
 #include <../test/verify.hpp>
 
-#include <cstdint>
 #include <miopen/env.hpp>
 #include <miopen/handle.hpp>
 #include <miopen/miopen.h>
@@ -86,8 +85,6 @@ public:
 
 private:
     InputFlags inflags;
-
-    int forw;
 
     miopenTensorDescriptor_t inputDesc;
     miopenTensorDescriptor_t outputDesc;
