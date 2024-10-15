@@ -36,31 +36,10 @@ struct NetworkConfig;
 
 namespace avgpool {
 
-struct ProblemDescription : ProblemDescriptionBase
+struct FwdProblemDescription : ProblemDescriptionBase
 {
-    ProblemDescription(const bool count_include_pad_, const int64_t divisor_override_)
-        : count_include_pad(count_include_pad_), divisor_override(divisor_override_)
-    {
-        if(divisor_override < 0)
-        {
-            MIOPEN_THROW(miopenStatusBadParm, "AvgPool: divisor_override must be non-negative.");
-        }
-    }
-
-protected:
-    bool count_include_pad;
-    int64_t divisor_override;
-};
-
-struct FwdProblemDescription : ProblemDescription
-{
-    FwdProblemDescription(const TensorDescriptor& inputDesc_,
-                          const TensorDescriptor& outputDesc_,
-                          const bool count_include_pad_,
-                          const int64_t divisor_override_)
-        : ProblemDescription(count_include_pad_, divisor_override_),
-          inputDesc(inputDesc_),
-          outputDesc(outputDesc_)
+    FwdProblemDescription(const TensorDescriptor& inputDesc_, const TensorDescriptor& outputDesc_)
+        : inputDesc(inputDesc_), outputDesc(outputDesc_)
     {
         IsValidLength();
         IsSameType();
@@ -115,15 +94,11 @@ protected:
     TensorDescriptor outputDesc;
 };
 
-struct BwdProblemDescription : ProblemDescription
+struct BwdProblemDescription : ProblemDescriptionBase
 {
     BwdProblemDescription(const TensorDescriptor& outputGradDesc_,
-                          const TensorDescriptor& inputGradDesc_,
-                          const bool count_include_pad_,
-                          const int64_t divisor_override_)
-        : ProblemDescription(count_include_pad_, divisor_override_),
-          outputGradDesc(outputGradDesc_),
-          inputGradDesc(inputGradDesc_)
+                          const TensorDescriptor& inputGradDesc_)
+        : outputGradDesc(outputGradDesc_), inputGradDesc(inputGradDesc_)
     {
         IsValidLength();
         IsSameType();

@@ -52,8 +52,7 @@ miopenStatus_t AvgPoolForward(Handle& handle,
                               const bool count_include_pad,
                               const int64_t divisor_override)
 {
-    const auto problem =
-        avgpool::FwdProblemDescription{inputDesc, outputDesc, count_include_pad, divisor_override};
+    const auto problem = avgpool::FwdProblemDescription{inputDesc, outputDesc};
 
     const auto invoke_params = [&]() {
         auto tmp       = avgpool::FwdInvokeParams{};
@@ -102,8 +101,7 @@ miopenStatus_t AvgPoolBackward(Handle& handle,
                                const bool count_include_pad,
                                const int64_t divisor_override)
 {
-    const auto problem = avgpool::BwdProblemDescription{
-        outputGradDesc, inputGradDesc, count_include_pad, divisor_override};
+    const auto problem = avgpool::BwdProblemDescription{outputGradDesc, inputGradDesc};
 
     const auto invoke_params = [&]() {
         auto tmp           = avgpool::BwdInvokeParams{};
