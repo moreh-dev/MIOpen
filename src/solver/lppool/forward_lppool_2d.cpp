@@ -45,29 +45,8 @@ namespace lppool {
 
 bool IsOverRocmFwd2d(const miopen::lppool::FwdProblemDescription& problem)
 {
-    if(problem.IsAllContiguous())
+    if(!problem.IsAllContiguous())
         return true;
-    else
-    {
-        auto dtype       = problem.GetInputDesc().GetType();
-        auto in_nelems   = problem.GetInputDesc().GetElementSize();
-        auto out_nelems  = problem.GetOutputDesc().GetElementSize();
-        auto in_over_out = static_cast<float>(in_nelems) / out_nelems;
-        if(dtype == miopenFloat)
-        {
-            if(out_nelems <= 9633792 && in_over_out >= 4)
-            {
-                return true;
-            }
-        }
-        else if(dtype == miopenHalf || dtype == miopenBFloat16)
-        {
-            if(out_nelems <= 3311616 && in_over_out >= 4)
-            {
-                return true;
-            }
-        }
-    }
     return false;
 }
 
@@ -84,10 +63,10 @@ bool LPPoolForward2d::IsApplicable(const ExecutionContext&,
     {
         return false;
     }
-    // if(!IsOverRocmFwd2d(problem))
-    // {
-    //     return false;
-    // }
+    if(!IsOverRocmFwd2d(problem))
+    {
+        return false;
+    }
     return true;
 }
 

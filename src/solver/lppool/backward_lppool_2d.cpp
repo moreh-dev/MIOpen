@@ -43,22 +43,6 @@ namespace solver {
 
 namespace lppool {
 
-bool IsOverRocmBwd2d(const miopen::lppool::BwdProblemDescription& problem)
-{
-    if(!problem.IsAllContiguous())
-    {
-        auto in_nelems   = problem.GetInputGradDesc().GetElementSize();
-        auto out_nelems  = problem.GetOutputGradDesc().GetElementSize();
-        auto in_over_out = static_cast<float>(in_nelems) / out_nelems;
-
-        if(in_over_out == 4)
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
 bool LPPoolBackward2d::IsApplicable(const ExecutionContext&,
                                     const miopen::lppool::BwdProblemDescription& problem) const
 {
@@ -72,10 +56,6 @@ bool LPPoolBackward2d::IsApplicable(const ExecutionContext&,
     {
         return false;
     }
-    // if(!IsOverRocmBwd2d(problem))
-    // {
-    //     return false;
-    // }
     return true;
 }
 

@@ -43,22 +43,6 @@ namespace solver {
 
 namespace lppool {
 
-bool IsOverRocmFwd1d(const miopen::lppool::FwdProblemDescription& problem)
-{
-    auto out_nelems = problem.GetOutputDesc().GetElementSize();
-    if(problem.IsAllContiguous())
-    {
-        if(out_nelems > 1536)
-            return true;
-    }
-    else
-    {
-        if(out_nelems > 6144 && out_nelems <= 17915904)
-            return true;
-    }
-    return false;
-}
-
 bool LPPoolForward1d::IsApplicable(const ExecutionContext&,
                                    const miopen::lppool::FwdProblemDescription& problem) const
 {
@@ -72,10 +56,6 @@ bool LPPoolForward1d::IsApplicable(const ExecutionContext&,
     {
         return false;
     }
-    // if(!IsOverRocmFwd1d(problem))
-    // {
-    //     return false;
-    // }
     return true;
 }
 
