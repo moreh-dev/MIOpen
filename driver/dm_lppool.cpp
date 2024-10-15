@@ -24,16 +24,16 @@
  *
  *******************************************************************************/
 #include "registry_driver_maker.hpp"
-#include "avgpool_driver.hpp"
+#include "lppool_driver.hpp"
 
 static Driver* makeDriver(const std::string& base_arg)
 {
-    if(base_arg == "avgpool")
-        return new AvgPoolDriver<float, float>();
-    if(base_arg == "avgpoolfp16")
-        return new AvgPoolDriver<float16, float>();
-    if(base_arg == "avgpoolbfp16")
-        return new AvgPoolDriver<bfloat16, float>();
+    if(base_arg == "lppool")
+        return new LPPoolDriver<float, float>();
+    if(base_arg == "lppoolfp16")
+        return new LPPoolDriver<float16, float>();
+    if(base_arg == "lppoolbfp16")
+        return new LPPoolDriver<bfloat16, float>();
     return nullptr;
 }
 

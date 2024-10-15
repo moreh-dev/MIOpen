@@ -62,7 +62,7 @@ enum class Primitive
     Item,
     RoPE,
     ReLU,
-    AvgPool
+    LPPool,
 };
 
 struct MIOPEN_INTERNALS_EXPORT Id

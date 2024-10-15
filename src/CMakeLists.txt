@@ -89,8 +89,6 @@ set( MIOpen_Source
     adam_api.cpp
     addlayernorm_api.cpp
     api/find2_0_commons.cpp
-    avgpool_api.cpp
-    avgpool/problem_description.cpp
     batch_norm.cpp
     batch_norm_api.cpp
     batchnorm/problem_description.cpp
@@ -159,6 +157,8 @@ set( MIOpen_Source
     load_file.cpp
     lock_file.cpp
     logger.cpp
+    lppool_api.cpp
+    lppool/problem_description.cpp
     lrn_api.cpp
     mha/mha_descriptor.cpp
     mha/problem_description.cpp
@@ -203,10 +203,6 @@ set( MIOpen_Source
     solver/activ/fwd_1.cpp
     solver/adam/adam.cpp
     solver/adam/transformers_adam_w.cpp
-    solver/avgpool/backward_avgpool_2d.cpp
-    solver/avgpool/backward_avgpool_3d.cpp
-    solver/avgpool/forward_avgpool_2d.cpp
-    solver/avgpool/forward_avgpool_3d.cpp
     solver/batchnorm/backward_ck.cpp
     solver/batchnorm/backward_per_activation.cpp
     solver/batchnorm/backward_per_activation_fused.cpp
@@ -310,6 +306,10 @@ set( MIOpen_Source
     solver/layernorm/forward_layernorm2d_ck.cpp
     solver/layernorm/forward_layernorm4d_ck.cpp
     solver/layernorm/forward_t5layernorm.cpp
+    solver/lppool/backward_lppool_1d.cpp
+    solver/lppool/backward_lppool_2d.cpp
+    solver/lppool/forward_lppool_1d.cpp
+    solver/lppool/forward_lppool_2d.cpp
     solver/mha/mha_solver_backward.cpp
     solver/mha/mha_solver_forward.cpp
     solver/pooling/forward2d.cpp
@@ -508,7 +508,6 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         ${GPU_BATCHED_TRANSPOSE_KERNEL_HIP}
         ${GPU_GENERAL_TENSOR_REORDER_KERNEL_HIP_SOURCE}
         kernels/MIOpenAdam.cpp
-        kernels/MIOpenAvgPool.cpp
         kernels/MIOpenCat.cpp
         kernels/MIOpenCheckNumerics.cpp
         kernels/MIOpenBatchNormActivBwdPerAct.cl
@@ -528,6 +527,7 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         kernels/MIOpenGroupNorm.cpp
         kernels/MIOpenGetitem.cpp
         kernels/MIOpenLayerNorm.cpp
+        kernels/MIOpenLPPool.cpp
         kernels/MIOpenLRNBwd.cl
         kernels/MIOpenLRNFwd.cl
         kernels/MIOpenNeuron.cl
@@ -658,13 +658,13 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         activ.cpp
         adam.cpp
         addlayernorm.cpp
-        avgpool.cpp
         cat.cpp
         groupnorm.cpp
         getitem.cpp
         glu.cpp
         kernel_cache.cpp
         layernorm.cpp
+        lppool.cpp
         lrn.cpp
         mlo_dir_conv.cpp
         exec_utils.cpp

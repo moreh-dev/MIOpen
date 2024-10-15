@@ -32,7 +32,7 @@
 
 namespace miopen {
 
-namespace avgpool {
+namespace lppool {
 
 struct FwdInvokeParams : public miopen::InvokeParams
 {
@@ -45,17 +45,11 @@ struct FwdInvokeParams : public miopen::InvokeParams
     ConstData_t input = nullptr;
     Data_t output     = nullptr;
 
-    int64_t KD               = 0;
-    int64_t KH               = 0;
-    int64_t KW               = 0;
-    int64_t SD               = 0;
-    int64_t SH               = 0;
-    int64_t SW               = 0;
-    int64_t PD               = 0;
-    int64_t PH               = 0;
-    int64_t PW               = 0;
-    bool count_include_pad   = false;
-    int64_t divisor_override = 0;
+    int64_t KD      = 0;
+    int64_t KH      = 0;
+    int64_t SD      = 0;
+    int64_t SH      = 0;
+    float norm_type = 1.0f;
 
     std::size_t GetWorkspaceSize() const { return 0; }
     Data_t GetWorkspace() const { return nullptr; }
@@ -66,28 +60,26 @@ struct BwdInvokeParams : public miopen::InvokeParams
 
     BwdInvokeParams() = default;
 
+    const TensorDescriptor* inputDesc      = nullptr;
+    const TensorDescriptor* outputDesc     = nullptr;
     const TensorDescriptor* outputGradDesc = nullptr;
     const TensorDescriptor* inputGradDesc  = nullptr;
 
+    ConstData_t input       = nullptr;
+    ConstData_t output      = nullptr;
     ConstData_t output_grad = nullptr;
     Data_t input_grad       = nullptr;
 
-    int64_t KD               = 0;
-    int64_t KH               = 0;
-    int64_t KW               = 0;
-    int64_t SD               = 0;
-    int64_t SH               = 0;
-    int64_t SW               = 0;
-    int64_t PD               = 0;
-    int64_t PH               = 0;
-    int64_t PW               = 0;
-    bool count_include_pad   = false;
-    int64_t divisor_override = 0;
+    int64_t KD      = 0;
+    int64_t KH      = 0;
+    int64_t SD      = 0;
+    int64_t SH      = 0;
+    float norm_type = 1.0f;
 
     std::size_t GetWorkspaceSize() const { return 0; }
     Data_t GetWorkspace() const { return nullptr; }
 };
 
-} // namespace avgpool
+} // namespace lppool
 
 } // namespace miopen

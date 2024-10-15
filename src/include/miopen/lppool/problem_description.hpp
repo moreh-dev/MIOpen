@@ -34,33 +34,28 @@ namespace miopen {
 
 struct NetworkConfig;
 
-namespace avgpool {
+namespace lppool {
 
 struct ProblemDescription : ProblemDescriptionBase
 {
-    ProblemDescription(const bool count_include_pad_, const int64_t divisor_override_)
-        : count_include_pad(count_include_pad_), divisor_override(divisor_override_)
+    ProblemDescription(const float norm_type_) : norm_type(norm_type_)
     {
-        if(divisor_override < 0)
+        if(norm_type == 0.0f)
         {
-            MIOPEN_THROW(miopenStatusBadParm, "AvgPool: divisor_override must be non-negative.");
+            MIOPEN_THROW(miopenStatusBadParm, "LPPool: norm_type must be non-zero.");
         }
     }
 
 protected:
-    bool count_include_pad;
-    int64_t divisor_override;
+    float norm_type;
 };
 
 struct FwdProblemDescription : ProblemDescription
 {
     FwdProblemDescription(const TensorDescriptor& inputDesc_,
                           const TensorDescriptor& outputDesc_,
-                          const bool count_include_pad_,
-                          const int64_t divisor_override_)
-        : ProblemDescription(count_include_pad_, divisor_override_),
-          inputDesc(inputDesc_),
-          outputDesc(outputDesc_)
+                          const float norm_type_)
+        : ProblemDescription(norm_type_), inputDesc(inputDesc_), outputDesc(outputDesc_)
     {
         IsValidLength();
         IsSameType();
@@ -79,7 +74,7 @@ struct FwdProblemDescription : ProblemDescription
            outputDesc.GetLengths().size() != input_dims)
         {
             MIOPEN_THROW(miopenStatusBadParm,
-                         "AvgPool: Input and output tensor sizes do not match.");
+                         "LPPool: Input and output tensor sizes do not match.");
         }
 
         return true;
@@ -87,9 +82,9 @@ struct FwdProblemDescription : ProblemDescription
 
     bool IsValidDims() const
     {
-        if(inputDesc.GetLengths().size() > 5 || inputDesc.GetLengths().size() < 4)
+        if(inputDesc.GetLengths().size() > 4 || inputDesc.GetLengths().size() < 3)
         {
-            MIOPEN_THROW(miopenStatusBadParm, "AvgPool: Only 4D and 5D tensors are supported.");
+            MIOPEN_THROW(miopenStatusBadParm, "LPPool: Only 3D and 4D tensors are supported.");
         }
 
         return true;
@@ -102,7 +97,7 @@ struct FwdProblemDescription : ProblemDescription
         if(inputDesc.GetType() != outputDesc.GetType())
         {
             MIOPEN_THROW(miopenStatusBadParm,
-                         "AvgPool: Input and output tensor types do not match.");
+                         "LPPool: Input and output tensor types do not match.");
         }
 
         return true;
@@ -117,11 +112,14 @@ protected:
 
 struct BwdProblemDescription : ProblemDescription
 {
-    BwdProblemDescription(const TensorDescriptor& outputGradDesc_,
+    BwdProblemDescription(const TensorDescriptor& inputDesc_,
+                          const TensorDescriptor& outputDesc_,
+                          const TensorDescriptor& outputGradDesc_,
                           const TensorDescriptor& inputGradDesc_,
-                          const bool count_include_pad_,
-                          const int64_t divisor_override_)
-        : ProblemDescription(count_include_pad_, divisor_override_),
+                          const float norm_type_)
+        : ProblemDescription(norm_type_),
+          inputDesc(inputDesc_),
+          outputDesc(outputDesc_),
           outputGradDesc(outputGradDesc_),
           inputGradDesc(inputGradDesc_)
     {
@@ -139,10 +137,11 @@ struct BwdProblemDescription : ProblemDescription
         auto input_dims = inputGradDesc.GetLengths().size();
         if(outputGradDesc.GetLengths()[0] != inputGradDesc.GetLengths()[0] ||
            outputGradDesc.GetLengths()[1] != inputGradDesc.GetLengths()[1] ||
+           outputGradDesc.GetLengths() != outputDesc.GetLengths() ||
+           inputGradDesc.GetLengths() != inputDesc.GetLengths() ||
            outputGradDesc.GetLengths().size() != input_dims)
         {
-            MIOPEN_THROW(miopenStatusBadParm,
-                         "AvgPool: Input grad and output grad tensor sizes do not match.");
+            MIOPEN_THROW(miopenStatusBadParm, "LPPool: Tensor sizes do not match.");
         }
 
         return true;
@@ -150,9 +149,9 @@ struct BwdProblemDescription : ProblemDescription
 
     bool IsValidDims() const
     {
-        if(inputGradDesc.GetLengths().size() > 5 || inputGradDesc.GetLengths().size() < 4)
+        if(inputGradDesc.GetLengths().size() > 4 || inputGradDesc.GetLengths().size() < 3)
         {
-            MIOPEN_THROW(miopenStatusBadParm, "AvgPool: Only 4D and 5D tensors are supported.");
+            MIOPEN_THROW(miopenStatusBadParm, "LPPool: Only 3D and 4D tensors are supported.");
         }
 
         return true;
@@ -160,15 +159,17 @@ struct BwdProblemDescription : ProblemDescription
 
     bool IsAllContiguous() const
     {
-        return inputGradDesc.IsContiguous() && outputGradDesc.IsContiguous();
+        return inputDesc.IsContiguous() && outputDesc.IsContiguous() &&
+               inputGradDesc.IsContiguous() && outputGradDesc.IsContiguous();
     }
 
     bool IsSameType() const
     {
-        if(inputGradDesc.GetType() != outputGradDesc.GetType())
+        if(inputGradDesc.GetType() != outputGradDesc.GetType() ||
+           inputGradDesc.GetType() != outputDesc.GetType() ||
+           inputGradDesc.GetType() != inputDesc.GetType())
         {
-            MIOPEN_THROW(miopenStatusBadParm,
-                         "AvgPool: Input grad and output grad tensor types do not match.");
+            MIOPEN_THROW(miopenStatusBadParm, "LPPool: Tensors types do not match.");
         }
 
         return true;
@@ -177,10 +178,12 @@ struct BwdProblemDescription : ProblemDescription
     NetworkConfig MakeNetworkConfig() const override;
 
 protected:
+    TensorDescriptor inputDesc;
+    TensorDescriptor outputDesc;
     TensorDescriptor outputGradDesc;
     TensorDescriptor inputGradDesc;
 };
 
-} // namespace avgpool
+} // namespace lppool
 
 } // namespace miopen

@@ -31,41 +31,33 @@ namespace miopen {
 struct Handle;
 struct TensorDescriptor;
 
-namespace avgpool {
+namespace lppool {
 
-MIOPEN_INTERNALS_EXPORT miopenStatus_t AvgPoolForward(Handle& handle,
+MIOPEN_INTERNALS_EXPORT miopenStatus_t LPPoolForward(Handle& handle,
+                                                     const TensorDescriptor& inputDesc,
+                                                     ConstData_t input,
+                                                     const TensorDescriptor& outputDesc,
+                                                     Data_t output,
+                                                     int64_t KD,
+                                                     int64_t KH,
+                                                     int64_t SD,
+                                                     int64_t SH,
+                                                     float norm_type);
+
+MIOPEN_INTERNALS_EXPORT miopenStatus_t LPPoolBackward(Handle& handle,
                                                       const TensorDescriptor& inputDesc,
                                                       ConstData_t input,
                                                       const TensorDescriptor& outputDesc,
-                                                      Data_t output,
+                                                      ConstData_t output,
+                                                      const TensorDescriptor& outputGradDesc,
+                                                      ConstData_t output_grad,
+                                                      const TensorDescriptor& inputGradDesc,
+                                                      Data_t input_grad,
                                                       int64_t KD,
                                                       int64_t KH,
-                                                      int64_t KW,
                                                       int64_t SD,
                                                       int64_t SH,
-                                                      int64_t SW,
-                                                      int64_t PD,
-                                                      int64_t PH,
-                                                      int64_t PW,
-                                                      bool count_include_pad,
-                                                      int64_t divisor_override);
-
-MIOPEN_INTERNALS_EXPORT miopenStatus_t AvgPoolBackward(Handle& handle,
-                                                       const TensorDescriptor& outputGradDesc,
-                                                       ConstData_t output_grad,
-                                                       const TensorDescriptor& inputGradDesc,
-                                                       Data_t input_grad,
-                                                       int64_t KD,
-                                                       int64_t KH,
-                                                       int64_t KW,
-                                                       int64_t SD,
-                                                       int64_t SH,
-                                                       int64_t SW,
-                                                       int64_t PD,
-                                                       int64_t PH,
-                                                       int64_t PW,
-                                                       bool count_include_pad,
-                                                       int64_t divisor_override);
-} // namespace avgpool
+                                                      float norm_type);
+} // namespace lppool
 
 } // namespace miopen

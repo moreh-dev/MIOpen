@@ -23,66 +23,64 @@
  * SOFTWARE.
  *
  *******************************************************************************/
-#include "avgpool.hpp"
+#include "lppool.hpp"
 #include "gtest/gtest.h"
 using float16 = half_float::half;
 
 // FORWARD TEST
-using GPU_Avgpool_fwd_FP32  = AvgPoolTestFwd<float>;
-using GPU_Avgpool_fwd_FP16  = AvgPoolTestFwd<float16>;
-using GPU_Avgpool_fwd_BFP16 = AvgPoolTestFwd<bfloat16>;
+using GPU_LPPool_fwd_FP32  = LPPoolTestFwd<float>;
+using GPU_LPPool_fwd_FP16  = LPPoolTestFwd<float16>;
+using GPU_LPPool_fwd_BFP16 = LPPoolTestFwd<bfloat16>;
 
-TEST_P(GPU_Avgpool_fwd_FP32, AvgPoolTestFwd)
+TEST_P(GPU_LPPool_fwd_FP32, LPPoolTestFwd)
 {
     RunTest();
     Verify();
 };
 
-TEST_P(GPU_Avgpool_fwd_FP16, AvgPoolTestFwd)
+TEST_P(GPU_LPPool_fwd_FP16, LPPoolTestFwd)
 {
     RunTest();
     Verify();
 };
 
-TEST_P(GPU_Avgpool_fwd_BFP16, AvgPoolTestFwd)
+TEST_P(GPU_LPPool_fwd_BFP16, LPPoolTestFwd)
 {
     RunTest();
     Verify();
 };
 
-INSTANTIATE_TEST_SUITE_P(Smoke, GPU_Avgpool_fwd_FP32, testing::ValuesIn(AvgPoolTestConfigsFwd()));
-INSTANTIATE_TEST_SUITE_P(Smoke, GPU_Avgpool_fwd_FP16, testing::ValuesIn(AvgPoolTestConfigsFwd()));
-INSTANTIATE_TEST_SUITE_P(Smoke, GPU_Avgpool_fwd_BFP16, testing::ValuesIn(AvgPoolTestConfigsFwd()));
+INSTANTIATE_TEST_SUITE_P(Smoke, GPU_LPPool_fwd_FP32, testing::ValuesIn(LPPoolTestConfigsFwd()));
+INSTANTIATE_TEST_SUITE_P(Smoke, GPU_LPPool_fwd_FP16, testing::ValuesIn(LPPoolTestConfigsFwd()));
+INSTANTIATE_TEST_SUITE_P(Smoke, GPU_LPPool_fwd_BFP16, testing::ValuesIn(LPPoolTestConfigsFwd()));
 
 // BACKWARD TEST
-using GPU_Avgpool_bwd_FP32  = AvgPoolTestBwd<float>;
-using GPU_Avgpool_bwd_FP16  = AvgPoolTestBwd<float16>;
-using GPU_Avgpool_bwd_BFP16 = AvgPoolTestBwd<bfloat16>;
+using GPU_LPPool_bwd_FP32  = LPPoolTestBwd<float>;
+using GPU_LPPool_bwd_FP16  = LPPoolTestBwd<float16>;
+using GPU_LPPool_bwd_BFP16 = LPPoolTestBwd<bfloat16>;
 
-TEST_P(GPU_Avgpool_bwd_FP32, AvgPoolTestBwd)
+TEST_P(GPU_LPPool_bwd_FP32, LPPoolTestBwd)
 {
     RunTest();
     Verify();
 };
 
-TEST_P(GPU_Avgpool_bwd_FP16, AvgPoolTestBwd)
+TEST_P(GPU_LPPool_bwd_FP16, LPPoolTestBwd)
 {
     RunTest();
     Verify();
 };
 
-TEST_P(GPU_Avgpool_bwd_BFP16, AvgPoolTestBwd)
+TEST_P(GPU_LPPool_bwd_BFP16, LPPoolTestBwd)
 {
     RunTest();
     Verify();
 };
 
+INSTANTIATE_TEST_SUITE_P(Smoke, GPU_LPPool_bwd_FP32, testing::ValuesIn(LPPoolTestConfigsBwdFp32()));
 INSTANTIATE_TEST_SUITE_P(Smoke,
-                         GPU_Avgpool_bwd_FP32,
-                         testing::ValuesIn(AvgPoolTestConfigsBwdFp32()));
+                         GPU_LPPool_bwd_FP16,
+                         testing::ValuesIn(LPPoolTestConfigsBwdFp16BFp16()));
 INSTANTIATE_TEST_SUITE_P(Smoke,
-                         GPU_Avgpool_bwd_FP16,
-                         testing::ValuesIn(AvgPoolTestConfigsBwdFp16BFp16()));
-INSTANTIATE_TEST_SUITE_P(Smoke,
-                         GPU_Avgpool_bwd_BFP16,
-                         testing::ValuesIn(AvgPoolTestConfigsBwdFp16BFp16()));
+                         GPU_LPPool_bwd_BFP16,
+                         testing::ValuesIn(LPPoolTestConfigsBwdFp16BFp16()));

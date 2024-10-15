@@ -24,12 +24,12 @@
  *
  *******************************************************************************/
 
-#include <miopen/avgpool/problem_description.hpp>
+#include <miopen/lppool/problem_description.hpp>
 #include <miopen/names.hpp>
 
 namespace miopen {
 
-namespace avgpool {
+namespace lppool {
 
 inline std::ostream& operator<<(std::ostream& os, const std::vector<size_t>& v)
 {
@@ -55,7 +55,7 @@ NetworkConfig FwdProblemDescription::MakeNetworkConfig() const
 
     std::ostringstream ss;
 
-    ss << "avgpool_fwd";
+    ss << "lppool_fwd";
     ss << "-input_dtype" << input_dtype;
     ss << "-Is" << input_size;
     ss << "-Os" << output_size;
@@ -75,7 +75,7 @@ NetworkConfig BwdProblemDescription::MakeNetworkConfig() const
 
     std::ostringstream ss;
 
-    ss << "avgpool_bwd";
+    ss << "lppool_bwd";
     ss << "-input_dtype" << input_dtype;
     ss << "-dIs" << input_grad_size;
     ss << "-dOs" << output_grad_size;
@@ -84,6 +84,6 @@ NetworkConfig BwdProblemDescription::MakeNetworkConfig() const
     return NetworkConfig{ss.str()};
 }
 
-} // namespace avgpool
+} // namespace lppool
 
 } // namespace miopen

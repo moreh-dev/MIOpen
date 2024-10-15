@@ -32,7 +32,6 @@ add_executable(MIOpenDriver
     dm_activ.cpp
     dm_adam.cpp
     dm_addlayernorm.cpp
-    dm_avgpool.cpp
     dm_bnorm.cpp
     dm_cat.cpp
     dm_conv.cpp
@@ -48,6 +47,7 @@ add_executable(MIOpenDriver
     dm_glu.cpp
     dm_groupnorm.cpp
     dm_layernorm.cpp
+    dm_lppool.cpp
     dm_lrn.cpp
     dm_pool.cpp
     dm_prelu.cpp
