@@ -306,7 +306,7 @@ int LPPoolDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     if(status != 0)
     {
         std::cout << "Error copying data to GPU\n" << std::endl;
-        return miopenStatusAllocFailed;
+        return miopenStatusInternalError;
     }
 
     return miopenStatusSuccess;
