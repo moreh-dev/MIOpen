@@ -72,6 +72,7 @@
  * @defgroup ReduceCalculation
  * @defgroup RotaryPositionalEmbeddings
  * @defgroup ReLU
+ * @defgroup lppool
  *
  */
 
@@ -7789,6 +7790,77 @@ MIOPEN_EXPORT miopenStatus_t miopenPReLUBackward(miopenHandle_t handle,
 
 /** @} */
 // CLOSEOUT RELU DOXYGEN GROUP
+#endif // MIOPEN_BETA_API
+
+#ifdef MIOPEN_BETA_API
+// lppool APIs
+/** @addtogroup lppool
+ *
+ *  @{
+ */
+
+/*! @brief Execute an lppool forward layer
+ *
+ * @param handle                   MIOpen handle (input)
+ * @param inputDesc                Tensor descriptor for input tensor (input)
+ * @param input                    Data tensor input (input)
+ * @param outputDesc               Tensor descriptor for output tensor (input)
+ * @param output                   Data tensor output (output)
+ * @param KD                       Kernel size in dimension D  (input)
+ * @param KH                       Kernel size in dimension H (input)
+ * @param SD                       Stride size in dimension D (input)
+ * @param SH                       Stride size in dimension H (input)
+ * @param norm_type                Norm type (input)
+ * use the number of elements in the pooling window (input)
+ * @return                         miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t miopenLPPoolForward(miopenHandle_t handle,
+                                                 const miopenTensorDescriptor_t inputDesc,
+                                                 const void* input,
+                                                 const miopenTensorDescriptor_t outputDesc,
+                                                 void* output,
+                                                 const int64_t KD,
+                                                 const int64_t KH,
+                                                 const int64_t SD,
+                                                 const int64_t SH,
+                                                 const float norm_type);
+
+/*! @brief Execute an lppool backward layer
+ *
+ * @param handle                   MIOpen handle (input)
+ * @param inputDesc                Tensor descriptor for input tensor (input)
+ * @param input                    Data tensor input (input)
+ * @param outputDesc               Tensor descriptor for output tensor (input)
+ * @param output                   Data tensor output (input)
+ * @param outputGradDesc           Tensor descriptor for output grad tensor (input)
+ * @param output_grad              Data tensor output grad (input)
+ * @param inputGradDesc            Tensor descriptor for input grad tensor (input)
+ * @param input_grad               Data tensor input grad (output)
+ * @param KD                       Kernel size in dimension D  (input)
+ * @param KH                       Kernel size in dimension H (input)
+ * @param SD                       Stride size in dimension D (input)
+ * @param SH                       Stride size in dimension H (input)
+ * @param norm_type                Norm type (input)
+ * use the number of elements in the pooling window (input)
+ * @return                         miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t miopenLPPoolBackward(miopenHandle_t handle,
+                                                  const miopenTensorDescriptor_t inputDesc,
+                                                  const void* input,
+                                                  const miopenTensorDescriptor_t outputDesc,
+                                                  const void* output,
+                                                  const miopenTensorDescriptor_t outputGradDesc,
+                                                  const void* output_grad,
+                                                  const miopenTensorDescriptor_t inputGradDesc,
+                                                  void* input_grad,
+                                                  const int64_t KD,
+                                                  const int64_t KH,
+                                                  const int64_t SD,
+                                                  const int64_t SH,
+                                                  const float norm_type);
+
+/** @} */
+// CLOSEOUT lppool DOXYGEN GROUP
 #endif // MIOPEN_BETA_API
 
 #ifdef __cplusplus
