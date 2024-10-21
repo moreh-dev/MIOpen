@@ -26,6 +26,7 @@
 #ifndef MIOPEN_GUARD_MIOPEN_H_
 #define MIOPEN_GUARD_MIOPEN_H_
 
+#include <cstdint>
 #ifdef __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wextern-c-compat"
@@ -72,6 +73,7 @@
  * @defgroup ReduceCalculation
  * @defgroup RotaryPositionalEmbeddings
  * @defgroup ReLU
+ * @defgroup Indexing
  *
  */
 
@@ -360,6 +362,11 @@ MIOPEN_DECLARE_OBJECT(miopenMhaDescriptor);
  */
 MIOPEN_DECLARE_OBJECT(miopenSoftmaxDescriptor);
 
+/*! @ingroup Indexing
+ * @brief Creates the miopenGatherDescriptor_t type
+ */
+MIOPEN_DECLARE_OBJECT(miopenGatherDescriptor);
+
 /*! @ingroup tensor
  * @enum miopenDataType_t
  * MIOpen floating point datatypes. Both 32-bit and 16-bit floats are supported in MIOpen.
@@ -554,6 +561,17 @@ typedef enum
     MIOPEN_SOFTMAX_MODE_CHANNEL =
         1, /*!< compute per spatial location (H, W) per image (N) across C */
 } miopenSoftmaxMode_t;
+
+/*! @ingroup Indexing
+ * @enum miopenGatherMode_t
+ * Gather modes
+ */
+typedef enum
+{
+    MIOPEN_GATHER    = 0, /*!< gather */
+    MIOPEN_GATHER_V2 = 1, /*!< gatherv2 */
+    MIOPEN_GATHER_ND = 2, /*!< gathernd */
+} miopenGatherMode_t;
 
 /*! @ingroup TensorReduce
  * @brief Version of TensorReduce API. Applications may use it to ensure
@@ -8001,6 +8019,83 @@ MIOPEN_EXPORT miopenStatus_t miopenMultiMarginLossForward(miopenHandle_t handle,
 
 /** @} */
 // CLOSEOUT LossFunction DOXYGEN GROUP
+#endif // MIOPEN_BETA_API
+
+// Gather APIs
+#ifdef MIOPEN_BETA_API
+
+/** @addtogroup Indexing
+ *
+ *  @{
+ */
+
+/*! @brief Creates the Gather descriptor object
+ *
+ * @param gatherDesc     Pointer to a gather descriptor type
+ * @return            miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t miopenCreateGatherDescriptor(miopenGatherDescriptor_t* gatherDesc);
+
+/*! @brief Sets the Gather descriptor details
+ *
+ * @param gatherDesc     Pointer to a gather descriptor (output)
+ * @param mode           Gather mode enum (input)
+ * @param dim            The dim in params to gather indices from for some gather modes (input)
+ * @param batch_dims     Number of batch dimensions for some gather modes (input)
+ * @return            miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t miopenSetGatherDescriptor(const miopenGatherDescriptor_t gatherDesc,
+                                                       miopenGatherMode_t mode,
+                                                       uint32_t dim,
+                                                       uint32_t batch_dims);
+
+/*! @brief Gets the Gather descriptor details
+ *
+ * @param gatherDesc     Pointer to a gather descriptor (input)
+ * @param mode           Gather mode enum (output)
+ * @param dim            The dim in params to gather indices from for some gather modes (output)
+ * @param batch_dims     Number of batch dimensions for some gather modes (output)
+ * @return            miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t miopenGetGatherDescriptor(const miopenGatherDescriptor_t gatherDesc,
+                                                       miopenGatherMode_t* mode,
+                                                       uint32_t* dim,
+                                                       uint32_t* batch_dims);
+
+/*! @brief Execute a Gather backward layer
+ *
+ * @param handle                   MIOpen handle (input)
+ * @param gatherDesc               Gather descriptor (input)
+ * @param outputGradDesc           Tensor descriptor for output gradient tensor (input)
+ * @param outputGrad               Gradient of output (input)
+ * @param indicesDesc              Tensor descriptor for indices tensor (input)
+ * @param indices                  Indices tensor (input)
+ * @param paramGradDesc            Tensor descriptor for param gradient tensor (input)
+ * @param paramGrad                Gradient of param (output)
+ * @param dim                      The dimension in params to gather indices from (input)
+ * @param batch_dims               Number of batch dimensions (input)
+ * @return                         miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t miopenGatherBackward(miopenHandle_t handle,
+                                                  const miopenGatherDescriptor_t gatherDesc,
+                                                  const miopenTensorDescriptor_t outputGradDesc,
+                                                  const void* outputGrad,
+                                                  const miopenTensorDescriptor_t indicesDesc,
+                                                  const void* indices,
+                                                  const miopenTensorDescriptor_t paramGradDesc,
+                                                  void* paramGrad,
+                                                  const void* dim,
+                                                  const void* batch_dims);
+
+/*! @brief Destroy the gather descriptor object
+ *
+ * @param gatherDesc  A gather descriptor type (input)
+ * @return              miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t miopenDestroyGatherDescriptor(miopenGatherDescriptor_t gatherDesc);
+
+/** @} */
+// CLOSEOUT INDEXING DOXYGEN GROUP
 #endif // MIOPEN_BETA_API
 
 #ifdef __cplusplus

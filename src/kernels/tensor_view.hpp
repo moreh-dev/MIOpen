@@ -46,6 +46,17 @@ struct tensor_view_t
         }
         return idx;
     }
+
+    void get_contiguous_stride()
+    {
+        int64_t stride_val = 1L;
+        for(int i = N - 1; i >= 0; --i)
+        {
+            stride[i] = stride_val;
+            stride_val *= size[i];
+        }
+    }
+
     uint64_t stride[N];
     uint64_t size[N];
 };
@@ -85,5 +96,21 @@ struct tensor_layout_t
 
     uint64_t layout[N];
 };
+
+template <typename T, int N>
+__host__ __device__ T inline getNDVal(const T* x, tensor_view_t<N> x_tv, uint64_t idx)
+{
+    tensor_layout_t<N> layout = tensor_layout_t<N>(x_tv, idx);
+    uint64_t x_idx            = x_tv.get_tensor_view_idx(layout);
+    return x[x_idx];
+}
+
+template <typename T, int N>
+__host__ __device__ void inline setNDVal(T* x, tensor_view_t<N> x_tv, uint64_t idx, T val)
+{
+    tensor_layout_t<N> layout = tensor_layout_t<N>(x_tv, idx);
+    uint64_t x_idx            = x_tv.get_tensor_view_idx(layout);
+    x[x_idx]                  = val;
+}
 
 #endif // GUARD_TENSOR_VIEW_HPP
