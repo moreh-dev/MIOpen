@@ -44,6 +44,7 @@ struct AdamTestCase
     float eps;
     bool amsgrad;
     bool maximize;
+    bool nesterov;
     bool adamw;
     bool use_step_tensor;
 
@@ -57,7 +58,8 @@ struct AdamTestCase
         }
         return os << " lr:" << tc.lr << " beta1:" << tc.beta1 << " beta2:" << tc.beta2
                   << " weight_decay:" << tc.weight_decay << " eps:" << tc.eps
-                  << " amsgrad:" << tc.amsgrad << " maximize:" << tc.maximize;
+                  << " amsgrad:" << tc.amsgrad << " maximize:" << tc.maximize
+                  << " nesterov:" << tc.nesterov;
     }
 
     const std::vector<int>& GetInput() { return input; }
@@ -67,24 +69,24 @@ std::vector<AdamTestCase> AdamTestConfigs()
 { // dim, dims
     // clang-format off
     std::vector<AdamTestCase> base_shape{
-        {{1}, 0.001, 0.9, 0.999, 0, 0.000001, false, false, false, false},
-        {{2}, 0.001, 0.9, 0.999, 0, 0.000001, false, false, false, false},
-        {{255}, 0.001, 0.9, 0.999, 0.0005, 0.000001, false, false, false, false},
-        {{1024}, 0.001, 0.9, 0.999, 1e-08, 0.000001, false, false, false, false},
-        {{32317}, 0.001, 0.9, 0.999, 0, 0.000001, false, false, false, false},
-        {{50000}, 0.001, 0.9, 0.999, 0, 0.000001, false, false, false, false},
-        {{29,1024}, 0.001, 0.9, 0.999, 0, 0.000001, false, false, false, false},
-        {{80,1536}, 0.001, 0.9, 0.999, 0, 0.000001, false, false, false, false},
-        {{128,1024}, 0.001, 0.9, 0.999, 0, 0.000001, false, false, false, false},
-        {{3706,32}, 0.001, 0.9, 0.999, 0, 0.000001, false, false, false, false},
-        {{32,1,41,11}, 0.001, 0.9, 0.999, 0, 0.000001, false, false, false, false},
-        {{32,64,3,3}, 0.001, 0.9, 0.999, 0.005, 0.000001, false, false, false, false},
-        {{64,256,3,3}, 0.001, 0.9, 0.999, 0.005, 0.000001, false, false, false, false},
-        {{128,192,1,1}, 0.001, 0.9, 0.999, 0.0005, 0.000001, false, false, false, false},
-        {{128,1024,1,1}, 0.001, 0.9, 0.999, 0.005, 0.000001, false, false, false, false},
-        {{192,192,3,3}, 0.001, 0.9, 0.999, 0.0005, 0.000001, false, false, false, false},
-        {{255,640,1,1}, 0.001, 0.9, 0.999, 0.0005, 0.000001, false, false, false, false},
-        {{256,512,3,3}, 0.001, 0.9, 0.999, 0.005, 0.000001, false, false, false, false}};
+        {{1}, 0.001, 0.9, 0.999, 0, 0.000001, false, false, false, false, false},
+        {{2}, 0.001, 0.9, 0.999, 0, 0.000001, false, false, false, false, false},
+        {{255}, 0.001, 0.9, 0.999, 0.0005, 0.000001, false, false, false, false, false},
+        {{1024}, 0.001, 0.9, 0.999, 1e-08, 0.000001, false, false, false, false, false},
+        {{32317}, 0.001, 0.9, 0.999, 0, 0.000001, false, false, false, false, false},
+        {{50000}, 0.001, 0.9, 0.999, 0, 0.000001, false, false, false, false, false},
+        {{29,1024}, 0.001, 0.9, 0.999, 0, 0.000001, false, false, false, false, false},
+        {{80,1536}, 0.001, 0.9, 0.999, 0, 0.000001, false, false, false, false, false},
+        {{128,1024}, 0.001, 0.9, 0.999, 0, 0.000001, false, false, false, false, false},
+        {{3706,32}, 0.001, 0.9, 0.999, 0, 0.000001, false, false, false, false, false},
+        {{32,1,41,11}, 0.001, 0.9, 0.999, 0, 0.000001, false, false, false, false, false},
+        {{32,64,3,3}, 0.001, 0.9, 0.999, 0.005, 0.000001, false, false, false, false, false},
+        {{64,256,3,3}, 0.001, 0.9, 0.999, 0.005, 0.000001, false, false, false, false, false},
+        {{128,192,1,1}, 0.001, 0.9, 0.999, 0.0005, 0.000001, false, false, false, false, false},
+        {{128,1024,1,1}, 0.001, 0.9, 0.999, 0.005, 0.000001, false, false, false, false, false},
+        {{192,192,3,3}, 0.001, 0.9, 0.999, 0.0005, 0.000001, false, false, false, false, false},
+        {{255,640,1,1}, 0.001, 0.9, 0.999, 0.0005, 0.000001, false, false, false, false, false},
+        {{256,512,3,3}, 0.001, 0.9, 0.999, 0.005, 0.000001, false, false, false, false, false}};
     // clang-format on
     std::vector<AdamTestCase> result;
     result.reserve(base_shape.size() * 16);
@@ -99,11 +101,15 @@ std::vector<AdamTestCase> AdamTestConfigs()
                 {
                     for(int l = 0; l <= 1; ++l)
                     {
-                        item.adamw           = static_cast<bool>(i);
-                        item.use_step_tensor = static_cast<bool>(j);
-                        item.amsgrad         = static_cast<bool>(k);
-                        item.maximize        = static_cast<bool>(l);
-                        result.push_back(item);
+                        for(int n = 0; n <= 1; ++n)
+                        {
+                            item.adamw           = static_cast<bool>(i);
+                            item.use_step_tensor = static_cast<bool>(j);
+                            item.amsgrad         = static_cast<bool>(k);
+                            item.maximize        = static_cast<bool>(l);
+                            item.nesterov        = static_cast<bool>(n);
+                            result.push_back(item);
+                        }
                     }
                 }
             }
@@ -130,6 +136,7 @@ protected:
         weight_decay    = adam_config.weight_decay;
         eps             = adam_config.eps;
         amsgrad         = adam_config.amsgrad;
+        nesterov        = adam_config.nesterov;
         maximize        = adam_config.maximize;
         adamw           = adam_config.adamw;
         use_step_tensor = adam_config.use_step_tensor;
@@ -196,6 +203,7 @@ protected:
                          eps,
                          amsgrad,
                          maximize,
+                         nesterov,
                          adamw,
                          is_amp,
                          grad_scale[0],
@@ -241,6 +249,7 @@ protected:
                                        eps,
                                        amsgrad,
                                        maximize,
+                                       nesterov,
                                        adamw,
                                        is_amp);
 
@@ -293,6 +302,7 @@ protected:
     float eps            = 0.0f;
     bool amsgrad         = false;
     bool maximize        = false;
+    bool nesterov        = false;
     bool adamw           = false;
     bool use_step_tensor = false;
     bool is_amp          = false;

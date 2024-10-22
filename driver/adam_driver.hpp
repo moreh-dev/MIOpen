@@ -62,6 +62,7 @@ void mloAdamRunHost(miopenTensorDescriptor_t paramDesc,
                     float eps,
                     bool amsgrad,
                     bool maximize,
+                    bool nesterov,
                     bool adamw,
                     bool is_amp,
                     int32_t grad_scale,
@@ -107,14 +108,22 @@ void mloAdamRunHost(miopenTensorDescriptor_t paramDesc,
                 max_exp_avg_sqs[i] = max_exp_avg_sq;
             }
 
-            denom = sqrt(max_exp_avg_sq) / sqrt(bias_correction2) + eps;
+            denom = (sqrt(max_exp_avg_sq) + eps) / sqrt(bias_correction2);
         }
         else
         {
-            denom = sqrt(exp_avg_sq) / sqrt(bias_correction2) + eps;
+            denom = (sqrt(exp_avg_sq) + eps) / sqrt(bias_correction2);
         }
 
-        params[i] = param - (lr / bias_correction1) * exp_avg / denom;
+        if(nesterov)
+        {
+            params[i] =
+                param - (lr / bias_correction1) * (exp_avg * beta1 + grad * (1 - beta1)) / denom;
+        }
+        else
+        {
+            params[i] = param - (lr / bias_correction1) * exp_avg / denom;
+        }
     }
 }
 
@@ -224,6 +233,7 @@ private:
     float eps;
     bool amsgrad   = false;
     bool maximize  = false;
+    bool nesterov  = false;
     bool found_inf = false;
     bool adamw     = false;
     bool is_amp    = false;
@@ -256,6 +266,7 @@ int AdamDriver<Tgpu, Tref, Tgrad>::GetandSetData()
     weight_decay   = inflags.GetValueDouble("weight_decay");
     amsgrad        = inflags.GetValueInt("amsgrad");
     maximize       = inflags.GetValueInt("maximize");
+    nesterov       = inflags.GetValueInt("nesterov");
     iter           = inflags.GetValueInt("iter");
 
     if(is_amp)
@@ -301,6 +312,7 @@ int AdamDriver<Tgpu, Tref, Tgrad>::AddCmdLineArgs()
     inflags.AddInputFlag("weight_decay", 'W', "0", "weight decay (Default=0)", "float");
     inflags.AddInputFlag("amsgrad", 'a', "0", "whether to use the AMSGrad (Default=0)", "int");
     inflags.AddInputFlag("maximize", 'm', "0", "whether to use the maximize (Default=0)", "int");
+    inflags.AddInputFlag("nesterov", 'n', "0", "whether to use the nesterov (Default=0)", "int");
 
     if(is_amp)
     {
@@ -482,6 +494,7 @@ int AdamDriver<Tgpu, Tref, Tgrad>::RunForwardGPU()
                                   eps,
                                   amsgrad,
                                   maximize,
+                                  nesterov,
                                   adamw,
                                   gradScaleDesc,
                                   grad_scale_ptr,
@@ -530,6 +543,7 @@ int AdamDriver<Tgpu, Tref, Tgrad>::RunForwardCPU()
                          eps,
                          amsgrad,
                          maximize,
+                         nesterov,
                          adamw,
                          is_amp,
                          grad_scale,

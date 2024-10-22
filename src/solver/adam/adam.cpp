@@ -129,6 +129,7 @@ ConvSolution Adam::GetSolution(const ExecutionContext& context,
                             params.eps,
                             params.amsgrad,
                             params.maximize,
+                            params.nesterov,
                             params.adamw,
                             numel);
 
@@ -176,6 +177,7 @@ ConvSolution Adam::GetSolution(const ExecutionContext& context,
                            params.eps,
                            params.amsgrad,
                            params.maximize,
+                           params.nesterov,
                            params.adamw,
                            numel);
                 };
@@ -206,6 +208,7 @@ ConvSolution Adam::GetSolution(const ExecutionContext& context,
                            params.step,
                            params.amsgrad,
                            params.maximize,
+                           params.nesterov,
                            params.adamw,
                            numel);
                 };

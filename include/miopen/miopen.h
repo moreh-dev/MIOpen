@@ -72,7 +72,6 @@
  * @defgroup ReduceCalculation
  * @defgroup RotaryPositionalEmbeddings
  * @defgroup ReLU
- * @defgroup avgpool
  *
  */
 
@@ -7027,6 +7026,36 @@ MIOPEN_EXPORT miopenStatus_t miopenBackendInitialize(miopenBackendDescriptor_t d
  *                 eps,
  *                 false,    // amsgrad
  *                 false,    // maximize
+ *                 false,    // nesterov
+ *                 false,    // adamw
+ *                 NULL,     // Unused gradScale Tensor because not amp
+ *                 NULL,
+ *                 NULL,     // Unused foundInf Tensor because not amp
+ *                 NULL);
+ *
+ * // Execute Adam Nesterov
+ * miopenFusedAdam(handle,
+ *                 paramDesc,
+ *                 param,
+ *                 gradDesc,
+ *                 grad,
+ *                 expAvgDesc,
+ *                 expAvg,
+ *                 expAvgSqDesc,
+ *                 expAvgSq,
+ *                 NULL,     // Unused maxExpAvgSqDesc because amsgrad is false
+ *                 NULL,
+ *                 NULL,     // Unused stateStep Tensor because use step integer argument
+ *                 NULL,
+ *                 step,
+ *                 lr,
+ *                 beta1,
+ *                 beta2,
+ *                 weight_decay,
+ *                 eps,
+ *                 false,    // amsgrad
+ *                 false,    // maximize
+ *                 true,     // nesterov
  *                 false,    // adamw
  *                 NULL,     // Unused gradScale Tensor because not amp
  *                 NULL,
@@ -7055,6 +7084,7 @@ MIOPEN_EXPORT miopenStatus_t miopenBackendInitialize(miopenBackendDescriptor_t d
  *                 eps,
  *                 false,    // amsgrad
  *                 false,    // maximize
+ *                 false,    // nesterov
  *                 true,     // adamw
  *                 NULL,     // Unused gradScale Tensor because not amp
  *                 NULL,
@@ -7083,6 +7113,7 @@ MIOPEN_EXPORT miopenStatus_t miopenBackendInitialize(miopenBackendDescriptor_t d
  *                 eps,
  *                 false,    // amsgrad
  *                 false,    // maximize
+ *                 false,    // nesterov
  *                 false,    // adamw
  *                 gradScaleDesc,
  *                 gradScale,
@@ -7118,6 +7149,7 @@ MIOPEN_EXPORT miopenStatus_t miopenBackendInitialize(miopenBackendDescriptor_t d
  * @param amsgrad             Flag indicating whether to use the AMSGrad variant of Adam (input)
  * @param maximize            Flag indicating whether to maximize the objective with respect to the
  *                            parameters (input)
+ * @param nesterov            Flag indicating whether to use the Nesterov variant of Adam (input)
  * @param adamw               If true, the operation becomes AdamW (input)
  * @param gradScaleDesc       Tensor descriptor for the input grad scale tensor (input, optional)
  * @param gradScale           Input grad scale tensor (input, optional)
@@ -7147,6 +7179,7 @@ MIOPEN_EXPORT miopenStatus_t miopenFusedAdam(miopenHandle_t handle,
                                              const float eps,
                                              const bool amsgrad,
                                              const bool maximize,
+                                             const bool nesterov,
                                              const bool adamw,
                                              const miopenTensorDescriptor_t gradScaleDesc,
                                              const void* gradScale,
@@ -7195,6 +7228,48 @@ MIOPEN_EXPORT miopenStatus_t miopenFusedAdam(miopenHandle_t handle,
  *                           eps,
  *                           false,  // amsgrad
  *                           false,  // maximize
+ *                           false,  // nesterov
+ *                           false,  // adamw
+ *                           NULL,   // Unused gradScale Tensor because not amp
+ *                           NULL,
+ *                           NULL,   // Unused foundInf Tensor because not amp
+ *                           NULL);
+ *
+ * // Execute Adam Nesterov
+ * miopenFusedAdamWithOutput(handle,
+ *                           paramInDesc,
+ *                           paramIn,
+ *                           paramOutDesc,
+ *                           paramOut,
+ *                           NULL,   // Unused paramOutFloat16 tensor because is not amp
+ *                           NULL,
+ *                           gradInDesc,
+ *                           gradIn,
+ *                           expAvgInDesc,
+ *                           expAvgIn,
+ *                           expAvgOutDesc,
+ *                           expAvgOut,
+ *                           expAvgInSqDesc,
+ *                           expAvgSqIn,
+ *                           expAvgSqOutDesc,
+ *                           expAvgSqOut,
+ *                           NULL,   // Unused maxExpAvgSqIn tensor because amsgrad is false
+ *                           NULL,
+ *                           NULL,   // Unused maxExpAvgSqOut tensor because amsgrad is false
+ *                           NULL,
+ *                           NULL,   // Unused stateStepIn tensor because use step integer argument
+ *                           NULL,
+ *                           NULL,   // Unused stateStepOut tensor because use step integer argument
+ *                           NULL,
+ *                           step,
+ *                           lr,
+ *                           beta1,
+ *                           beta2,
+ *                           weight_decay,
+ *                           eps,
+ *                           false,  // amsgrad
+ *                           false,  // maximize
+ *                           true,   // nesterov
  *                           false,  // adamw
  *                           NULL,   // Unused gradScale Tensor because not amp
  *                           NULL,
@@ -7232,6 +7307,7 @@ MIOPEN_EXPORT miopenStatus_t miopenFusedAdam(miopenHandle_t handle,
  *                           lr, beta1, beta2, weight_decay, eps,
  *                           false,        // amsgrad
  *                           false,        // maximize
+ *                           false,        // nesterov
  *                           false,        // adamw
  *                           gradScaleDesc,
  *                           gradScale,
@@ -7285,6 +7361,7 @@ MIOPEN_EXPORT miopenStatus_t miopenFusedAdam(miopenHandle_t handle,
  * @param amsgrad             Flag indicating whether to use the AMSGrad variant of Adam (input)
  * @param maximize            Flag indicating whether to maximize the objective with respect to the
  *                            parameters (input)
+ * @param nesterov            Flag indicating whether to use the Nesterov variant of Adam (input)
  * @param adamw               If it is true, the operation becomes AdamW (input)
  * @param gradScaleDesc       Tensor descriptor for the input grad scale tensor (input, optional)
  * @param gradScale           Input grad scale tensor (input, optional)
@@ -7327,6 +7404,7 @@ miopenFusedAdamWithOutput(miopenHandle_t handle,
                           const float eps,
                           const bool amsgrad,
                           const bool maximize,
+                          const bool nesterov,
                           const bool adamw,
                           const miopenTensorDescriptor_t gradScaleDesc,
                           const void* gradScale,
@@ -7790,94 +7868,6 @@ MIOPEN_EXPORT miopenStatus_t miopenPReLUBackward(miopenHandle_t handle,
 
 /** @} */
 // CLOSEOUT RELU DOXYGEN GROUP
-#endif // MIOPEN_BETA_API
-
-#ifdef MIOPEN_BETA_API
-// avgpool APIs
-/** @addtogroup avgpool
- *
- *  @{
- */
-
-/*! @brief Execute an avgpool forward layer
- *
- * @param handle                   MIOpen handle (input)
- * @param inputDesc                Tensor descriptor for input tensor (input)
- * @param input                    Data tensor input (input)
- * @param outputDesc               Tensor descriptor for output tensor (input)
- * @param output                   Data tensor output (output)
- * @param KD                       Kernel size in dimension D  (input)
- * @param KH                       Kernel size in dimension H (input)
- * @param KW                       Kernel size in dimension W (input)
- * @param SD                       Stride size in dimension D (input)
- * @param SH                       Stride size in dimension H (input)
- * @param SW                       Stride size in dimension W (input)
- * @param PD                       Padding size in dimension D (input)
- * @param PH                       Padding size in dimension H (input)
- * @param PW                       Padding size in dimension W (input)
- * @param count_include_pad        When True, will include the zero-padding in the averaging
- * calculation (input)
- * @param divisor_override         If non-zero, will use this value as the divisor, otherwise will
- * use the number of elements in the pooling window (input)
- * @return                         miopenStatus_t
- */
-MIOPEN_EXPORT miopenStatus_t miopenAvgPoolForward(miopenHandle_t handle,
-                                                  const miopenTensorDescriptor_t inputDesc,
-                                                  const void* input,
-                                                  const miopenTensorDescriptor_t outputDesc,
-                                                  void* output,
-                                                  const int64_t KD,
-                                                  const int64_t KH,
-                                                  const int64_t KW,
-                                                  const int64_t SD,
-                                                  const int64_t SH,
-                                                  const int64_t SW,
-                                                  const int64_t PD,
-                                                  const int64_t PH,
-                                                  const int64_t PW,
-                                                  const bool count_include_pad,
-                                                  const int64_t divisor_override);
-
-/*! @brief Execute an avgpool backward layer
- *
- * @param handle                   MIOpen handle (input)
- * @param outputGradDesc           Tensor descriptor for output grad tensor (input)
- * @param output_grad              Data tensor output grad (input)
- * @param inputGradDesc            Tensor descriptor for input grad tensor (input)
- * @param input_grad               Data tensor input grad (output)
- * @param KD                       Kernel size in dimension D  (input)
- * @param KH                       Kernel size in dimension H (input)
- * @param KW                       Kernel size in dimension W (input)
- * @param SD                       Stride size in dimension D (input)
- * @param SH                       Stride size in dimension H (input)
- * @param SW                       Stride size in dimension W (input)
- * @param PD                       Padding size in dimension D (input)
- * @param PH                       Padding size in dimension H (input)
- * @param PW                       Padding size in dimension W (input)
- * @param count_include_pad        When True, will include the zero-padding in the averaging
- * calculation (input)
- * @param divisor_override         If non-zero, will use this value as the divisor, otherwise will
- * use the number of elements in the pooling window (input)
- * @return                         miopenStatus_t
- */
-MIOPEN_EXPORT miopenStatus_t miopenAvgPoolBackward(miopenHandle_t handle,
-                                                   const miopenTensorDescriptor_t outputGradDesc,
-                                                   const void* output_grad,
-                                                   const miopenTensorDescriptor_t inputGradDesc,
-                                                   void* input_grad,
-                                                   const int64_t KD,
-                                                   const int64_t KH,
-                                                   const int64_t KW,
-                                                   const int64_t SD,
-                                                   const int64_t SH,
-                                                   const int64_t SW,
-                                                   const int64_t PD,
-                                                   const int64_t PH,
-                                                   const int64_t PW,
-                                                   const bool count_include_pad,
-                                                   const int64_t divisor_override);
-/** @} */
-// CLOSEOUT avgpool DOXYGEN GROUP
 #endif // MIOPEN_BETA_API
 
 #ifdef __cplusplus

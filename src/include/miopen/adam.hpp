@@ -70,6 +70,7 @@ MIOPEN_INTERNALS_EXPORT miopenStatus_t Adam(Handle& handle,
                                             float eps,
                                             bool amsgrad,
                                             bool maximize,
+                                            bool nesterov,
                                             bool adamw,
                                             bool is_amp);
 
