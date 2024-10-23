@@ -24,7 +24,6 @@
  *
  *******************************************************************************/
 #define MIOPEN_BETA_API 1
-#include "../driver/tensor_driver.hpp"
 #include "cpu_adam.hpp"
 #include "get_handle.hpp"
 #include "random.hpp"
@@ -253,7 +252,7 @@ protected:
                                        adamw,
                                        is_amp);
 
-            EXPECT_EQ(status, miopenStatusSuccess);
+            ASSERT_EQ(status, miopenStatusSuccess);
         }
 
         param.data = handle.Read<Tp>(param_dev, param.data.size());
@@ -267,9 +266,9 @@ protected:
         double threshold = std::numeric_limits<Tp>::epsilon();
         auto error       = miopen::rms_range(ref_param, param);
 
-        EXPECT_TRUE(miopen::range_distance(ref_param) == miopen::range_distance(param));
-        EXPECT_TRUE(error < threshold * 10) << "Error output beyond tolerance Error:" << error
-                                            << ",  Thresholdx10: " << threshold * 10;
+        ASSERT_EQ(miopen::range_distance(ref_param), miopen::range_distance(param));
+        EXPECT_LT(error, threshold * 10)
+            << "Error Output beyond tolerance: " << error << " Tolerance: " << threshold * 10;
     }
 
     AdamTestCase adam_config;
