@@ -23,8 +23,7 @@
  * SOFTWARE.
  *
  *******************************************************************************/
-#ifndef GUARD_CPU_ADAM_HPP
-#define GUARD_CPU_ADAM_HPP
+#pragma once
 
 #include "tensor_holder.hpp"
 
@@ -106,5 +105,3 @@ void cpu_adam(tensor<T1>& params,
         params[i] = param;
     });
 }
-
-#endif
