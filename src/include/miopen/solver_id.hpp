@@ -61,7 +61,7 @@ enum class Primitive
     Adam,
     Item,
     RoPE,
-    ReLU
+    ReLU,
 };
 
 struct MIOPEN_INTERNALS_EXPORT Id

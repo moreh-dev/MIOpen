@@ -48,6 +48,7 @@ inline __device__ void AdamInternal(T1* param_in,
                                     uint32_t step,
                                     bool amsgrad,
                                     bool maximize,
+                                    bool nesterov,
                                     bool adamw,
                                     size_t gid)
 {
@@ -92,15 +93,23 @@ inline __device__ void AdamInternal(T1* param_in,
         __builtin_assume(max_exp_avg_sq >= 0 && max_exp_avg_sq <= 1);
         max_exp_avg_sq          = max(max_exp_avg_sq, exp_avg_sq);
         max_exp_avg_sq_out[gid] = static_cast<T1>(max_exp_avg_sq);
-        denom                   = sqrt(max_exp_avg_sq) / sqrt(bias_correction2) + eps;
+        denom                   = (sqrt(max_exp_avg_sq) + eps) / sqrt(bias_correction2);
     }
     else
     {
-        denom = sqrt(exp_avg_sq) / sqrt(bias_correction2) + eps;
+        denom = (sqrt(exp_avg_sq) + eps) / sqrt(bias_correction2);
     }
 
     T2 step_size = lr / bias_correction1;
-    param        = param - step_size * exp_avg / denom;
+
+    if(nesterov)
+    {
+        param = param - step_size * (beta1 * exp_avg + (1 - beta1) * grad) / denom;
+    }
+    else
+    {
+        param = param - step_size * exp_avg / denom;
+    }
 
     param_out[gid]      = static_cast<T1>(param);
     exp_avg_out[gid]    = static_cast<T1>(exp_avg);
@@ -124,6 +133,7 @@ extern "C" __global__ void AdamContiguous(PTYPE* param_in,
                                           uint32_t step,
                                           bool amsgrad,
                                           bool maximize,
+                                          bool nesterov,
                                           bool adamw,
                                           size_t input_size)
 {
@@ -151,6 +161,7 @@ extern "C" __global__ void AdamContiguous(PTYPE* param_in,
                                    step,
                                    amsgrad,
                                    maximize,
+                                   nesterov,
                                    adamw,
                                    gid);
     }
@@ -176,6 +187,7 @@ inline __device__ void AmpAdamInternal(T1* param_in,
                                        uint32_t step,
                                        bool amsgrad,
                                        bool maximize,
+                                       bool nesterov,
                                        bool adamw,
                                        size_t input_size)
 {
@@ -207,6 +219,7 @@ inline __device__ void AmpAdamInternal(T1* param_in,
                              step,
                              amsgrad,
                              maximize,
+                             nesterov,
                              adamw,
                              gid);
 
@@ -266,6 +279,7 @@ extern "C" __global__ void AmpAdamContiguousWithStep(PTYPE* param_in,
                                                      float eps,
                                                      bool amsgrad,
                                                      bool maximize,
+                                                     bool nesterov,
                                                      bool adamw,
                                                      size_t input_size)
 {
@@ -297,6 +311,7 @@ extern "C" __global__ void AmpAdamContiguousWithStep(PTYPE* param_in,
                                              step_val,
                                              amsgrad,
                                              maximize,
+                                             nesterov,
                                              adamw,
                                              input_size);
     }
@@ -336,6 +351,7 @@ extern "C" __global__ void AmpAdamContiguous(PTYPE* param_in,
                                              float eps,
                                              bool amsgrad,
                                              bool maximize,
+                                             bool nesterov,
                                              bool adamw,
                                              size_t input_size)
 {
@@ -365,6 +381,7 @@ extern "C" __global__ void AmpAdamContiguous(PTYPE* param_in,
                                              step,
                                              amsgrad,
                                              maximize,
+                                             nesterov,
                                              adamw,
                                              input_size);
     }

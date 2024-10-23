@@ -23,8 +23,7 @@
  * SOFTWARE.
  *
  *******************************************************************************/
-#ifndef GUARD_MIOPEN_ADAM_DRIVER_HPP
-#define GUARD_MIOPEN_ADAM_DRIVER_HPP
+#pragma once
 
 #include "InputFlags.hpp"
 #include "driver.hpp"
@@ -37,15 +36,9 @@
 #include <miopen/miopen.h>
 #include <miopen/tensor.hpp>
 
-#include <algorithm>
-#include <cfloat>
 #include <cstdlib>
 #include <memory>
-#include <numeric>
 #include <vector>
-
-#ifndef MLO_ADAMHOST_H_
-#define MLO_ADAMHOST_H_
 
 template <typename Tref>
 void mloAdamRunHost(miopenTensorDescriptor_t paramDesc,
@@ -62,6 +55,7 @@ void mloAdamRunHost(miopenTensorDescriptor_t paramDesc,
                     float eps,
                     bool amsgrad,
                     bool maximize,
+                    bool nesterov,
                     bool adamw,
                     bool is_amp,
                     int32_t grad_scale,
@@ -107,18 +101,24 @@ void mloAdamRunHost(miopenTensorDescriptor_t paramDesc,
                 max_exp_avg_sqs[i] = max_exp_avg_sq;
             }
 
-            denom = sqrt(max_exp_avg_sq) / sqrt(bias_correction2) + eps;
+            denom = (sqrt(max_exp_avg_sq) + eps) / sqrt(bias_correction2);
         }
         else
         {
-            denom = sqrt(exp_avg_sq) / sqrt(bias_correction2) + eps;
+            denom = (sqrt(exp_avg_sq) + eps) / sqrt(bias_correction2);
         }
 
-        params[i] = param - (lr / bias_correction1) * exp_avg / denom;
+        if(nesterov)
+        {
+            params[i] =
+                param - (lr / bias_correction1) * (exp_avg * beta1 + grad * (1 - beta1)) / denom;
+        }
+        else
+        {
+            params[i] = param - (lr / bias_correction1) * exp_avg / denom;
+        }
     }
 }
-
-#endif
 
 template <typename Tgpu, typename Tref = Tgpu, typename Tgrad = Tgpu>
 class AdamDriver : public Driver
@@ -224,6 +224,7 @@ private:
     float eps;
     bool amsgrad   = false;
     bool maximize  = false;
+    bool nesterov  = false;
     bool found_inf = false;
     bool adamw     = false;
     bool is_amp    = false;
@@ -256,6 +257,7 @@ int AdamDriver<Tgpu, Tref, Tgrad>::GetandSetData()
     weight_decay   = inflags.GetValueDouble("weight_decay");
     amsgrad        = inflags.GetValueInt("amsgrad");
     maximize       = inflags.GetValueInt("maximize");
+    nesterov       = inflags.GetValueInt("nesterov");
     iter           = inflags.GetValueInt("iter");
 
     if(is_amp)
@@ -265,24 +267,34 @@ int AdamDriver<Tgpu, Tref, Tgrad>::GetandSetData()
     }
 
     std::vector<int> one_size = {1};
-    SetTensorNd(paramDesc, param_len, data_type);
-    SetTensorNd(paramOutDesc, param_len, data_type);
-    SetTensorNd(gradDesc, param_len, grad_type);
-    SetTensorNd(expAvgDesc, param_len, data_type);
-    SetTensorNd(expAvgSqDesc, param_len, data_type);
-    SetTensorNd(dummyOutDesc, param_len, data_type);
+    if(SetTensorNd(paramDesc, param_len, data_type) != miopenStatusSuccess)
+        MIOPEN_THROW("Error parsing param tensor: " + inflags.GetValueStr("dims") + ".");
+    if(SetTensorNd(paramOutDesc, param_len, data_type) != miopenStatusSuccess)
+        MIOPEN_THROW("Error parsing paramOut tensor: " + inflags.GetValueStr("dims") + ".");
+    if(SetTensorNd(gradDesc, param_len, grad_type) != miopenStatusSuccess)
+        MIOPEN_THROW("Error parsing grad tensor: " + inflags.GetValueStr("dims") + ".");
+    if(SetTensorNd(expAvgDesc, param_len, data_type) != miopenStatusSuccess)
+        MIOPEN_THROW("Error parsing expAvg tensor: " + inflags.GetValueStr("dims") + ".");
+    if(SetTensorNd(expAvgSqDesc, param_len, data_type) != miopenStatusSuccess)
+        MIOPEN_THROW("Error parsing expAvgSq tensor: " + inflags.GetValueStr("dims") + ".");
+    if(SetTensorNd(dummyOutDesc, param_len, data_type) != miopenStatusSuccess)
+        MIOPEN_THROW("Error parsing dummyOut tensor: " + inflags.GetValueStr("dims") + ".");
 
     if(amsgrad)
     {
         miopenCreateTensorDescriptor(&maxExpAvgSqDesc);
-        SetTensorNd(maxExpAvgSqDesc, param_len, data_type);
+        if(SetTensorNd(maxExpAvgSqDesc, param_len, data_type) != miopenStatusSuccess)
+            MIOPEN_THROW("Error parsing maxExpAvgSq tensor: " + inflags.GetValueStr("dims") + ".");
     }
 
     if(is_amp)
     {
-        SetTensorNd(stepDesc, one_size, miopenInt32);
-        SetTensorNd(gradScaleDesc, one_size, miopenInt32);
-        SetTensorNd(foundInfDesc, one_size, miopenInt32);
+        if(SetTensorNd(stepDesc, one_size, miopenInt32) != miopenStatusSuccess)
+            MIOPEN_THROW("Error parsing step tensor.");
+        if(SetTensorNd(gradScaleDesc, one_size, miopenInt32) != miopenStatusSuccess)
+            MIOPEN_THROW("Error parsing gradScale tensor.");
+        if(SetTensorNd(foundInfDesc, one_size, miopenInt32) != miopenStatusSuccess)
+            MIOPEN_THROW("Error parsing foundInf tensor.");
     }
 
     return 0;
@@ -301,6 +313,7 @@ int AdamDriver<Tgpu, Tref, Tgrad>::AddCmdLineArgs()
     inflags.AddInputFlag("weight_decay", 'W', "0", "weight decay (Default=0)", "float");
     inflags.AddInputFlag("amsgrad", 'a', "0", "whether to use the AMSGrad (Default=0)", "int");
     inflags.AddInputFlag("maximize", 'm', "0", "whether to use the maximize (Default=0)", "int");
+    inflags.AddInputFlag("nesterov", 'n', "0", "whether to use the nesterov (Default=0)", "int");
 
     if(is_amp)
     {
@@ -396,38 +409,62 @@ int AdamDriver<Tgpu, Tref, Tgrad>::AllocateBuffersAndCopy()
     }
 
     if(param_dev->ToGPU(GetStream(), param.data()) != 0)
+    {
         std::cerr << "Error copying (param) to GPU, size: " << param_dev->GetSize() << std::endl;
+        return miopenStatusAllocFailed;
+    }
 
     if(grad_dev->ToGPU(GetStream(), grad.data()) != 0)
+    {
         std::cerr << "Error copying (grad) to GPU, size: " << grad_dev->GetSize() << std::endl;
+        return miopenStatusAllocFailed;
+    }
 
     if(exp_avg_dev->ToGPU(GetStream(), exp_avg.data()) != 0)
+    {
         std::cerr << "Error copying (exp_avg) to GPU, size: " << exp_avg_dev->GetSize()
                   << std::endl;
+        return miopenStatusAllocFailed;
+    }
 
     if(exp_avg_sq_dev->ToGPU(GetStream(), exp_avg_sq.data()) != 0)
+    {
         std::cerr << "Error copying (exp_avg_sq) to GPU, size: " << exp_avg_sq_dev->GetSize()
                   << std::endl;
+        return miopenStatusAllocFailed;
+    }
 
     if(amsgrad)
     {
         if(max_exp_avg_sq_dev->ToGPU(GetStream(), max_exp_avg_sq.data()) != 0)
+        {
             std::cerr << "Error copying (max_exp_avg_sq) to GPU, size: "
                       << max_exp_avg_sq_dev->GetSize() << std::endl;
+            return miopenStatusAllocFailed;
+        }
     }
 
     if(is_amp)
     {
         int step = 0;
         if(step_dev->ToGPU(GetStream(), &step) != 0)
+        {
             std::cerr << "Error copying (step) to GPU, size: " << step_dev->GetSize() << std::endl;
+            return miopenStatusAllocFailed;
+        }
 
         if(scale_dev->ToGPU(GetStream(), &grad_scale) != 0)
+        {
             std::cerr << "Error copying (scale) to GPU, size: " << scale_dev->GetSize()
                       << std::endl;
+            return miopenStatusAllocFailed;
+        }
         if(found_inf_dev->ToGPU(GetStream(), &found_inf) != 0)
+        {
             std::cerr << "Error copying (found_inf) to GPU, size: " << found_inf_dev->GetSize()
                       << std::endl;
+            return miopenStatusAllocFailed;
+        }
     }
 
     return miopenStatusSuccess;
@@ -449,44 +486,45 @@ int AdamDriver<Tgpu, Tref, Tgrad>::RunForwardGPU()
 
     for(int i = 0; i < iter; i++)
     {
-        miopenFusedAdamWithOutput(GetHandle(),
-                                  paramDesc,
-                                  param_dev->GetMem(),
-                                  paramOutDesc,
-                                  param_out_dev->GetMem(),
-                                  nullptr,
-                                  nullptr,
-                                  gradDesc,
-                                  grad_dev->GetMem(),
-                                  expAvgDesc,
-                                  exp_avg_dev->GetMem(),
-                                  dummyOutDesc,
-                                  dummy_out_dev->GetMem(),
-                                  expAvgSqDesc,
-                                  exp_avg_sq_dev->GetMem(),
-                                  dummyOutDesc,
-                                  dummy_out_dev->GetMem(),
-                                  maxExpAvgSqDesc,
-                                  max_exp_avg_sq_ptr,
-                                  dummyOutDesc,
-                                  dummy_out_dev->GetMem(),
-                                  stepDesc,
-                                  state_step_ptr,
-                                  stepDesc,
-                                  state_step_ptr,
-                                  i + 1,
-                                  lr,
-                                  beta1,
-                                  beta2,
-                                  weight_decay,
-                                  eps,
-                                  amsgrad,
-                                  maximize,
-                                  adamw,
-                                  gradScaleDesc,
-                                  grad_scale_ptr,
-                                  foundInfDesc,
-                                  found_inf_ptr);
+        auto status = miopenFusedAdamWithOutput(GetHandle(),
+                                                paramDesc,
+                                                param_dev->GetMem(),
+                                                paramOutDesc,
+                                                param_out_dev->GetMem(),
+                                                nullptr,
+                                                nullptr,
+                                                gradDesc,
+                                                grad_dev->GetMem(),
+                                                expAvgDesc,
+                                                exp_avg_dev->GetMem(),
+                                                dummyOutDesc,
+                                                dummy_out_dev->GetMem(),
+                                                expAvgSqDesc,
+                                                exp_avg_sq_dev->GetMem(),
+                                                dummyOutDesc,
+                                                dummy_out_dev->GetMem(),
+                                                maxExpAvgSqDesc,
+                                                max_exp_avg_sq_ptr,
+                                                dummyOutDesc,
+                                                dummy_out_dev->GetMem(),
+                                                stepDesc,
+                                                state_step_ptr,
+                                                stepDesc,
+                                                state_step_ptr,
+                                                i + 1,
+                                                lr,
+                                                beta1,
+                                                beta2,
+                                                weight_decay,
+                                                eps,
+                                                amsgrad,
+                                                maximize,
+                                                nesterov,
+                                                adamw,
+                                                gradScaleDesc,
+                                                grad_scale_ptr,
+                                                foundInfDesc,
+                                                found_inf_ptr);
 
         float time = 0.0;
         miopenGetKernelTime(GetHandle(), &time);
@@ -499,16 +537,21 @@ int AdamDriver<Tgpu, Tref, Tgrad>::RunForwardGPU()
     {
         STOP_TIME
         if(WALL_CLOCK)
-            printf("Wall-clock Time Forward Adam Elapsed: %f ms\n", t.gettime_ms() / iter);
+            std::cout << "Wall-clock Time Forward Adam Elapsed: " << t.gettime_ms() / iter << " ms"
+                      << std::endl;
 
         float kernel_average_time =
             iter > 1 ? (kernel_total_time - kernel_first_time) / (iter - 1) : kernel_first_time;
-        printf("GPU Kernel Time Forward Adam Elapsed: %f ms\n", kernel_average_time);
+        std::cout << "GPU Kernel Time Forward Adam Elapsed: " << kernel_average_time << " ms"
+                  << std::endl;
     }
 
     if(param_out_dev->FromGPU(GetStream(), param.data()) != 0)
+    {
         std::cerr << "Error copying (param_dev) from GPU, size: " << param_dev->GetSize()
                   << std::endl;
+        return miopenStatusInternalError;
+    }
 
     return miopenStatusSuccess;
 }
@@ -516,26 +559,29 @@ int AdamDriver<Tgpu, Tref, Tgrad>::RunForwardGPU()
 template <typename Tgpu, typename Tref, typename Tgrad>
 int AdamDriver<Tgpu, Tref, Tgrad>::RunForwardCPU()
 {
-    mloAdamRunHost<Tref>(paramDesc,
-                         param_host.data(),
-                         grad_host.data(),
-                         exp_avg_host.data(),
-                         exp_avg_sq_host.data(),
-                         max_exp_avg_sq_host.data(),
-                         iter,
-                         lr,
-                         beta1,
-                         beta2,
-                         weight_decay,
-                         eps,
-                         amsgrad,
-                         maximize,
-                         adamw,
-                         is_amp,
-                         grad_scale,
-                         found_inf);
+    int status = miopenStatusSuccess;
 
-    return miopenStatusSuccess;
+    status = mloAdamRunHost<Tref>(paramDesc,
+                                  param_host.data(),
+                                  grad_host.data(),
+                                  exp_avg_host.data(),
+                                  exp_avg_sq_host.data(),
+                                  max_exp_avg_sq_host.data(),
+                                  iter,
+                                  lr,
+                                  beta1,
+                                  beta2,
+                                  weight_decay,
+                                  eps,
+                                  amsgrad,
+                                  maximize,
+                                  nesterov,
+                                  adamw,
+                                  is_amp,
+                                  grad_scale,
+                                  found_inf);
+    MIOPEN_THROW_IF(status != miopenStatusSuccess, "Error in mloAdamRunHost");
+    return status;
 }
 
 template <typename Tgpu, typename Tref, typename Tgrad>
@@ -589,5 +635,3 @@ int AdamDriver<Tgpu, Tref, Tgrad>::VerifyBackward()
 {
     return miopenStatusSuccess;
 }
-
-#endif // GUARD_MIOPEN_ADAM_DRIVER_HPP

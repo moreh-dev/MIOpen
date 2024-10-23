@@ -7026,6 +7026,36 @@ MIOPEN_EXPORT miopenStatus_t miopenBackendInitialize(miopenBackendDescriptor_t d
  *                 eps,
  *                 false,    // amsgrad
  *                 false,    // maximize
+ *                 false,    // nesterov
+ *                 false,    // adamw
+ *                 NULL,     // Unused gradScale Tensor because not amp
+ *                 NULL,
+ *                 NULL,     // Unused foundInf Tensor because not amp
+ *                 NULL);
+ *
+ * // Execute Adam Nesterov
+ * miopenFusedAdam(handle,
+ *                 paramDesc,
+ *                 param,
+ *                 gradDesc,
+ *                 grad,
+ *                 expAvgDesc,
+ *                 expAvg,
+ *                 expAvgSqDesc,
+ *                 expAvgSq,
+ *                 NULL,     // Unused maxExpAvgSqDesc because amsgrad is false
+ *                 NULL,
+ *                 NULL,     // Unused stateStep Tensor because use step integer argument
+ *                 NULL,
+ *                 step,
+ *                 lr,
+ *                 beta1,
+ *                 beta2,
+ *                 weight_decay,
+ *                 eps,
+ *                 false,    // amsgrad
+ *                 false,    // maximize
+ *                 true,     // nesterov
  *                 false,    // adamw
  *                 NULL,     // Unused gradScale Tensor because not amp
  *                 NULL,
@@ -7054,6 +7084,7 @@ MIOPEN_EXPORT miopenStatus_t miopenBackendInitialize(miopenBackendDescriptor_t d
  *                 eps,
  *                 false,    // amsgrad
  *                 false,    // maximize
+ *                 false,    // nesterov
  *                 true,     // adamw
  *                 NULL,     // Unused gradScale Tensor because not amp
  *                 NULL,
@@ -7082,6 +7113,7 @@ MIOPEN_EXPORT miopenStatus_t miopenBackendInitialize(miopenBackendDescriptor_t d
  *                 eps,
  *                 false,    // amsgrad
  *                 false,    // maximize
+ *                 false,    // nesterov
  *                 false,    // adamw
  *                 gradScaleDesc,
  *                 gradScale,
@@ -7117,6 +7149,7 @@ MIOPEN_EXPORT miopenStatus_t miopenBackendInitialize(miopenBackendDescriptor_t d
  * @param amsgrad             Flag indicating whether to use the AMSGrad variant of Adam (input)
  * @param maximize            Flag indicating whether to maximize the objective with respect to the
  *                            parameters (input)
+ * @param nesterov            Flag indicating whether to use the Nesterov variant of Adam (input)
  * @param adamw               If true, the operation becomes AdamW (input)
  * @param gradScaleDesc       Tensor descriptor for the input grad scale tensor (input, optional)
  * @param gradScale           Input grad scale tensor (input, optional)
@@ -7146,6 +7179,7 @@ MIOPEN_EXPORT miopenStatus_t miopenFusedAdam(miopenHandle_t handle,
                                              const float eps,
                                              const bool amsgrad,
                                              const bool maximize,
+                                             const bool nesterov,
                                              const bool adamw,
                                              const miopenTensorDescriptor_t gradScaleDesc,
                                              const void* gradScale,
@@ -7194,6 +7228,48 @@ MIOPEN_EXPORT miopenStatus_t miopenFusedAdam(miopenHandle_t handle,
  *                           eps,
  *                           false,  // amsgrad
  *                           false,  // maximize
+ *                           false,  // nesterov
+ *                           false,  // adamw
+ *                           NULL,   // Unused gradScale Tensor because not amp
+ *                           NULL,
+ *                           NULL,   // Unused foundInf Tensor because not amp
+ *                           NULL);
+ *
+ * // Execute Adam Nesterov
+ * miopenFusedAdamWithOutput(handle,
+ *                           paramInDesc,
+ *                           paramIn,
+ *                           paramOutDesc,
+ *                           paramOut,
+ *                           NULL,   // Unused paramOutFloat16 tensor because is not amp
+ *                           NULL,
+ *                           gradInDesc,
+ *                           gradIn,
+ *                           expAvgInDesc,
+ *                           expAvgIn,
+ *                           expAvgOutDesc,
+ *                           expAvgOut,
+ *                           expAvgInSqDesc,
+ *                           expAvgSqIn,
+ *                           expAvgSqOutDesc,
+ *                           expAvgSqOut,
+ *                           NULL,   // Unused maxExpAvgSqIn tensor because amsgrad is false
+ *                           NULL,
+ *                           NULL,   // Unused maxExpAvgSqOut tensor because amsgrad is false
+ *                           NULL,
+ *                           NULL,   // Unused stateStepIn tensor because use step integer argument
+ *                           NULL,
+ *                           NULL,   // Unused stateStepOut tensor because use step integer argument
+ *                           NULL,
+ *                           step,
+ *                           lr,
+ *                           beta1,
+ *                           beta2,
+ *                           weight_decay,
+ *                           eps,
+ *                           false,  // amsgrad
+ *                           false,  // maximize
+ *                           true,   // nesterov
  *                           false,  // adamw
  *                           NULL,   // Unused gradScale Tensor because not amp
  *                           NULL,
@@ -7231,6 +7307,7 @@ MIOPEN_EXPORT miopenStatus_t miopenFusedAdam(miopenHandle_t handle,
  *                           lr, beta1, beta2, weight_decay, eps,
  *                           false,        // amsgrad
  *                           false,        // maximize
+ *                           false,        // nesterov
  *                           false,        // adamw
  *                           gradScaleDesc,
  *                           gradScale,
@@ -7284,6 +7361,7 @@ MIOPEN_EXPORT miopenStatus_t miopenFusedAdam(miopenHandle_t handle,
  * @param amsgrad             Flag indicating whether to use the AMSGrad variant of Adam (input)
  * @param maximize            Flag indicating whether to maximize the objective with respect to the
  *                            parameters (input)
+ * @param nesterov            Flag indicating whether to use the Nesterov variant of Adam (input)
  * @param adamw               If it is true, the operation becomes AdamW (input)
  * @param gradScaleDesc       Tensor descriptor for the input grad scale tensor (input, optional)
  * @param gradScale           Input grad scale tensor (input, optional)
@@ -7326,6 +7404,7 @@ miopenFusedAdamWithOutput(miopenHandle_t handle,
                           const float eps,
                           const bool amsgrad,
                           const bool maximize,
+                          const bool nesterov,
                           const bool adamw,
                           const miopenTensorDescriptor_t gradScaleDesc,
                           const void* gradScale,

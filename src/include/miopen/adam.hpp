@@ -23,8 +23,7 @@
  * SOFTWARE.
  *
  *******************************************************************************/
-#ifndef MIOPEN_ADAM_HPP_
-#define MIOPEN_ADAM_HPP_
+#pragma once
 
 #include <miopen/common.hpp>
 
@@ -70,6 +69,7 @@ MIOPEN_INTERNALS_EXPORT miopenStatus_t Adam(Handle& handle,
                                             float eps,
                                             bool amsgrad,
                                             bool maximize,
+                                            bool nesterov,
                                             bool adamw,
                                             bool is_amp);
 
@@ -109,4 +109,3 @@ TransformersAdamW(Handle& handle,
                   bool correct_bias,
                   bool is_amp);
 } // namespace miopen
-#endif // _MIOPEN_ADAM_HPP_

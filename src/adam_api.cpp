@@ -37,6 +37,7 @@ static void LogCmdAdam(const miopenTensorDescriptor_t paramDesc,
                        const float eps,
                        const bool amsgrad,
                        const bool maximize,
+                       const bool nesterov,
                        const bool adamw,
                        const bool is_amp)
 {
@@ -71,7 +72,8 @@ static void LogCmdAdam(const miopenTensorDescriptor_t paramDesc,
         }
         batch_sz.pop_back();
         ss << " -d " << batch_sz << " -l " << lr << " -1 " << beta1 << " -2 " << beta2 << " -e "
-           << eps << " -W " << weight_decay << " -a " << amsgrad << " -m " << maximize;
+           << eps << " -W " << weight_decay << " -a " << amsgrad << " -m " << maximize << " -n "
+           << nesterov;
         MIOPEN_LOG_DRIVER_CMD(ss.str());
     }
 }
@@ -99,6 +101,7 @@ extern "C" miopenStatus_t miopenFusedAdam(miopenHandle_t handle,
                                           const float eps,
                                           const bool amsgrad,
                                           const bool maximize,
+                                          const bool nesterov,
                                           const bool adamw,
                                           const miopenTensorDescriptor_t gradScaleDesc,
                                           const void* gradScale,
@@ -126,6 +129,7 @@ extern "C" miopenStatus_t miopenFusedAdam(miopenHandle_t handle,
                         eps,
                         amsgrad,
                         maximize,
+                        nesterov,
                         adamw,
                         gradScaleDesc,
                         gradScale,
@@ -135,7 +139,8 @@ extern "C" miopenStatus_t miopenFusedAdam(miopenHandle_t handle,
     const miopen::TensorDescriptor dummyDesc;
     bool is_amp = (foundInfDesc != nullptr || gradScaleDesc != nullptr);
 
-    LogCmdAdam(paramDesc, lr, beta1, beta2, weight_decay, eps, amsgrad, maximize, adamw, is_amp);
+    LogCmdAdam(
+        paramDesc, lr, beta1, beta2, weight_decay, eps, amsgrad, maximize, nesterov, adamw, is_amp);
 
     return miopen::try_([&] {
         miopen::Adam(miopen::deref(handle),
@@ -175,6 +180,7 @@ extern "C" miopenStatus_t miopenFusedAdam(miopenHandle_t handle,
                      eps,
                      amsgrad,
                      maximize,
+                     nesterov,
                      adamw,
                      is_amp);
     });
@@ -214,6 +220,7 @@ miopenFusedAdamWithOutput(miopenHandle_t handle,
                           const float eps,
                           const bool amsgrad,
                           const bool maximize,
+                          const bool nesterov,
                           const bool adamw,
                           const miopenTensorDescriptor_t gradScaleDesc,
                           const void* gradScale,
@@ -251,6 +258,7 @@ miopenFusedAdamWithOutput(miopenHandle_t handle,
                         eps,
                         amsgrad,
                         maximize,
+                        nesterov,
                         adamw,
                         gradScaleDesc,
                         gradScale,
@@ -260,7 +268,17 @@ miopenFusedAdamWithOutput(miopenHandle_t handle,
     const miopen::TensorDescriptor dummyDesc;
     bool is_amp = (foundInfDesc != nullptr || gradScaleDesc != nullptr);
 
-    LogCmdAdam(paramInDesc, lr, beta1, beta2, weight_decay, eps, amsgrad, maximize, adamw, is_amp);
+    LogCmdAdam(paramInDesc,
+               lr,
+               beta1,
+               beta2,
+               weight_decay,
+               eps,
+               amsgrad,
+               maximize,
+               nesterov,
+               adamw,
+               is_amp);
 
     return miopen::try_([&] {
         miopen::Adam(miopen::deref(handle),
@@ -300,6 +318,7 @@ miopenFusedAdamWithOutput(miopenHandle_t handle,
                      eps,
                      amsgrad,
                      maximize,
+                     nesterov,
                      adamw,
                      is_amp);
     });

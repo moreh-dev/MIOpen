@@ -72,6 +72,7 @@ miopenStatus_t Adam(Handle& handle,
                     const float eps,
                     const bool amsgrad,
                     const bool maximize,
+                    const bool nesterov,
                     const bool adamw,
                     const bool is_amp)
 {
@@ -123,6 +124,7 @@ miopenStatus_t Adam(Handle& handle,
         tmp.eps          = eps;
         tmp.amsgrad      = amsgrad;
         tmp.maximize     = maximize;
+        tmp.nesterov     = nesterov;
         tmp.adamw        = adamw;
 
         return tmp;

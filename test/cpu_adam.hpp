@@ -23,8 +23,7 @@
  * SOFTWARE.
  *
  *******************************************************************************/
-#ifndef GUARD_CPU_ADAM_HPP
-#define GUARD_CPU_ADAM_HPP
+#pragma once
 
 #include "tensor_holder.hpp"
 
@@ -41,6 +40,7 @@ void cpu_adam(tensor<T1>& params,
               float eps,
               bool amsgrad,
               bool maximize,
+              bool nesterov,
               bool adamw,
               bool is_amp,
               int32_t grad_scale,
@@ -84,18 +84,24 @@ void cpu_adam(tensor<T1>& params,
                 if(exp_avg_sq > max_exp_avg_sq)
                     max_exp_avg_sq = exp_avg_sq;
 
-                denom = sqrt(max_exp_avg_sq) / sqrt(bias_correction2) + eps;
+                denom = (sqrt(max_exp_avg_sq) + eps) / sqrt(bias_correction2);
             }
             else
             {
-                denom = sqrt(exp_avg_sq) / sqrt(bias_correction2) + eps;
+                denom = (sqrt(exp_avg_sq) + eps) / sqrt(bias_correction2);
             }
 
-            param = param - (lr / bias_correction1) * exp_avg / denom;
+            if(nesterov)
+            {
+                param = param -
+                        (lr / bias_correction1) * (exp_avg * beta1 + grad * (1 - beta1)) / denom;
+            }
+            else
+            {
+                param = param - (lr / bias_correction1) * exp_avg / denom;
+            }
         }
 
         params[i] = param;
     });
 }
-
-#endif

@@ -62,6 +62,7 @@ struct AdamInvokeParams : public miopen::InvokeParams
     float eps          = 0.0;
     bool amsgrad       = false;
     bool maximize      = false;
+    bool nesterov      = false;
     bool adamw         = false;
 
     std::size_t GetWorkspaceSize() const { return 0; }
