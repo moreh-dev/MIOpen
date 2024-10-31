@@ -55,7 +55,6 @@ void cpu_any_forward(tensor<T> input, tensor<unsigned char>& ref_output, size_t 
             size_t input_idx  = (o / inner_size) * inner_size * reduce_size + o % inner_size;
             unsigned char any = 0;
             ford(reduce_size)([&](size_t o) {
-                // T val = input[input_idx];
                 unsigned char val = input[input_idx] != 0;
                 any               = any || val;
                 input_idx += inner_size;

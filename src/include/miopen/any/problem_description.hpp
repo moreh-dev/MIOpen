@@ -25,7 +25,6 @@
  *******************************************************************************/
 #pragma once
 
-// #include <cstdint>
 #include "miopen/errors.hpp"
 #include <miopen/miopen.h>
 #include <miopen/problem_description_base.hpp>
@@ -55,11 +54,6 @@ struct ProblemDescription : ProblemDescriptionBase
         {
             MIOPEN_THROW(miopenStatusBadParm, "Any: The input and output dim size don't match.");
         }
-
-        // if(!IsAllPacked())
-        // {
-        //     MIOPEN_THROW(miopenStatusBadParm, "Any: The input or output tensor is not packed.");
-        // }
     }
 
     const TensorDescriptor& GetInputDesc() const { return inputDesc; }
@@ -117,16 +111,6 @@ struct ProblemDescription : ProblemDescriptionBase
                     return false;
                 }
             }
-        }
-
-        return true;
-    }
-
-    bool IsAllPacked() const
-    {
-        if(!(inputDesc.IsPacked() && outputDesc.IsPacked()))
-        {
-            return false;
         }
 
         return true;

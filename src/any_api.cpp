@@ -29,10 +29,6 @@
 #include <miopen/handle.hpp>
 #include <miopen/logger.hpp>
 #include <miopen/tensor_ops.hpp>
-// #include <sstream>
-
-// #include "miopen/common.hpp"
-// #include "miopen/miopen.h"
 
 static void
 LogCmdAny(const miopenTensorDescriptor_t inputDesc, const int32_t dim, const bool keepdim)
@@ -42,26 +38,25 @@ LogCmdAny(const miopenTensorDescriptor_t inputDesc, const int32_t dim, const boo
         std::stringstream ss;
         auto dtype = miopen::deref(inputDesc).GetType();
 
-        // TODO: Rearange in a logic way if needed
         if(dtype == miopenInt8)
         {
             ss << "anyint8";
         }
-        else if(dtype == miopenHalf)
+        else if(dtype == miopenDouble)
         {
-            ss << "anyfp16";
+            ss << "anyfp64";
         }
         else if(dtype == miopenFloat)
         {
             ss << "anyfp32";
         }
+        else if(dtype == miopenHalf)
+        {
+            ss << "anyfp16";
+        }
         else if(dtype == miopenBFloat16)
         {
             ss << "anybfp16";
-        }
-        else if(dtype == miopenDouble)
-        {
-            ss << "anyfp64";
         }
 
         ss << "-shape ( ";
@@ -86,7 +81,6 @@ miopenGetAnyForwardWorkspaceSize(miopenHandle_t handle,
                                  const miopenTensorDescriptor_t outputDesc,
                                  size_t* sizeInBytes)
 {
-    // MIOPEN_LOG_FUNCTION(handle, inputDesc, dim, keepdim, outputDesc, sizeInBytes);
     MIOPEN_LOG_FUNCTION(handle, inputDesc, dim, keepdim, outputDesc, sizeInBytes);
 
     return miopen::try_([&] {

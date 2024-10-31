@@ -61,9 +61,6 @@ int32_t mloAnyForwardRunHost(miopenTensorDescriptor_t inputDesc,
     auto output_numel = miopen::deref(outputDesc).GetElementSize();
     auto input_numel  = miopen::deref(inputDesc).GetElementSize();
 
-    // float a = 0;
-    // std::cout << "(a == 0): " << (a == 0) << std::endl;
-
     if(dim != -1)
     {
         auto inner_size = 1ULL;
@@ -111,8 +108,6 @@ public:
         data_type = miopen_type<Tgpu>{};
     }
 
-    std::vector<int> ComputeStrides(std::vector<int> input);
-    std::vector<int> ComputeContiguousStrides(std::vector<int> input);
     int AddCmdLineArgs() override;
     int ParseCmdLineArgs(int argc, char* argv[]) override;
     InputFlags& GetInputFlags() override { return inflags; }
@@ -157,21 +152,6 @@ private:
     bool keepdim;
 
     bool isContiguous;
-};
-
-// Equivalent to: tensor.tranpose(0, -1).contiguous().tranpose(0, -1) incase contiguous = False
-template <typename Tgpu, typename Tref>
-std::vector<int> AnyDriver<Tgpu, Tref>::ComputeStrides(std::vector<int> inputDim)
-{
-    if(!isContiguous)
-        std::swap(inputDim.front(), inputDim.back());
-    std::vector<int> strides(inputDim.size());
-    strides.back() = 1;
-    for(int i = inputDim.size() - 2; i >= 0; --i)
-        strides[i] = strides[i + 1] * inputDim[i + 1];
-    if(!isContiguous)
-        std::swap(strides.front(), strides.back());
-    return strides;
 };
 
 template <typename Tgpu, typename Tref>
@@ -227,10 +207,6 @@ int AnyDriver<Tgpu, Tref>::GetandSetData()
         in_strides[0] *= 2;
         SetTensorNd(inputDesc, in_dims, in_strides, data_type);
     }
-
-    // auto in_strides = ComputeStrides(in_dims);
-
-    // SetTensorNd(inputDesc, in_dims, in_strides, data_type);
 
     std::vector<int> out_len(in_dims);
     if(dim != -1)
@@ -299,12 +275,6 @@ int AnyDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     in[0 * 4 * 5 + 3 * 5 + 1] = 0;
     in[0 * 4 * 5 + 4 * 5 + 1] = 0;
 
-    // std::cout << "in: ";
-    // for(auto i : in) {
-    //     std::cout << signed(i) << " ";
-    // }
-    // std::cout << std::endl;
-
     if(in_dev->ToGPU(GetStream(), in.data()) != 0)
         std::cerr << "Error copying (in) to GPU, size: " << in_dev->GetSize() << std::endl;
 
@@ -327,7 +297,6 @@ int AnyDriver<Tgpu, Tref>::RunForwardGPU()
     for(int i = 0; i < inflags.GetValueInt("iter"); i++)
     {
         miopenAnyForward(GetHandle(),
-                         //  workspace_dev->GetMem(),
                          (dim == -1) ? workspace_dev->GetMem() : nullptr,
                          ws_sizeInBytes,
                          inputDesc,
@@ -374,20 +343,6 @@ template <typename Tgpu, typename Tref>
 int AnyDriver<Tgpu, Tref>::VerifyForward()
 {
     RunForwardCPU();
-
-    // std::cout << "outhost: ";
-    // for(auto i : outhost)
-    // {
-    //     std::cout << signed(i) << " ";
-    // }
-    // std::cout << std::endl;
-
-    // std::cout << "out: ";
-    // for(auto i : out)
-    // {
-    //     std::cout << signed(i) << " ";
-    // }
-    // std::cout << std::endl;
 
     auto is_equal = (outhost == out);
 

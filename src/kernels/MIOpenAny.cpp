@@ -30,14 +30,7 @@
 
 #include <float_types.h>
 #include <tensor_view.hpp>
-
-#ifndef MIOPEN_USE_INT8
-#define MIOPEN_USE_INT8 0
-#endif
-
-#if MIOPEN_USE_INT8
-using INPUT_TYPE = signed char;
-#endif
+#include <miopen_cstdint.hpp>
 
 template <typename DTYPE>
 __device__ void any_forward(const DTYPE* __restrict__ input,
