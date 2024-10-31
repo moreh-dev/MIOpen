@@ -92,6 +92,11 @@ inline std::vector<AnyTestCase> AnyTestConfigs()
         AnyTestCase({4, 5, 7}, 2, true),
         AnyTestCase({4, 5, 7, 8}, 3),
         AnyTestCase({4, 5, 7, 8}, 3, true),
+
+        // Add cases for large tensors
+        AnyTestCase({512,64,112, 112}, -1, false, true),
+        AnyTestCase({512,64,112, 112}, -1, false, false),
+        AnyTestCase({512,64,112, 112}, 3, false, false),
     };
 }
 

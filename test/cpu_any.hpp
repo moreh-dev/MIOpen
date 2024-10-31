@@ -25,6 +25,7 @@
  *******************************************************************************/
 #pragma once
 
+#include "tensor_view.hpp"
 #include <ford.hpp>
 #include <tensor_holder.hpp>
 #include <miopen/tensor_view_utils.hpp>
@@ -52,21 +53,28 @@ void cpu_any_forward(tensor<T> input, tensor<unsigned char>& ref_output, size_t 
     if(dim != -1)
     {
         par_ford(output_numel)([&](size_t o) {
-            size_t input_idx  = (o / inner_size) * inner_size * reduce_size + o % inner_size;
+            size_t idx        = (o / inner_size) * inner_size * reduce_size + o % inner_size;
+            auto inp_tl       = tensor_layout_t(input_tv, idx);
+            auto input_idx    = input_tv.get_tensor_view_idx(inp_tl);
             unsigned char any = 0;
             ford(reduce_size)([&](size_t o) {
                 unsigned char val = input[input_idx] != 0;
                 any               = any || val;
                 input_idx += inner_size;
             });
-            ref_output[o] = any;
+
+            auto out_tl         = tensor_layout_t(output_tv, o);
+            auto out_idx        = output_tv.get_tensor_view_idx(out_tl);
+            ref_output[out_idx] = any;
         });
     }
     else
     {
         unsigned char any = 0;
         par_ford(input_numel)([&](size_t i) {
-            unsigned char val = input[i] != 0;
+            auto inp_tl       = tensor_layout_t(input_tv, i);
+            auto input_idx    = input_tv.get_tensor_view_idx(inp_tl);
+            unsigned char val = input[input_idx] != 0;
             any               = any || val;
         });
         ref_output[0] = any;
