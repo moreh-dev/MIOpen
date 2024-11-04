@@ -55,8 +55,6 @@ int32_t mloAnyForwardRunHost(miopenTensorDescriptor_t inputDesc,
                              Tcheck* outputHost,
                              int32_t dim)
 {
-    // auto input_tv  = miopen::get_inner_expanded_tv<5>(inputDesc);
-    // auto output_tv = miopen::get_inner_expanded_tv<5>(outputDesc);
     auto input_tv  = miopen::get_inner_expanded_tv<5>(miopen::deref(inputDesc));
     auto output_tv = miopen::get_inner_expanded_tv<5>(miopen::deref(outputDesc));
 
@@ -142,8 +140,8 @@ public:
 private:
     InputFlags inflags;
 
-    miopenTensorDescriptor_t inputDesc;
-    miopenTensorDescriptor_t outputDesc;
+    miopenTensorDescriptor_t inputDesc  = nullptr;
+    miopenTensorDescriptor_t outputDesc = nullptr;
 
     std::unique_ptr<GPUMem> in_dev;
     std::unique_ptr<GPUMem> out_dev;
@@ -174,6 +172,11 @@ int AnyDriver<Tgpu, Tref>::AddCmdLineArgs()
                          "the dimension to reduce (Default=-1. This is equivalent to dim=None",
                          "int");
     inflags.AddInputFlag("keepdim", 'k', "0", "Keep the reduced dimension (Default=0)", "int");
+    inflags.AddInputFlag("print-diff",
+                         'p',
+                         "0",
+                         "Enable print differences between out and outhost or not (Default=0)",
+                         "int");
     inflags.AddInputFlag("iter", 'i', "10", "Number of Iterations (Default=10)", "int");
     inflags.AddInputFlag("verify", 'V', "1", "Verify Each Layer (Default=1)", "int");
     inflags.AddInputFlag("time", 't', "0", "Time Each Layer (Default=0)", "int");
@@ -208,8 +211,6 @@ int AnyDriver<Tgpu, Tref>::GetandSetData()
         if(SetTensorNd(inputDesc, in_dims, data_type) != miopenStatusSuccess)
             MIOPEN_THROW("Error parsing input tensor (contiguous): " +
                          inflags.GetValueStr("input-dims") + ".");
-
-        // SetTensorNd(inputDesc, in_dims, data_type);
     }
     else
     {
@@ -224,7 +225,6 @@ int AnyDriver<Tgpu, Tref>::GetandSetData()
         if(SetTensorNd(inputDesc, in_dims, in_strides, data_type) != miopenStatusSuccess)
             MIOPEN_THROW("Error parsing input tensor (non-contiguous): " +
                          inflags.GetValueStr("input-dims") + ".");
-        // SetTensorNd(inputDesc, in_dims, in_strides, data_type);
     }
 
     std::vector<int> out_len(in_dims);
@@ -247,7 +247,6 @@ int AnyDriver<Tgpu, Tref>::GetandSetData()
     if(SetTensorNd(outputDesc, out_len, data_type) != miopenStatusSuccess)
         MIOPEN_THROW("Error parsing output tensor: " + inflags.GetValueStr("input-dims") + ".");
 
-    // SetTensorNd(outputDesc, out_len, data_type);
 
     return miopenStatusSuccess;
 }
@@ -269,11 +268,15 @@ int AnyDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
     uint32_t ctx = 0;
 
     // GPU allocation
-    in_dev  = std::unique_ptr<GPUMem>(new GPUMem(ctx, in_sz, sizeof(Tgpu)));
-    out_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, out_sz, sizeof(Tgpu)));
+    in_dev  = std::make_unique<GPUMem>(ctx, in_sz, sizeof(Tgpu));
+    out_dev = std::make_unique<GPUMem>(ctx, out_sz, sizeof(unsigned char));
     if(dim == -1)
     {
-        workspace_dev = std::unique_ptr<GPUMem>(new GPUMem(ctx, ws_sizeInBytes, sizeof(std::byte)));
+        workspace_dev = std::make_unique<GPUMem>(ctx, ws_sizeInBytes, sizeof(std::byte));
+    }
+    else
+    {
+        workspace_dev = nullptr;
     }
 
     // GPU host allocation
@@ -319,7 +322,7 @@ int AnyDriver<Tgpu, Tref>::RunForwardGPU()
     for(int i = 0; i < inflags.GetValueInt("iter"); i++)
     {
         auto status = miopenAnyForward(GetHandle(),
-                                       (dim == -1) ? workspace_dev->GetMem() : nullptr,
+                                       workspace_dev ? workspace_dev->GetMem() : nullptr,
                                        ws_sizeInBytes,
                                        inputDesc,
                                        in_dev->GetMem(),
@@ -381,18 +384,24 @@ int AnyDriver<Tgpu, Tref>::VerifyForward()
     if(!is_equal)
     {
         std::cout << "Forward Any FAILED" << std::endl;
-        size_t limit_print = 20;
-        std::cout << "Limiting print to first " << limit_print << " mismatches" << std::endl;
-        for(size_t i = 0; i < out.size(); i++)
+
+        auto is_print_diff = inflags.GetValueInt("print-diff") != 0;
+        if(is_print_diff)
         {
-            if(out[i] != outhost[i])
+            size_t limit_print = 20;
+            std::cout << "Limiting print to first " << limit_print << " mismatches" << std::endl;
+            for(size_t i = 0; i < out.size(); i++)
             {
-                std::cout << "Forward Any Mismatch at index: " << i << ". (GPU: " << +out[i]
-                          << " CPU: " << +outhost[i] << ")" << std::endl;
-                if(limit_print-- == 0)
-                    break;
+                if(out[i] != outhost[i])
+                {
+                    std::cout << "Forward Any Mismatch at index: " << i << ". (GPU: " << +out[i]
+                              << " CPU: " << +outhost[i] << ")" << std::endl;
+                    if(limit_print-- == 0)
+                        break;
+                }
             }
         }
+
         return EC_VerifyFwd;
     }
     else

@@ -107,9 +107,7 @@ ConvSolution AnyForward::GetSolution(const ExecutionContext& context,
         kernel.kernel_file = "MIOpenAny.cpp";
         kernel.kernel_name = "AnyForward";
 
-        KernelBuildParameters build_params;
-
-        build_params = KernelBuildParameters{
+        const auto build_params = KernelBuildParameters{
             {"MIOPEN_USE_FP32", static_cast<int>(dtype == miopenFloat)},
             {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
             {"MIOPEN_USE_BFP16", static_cast<int>(dtype == miopenBFloat16)},
@@ -126,6 +124,10 @@ ConvSolution AnyForward::GetSolution(const ExecutionContext& context,
         kernel.g_wk.push_back(zgridsize);
 
         result.construction_params.push_back(kernel);
+
+        // result.invoker_factory = [](const std::vector<Kernel>& kernels) {
+        //     return [](const Handle& handle_, const AnyInvokeParams& raw_params) {};
+        // };
 
         result.invoker_factory = [=](const std::vector<Kernel>& kernels) {
             return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
@@ -166,9 +168,7 @@ ConvSolution AnyForward::GetSolution(const ExecutionContext& context,
                 kernel.kernel_file = "MIOpenAny.cpp";
                 kernel.kernel_name = "ReduceAny";
 
-                KernelBuildParameters build_params;
-
-                build_params = KernelBuildParameters{
+                const auto build_params = KernelBuildParameters{
                     {"MIOPEN_USE_FP32", static_cast<int>(dtype == miopenFloat)},
                     {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
                     {"MIOPEN_USE_BFP16", static_cast<int>(dtype == miopenBFloat16)},
@@ -203,9 +203,7 @@ ConvSolution AnyForward::GetSolution(const ExecutionContext& context,
             kernel.kernel_file = "MIOpenAny.cpp";
             kernel.kernel_name = "ReduceAny";
 
-            KernelBuildParameters build_params;
-
-            build_params = KernelBuildParameters{
+            const auto build_params = KernelBuildParameters{
                 {"MIOPEN_USE_FP32", static_cast<int>(dtype == miopenFloat)},
                 {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
                 {"MIOPEN_USE_BFP16", static_cast<int>(dtype == miopenBFloat16)},
