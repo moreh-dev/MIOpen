@@ -56,12 +56,10 @@ namespace any {
 MultiBufferWorkspaceTraits GetMultiBufferWorkspaceTraits(const TensorDescriptor& inputDesc)
 {
     auto input_numel = inputDesc.GetElementSize();
-    auto size        = ((input_numel + LOCAL_SIZE - 1) / LOCAL_SIZE);
 
-    auto dtype = inputDesc.GetType();
-    size *= get_data_size(dtype);
+    auto dtype            = inputDesc.GetType();
     size_t data_size      = get_data_size(dtype);
-    size_t workspace_size = AlignUp(size, LOCAL_SIZE) / LOCAL_SIZE;
+    size_t workspace_size = AlignUp(input_numel, LOCAL_SIZE) / LOCAL_SIZE;
     size_t ws_scratch_mem = 2 * workspace_size * data_size;
     size_t ws_local_mem   = LOCAL_SIZE * data_size;
 
@@ -258,6 +256,8 @@ ConvSolution AnyForward::GetSolution(const ExecutionContext& context,
                     kernel(input_mem, scratch_mem, local_mem, N, input_tv, output_tv);
                     input_mem = scratch_mem;
                     output_tv = input_tv;
+
+                    N = AlignUp(N, LOCAL_SIZE) / LOCAL_SIZE;
                 }
 
                 /* Last Reduction */

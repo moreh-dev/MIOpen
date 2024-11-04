@@ -73,7 +73,7 @@ __device__ void any_forward(const DTYPE* __restrict__ input,
 template <typename DTYPE>
 __device__ void reduce_any(DTYPE* __restrict__ input,
                            unsigned char* __restrict__ output,
-                           unsigned char* local_mem,
+                           DTYPE* local_mem,
                            uint64_t N,
                            tensor_view_t<5> input_tv,
                            tensor_view_t<5> output_tv)
@@ -92,7 +92,7 @@ __device__ void reduce_any(DTYPE* __restrict__ input,
         auto val = input[input_idx];
 #endif
 
-        local_mem[lid] = (val != 0);
+        local_mem[lid] = val;
     }
     else
     {
@@ -114,7 +114,7 @@ __device__ void reduce_any(DTYPE* __restrict__ input,
     {
         auto o_tl          = tensor_layout_t<5>(output_tv, blockIdx.x);
         auto output_idx    = output_tv.get_tensor_view_idx(o_tl);
-        output[output_idx] = local_mem[0];
+        output[output_idx] = static_cast<unsigned char>(local_mem[0]) != 0;
     }
 }
 
@@ -132,7 +132,7 @@ extern "C" __global__ void AnyForward(const INPUT_TYPE* __restrict__ input,
 
 extern "C" __global__ void ReduceAny(INPUT_TYPE* __restrict__ input,
                                      unsigned char* __restrict__ output,
-                                     unsigned char* local_mem,
+                                     INPUT_TYPE* local_mem,
                                      uint64_t N,
                                      tensor_view_t<5> input_tv,
                                      tensor_view_t<5> output_tv)
