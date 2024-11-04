@@ -34,6 +34,7 @@
 
 #include <cstdint>
 #include <cstdlib>
+#include <iostream>
 #include <memory>
 #include <vector>
 
@@ -54,6 +55,11 @@ int32_t mloAnyForwardRunHost(miopenTensorDescriptor_t inputDesc,
                              Tcheck* outputHost,
                              int32_t dim)
 {
+    // auto input_tv  = miopen::get_inner_expanded_tv<5>(inputDesc);
+    // auto output_tv = miopen::get_inner_expanded_tv<5>(outputDesc);
+    auto input_tv  = miopen::get_inner_expanded_tv<5>(miopen::deref(inputDesc));
+    auto output_tv = miopen::get_inner_expanded_tv<5>(miopen::deref(outputDesc));
+
     auto input_dims  = miopen::deref(inputDesc).GetLengths();
     auto output_dims = miopen::deref(outputDesc).GetLengths();
 
@@ -69,27 +75,30 @@ int32_t mloAnyForwardRunHost(miopenTensorDescriptor_t inputDesc,
             inner_size *= input_dims[i];
         }
 
-        for(size_t o = 0; o < output_numel; o++)
-        {
-            size_t input_idx = (o / inner_size) * inner_size * reduce_size + o % inner_size;
+        par_ford(output_numel)([&](size_t o) {
+            size_t idx     = (o / inner_size) * inner_size * reduce_size + o % inner_size;
+            auto inp_tl    = tensor_layout_t(input_tv, idx);
+            auto input_idx = input_tv.get_tensor_view_idx(inp_tl);
 
             Tcheck any = 0;
-            for(size_t i = 0; i < reduce_size; i++)
-            {
-                Tcheck val = static_cast<Tcheck>(input[input_idx]);
-                any        = (any || val) != 0;
+            ford(reduce_size)([&](size_t) {
+                Tcheck val = input[input_idx] != 0;
+                any        = any || val;
                 input_idx += inner_size;
-            }
-            outputHost[o] = any;
-        }
+            });
+
+            auto out_tl         = tensor_layout_t(output_tv, o);
+            auto out_idx        = output_tv.get_tensor_view_idx(out_tl);
+            outputHost[out_idx] = any;
+        });
     }
     else
     {
         Tcheck any = 0;
-        for(size_t i = 0; i < input_numel; i++)
-        {
-            any = (any || input[i]) != 0;
-        }
+        par_ford(input_numel)([&](size_t i) {
+            Tcheck val = input[i] != 0;
+            any        = any || val;
+        });
         outputHost[0] = any;
     }
 
@@ -133,8 +142,6 @@ public:
 private:
     InputFlags inflags;
 
-    int forw;
-
     miopenTensorDescriptor_t inputDesc;
     miopenTensorDescriptor_t outputDesc;
 
@@ -161,11 +168,15 @@ int AnyDriver<Tgpu, Tref>::AddCmdLineArgs()
     inflags.AddTensorFlag(
         "input-dims", 'D', "3x4x5", "The dimensional lengths of the input tensor (Default=3x4x5)");
     inflags.AddInputFlag("contiguous", 'C', "1", "Tensor is contiguous or not (Default=1)", "int");
-    inflags.AddInputFlag("dim", 'd', "-1", "the dimension to reduce (Default=None)", "int");
+    inflags.AddInputFlag("dim",
+                         'd',
+                         "-1",
+                         "the dimension to reduce (Default=-1. This is equivalent to dim=None",
+                         "int");
     inflags.AddInputFlag("keepdim", 'k', "0", "Keep the reduced dimension (Default=0)", "int");
     inflags.AddInputFlag("iter", 'i', "10", "Number of Iterations (Default=10)", "int");
     inflags.AddInputFlag("verify", 'V', "1", "Verify Each Layer (Default=1)", "int");
-    inflags.AddInputFlag("time", 't', "1", "Time Each Layer (Default=0)", "int");
+    inflags.AddInputFlag("time", 't', "0", "Time Each Layer (Default=0)", "int");
     inflags.AddInputFlag(
         "wall", 'w', "0", "Wall-clock Time Each Layer, Requires time == 1 (Default=0)", "int");
     return miopenStatusSuccess;
@@ -194,7 +205,11 @@ int AnyDriver<Tgpu, Tref>::GetandSetData()
 
     if(isContiguous)
     {
-        SetTensorNd(inputDesc, in_dims, data_type);
+        if(SetTensorNd(inputDesc, in_dims, data_type) != miopenStatusSuccess)
+            MIOPEN_THROW("Error parsing input tensor (contiguous): " +
+                         inflags.GetValueStr("input-dims") + ".");
+
+        // SetTensorNd(inputDesc, in_dims, data_type);
     }
     else
     {
@@ -205,7 +220,11 @@ int AnyDriver<Tgpu, Tref>::GetandSetData()
             in_strides[i] = in_strides[i + 1] * in_dims[i + 1];
         }
         in_strides[0] *= 2;
-        SetTensorNd(inputDesc, in_dims, in_strides, data_type);
+
+        if(SetTensorNd(inputDesc, in_dims, in_strides, data_type) != miopenStatusSuccess)
+            MIOPEN_THROW("Error parsing input tensor (non-contiguous): " +
+                         inflags.GetValueStr("input-dims") + ".");
+        // SetTensorNd(inputDesc, in_dims, in_strides, data_type);
     }
 
     std::vector<int> out_len(in_dims);
@@ -225,7 +244,10 @@ int AnyDriver<Tgpu, Tref>::GetandSetData()
         out_len = {1};
     }
 
-    SetTensorNd(outputDesc, out_len, data_type);
+    if(SetTensorNd(outputDesc, out_len, data_type) != miopenStatusSuccess)
+        MIOPEN_THROW("Error parsing output tensor: " + inflags.GetValueStr("input-dims") + ".");
+
+    // SetTensorNd(outputDesc, out_len, data_type);
 
     return miopenStatusSuccess;
 }
@@ -256,30 +278,30 @@ int AnyDriver<Tgpu, Tref>::AllocateBuffersAndCopy()
 
     // GPU host allocation
     in  = std::vector<Tgpu>(in_sz, static_cast<Tgpu>(0));
-    out = std::vector<unsigned char>(out_sz, static_cast<Tgpu>(0));
+    out = std::vector<unsigned char>(out_sz, 0);
 
     // CPU allocation
     outhost = std::vector<Tref>(out_sz, static_cast<Tref>(0));
 
     for(int i = 0; i < in_sz; i++)
     {
-        in[i] = prng::gen_A_to_B<Tgpu>(std::numeric_limits<Tgpu>::min(),
-                                       std::numeric_limits<Tgpu>::max());
+        in[i] = prng::gen_A_to_B<int32_t>(0, 2) == 0
+                    ? static_cast<Tgpu>(0)
+                    : prng::gen_A_to_B<Tgpu>(std::numeric_limits<Tgpu>::min(),
+                                             std::numeric_limits<Tgpu>::max());
     }
-    // Temporary set those values to force the output[x][x][1] any to be 0
-    // size: 3x4x5
-    // reduce_dim: 1
-    in[1]                     = 0;
-    in[0 * 4 * 5 + 1 * 5 + 1] = 0;
-    in[0 * 4 * 5 + 2 * 5 + 1] = 0;
-    in[0 * 4 * 5 + 3 * 5 + 1] = 0;
-    in[0 * 4 * 5 + 4 * 5 + 1] = 0;
 
     if(in_dev->ToGPU(GetStream(), in.data()) != 0)
+    {
         std::cerr << "Error copying (in) to GPU, size: " << in_dev->GetSize() << std::endl;
+        return miopenStatusInternalError;
+    }
 
     if(out_dev->ToGPU(GetStream(), out.data()) != 0)
+    {
         std::cerr << "Error copying (out) to GPU, size: " << out_dev->GetSize() << std::endl;
+        return miopenStatusInternalError;
+    }
 
     return miopenStatusSuccess;
 }
@@ -296,15 +318,17 @@ int AnyDriver<Tgpu, Tref>::RunForwardGPU()
 
     for(int i = 0; i < inflags.GetValueInt("iter"); i++)
     {
-        miopenAnyForward(GetHandle(),
-                         (dim == -1) ? workspace_dev->GetMem() : nullptr,
-                         ws_sizeInBytes,
-                         inputDesc,
-                         in_dev->GetMem(),
-                         dim,
-                         keepdim,
-                         outputDesc,
-                         out_dev->GetMem());
+        auto status = miopenAnyForward(GetHandle(),
+                                       (dim == -1) ? workspace_dev->GetMem() : nullptr,
+                                       ws_sizeInBytes,
+                                       inputDesc,
+                                       in_dev->GetMem(),
+                                       dim,
+                                       keepdim,
+                                       outputDesc,
+                                       out_dev->GetMem());
+
+        MIOPEN_THROW_IF(status != miopenStatusSuccess, "Error in miopenAnyForward");
 
         float time = 0.0;
         miopenGetKernelTime(GetHandle(), &time);
@@ -318,15 +342,20 @@ int AnyDriver<Tgpu, Tref>::RunForwardGPU()
         STOP_TIME
         int iter = inflags.GetValueInt("iter");
         if(WALL_CLOCK)
-            printf("Wall-clock Time Forward Sum Elapsed: %f ms\n", t.gettime_ms() / iter);
+            std::cout << "Wall-clock Time Forward Any Elapsed: " << t.gettime_ms() / iter << " ms"
+                      << std::endl;
 
         float kernel_average_time =
             iter > 1 ? (kernel_total_time - kernel_first_time) / (iter - 1) : kernel_first_time;
-        printf("GPU Kernel Time Forward Sum Elapsed: %f ms\n", kernel_average_time);
+        std::cout << "GPU Kernel Time Forward Any Elapsed: " << kernel_average_time << " ms"
+                  << std::endl;
     }
 
     if(out_dev->FromGPU(GetStream(), out.data()) != 0)
+    {
         std::cerr << "Error copying (out_dev) from GPU, size: " << out_dev->GetSize() << std::endl;
+        return miopenStatusInternalError;
+    }
 
     return miopenStatusSuccess;
 }
@@ -334,9 +363,12 @@ int AnyDriver<Tgpu, Tref>::RunForwardGPU()
 template <typename Tgpu, typename Tref>
 int AnyDriver<Tgpu, Tref>::RunForwardCPU()
 {
-    mloAnyForwardRunHost<Tgpu, Tref>(inputDesc, outputDesc, in.data(), outhost.data(), dim);
+    auto status =
+        mloAnyForwardRunHost<Tgpu, Tref>(inputDesc, outputDesc, in.data(), outhost.data(), dim);
 
-    return miopenStatusSuccess;
+    MIOPEN_THROW_IF(status != miopenStatusSuccess, "Error in mloAnyForwardRunHost");
+
+    return status;
 }
 
 template <typename Tgpu, typename Tref>
@@ -348,13 +380,24 @@ int AnyDriver<Tgpu, Tref>::VerifyForward()
 
     if(!is_equal)
     {
-        std::cout << "Forward Any FAILED: is_equal = " << is_equal << std::endl;
+        std::cout << "Forward Any FAILED" << std::endl;
+        size_t limit_print = 20;
+        std::cout << "Limiting print to first " << limit_print << " mismatches" << std::endl;
+        for(size_t i = 0; i < out.size(); i++)
+        {
+            if(out[i] != outhost[i])
+            {
+                std::cout << "Forward Any Mismatch at index: " << i << ". (GPU: " << +out[i]
+                          << " CPU: " << +outhost[i] << ")" << std::endl;
+                if(limit_print-- == 0)
+                    break;
+            }
+        }
         return EC_VerifyFwd;
     }
     else
     {
-        std::cout << "Forward Any Verifies OK on CPU reference (is_equal = " << is_equal << ")"
-                  << std::endl;
+        std::cout << "Forward Any Verifies OK on CPU reference" << std::endl;
     }
 
     return miopenStatusSuccess;

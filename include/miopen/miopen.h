@@ -7745,17 +7745,18 @@ MIOPEN_EXPORT miopenStatus_t miopenPReLUBackward(miopenHandle_t handle,
  *
  * @param handle                   MIOpen Handle (input)
  * @param inputDesc                Tensor descriptor for data input tensor x (input)
- * @param dim                      The dimension(s) to reduce (input)
+ * @param dim                      The dimension to reduce. To reduce across all dimensions (i.e.,
+ * dim=None), use dim=-1 (input)
  * @param keepdim                  Whether the output tensor has dim retained or not (input)
  * @param outputDesc               Tensor descriptor for output tensor (input)
- * @param sizeInBytes              Pointer to data to return the minimum workspace size
+ * @param sizeInBytes              Pointer to data to return the minimum workspace size (output)
  * @return                         miopenStatus_t
  */
 
 MIOPEN_EXPORT miopenStatus_t
 miopenGetAnyForwardWorkspaceSize(miopenHandle_t handle,
                                  const miopenTensorDescriptor_t inputDesc,
-                                 const int32_t dim,
+                                 const int64_t dim,
                                  const bool keepdim,
                                  const miopenTensorDescriptor_t outputDesc,
                                  size_t* sizeInBytes);
@@ -7767,7 +7768,8 @@ miopenGetAnyForwardWorkspaceSize(miopenHandle_t handle,
  * @param workspaceSizeInBytes     Size in bytes of the allocated workspace data (input)
  * @param inputDesc                Tensor descriptor for input tensor (input)
  * @param input                    Data tensor input (input)
- * @param dim                      The dimension(s) to reduce (input)
+ * @param dim                      The dimension to reduce. To reduce across all dimensions (i.e.,
+ * dim=None), use dim=-1 (input)
  * @param keepdim                  Whether the output tensor has dim retained or not (input)
  * @param outputDesc               Tensor descriptor for output tensor (input)
  * @param output                   Data tensor output (output)
@@ -7779,7 +7781,7 @@ MIOPEN_EXPORT miopenStatus_t miopenAnyForward(miopenHandle_t handle,
                                               size_t workspaceSizeInBytes,
                                               const miopenTensorDescriptor_t inputDesc,
                                               void* input,
-                                              const int32_t dim,
+                                              const int64_t dim,
                                               const bool keepdim,
                                               const miopenTensorDescriptor_t outputDesc,
                                               void* output);

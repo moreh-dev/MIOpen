@@ -26,11 +26,11 @@
 #include <miopen/any.hpp>
 #include <miopen/any/invoke_params.hpp>
 #include <miopen/any/solvers.hpp>
-#include "miopen/any/problem_description.hpp"
+#include <miopen/any/problem_description.hpp>
 
-#include "miopen/execution_context.hpp"
-#include "miopen/miopen.h"
-#include "miopen/names.hpp"
+#include <miopen/execution_context.hpp>
+#include <miopen/miopen.h>
+#include <miopen/names.hpp>
 #include <miopen/datatype.hpp>
 #include <miopen/find_solution.hpp>
 #include <miopen/float_equal.hpp>
@@ -45,16 +45,9 @@ std::size_t GetAnyForwardWorkspaceSize(Handle& handle,
                                        int32_t dim,
                                        bool keepdim)
 {
-    // NOTE: If dim != -1 (i.e. dim != None), then no additional temporary workspace is needed
-    if(dim != -1)
-    {
-        return 0;
-    }
-
     auto ctx           = ExecutionContext{&handle};
     const auto problem = any::ProblemDescription{inputDesc, outputDesc, dim, keepdim};
 
-    const auto algo    = AlgorithmName("AnyForward");
     const auto solvers = solver::SolverContainer<solver::any::AnyForward>{};
 
     auto pair_size_vector = solvers.GetWorkspaceSizes(ctx, problem);

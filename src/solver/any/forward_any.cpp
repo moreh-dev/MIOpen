@@ -53,8 +53,6 @@ namespace solver {
 
 namespace any {
 
-constexpr uint64_t DivCeil(uint64_t numer, uint64_t denom) { return (numer + denom - 1) / denom; }
-
 MultiBufferWorkspaceTraits GetMultiBufferWorkspaceTraits(const TensorDescriptor& inputDesc)
 {
     auto input_numel = inputDesc.GetElementSize();
@@ -63,7 +61,7 @@ MultiBufferWorkspaceTraits GetMultiBufferWorkspaceTraits(const TensorDescriptor&
     auto dtype = inputDesc.GetType();
     size *= get_data_size(dtype);
     size_t data_size      = get_data_size(dtype);
-    size_t workspace_size = AlignUp(size, LOCAL_SIZE);
+    size_t workspace_size = AlignUp(size, LOCAL_SIZE) / LOCAL_SIZE;
     size_t ws_scratch_mem = 2 * workspace_size * data_size;
     size_t ws_local_mem   = LOCAL_SIZE * data_size;
 

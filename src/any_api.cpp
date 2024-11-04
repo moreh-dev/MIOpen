@@ -76,7 +76,7 @@ LogCmdAny(const miopenTensorDescriptor_t inputDesc, const int32_t dim, const boo
 extern "C" miopenStatus_t
 miopenGetAnyForwardWorkspaceSize(miopenHandle_t handle,
                                  const miopenTensorDescriptor_t inputDesc,
-                                 const int32_t dim,
+                                 const int64_t dim,
                                  const bool keepdim,
                                  const miopenTensorDescriptor_t outputDesc,
                                  size_t* sizeInBytes)
@@ -97,7 +97,7 @@ extern "C" miopenStatus_t miopenAnyForward(miopenHandle_t handle,
                                            size_t workspaceSizeInBytes,
                                            const miopenTensorDescriptor_t inputDesc,
                                            void* input,
-                                           const int32_t dim,
+                                           const int64_t dim,
                                            const bool keepdim,
                                            const miopenTensorDescriptor_t outputDesc,
                                            void* output)

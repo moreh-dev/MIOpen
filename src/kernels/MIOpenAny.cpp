@@ -42,7 +42,7 @@ __device__ void any_forward(const DTYPE* __restrict__ input,
                             tensor_view_t<5> input_tv,
                             tensor_view_t<5> output_tv)
 {
-    uint64_t gid = blockIdx.x * blockDim.x + threadIdx.x;
+    size_t gid = blockIdx.x * blockDim.x + threadIdx.x;
 
     if(gid >= N)
         return;
@@ -78,8 +78,8 @@ __device__ void reduce_any(DTYPE* __restrict__ input,
                            tensor_view_t<5> input_tv,
                            tensor_view_t<5> output_tv)
 {
-    uint64_t gid = blockIdx.x * blockDim.x + threadIdx.x;
-    uint64_t lid = threadIdx.x;
+    size_t gid = blockIdx.x * blockDim.x + threadIdx.x;
+    size_t lid = threadIdx.x;
 
     auto i_tl      = tensor_layout_t(input_tv, gid);
     auto input_idx = input_tv.get_tensor_view_idx(i_tl);

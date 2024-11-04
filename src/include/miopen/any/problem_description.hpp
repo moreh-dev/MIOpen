@@ -25,7 +25,7 @@
  *******************************************************************************/
 #pragma once
 
-#include "miopen/errors.hpp"
+#include <miopen/errors.hpp>
 #include <miopen/miopen.h>
 #include <miopen/problem_description_base.hpp>
 #include <miopen/activ.hpp>
@@ -61,6 +61,7 @@ struct ProblemDescription : ProblemDescriptionBase
     int32_t GetDim() const { return dim; }
     bool GetKeepDim() const { return keepdim; }
 
+    // TODO: Rewrite logic to be more clean
     bool IsRightLength() const
     {
         if(dim != -1)
@@ -95,6 +96,29 @@ struct ProblemDescription : ProblemDescriptionBase
                 if(inputDesc.GetNumDims() - 1 != outputDesc.GetNumDims())
                 {
                     return false;
+                }
+                else
+                {
+                    std::vector<size_t> full_lengths(outputDesc.GetLengths());
+                    full_lengths.insert(full_lengths.begin() + dim, 1);
+
+                    for(uint32_t i = 0; i < inputDesc.GetNumDims(); ++i)
+                    {
+                        if(i == dim)
+                        {
+                            if(full_lengths[i] != 1)
+                            {
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            if(inputDesc.GetLengths()[i] != full_lengths[i])
+                            {
+                                return false;
+                            }
+                        }
+                    }
                 }
             }
         }

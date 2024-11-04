@@ -42,9 +42,6 @@ static Driver* makeDriver(const std::string& base_arg)
         return new AnyDriver<float16, uint8_t>();
     if(base_arg == "anybfp16")
         return new AnyDriver<bfloat16, uint8_t>;
-    // TODO: MIOpen seems to not support int16 (?)
-    // if(base_arg == "anyint16")
-    //     return new AnyDriver<int16_t, uint8_t>();
     if(base_arg == "any")
         return new AnyDriver<float, uint8_t>();
     if(base_arg == "anyint32")
