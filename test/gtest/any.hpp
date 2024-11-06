@@ -25,7 +25,6 @@
  *******************************************************************************/
 #include <cpu_any.hpp>
 #include <get_handle.hpp>
-#include <random.hpp>
 #include <tensor_holder.hpp>
 #include <verify.hpp>
 
@@ -94,9 +93,9 @@ inline std::vector<AnyTestCase> AnyTestConfigs()
         AnyTestCase({4, 5, 7, 8}, 3, true),
 
         // Add cases for large tensors
-        AnyTestCase({512,64,112, 112}, -1, false, true),
-        AnyTestCase({512,64,112, 112}, -1, false, false),
-        AnyTestCase({512,64,112, 112}, 3, false, false),
+        AnyTestCase({512, 64, 56, 56}, -1, false, true),
+        AnyTestCase({512, 64, 56, 56}, -1, false, false),
+        AnyTestCase({512, 64, 56, 56}, 3, false, false),
     };
 }
 
@@ -114,8 +113,10 @@ protected:
         keepdim      = any_config.keepdim;
 
         auto gen_in_value = [](auto...) {
-            return prng::gen_A_to_B<T>(std::numeric_limits<T>::min(),
-                                       std::numeric_limits<T>::max());
+            return prng::gen_A_to_B<int32_t>(0, 2) == 0
+                       ? static_cast<T>(0)
+                       : prng::gen_A_to_B<T>(std::numeric_limits<T>::min(),
+                                             std::numeric_limits<T>::max());
         };
 
         if(any_config.is_contiguous)
@@ -167,8 +168,8 @@ protected:
 
         if(ws_sizeInBytes > 0)
         {
-            workspace = tensor<float>{ws_sizeInBytes / sizeof(float)};
-            std::fill(workspace.begin(), workspace.end(), 0.0f);
+            workspace = tensor<T>{ws_sizeInBytes / sizeof(T)};
+            std::fill(workspace.begin(), workspace.end(), static_cast<T>(0));
             workspace_dev = handle.Write(workspace.data);
         }
         else
@@ -214,7 +215,7 @@ protected:
 
     tensor<T> input;
     tensor<unsigned char> output;
-    tensor<float> workspace;
+    tensor<T> workspace;
 
     tensor<unsigned char> ref_output;
 

@@ -24,8 +24,8 @@
  *
  *******************************************************************************/
 #ifndef MIOPEN_DONT_USE_HIP_RUNTIME_HEADERS
+#include <hip/hip_fp16.h>
 #include <hip/hip_runtime.h>
-#include <cstdio>
 #endif
 
 #include <float_types.h>

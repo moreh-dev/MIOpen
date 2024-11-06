@@ -232,6 +232,17 @@ ConvSolution AnyForward::GetSolution(const ExecutionContext& context,
                 // decltype(auto) kernel = handle_.Run(kernels.front());
                 decltype(auto) params = raw_params.CastTo<miopen::any::InvokeParams>();
 
+                HipEventPtr start, stop;
+                bool profiling = handle_.IsProfilingEnabled();
+                if(profiling)
+                {
+                    handle_.EnableProfiling(false);
+                    hipStreamSynchronize(handle_.GetStream());
+                    start = miopen::make_hip_event();
+                    stop  = miopen::make_hip_event();
+                    hipEventRecord(start.get(), handle_.GetStream());
+                }
+
                 /* Any Reduction */
                 auto scratch_mem = getBuffPart(params.GetWorkspace(), 0);
                 auto local_mem   = getBuffPart(params.GetWorkspace(), 1);
@@ -266,6 +277,20 @@ ConvSolution AnyForward::GetSolution(const ExecutionContext& context,
                     decltype(auto) kernel = handle_.Run(kernels[kernelCnt]);
                     kernel(input_mem, params.output, local_mem, N, input_tv, output_tv);
                 }
+
+                if(profiling)
+                {
+                    float elapsed = 0.0f;
+                    hipEventRecord(stop.get(), handle_.GetStream());
+                    handle_.EnableProfiling(true);
+                    hipEventSynchronize(stop.get());
+                    hipEventElapsedTime(&elapsed, start.get(), stop.get());
+                    // Clean up
+                    hipEventDestroy(start.get());
+                    hipEventDestroy(stop.get());
+                    handle_.ResetKernelTime();
+                    handle_.AccumKernelTime(elapsed);
+                };
             };
         };
         // End building result.invoker_factory

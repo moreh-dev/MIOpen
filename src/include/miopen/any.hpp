@@ -35,16 +35,16 @@ struct TensorDescriptor;
 MIOPEN_INTERNALS_EXPORT std::size_t GetAnyForwardWorkspaceSize(Handle& handle,
                                                                const TensorDescriptor& inputDesc,
                                                                const TensorDescriptor& outputDesc,
-                                                               int32_t dim,
-                                                               bool keepdim);
+                                                               const int64_t dim,
+                                                               const bool keepdim);
 
 MIOPEN_INTERNALS_EXPORT miopenStatus_t AnyForward(Handle& handle,
                                                   Data_t workspace,
                                                   size_t workspaceSizeInBytes,
                                                   const TensorDescriptor& inputDesc,
                                                   Data_t input,
-                                                  int32_t dim,
-                                                  bool keepdim,
+                                                  const int64_t dim,
+                                                  const bool keepdim,
                                                   const TensorDescriptor& outputDesc,
                                                   Data_t output);
 
