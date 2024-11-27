@@ -129,6 +129,8 @@ set( MIOpen_Source
     getitem_api.cpp
     glu/problem_description.cpp
     glu_api.cpp
+    gradientdescent_api.cpp
+    gradientdescent/problem_description.cpp
     graphapi/convolution.cpp
     graphapi/conv_bias_res_add_activ_forward_executor.cpp
     graphapi/engine.cpp
@@ -304,6 +306,7 @@ set( MIOpen_Source
     solver/glu/forward_glu.cpp
     solver/groupnorm/forward_groupnorm.cpp
     solver/getitem/backward_getitem.cpp
+    solver/gradientdescent/gradientdescent.cpp
     solver/kthvalue/forward_kthvalue.cpp
     solver/layernorm/backward_t5layernorm.cpp
     solver/layernorm/forward_addlayernorm.cpp
@@ -334,8 +337,6 @@ set( MIOpen_Source
     solver/softmarginloss/forward_softmarginloss.cpp
     solver/softmax/attn_softmax.cpp
     solver/softmax/softmax.cpp
-    solver/unsortedsegmentsum/backward_unsortedsegmentsum.cpp
-    solver/unsortedsegmentsum/forward_unsortedsegmentsum.cpp
     subbuffers.cpp
     t5layernorm_api.cpp
     target_properties.cpp
@@ -344,8 +345,6 @@ set( MIOpen_Source
     tensor_api.cpp
     transformers_adam_w_api.cpp
     seq_tensor.cpp
-    unsortedsegmentsum_api.cpp
-    unsortedsegmentsum/problem_description.cpp
 )
 
 if(MIOPEN_ENABLE_AI_KERNEL_TUNING OR MIOPEN_ENABLE_AI_IMMED_MODE_FALLBACK)
@@ -663,10 +662,10 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
 
     if(${MIOPEN_DEVELOPMENT_KERNEL_INCLUDES_COUNT})
         add_kernels("kernel_includes.cpp" "MIOPEN_KERNEL_" "_INCLUDE" "${MIOPEN_DEVELOPMENT_KERNEL_INCLUDES}")
-    endif()
-
-    configure_file(db_path.cpp.in ${PROJECT_BINARY_DIR}/db_path.cpp)
-    list(APPEND MIOpen_Source
+        endif()
+        
+        configure_file(db_path.cpp.in ${PROJECT_BINARY_DIR}/db_path.cpp)
+        list(APPEND MIOpen_Source
         activ.cpp
         adam.cpp
         addlayernorm.cpp
@@ -675,6 +674,7 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         groupnorm.cpp
         getitem.cpp
         glu.cpp
+        gradientdescent.cpp
         kernel_cache.cpp
         kthvalue.cpp
         layernorm.cpp
@@ -707,7 +707,6 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         rope.cpp
         softmarginloss.cpp
         transformers_adam_w.cpp
-        unsortedsegmentsum.cpp
         ${PROJECT_BINARY_DIR}/db_path.cpp
         )
 

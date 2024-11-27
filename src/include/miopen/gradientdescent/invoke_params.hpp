@@ -31,32 +31,26 @@
 
 namespace miopen {
 
-namespace UnsortedSegmentSum {
+namespace GradientDescent {
 
-struct FwdInvokeParams : public miopen::InvokeParams
+struct InvokeParams : public miopen::InvokeParams
 {
-    FwdInvokeParams() = default;
+    InvokeParams() = default;
 
-    ConstData_t Input       = nullptr;
-    Data_t Output           = nullptr;
-    ConstData_t segment_ids = nullptr;
+    const TensorDescriptor* varInDesc   = nullptr;
+    const TensorDescriptor* varOutDesc  = nullptr;
+    const TensorDescriptor* alphaInDesc = nullptr;
+    const TensorDescriptor* deltaInDesc = nullptr;
+
+    ConstData_t var_in   = nullptr;
+    Data_t var_out       = nullptr;
+    ConstData_t alpha_in = nullptr;
+    ConstData_t delta_in = nullptr;
 
     std::size_t GetWorkspaceSize() const { return 0; }
     Data_t GetWorkspace() const { return nullptr; }
 };
 
-struct BwdInvokeParams : public miopen::InvokeParams
-{
-    BwdInvokeParams() = default;
-
-    ConstData_t OutputGrad  = nullptr;
-    Data_t InputGrad        = nullptr;
-    ConstData_t segment_ids = nullptr;
-
-    std::size_t GetWorkspaceSize() const { return 0; }
-    Data_t GetWorkspace() const { return nullptr; }
-};
-
-} // namespace UnsortedSegmentSum
+} // namespace GradientDescent
 
 } // namespace miopen

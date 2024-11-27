@@ -33,6 +33,7 @@
 #include <miopen/glu/solvers.hpp>
 #include <miopen/groupnorm/solvers.hpp>
 #include <miopen/getitem/solvers.hpp>
+#include <miopen/gradientdescent/solvers.hpp>
 #include <miopen/kthvalue/solvers.hpp>
 #include <miopen/layernorm/solvers.hpp>
 #include <miopen/pooling/solvers.hpp>
@@ -43,7 +44,6 @@
 #include <miopen/softmarginloss/solvers.hpp>
 #include <miopen/softmax/solvers.hpp>
 #include <miopen/multimarginloss/solvers.hpp>
-#include <miopen/unsortedsegmentsum/solvers.hpp>
 
 #include <miopen/conv_algo_name.hpp>
 #include <miopen/db.hpp>
@@ -702,12 +702,8 @@ inline SolverRegistrar::SolverRegistrar(IdRegistryData& registry)
              multimarginloss::MultiMarginLossForward{}.SolverDbId());
     Register(registry,
              ++id,
-             Primitive::UnsortedSegmentSum,
-             UnsortedSegmentSum::UnsortedSegmentSumForward{}.SolverDbId());
-    Register(registry,
-             ++id,
-             Primitive::UnsortedSegmentSum,
-             UnsortedSegmentSum::UnsortedSegmentSumBackward{}.SolverDbId());
+             Primitive::GradientDescent,
+             GradientDescent::GradientDescent{}.SolverDbId());
     // IMPORTANT: New solvers should be added to the end of the function!
 }
 

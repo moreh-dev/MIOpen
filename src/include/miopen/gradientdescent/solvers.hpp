@@ -26,48 +26,28 @@
 #pragma once
 
 #include <miopen/solver.hpp>
-#include <miopen/unsortedsegmentsum/problem_description.hpp>
+#include <miopen/gradientdescent/problem_description.hpp>
 
 namespace miopen {
 
 namespace solver {
 
-namespace UnsortedSegmentSum {
+namespace GradientDescent {
 
-using UnsortedSegmentSumForwardSolver =
-    NonTunableSolverBase<ExecutionContext, miopen::UnsortedSegmentSum::FwdProblemDescription>;
-using UnsortedSegmentSumBackwardSolver =
-    NonTunableSolverBase<ExecutionContext, miopen::UnsortedSegmentSum::BwdProblemDescription>;
+using GradientDescentSolver =
+    NonTunableSolverBase<ExecutionContext, miopen::GradientDescent::ProblemDescription>;
 
-struct UnsortedSegmentSumForward final : UnsortedSegmentSumForwardSolver
+struct GradientDescent final : GradientDescentSolver
 {
-    const std::string& SolverDbId() const override
-    {
-        return GetSolverDbId<UnsortedSegmentSumForward>();
-    }
-    bool
-    IsApplicable(const ExecutionContext& context,
-                 const miopen::UnsortedSegmentSum::FwdProblemDescription& problem) const override;
+    const std::string& SolverDbId() const override { return GetSolverDbId<GradientDescent>(); }
+    bool IsApplicable(const ExecutionContext& context,
+                      const miopen::GradientDescent::ProblemDescription& problem) const override;
     ConvSolution
     GetSolution(const ExecutionContext& context,
-                const miopen::UnsortedSegmentSum::FwdProblemDescription& problem) const override;
+                const miopen::GradientDescent::ProblemDescription& problem) const override;
 };
 
-struct UnsortedSegmentSumBackward final : UnsortedSegmentSumBackwardSolver
-{
-    const std::string& SolverDbId() const override
-    {
-        return GetSolverDbId<UnsortedSegmentSumBackward>();
-    }
-    bool
-    IsApplicable(const ExecutionContext& context,
-                 const miopen::UnsortedSegmentSum::BwdProblemDescription& problem) const override;
-    ConvSolution
-    GetSolution(const ExecutionContext& context,
-                const miopen::UnsortedSegmentSum::BwdProblemDescription& problem) const override;
-};
-
-} // namespace UnsortedSegmentSum
+} // namespace GradientDescent
 
 } // namespace solver
 

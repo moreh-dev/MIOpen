@@ -72,7 +72,6 @@
  * @defgroup ReduceCalculation
  * @defgroup RotaryPositionalEmbeddings
  * @defgroup ReLU
- * @defgroup UnsortedSegmentSum
  *
  */
 
@@ -8005,57 +8004,37 @@ MIOPEN_EXPORT miopenStatus_t miopenMultiMarginLossForward(miopenHandle_t handle,
 #endif // MIOPEN_BETA_API
 
 #ifdef MIOPEN_BETA_API
-// UnsortedSegmentSum APIs
-/** @addtogroup UnsortedSegmentSum
+// gradientdescent APIs
+/** @addtogroup SGD
  *
  * @{
  */
-/*! @brief Execute a UnsortedSegmentSum forward layer
+/*! @brief Execute a gradientdescent layer
  *
  * @param handle                   MIOpen handle (input)
- * @param InputDesc                Tensor descriptor for input tensor (input)
- * @param Input                    Data tensor input (input)
- * @param OutputDesc               Tensor descriptor for output tensor (input)
- * @param Output                   Data tensor output (output)
- * @param SegmentIdsDesc           Tensor descriptor for segment_ids tensor (input)
- * @param segment_ids              A tensor whose shape is a prefix of input shape. The values must
- * be less than number of segments (output's first dimension) (input)
+ * @param varInDesc                Tensor descriptor for the input variable tensor (input)
+ * @param var_in                   Input variable tensor (input)
+ * @param varOutDesc               Tensor descriptor for the output variable tensor (input)
+ * @param var_out                  Output variable tensor (output)
+ * @param alphaInDesc              Tensor descriptor for the input alpha tensor (input)
+ * @param alpha_in                 Input alpha tensor (input)
+ * @param deltaInDesc              Tensor descriptor for the input delta tensor (input)
+ * @param delta_in                 Input delta tensor (input)
  * @return                         miopenStatus_t
  */
 
-MIOPEN_EXPORT miopenStatus_t
-miopenUnsortedSegmentSumForward(miopenHandle_t handle,
-                                const miopenTensorDescriptor_t InputDesc,
-                                const void* Input,
-                                const miopenTensorDescriptor_t OutputDesc,
-                                void* Output,
-                                const miopenTensorDescriptor_t SegmentIdsDesc,
-                                const void* segment_ids);
-
-/*! @brief Execute a UnsortedSegmentSum forward layer
- *
- * @param handle                   MIOpen handle (input)
- * @param OutputGradDesc           Tensor descriptor for output grad tensor (input)
- * @param OutputGrad               Data tensor output grad (input)
- * @param InputGradDesc            Tensor descriptor for input grad tensor (input)
- * @param InputGrad                Data tensor input grad (output)
- * @param SegmentIdsDesc           Tensor descriptor for segment_ids tensor (input)
- * @param segment_ids              A tensor whose shape is a prefix of input shape. The values must
- * be less than number of segments (output's first dimension) (input)
- * @return                         miopenStatus_t
- */
-
-MIOPEN_EXPORT miopenStatus_t
-miopenUnsortedSegmentSumBackward(miopenHandle_t handle,
-                                 const miopenTensorDescriptor_t OutputGradDesc,
-                                 const void* OutputGrad,
-                                 const miopenTensorDescriptor_t InputGradDesc,
-                                 void* InputGrad,
-                                 const miopenTensorDescriptor_t SegmentIdsDesc,
-                                 const void* segment_ids);
+MIOPEN_EXPORT miopenStatus_t miopenGradientDescent(miopenHandle_t handle,
+                                                   const miopenTensorDescriptor_t varInDesc,
+                                                   const void* var_in,
+                                                   const miopenTensorDescriptor_t varOutDesc,
+                                                   void* var_out,
+                                                   const miopenTensorDescriptor_t alphaInDesc,
+                                                   const void* alpha_in,
+                                                   const miopenTensorDescriptor_t deltaInDesc,
+                                                   const void* delta_in);
 
 /** @} */
-// CLOSEOUT UnsortedSegmentSum DOXYGEN GROUP
+// CLOSEOUT SGD DOXYGEN GROUP
 #endif
 
 #ifdef __cplusplus

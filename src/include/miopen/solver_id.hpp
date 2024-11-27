@@ -64,7 +64,7 @@ enum class Primitive
     Kthvalue,
     SoftMarginLoss,
     MultiMarginLoss,
-    UnsortedSegmentSum
+    GradientDescent,
 };
 
 struct MIOPEN_INTERNALS_EXPORT Id

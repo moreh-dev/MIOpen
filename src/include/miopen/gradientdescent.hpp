@@ -23,30 +23,25 @@
  * SOFTWARE.
  *
  *******************************************************************************/
-
-#include <miopen/gradientdescent/problem_description.hpp>
-#include <miopen/names.hpp>
-
-#include <sstream>
+#pragma once
+#include <miopen/common.hpp>
 
 namespace miopen {
 
+struct Handle;
+struct TensorDescriptor;
+
 namespace GradientDescent {
 
-NetworkConfig ProblemDescription::MakeNetworkConfig() const
-{
-    auto dtype         = varInDesc.GetType();
-    auto input_lengths = varInDesc.GetLengths();
-
-    std::ostringstream ss;
-    ss << "dtype" << dtype;
-    ss << "input_lengths";
-    for(auto length : input_lengths)
-        ss << length << ',';
-    ss << "is_contiguous" << IsAllContiguous();
-
-    return NetworkConfig{ss.str()};
-}
+MIOPEN_INTERNALS_EXPORT miopenStatus_t GradientDescent(Handle& handle,
+                                                       const TensorDescriptor& varInDesc,
+                                                       ConstData_t var_in,
+                                                       const TensorDescriptor& varOutDesc,
+                                                       Data_t var_out,
+                                                       const TensorDescriptor& alphaInDesc,
+                                                       ConstData_t alpha_in,
+                                                       const TensorDescriptor& deltaInDesc,
+                                                       ConstData_t delta_in);
 
 } // namespace GradientDescent
 

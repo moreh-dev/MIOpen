@@ -27,12 +27,12 @@
 #include <miopen/execution_context.hpp>
 #include <miopen/invoke_params.hpp>
 #include <miopen/tensor_view_utils.hpp>
-#include <miopen/unsortedsegmentsum/solvers.hpp>
+#include <miopen/gradientdescent/solvers.hpp>
 
-#include <miopen/unsortedsegmentsum/invoke_params.hpp>
+#include <miopen/gradientdescent/invoke_params.hpp>
 #include <miopen/datatype.hpp>
 #include <miopen/mlo_internal.hpp>
-#include <miopen/unsortedsegmentsum.hpp>
+#include <miopen/gradientdescent.hpp>
 #include <miopen/target_properties.hpp>
 
 #define LOCAL_SIZE 256
@@ -41,33 +41,28 @@ namespace miopen {
 
 namespace solver {
 
-namespace UnsortedSegmentSum {
+namespace GradientDescent {
 
-bool UnsortedSegmentSumForward::IsApplicable(
-    [[maybe_unused]] const ExecutionContext& context,
-    const miopen::UnsortedSegmentSum::FwdProblemDescription& problem) const
+bool GradientDescent::IsApplicable([[maybe_unused]] const ExecutionContext& context,
+                                   const miopen::GradientDescent::ProblemDescription& problem) const
 {
-    if(!(problem.GetInputDesc().GetType() == miopenFloat ||
-         problem.GetInputDesc().GetType() == miopenHalf ||
-         problem.GetInputDesc().GetType() == miopenBFloat16))
+    if(!(problem.GetvarInDesc().GetType() == miopenFloat ||
+         problem.GetvarInDesc().GetType() == miopenHalf ||
+         problem.GetvarInDesc().GetType() == miopenBFloat16))
         return false;
     return true;
 }
 
-ConvSolution UnsortedSegmentSumForward::GetSolution(
-    [[maybe_unused]] const ExecutionContext& context,
-    const miopen::UnsortedSegmentSum::FwdProblemDescription& problem) const
+ConvSolution
+GradientDescent::GetSolution([[maybe_unused]] const ExecutionContext& context,
+                             const miopen::GradientDescent::ProblemDescription& problem) const
 {
     auto result = ConvSolution{miopenStatusSuccess};
 
-    auto dtype    = problem.GetInputDesc().GetType();
-    auto d_dtype  = miopen::GetDataType(dtype);
-    auto seg_type = miopen::GetDataType(problem.GetSegmentIdsDesc().GetType());
-    auto dims     = problem.GetInputDesc().GetLengths();
-    auto nelems   = problem.GetInputDesc().GetElementSize();
-
-    size_t inner_dim_size = nelems / dims[0];
-    size_t num_segments   = problem.GetOutputDesc().GetLengths()[0];
+    auto is_contiguous = problem.IsAllContiguous();
+    auto dtype         = problem.GetvarInDesc().GetType();
+    auto d_dtype       = miopen::GetDataType(dtype);
+    auto nelems        = problem.GetvarInDesc().GetElementSize();
 
     const auto build_params = KernelBuildParameters{
         {"MIOPEN_USE_FP16", static_cast<int>(dtype == miopenHalf)},
@@ -75,7 +70,6 @@ ConvSolution UnsortedSegmentSumForward::GetSolution(
         {"MIOPEN_USE_FP64", static_cast<int>(dtype == miopenDouble)},
         {"MIOPEN_USE_BFP16", static_cast<int>(dtype == miopenBFloat16)},
         {"D_TYPE", d_dtype == "bfloat16" ? "ushort" : d_dtype},
-        {"SEG_TYPE", seg_type == "int64" ? "size_t" : seg_type},
     };
 
     size_t xlocalsize = LOCAL_SIZE;
@@ -86,7 +80,7 @@ ConvSolution UnsortedSegmentSumForward::GetSolution(
     size_t zgridsize  = 1;
 
     auto kernel         = KernelInfo{};
-    kernel.kernel_file  = "MIOpenUnsortedSegmentSum.cpp";
+    kernel.kernel_file  = "MIOpenGradientDescent.cpp";
     kernel.comp_options = build_params.GenerateFor(kbp::HIP{});
 
     kernel.l_wk.push_back(xlocalsize);
@@ -97,27 +91,51 @@ ConvSolution UnsortedSegmentSumForward::GetSolution(
     kernel.g_wk.push_back(ygridsize);
     kernel.g_wk.push_back(zgridsize);
 
-    kernel.kernel_name = "UnsortedSegmentSumFwd";
-    result.invoker_factory =
-        [nelems, inner_dim_size, num_segments](const std::vector<Kernel>& kernels) {
+    if(is_contiguous)
+    {
+        kernel.kernel_name = "ResourceApplyGradientDescentContiguous";
+        result.construction_params.push_back(kernel);
+
+        result.invoker_factory = [nelems](const std::vector<Kernel>& kernels) {
             return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
                 decltype(auto) kernel = handle_.Run(kernels.front());
-                decltype(auto) params =
-                    raw_params.CastTo<miopen::UnsortedSegmentSum::FwdInvokeParams>();
+                decltype(auto) params = raw_params.CastTo<miopen::GradientDescent::InvokeParams>();
 
-                kernel(params.Input,
-                       params.Output,
-                       params.segment_ids,
-                       nelems,
-                       inner_dim_size,
-                       num_segments);
+                kernel(params.var_in, params.var_out, params.alpha_in, params.delta_in, nelems);
             };
         };
-    result.construction_params.push_back(kernel);
+    }
+    else
+    {
+        kernel.kernel_name = "ResourceApplyGradientDescent";
+        result.construction_params.push_back(kernel);
+
+        result.invoker_factory = [nelems](const std::vector<Kernel>& kernels) {
+            return [=](const Handle& handle_, const AnyInvokeParams& raw_params) {
+                decltype(auto) kernel = handle_.Run(kernels.front());
+                decltype(auto) params = raw_params.CastTo<miopen::GradientDescent::InvokeParams>();
+
+                auto var_in_tv   = get_inner_expanded_tv<5>(deref(params.varInDesc));
+                auto var_out_tv  = get_inner_expanded_tv<5>(deref(params.varOutDesc));
+                auto alpha_in_tv = get_inner_expanded_tv<5>(deref(params.alphaInDesc));
+                auto delta_in_tv = get_inner_expanded_tv<5>(deref(params.deltaInDesc));
+
+                kernel(params.var_in,
+                       params.var_out,
+                       params.alpha_in,
+                       params.delta_in,
+                       nelems,
+                       var_in_tv,
+                       var_out_tv,
+                       alpha_in_tv,
+                       delta_in_tv);
+            };
+        };
+    }
     return result;
 }
 
-} // namespace UnsortedSegmentSum
+} // namespace GradientDescent
 
 } // namespace solver
 

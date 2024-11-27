@@ -23,31 +23,44 @@
  * SOFTWARE.
  *
  *******************************************************************************/
+#include "gradientdescent.hpp"
 
-#include <miopen/gradientdescent/problem_description.hpp>
-#include <miopen/names.hpp>
-
-#include <sstream>
-
-namespace miopen {
-
-namespace GradientDescent {
-
-NetworkConfig ProblemDescription::MakeNetworkConfig() const
+struct GPU_GradientDescent_FP32 : GradientDescentTest<float>
 {
-    auto dtype         = varInDesc.GetType();
-    auto input_lengths = varInDesc.GetLengths();
+};
 
-    std::ostringstream ss;
-    ss << "dtype" << dtype;
-    ss << "input_lengths";
-    for(auto length : input_lengths)
-        ss << length << ',';
-    ss << "is_contiguous" << IsAllContiguous();
+struct GPU_GradientDescent_FP16 : GradientDescentTest<half>
+{
+};
 
-    return NetworkConfig{ss.str()};
-}
+struct GPU_GradientDescent_BFP16 : GradientDescentTest<bfloat16>
+{
+};
 
-} // namespace GradientDescent
+TEST_P(GPU_GradientDescent_FP32, Test)
+{
+    RunTest();
+    Verify();
+};
 
-} // namespace miopen
+TEST_P(GPU_GradientDescent_FP16, Test)
+{
+    RunTest();
+    Verify();
+};
+
+TEST_P(GPU_GradientDescent_BFP16, Test)
+{
+    RunTest();
+    Verify();
+};
+
+INSTANTIATE_TEST_SUITE_P(Full,
+                         GPU_GradientDescent_FP32,
+                         testing::ValuesIn(GradientDescentTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(Full,
+                         GPU_GradientDescent_FP16,
+                         testing::ValuesIn(GradientDescentTestConfigs()));
+INSTANTIATE_TEST_SUITE_P(Full,
+                         GPU_GradientDescent_BFP16,
+                         testing::ValuesIn(GradientDescentTestConfigs()));
