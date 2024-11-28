@@ -117,7 +117,7 @@ GradientDescent::GetSolution([[maybe_unused]] const ExecutionContext& context,
 
                 auto var_in_tv   = get_inner_expanded_tv<5>(deref(params.varInDesc));
                 auto var_out_tv  = get_inner_expanded_tv<5>(deref(params.varOutDesc));
-                auto alpha_in_tv = get_inner_expanded_tv<5>(deref(params.alphaInDesc));
+                auto alpha_in_tv = get_inner_expanded_tv<1>(deref(params.alphaInDesc));
                 auto delta_in_tv = get_inner_expanded_tv<5>(deref(params.deltaInDesc));
 
                 kernel(params.var_in,

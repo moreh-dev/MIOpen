@@ -45,6 +45,7 @@ add_executable(MIOpenDriver
     dm_gemm.cpp
     dm_getitem.cpp
     dm_glu.cpp
+    dm_gradientdescent.cpp
     dm_groupnorm.cpp
     dm_kthvalue.cpp
     dm_layernorm.cpp
@@ -62,7 +63,6 @@ add_executable(MIOpenDriver
     dm_t5layernorm.cpp
     dm_tensorop.cpp
     dm_transformers_adam_w.cpp
-    dm_unsortedsegmentsum.cpp
     main.cpp
     registry_driver_maker.cpp
     rocrand_wrapper.cpp)

@@ -24,16 +24,16 @@
  *
  *******************************************************************************/
 #include "registry_driver_maker.hpp"
-#include "unsortedsegmentsum_driver.hpp"
+#include "gradientdescent_driver.hpp"
 
 static Driver* makeDriver(const std::string& base_arg)
 {
-    if(base_arg == "unsortedsegmentsum")
-        return new UnsortedSegmentSumDriver<float, float>();
-    if(base_arg == "unsortedsegmentsumfp16")
-        return new UnsortedSegmentSumDriver<float16, float>();
-    if(base_arg == "unsortedsegmentsumbfp16")
-        return new UnsortedSegmentSumDriver<bfloat16, float>();
+    if(base_arg == "gradientdescent")
+        return new GradientDescentDriver<float, float>();
+    if(base_arg == "gradientdescentfp16")
+        return new GradientDescentDriver<float16, float>();
+    if(base_arg == "gradientdescentbfp16")
+        return new GradientDescentDriver<bfloat16, float>();
     return nullptr;
 }
 

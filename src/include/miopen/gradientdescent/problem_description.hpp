@@ -48,7 +48,7 @@ struct ProblemDescription : ProblemDescriptionBase
           deltaInDesc(deltaInDesc_)
     {
         IsSameType();
-        IsValidDims();
+        IsSameDims();
     }
 
     const TensorDescriptor& GetvarInDesc() const { return varInDesc; }
@@ -66,7 +66,7 @@ struct ProblemDescription : ProblemDescriptionBase
         return true;
     }
 
-    bool IsValidDims() const
+    bool IsSameDims() const
     {
         if(varInDesc.GetLengths() != varOutDesc.GetLengths() ||
            varInDesc.GetLengths() != deltaInDesc.GetLengths())
@@ -78,8 +78,7 @@ struct ProblemDescription : ProblemDescriptionBase
 
     bool IsAllContiguous() const
     {
-        return varInDesc.IsContiguous() && varOutDesc.IsContiguous() &&
-               alphaInDesc.IsContiguous() && deltaInDesc.IsContiguous();
+        return varInDesc.IsContiguous() && varOutDesc.IsContiguous() && deltaInDesc.IsContiguous();
     }
     NetworkConfig MakeNetworkConfig() const override;
 

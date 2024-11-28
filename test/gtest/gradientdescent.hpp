@@ -49,20 +49,38 @@ inline std::ostream& operator<<(std::ostream& os, const std::vector<T>& v)
 struct GradientDescentTestCase
 {
     std::vector<size_t> dims;
+    bool is_contiguous = true;
 
     friend std::ostream& operator<<(std::ostream& os, const GradientDescentTestCase& tc)
     {
-        return os << " dims:" << tc.dims;
+        return os << " dims:" << tc.dims << " is_contiguous:" << tc.is_contiguous;
+    }
+
+    std::vector<size_t> ComputeStrides(std::vector<size_t> inputDim) const
+    {
+        if(!is_contiguous)
+            std::swap(inputDim.front(), inputDim.back());
+        std::vector<size_t> strides(inputDim.size());
+        strides.back() = 1;
+        for(int i = inputDim.size() - 2; i >= 0; --i)
+            strides[i] = strides[i + 1] * inputDim[i + 1];
+        if(!is_contiguous)
+            std::swap(strides.front(), strides.back());
+        return strides;
     }
 };
 
 inline std::vector<GradientDescentTestCase> GradientDescentTestConfigs()
 { // n c d h w lr momentum dampening weightDecay nesterov momentumInitialized
     return {
-        {{50, 10}},
-        {{50, 10, 20}},
-        {{50, 10, 20, 30}},
-        {{50, 10, 20, 30, 4}},
+        // {{50, 10}, true},
+        {{50, 10}, false},
+        // {{50, 10, 20}, true},
+        {{50, 10, 20}, false},
+        // {{50, 10, 20, 30}, true},
+        {{50, 10, 20, 30}, false},
+        // {{50, 10, 20, 30, 4}, true},
+        {{50, 10, 20, 30, 4}, false},
     };
 }
 
@@ -77,48 +95,51 @@ protected:
 
         auto gen_value = [](auto...) { return prng::gen_descreet_uniform_sign<T>(1e-2, 100); };
 
-        auto dims        = GradientDescent_config.dims;
-        auto output_dims = dims;
+        auto dims    = GradientDescent_config.dims;
+        auto strides = GradientDescent_config.ComputeStrides(dims);
 
-        var_in   = tensor<T>{dims}.generate(gen_value);
+        var_in   = tensor<T>{dims, strides}.generate(gen_value);
         var_out  = tensor<T>{dims};
         alpha_in = tensor<T>{1}.generate(gen_value);
         delta_in = tensor<T>{dims}.generate(gen_value);
 
-        ref_output = tensor<T>(dims);
+        ref_var_out = tensor<T>(dims);
 
-        std::fill(output.begin(), output.end(), 0);
-        std::fill(ref_output.begin(), ref_output.end(), 0);
-
-        input_dev       = handle.Write(input.data);
-        output_dev      = handle.Write(output.data);
-        segment_ids_dev = handle.Write(segment_ids.data);
+        var_in_dev   = handle.Write(var_in.data);
+        var_out_dev  = handle.Write(var_out.data);
+        alpha_in_dev = handle.Write(alpha_in.data);
+        delta_in_dev = handle.Write(delta_in.data);
     }
 
     void RunTest()
     {
         auto&& handle = get_handle();
-        cpu_GradientDescent_forward<T, int>(input, ref_output, segment_ids, num_segments);
+        std::fill(var_out.begin(), var_out.end(), 0);
+        std::fill(ref_var_out.begin(), ref_var_out.end(), 0);
+
+        cpu_GradientDescent<T>(var_in, ref_var_out, alpha_in, delta_in);
         miopenStatus_t status = miopenStatusSuccess;
 
         status = miopen::GradientDescent::GradientDescent(handle,
-                                                          input.desc,
-                                                          input_dev.get(),
-                                                          output.desc,
-                                                          output_dev.get(),
-                                                          segment_ids.desc,
-                                                          segment_ids_dev.get());
+                                                          var_in.desc,
+                                                          var_in_dev.get(),
+                                                          var_out.desc,
+                                                          var_out_dev.get(),
+                                                          alpha_in.desc,
+                                                          alpha_in_dev.get(),
+                                                          delta_in.desc,
+                                                          delta_in_dev.get());
         ASSERT_EQ(status, miopenStatusSuccess);
-        output.data = handle.Read<T>(output_dev, output.data.size());
+        var_out.data = handle.Read<T>(var_out_dev, var_out.data.size());
     }
 
     void Verify()
     {
         double threshold = std::numeric_limits<T>::epsilon();
-        auto error       = miopen::rms_range(ref_output, output);
+        auto error       = miopen::rms_range(ref_var_out, var_out);
 
-        ASSERT_EQ(miopen::range_distance(ref_output), miopen::range_distance(output));
-        EXPECT_LT(error, threshold * 10) << "Error output beyond tolerance Error:" << error
+        ASSERT_EQ(miopen::range_distance(ref_var_out), miopen::range_distance(var_out));
+        EXPECT_LT(error, threshold * 10) << "Error var_out beyond tolerance Error:" << error
                                          << ",  Thresholdx10: " << threshold * 10;
     }
     GradientDescentTestCase GradientDescent_config;
@@ -128,7 +149,7 @@ protected:
     tensor<T> alpha_in;
     tensor<T> delta_in;
 
-    tensor<T> ref_output;
+    tensor<T> ref_var_out;
 
     miopen::Allocator::ManageDataPtr var_in_dev;
     miopen::Allocator::ManageDataPtr var_out_dev;

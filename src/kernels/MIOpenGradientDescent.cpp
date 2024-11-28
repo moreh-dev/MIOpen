@@ -29,6 +29,7 @@
 #endif
 
 #include "float_types.h"
+#include "tensor_view.hpp"
 
 template <typename TIO>
 __device__ void resourceApplyGradientDescent(const TIO* __restrict__ var_in,
@@ -38,20 +39,21 @@ __device__ void resourceApplyGradientDescent(const TIO* __restrict__ var_in,
                                              const uint64_t input_size,
                                              tensor_view_t<5> var_in_tv,
                                              tensor_view_t<5> var_out_tv,
-                                             tensor_view_t<5> alpha_in_tv,
+                                             tensor_view_t<1> alpha_in_tv,
                                              tensor_view_t<5> delta_in_tv)
 {
     const uint64_t gid = threadIdx.x + blockIdx.x * blockDim.x;
     if(gid >= input_size)
         return;
+    auto tensor_layout = tensor_layout_t<5>(var_in_tv, gid);
 
-    FLOAT_ACCUM var   = CVT_ACCUM2FLOAT(var_in[var_in_tv.get_tensor_view_idx({gid})]);
-    FLOAT_ACCUM alpha = CVT_ACCUM2FLOAT(alpha_in[alpha_in_tv.get_tensor_view_idx({0})]);
-    FLOAT_ACCUM delta = CVT_ACCUM2FLOAT(delta_in[delta_in_tv.get_tensor_view_idx({gid})]);
+    FLOAT_ACCUM var   = CVT_FLOAT2ACCUM(var_in[var_in_tv.get_tensor_view_idx(tensor_layout)]);
+    FLOAT_ACCUM alpha = CVT_FLOAT2ACCUM(alpha_in[alpha_in_tv.get_tensor_view_idx({0})]);
+    FLOAT_ACCUM delta = CVT_FLOAT2ACCUM(delta_in[delta_in_tv.get_tensor_view_idx(tensor_layout)]);
 
     var -= alpha * delta;
 
-    var_out[var_out_tv.get_tensor_view_idx({gid})] = CVT_FLOAT2ACCUM(var);
+    var_out[var_out_tv.get_tensor_view_idx(tensor_layout)] = CVT_ACCUM2FLOAT(var);
 }
 
 extern "C" __global__ void ResourceApplyGradientDescent(const D_TYPE* __restrict__ var_in,
@@ -61,7 +63,7 @@ extern "C" __global__ void ResourceApplyGradientDescent(const D_TYPE* __restrict
                                                         const uint64_t input_size,
                                                         tensor_view_t<5> var_in_tv,
                                                         tensor_view_t<5> var_out_tv,
-                                                        tensor_view_t<5> alpha_in_tv,
+                                                        tensor_view_t<1> alpha_in_tv,
                                                         tensor_view_t<5> delta_in_tv)
 {
     resourceApplyGradientDescent<D_TYPE>(var_in,
@@ -86,13 +88,13 @@ __device__ void resourceApplyGradientDescentContiguous(const TIO* __restrict__ v
     if(gid >= input_size)
         return;
 
-    FLOAT_ACCUM var   = CVT_ACCUM2FLOAT(var_in[gid]);
-    FLOAT_ACCUM alpha = CVT_ACCUM2FLOAT(alpha_in[0]);
-    FLOAT_ACCUM delta = CVT_ACCUM2FLOAT(delta_in[gid]);
+    FLOAT_ACCUM var   = CVT_FLOAT2ACCUM(var_in[gid]);
+    FLOAT_ACCUM alpha = CVT_FLOAT2ACCUM(alpha_in[0]);
+    FLOAT_ACCUM delta = CVT_FLOAT2ACCUM(delta_in[gid]);
 
     var -= alpha * delta;
 
-    var_out[gid] = CVT_FLOAT2ACCUM(var);
+    var_out[gid] = CVT_ACCUM2FLOAT(var);
 }
 
 extern "C" __global__ void

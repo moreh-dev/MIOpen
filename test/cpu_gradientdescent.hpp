@@ -26,6 +26,7 @@
 #pragma once
 
 #include "tensor_holder.hpp"
+#include "tensor_view.hpp"
 #include <miopen/tensor_view_utils.hpp>
 
 template <class T>
@@ -36,18 +37,20 @@ void cpu_GradientDescent(const tensor<T>& var_in,
 {
     auto var_in_tv   = miopen::get_inner_expanded_tv<5>(var_in.desc);
     auto var_out_tv  = miopen::get_inner_expanded_tv<5>(var_out.desc);
-    auto alpha_in_tv = miopen::get_inner_expanded_tv<5>(alpha_in.desc);
+    auto alpha_in_tv = miopen::get_inner_expanded_tv<1>(alpha_in.desc);
     auto delta_in_tv = miopen::get_inner_expanded_tv<5>(delta_in.desc);
 
     uint64_t N = var_in.desc.GetElementSize();
 
     par_ford(N)([&](uint64_t gid) {
-        double var   = static_cast<double>(var_in[var_in_tv.get_tensor_view_idx({gid})]);
+        auto tensor_layout = tensor_layout_t<5>(var_in_tv, gid);
+        double var   = static_cast<double>(var_in[var_in_tv.get_tensor_view_idx(tensor_layout)]);
         double alpha = static_cast<double>(alpha_in[alpha_in_tv.get_tensor_view_idx({0})]);
-        double delta = static_cast<double>(delta_in[delta_in_tv.get_tensor_view_idx({gid})]);
+        double delta =
+            static_cast<double>(delta_in[delta_in_tv.get_tensor_view_idx(tensor_layout)]);
 
         var -= alpha * delta;
 
-        var_out[var_out_tv.get_tensor_view_idx({gid})] = static_cast<T>(var);
+        var_out[var_out_tv.get_tensor_view_idx(tensor_layout)] = static_cast<T>(var);
     });
 }

@@ -49,12 +49,16 @@ miopenStatus_t GradientDescent(Handle& handle,
         GradientDescent::ProblemDescription{varInDesc, varOutDesc, alphaInDesc, deltaInDesc};
 
     const auto invoke_params = [&]() {
-        auto tmp      = GradientDescent::InvokeParams{};
-        tmp.varInDesc = &varInDesc;
-        tmp.var_in    = var_in;
-        tmp.var_out   = var_out;
-        tmp.alpha_in  = alpha_in;
-        tmp.delta_in  = delta_in;
+        auto tmp        = GradientDescent::InvokeParams{};
+        tmp.varInDesc   = &varInDesc;
+        tmp.varOutDesc  = &varOutDesc;
+        tmp.alphaInDesc = &alphaInDesc;
+        tmp.deltaInDesc = &deltaInDesc;
+
+        tmp.var_in   = var_in;
+        tmp.var_out  = var_out;
+        tmp.alpha_in = alpha_in;
+        tmp.delta_in = delta_in;
 
         return tmp;
     }();
