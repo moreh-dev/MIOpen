@@ -337,6 +337,7 @@ set( MIOpen_Source
     solver/softmax/attn_softmax.cpp
     solver/softmax/softmax.cpp
     subbuffers.cpp
+    sumtosize_api.cpp
     t5layernorm_api.cpp
     target_properties.cpp
     temp_file.cpp
@@ -703,6 +704,7 @@ if( MIOPEN_BACKEND MATCHES "OpenCL" OR MIOPEN_BACKEND STREQUAL "HIPOC" OR MIOPEN
         reduceextreme.cpp
         rope.cpp
         softmarginloss.cpp
+        sumtosize.cpp
         transformers_adam_w.cpp
         ${PROJECT_BINARY_DIR}/db_path.cpp
         )

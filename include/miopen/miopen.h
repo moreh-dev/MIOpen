@@ -8176,6 +8176,51 @@ MIOPEN_EXPORT miopenStatus_t miopenMultiMarginLossForward(miopenHandle_t handle,
 // CLOSEOUT LossFunction DOXYGEN GROUP
 #endif // MIOPEN_BETA_API
 
+#ifdef MIOPEN_BETA_API
+// SumToSize APIs
+/** @addtogroup reducecalculation
+ *
+ *  @{
+ */
+
+/*! @brief Helper function to query the minimum workspace size required by the SumToSize call
+ *
+ * @param [in]   handle                   MIOpen Handle
+ * @param [in]   inputDesc                Tensor descriptor for data input tensor
+ * @param [in]   outputDesc               Tensor descriptor for output data tensor
+ * @param [out]  sizeInBytes              Pointer to data to return the minimum workspace size
+ * @return                                miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t
+miopenGetSumToSizeForwardWorkSpaceSize(miopenHandle_t handle,
+                                       miopenTensorDescriptor_t inputDesc,
+                                       miopenTensorDescriptor_t outputDesc,
+                                       size_t* sizeInBytes);
+
+/*! @brief Execute a SumToSize forward layer
+ *
+ * @param [in]   handle                   MIOpen handle
+ * @param [in]   inputDesc                Tensor descriptor for data input tensor
+ * @param [in]   input                    Data input tensor
+ * @param [in]   outputDesc               Tensor descriptor for output data tensor
+ * @param [out]  output                   Data output tensor
+ * @param [in]   workspace                Address of the allocated workspace data
+ * @param [in]   workspaceSizeInBytes     Size in bytes of the allocated workspace data
+ * @param [in]   dim                      Dimension to calculation.
+ * @return                                miopenStatus_t
+ */
+MIOPEN_EXPORT miopenStatus_t miopenSumToSizeForward(miopenHandle_t handle,
+                                                    miopenTensorDescriptor_t inputDesc,
+                                                    const void* input,
+                                                    miopenTensorDescriptor_t outputDesc,
+                                                    void* output,
+                                                    void* workspace,
+                                                    size_t workspaceSizeInBytes);
+
+/** @} */
+// CLOSEOUT REDUCE CALCULATION DOXYGEN GROUP
+#endif // MIOPEN_BETA_API
+
 #ifdef __cplusplus
 }
 #endif

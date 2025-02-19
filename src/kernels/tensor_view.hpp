@@ -83,6 +83,12 @@ struct tensor_layout_t
         }
     }
 
+    constexpr tensor_layout_t()
+    {
+        for(auto i = 0; i < N; i++)
+            layout[i] = 0;
+    }
+
     uint64_t layout[N];
 };
 
