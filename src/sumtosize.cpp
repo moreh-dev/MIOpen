@@ -181,9 +181,7 @@ miopenStatus_t SumToSizeForward(Handle& handle,
     }
 
     // Start profiling
-    // TODO: With this profiling method, start will be the start of problem, invoke_param
-    // initialization instead of first kernel call, which leads to longer time. This difference is a
-    // large number in test case with small shape
+    // TODO: this profiling method will count time to init problem, invoke_params, ...
     float elapsed = 0.0f;
     HipEventPtr start;
     HipEventPtr stop;
