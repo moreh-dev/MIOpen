@@ -174,10 +174,10 @@ int SumToSizeDriver<Tgpu, Tref>::ParseCmdLineArgs(int argc, char* argv[])
 template <typename Tgpu, typename Tref>
 int SumToSizeDriver<Tgpu, Tref>::GetandSetData()
 {
-    std::vector<int> in_len = inflags.GetValueTensor("input").lengths;
+    auto in_len = inflags.GetValueVectorUint64("input");
     if(SetTensorNd(inputDesc, in_len, data_type) != miopenStatusSuccess)
         MIOPEN_THROW("SetTensorNd: Invalid input tensor shape.");
-    std::vector<int> out_len = inflags.GetValueTensor("output").lengths;
+    auto out_len = inflags.GetValueVectorUint64("output");
     if(SetTensorNd(outputDesc, out_len, data_type) != miopenStatusSuccess)
         MIOPEN_THROW("SetTensorNd: Invalid output tensor shape.");
     return miopenStatusSuccess;
@@ -271,7 +271,7 @@ int SumToSizeDriver<Tgpu, Tref>::RunForwardGPU()
 template <typename Tgpu, typename Tref>
 int SumToSizeDriver<Tgpu, Tref>::RunBackwardGPU()
 {
-    return miopenStatusSuccess;
+    return miopenStatusNotImplemented;
 }
 
 template <typename Tgpu, typename Tref>
@@ -312,5 +312,5 @@ int SumToSizeDriver<Tgpu, Tref>::VerifyForward()
 template <typename Tgpu, typename Tref>
 int SumToSizeDriver<Tgpu, Tref>::VerifyBackward()
 {
-    return miopenStatusSuccess;
+    return miopenStatusNotImplemented;
 }

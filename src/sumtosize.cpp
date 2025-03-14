@@ -185,7 +185,8 @@ miopenStatus_t SumToSizeForward(Handle& handle,
     float elapsed = 0.0f;
     HipEventPtr start;
     HipEventPtr stop;
-    if(handle.IsProfilingEnabled())
+    const bool profiling = handle.IsProfilingEnabled();
+    if(profiling)
     {
         handle.EnableProfiling(false);
         start = miopen::make_hip_event();
@@ -233,7 +234,7 @@ miopenStatus_t SumToSizeForward(Handle& handle,
     }
 
     // End of profiling
-    if(!handle.IsProfilingEnabled())
+    if(profiling)
     {
         hipEventRecord(stop.get(), handle.GetStream());
         hipEventSynchronize(stop.get());
